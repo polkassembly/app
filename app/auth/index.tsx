@@ -43,7 +43,7 @@ export default function IntroScreen() {
       <Slides />
 
       <View style={styles.bottom}>
-        <ThemedButton onPress={() => {}} text="Get Started" />
+        <ThemedButton textType="buttonLarge" onPress={() => {}} text="Get Started" />
       </View>
     </SafeAreaView>
   );
