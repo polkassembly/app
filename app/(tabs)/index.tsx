@@ -1,6 +1,7 @@
 import { IconPoints } from "@/components/icons/icon-points";
 import { IconQR } from "@/components/icons/icon-qr";
 import { ThemedText } from "@/components/ThemedText";
+import { ThemedView } from "@/components/ThemedView";
 import { Colors } from "@/constants/Colors";
 import React, { PropsWithChildren, useState } from "react";
 import {
@@ -27,6 +28,7 @@ import {
   TabBarIndicator,
   TabView,
 } from "react-native-tab-view";
+import { Actions, Activity, Badges, PointsView, ProfileHeader } from "@/components/Profile";
 
 const renderScene = SceneMap({
   profile: Profile,
@@ -44,141 +46,29 @@ const styles = StyleSheet.create({
     height: "100%",
   },
 
-  headerContainer: {
-    display: "flex",
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    margin: 24,
-  },
-
-  avatar: {
-    width: 42,
-    height: 42,
-    borderRadius: 21,
-    backgroundColor: "#ff6191",
-  },
-
-  pointsWrapper: {
-    marginInline: 24,
-  },
-
-  pointsContainer: {
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingBlock: 16,
-    paddingInline: 20,
-  },
+  scrollView: {
+    paddingHorizontal: 16,
+    marginTop: 16,
+    rowGap: 20,
+  }
 });
 
 function Profile() {
   return (
-    <ScrollView style={styles.container}>
-      <ProfileHeader />
+    <ThemedView type="background" style={styles.container}>
+      <ScrollView style={styles.scrollView} contentContainerStyle={{gap: 20}}>
+        <ProfileHeader />
 
-      <PointsView />
+        <PointsView />
 
-      <Badges />
+        <Badges />
 
-      <Actions />
+        <Actions />
 
-      <Activity />
-    </ScrollView>
+        <Activity />
+      </ScrollView>
+    </ThemedView>
   );
-}
-
-function ProfileHeader() {
-  return (
-    <View style={styles.headerContainer}>
-      <ThemedText type="title">GM, Zesha</ThemedText>
-      <Image style={styles.avatar} />
-    </View>
-  );
-}
-
-function PointsView() {
-  return (
-    <View style={styles.pointsWrapper}>
-      <PointsViewBackground />
-
-      <View style={styles.pointsContainer}>
-        <View style={{ display: "flex", flexDirection: "column", gap: 2 }}>
-          <ThemedText type="default">Your Points</ThemedText>
-
-          <View
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              alignItems: "center",
-              gap: "8",
-            }}
-          >
-            <IconPoints style={{ width: 24 }} />
-            <ThemedText type="title" style={{ fontWeight: 700 }}>
-              7,896
-            </ThemedText>
-          </View>
-        </View>
-
-        <Pressable
-          style={{
-            backgroundColor: "#FFFFFF12",
-            padding: 8,
-            borderRadius: 8,
-          }}
-        >
-          <IconQR style={{ width: 16 }} />
-        </Pressable>
-      </View>
-    </View>
-  );
-}
-
-function PointsViewBackground() {
-  return (
-    <Svg
-      style={{
-        position: "absolute",
-        top: 0,
-        left: 0,
-        height: "100%",
-        width: "100%",
-      }}
-      viewBox="0 0 100% 100%"
-    >
-      <Defs>
-        <LinearGradient id="grad" gradientTransform="rotate(45)">
-          <Stop offset="0" stopColor="#df6a7d" stopOpacity={1} />
-          <Stop offset="33.3%" stopColor="#c941a2" stopOpacity={1} />
-          <Stop offset="66.6%" stopColor="#fe3761" stopOpacity={1} />
-          <Stop offset="100%" stopColor="#781d2c" stopOpacity={1} />
-        </LinearGradient>
-      </Defs>
-
-      <Rect
-        rx="20px"
-        x="0"
-        y="0"
-        width="100%"
-        height="100%"
-        fill="url(#grad)"
-      />
-    </Svg>
-  );
-}
-
-function Badges() {
-  return <View />;
-}
-
-function Actions() {
-  return <View />;
-}
-
-function Activity() {
-  return <View />;
 }
 
 function Timeline() {
@@ -209,7 +99,7 @@ export default function Home() {
                 {...props}
                 width={100}
                 style={StyleSheet.compose(props.style, {
-                  backgroundColor: Colors.dark.accent,
+                  backgroundColor: Colors.dark.ctaStroke,
                 })}
               />
             )}
@@ -239,8 +129,8 @@ function TabViewWrapper({ children }: PropsWithChildren) {
       >
         <Defs>
           <RadialGradient id="grad">
-            <Stop offset="0" stopColor={Colors.dark.accent} stopOpacity={1} />
-            <Stop offset="1" stopColor={Colors.dark.accent} stopOpacity={0} />
+            <Stop offset="0" stopColor={Colors.dark.ctaStroke} stopOpacity={1} />
+            <Stop offset="1" stopColor={Colors.dark.ctaStroke} stopOpacity={0} />
           </RadialGradient>
         </Defs>
 
