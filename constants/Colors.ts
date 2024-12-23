@@ -23,6 +23,12 @@ export const Colors = {
     selectedIcon: "#1D1D1D",
     inactiveIcon: "#575756",
     tint: tintColorDark,
+
+    /**
+     * Not documented in the color scheme in design spec but still used
+     * as backdrop background for bottom sheet.
+     */
+    backdrop: "#222121A6",
   },
   dark: {
     background: "#161616",
@@ -38,6 +44,12 @@ export const Colors = {
     selectedIcon: "#1D1D1D",
     inactiveIcon: "#575756",
     tint: tintColorDark,
+
+    /**
+     * Not documented in the color scheme in design spec but still used
+     * as backdrop background for bottom sheet.
+     */
+    backdrop: "#222121A6",
   },
 };
 
