@@ -8,8 +8,17 @@ import { DarkTheme, DefaultTheme } from "@react-navigation/native";
 const tintColorDark = "#fff";
 const tintColorLight = "#fff";
 
+/**
+ * The primary color of the app. While design spec has 'ctaStroke' and 'ctaText'
+ * which are the exact same colors, those names do not match the semantics of
+ * how the color is actually used. Hence this alias.
+ * This occurs as background of buttons, links text color and other things with emphasis.
+ */
+const colorAccent = "#E5007A";
+
 export const Colors = {
   light: {
+    accent: colorAccent,
     background: "#161616",
     secondaryBackground: "#000000",
     container: "#000000",
@@ -25,6 +34,7 @@ export const Colors = {
     tint: tintColorDark,
   },
   dark: {
+    accent: colorAccent,
     background: "#161616",
     secondaryBackground: "#000000",
     container: "#000000",
@@ -40,7 +50,6 @@ export const Colors = {
     tint: tintColorDark,
   },
 };
-
 
 export const NavigationLightTheme = {
   ...DefaultTheme,
