@@ -12,7 +12,7 @@ export function ThemedText({
   style,
   lightColor,
   darkColor,
-  type = "default",
+  type = "bodyLarge",
   ...rest
 }: ThemedTextProps) {
   const color = useThemeColor({ light: lightColor, dark: darkColor }, "text");
@@ -21,38 +21,60 @@ export function ThemedText({
 }
 
 const styles = StyleSheet.create({
-  default: {
+  bodyLarge: {
     fontSize: 16,
     lineHeight: 24,
   },
-  defaultSemiBold: {
-    fontSize: 16,
-    lineHeight: 24,
-    fontWeight: "600",
-  },
+
+  /**
+   * This font style is *not* documented in Figma as on of the
+   * typography style but still uses it in the intro screens.
+   */
   display: {
     fontSize: 28,
     fontWeight: 600,
     lineHeight: 42,
   },
-  title: {
+
+  titleLarge: {
     fontSize: 24,
     fontWeight: 500,
     lineHeight: 36,
   },
-  subtitle: {
+  titleMedium: {
     fontSize: 20,
     lineHeight: 30,
     fontWeight: 600,
   },
+
+  /**
+   * Not part of the design spec. Marked for removal.
+   */
   link: {
     lineHeight: 30,
     fontSize: 16,
     color: "#0a7ea4",
   },
-  button: {
+
+  /**
+   * This font style is *not* documented in Figma as on of the
+   * typography style but still uses it in the intro screens.
+   */
+  buttonLarge: {
     lineHeight: 24,
     fontSize: 16,
     fontWeight: 600,
+  },
+
+  button1: {
+    lineHeight: 21,
+    fontSize: 14,
+    fontWeight: 500,
+    textTransform: "capitalize",
+  },
+  button2: {
+    lineHeight: 21,
+    fontSize: 14,
+    fontWeight: 500,
   },
 });

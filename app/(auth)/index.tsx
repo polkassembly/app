@@ -87,7 +87,7 @@ function Slide1() {
 function Slide2() {
   return (
     <View style={styles.slideContainer}>
-      <ThemedText type="subtitle">Hi, I am Polka- your friendly goto...</ThemedText>
+      <ThemedText type="titleMedium">Hi, I am Polka- your friendly goto...</ThemedText>
 
       <Image
         style={{ flexGrow: 1, flexBasis: 0 }}
