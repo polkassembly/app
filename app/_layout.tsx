@@ -41,7 +41,7 @@ function Content() {
 
   useEffect(() => {
     if (needsLogin) {
-      router.replace("/(auth)");
+      router.replace("/auth");
     }
   }, [needsLogin]);
 
@@ -49,7 +49,7 @@ function Content() {
     <ThemeProvider value={NavigationDarkTheme}>
       <Stack>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+        <Stack.Screen name="auth" options={{ headerShown: false }} />
         <Stack.Screen name="+not-found" />
       </Stack>
       <StatusBar style="auto" />
