@@ -1,7 +1,7 @@
 import { Colors } from "@/constants/Colors";
 import { StyleSheet, TouchableOpacity } from "react-native";
 import { TouchableOpacityProps } from "react-native-gesture-handler";
-import { ThemedText } from "./ThemedText";
+import { ThemedText, ThemedTextProps } from "./ThemedText";
 
 const styles = StyleSheet.create({
   button: {
@@ -12,17 +12,40 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+
+  bordered: {
+    backgroundColor: "#00000000",
+    borderColor: Colors.dark.accent,
+    borderWidth: 1,
+  },
 });
 
 export default function ThemedButton({
+  textType = "button2",
   text,
+  bordered = false,
   ...props
-}: TouchableOpacityProps & { text?: string }) {
+}: TouchableOpacityProps & {
+  text?: string;
+  textType?: ThemedTextProps["type"];
+  bordered?: boolean;
+}) {
   return (
-    <TouchableOpacity {...props} style={[props.style, styles.button]}>
+    <TouchableOpacity
+      {...props}
+      style={[props.style, styles.button, bordered && styles.bordered]}
+    >
       {props.children}
 
-      {text ? <ThemedText type="button">{text}</ThemedText> : null}
+      {text ? (
+        <ThemedText
+          type={textType}
+          darkColor={bordered ? Colors.dark.accent : undefined}
+          lightColor={bordered ? Colors.light.accent : undefined}
+        >
+          {text}
+        </ThemedText>
+      ) : null}
     </TouchableOpacity>
   );
 }
