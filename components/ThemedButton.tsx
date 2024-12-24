@@ -1,5 +1,6 @@
 import { Colors } from "@/constants/Colors";
-import { StyleSheet, TouchableOpacity } from "react-native";
+import React from "react";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { TouchableOpacityProps } from "react-native-gesture-handler";
 import { ThemedText, ThemedTextProps } from "./ThemedText";
 
@@ -24,21 +25,27 @@ const styles = StyleSheet.create({
   },
 });
 
-export default function ThemedButton({
-  textType = "button2",
-  text,
-  bordered = false,
-  borderless = false,
-  ...props
-}: TouchableOpacityProps & {
+interface ThemedButtonProps extends TouchableOpacityProps {
   text?: string;
   textType?: ThemedTextProps["type"];
   bordered?: boolean;
   borderless?: boolean;
-}) {
-  return (
+}
+
+const ThemedButton = React.forwardRef<View, ThemedButtonProps>(
+  (
+    {
+      textType = "button2",
+      text,
+      bordered = false,
+      borderless = false,
+      ...props
+    },
+    ref
+  ) => (
     <TouchableOpacity
       {...props}
+      ref={ref}
       style={[
         props.style,
         styles.button,
@@ -58,5 +65,7 @@ export default function ThemedButton({
         </ThemedText>
       ) : null}
     </TouchableOpacity>
-  );
-}
+  )
+);
+
+export default ThemedButton;
