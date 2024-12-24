@@ -18,30 +18,41 @@ const styles = StyleSheet.create({
     borderColor: Colors.dark.accent,
     borderWidth: 1,
   },
+
+  borderless: {
+    backgroundColor: "#00000000",
+  },
 });
 
 export default function ThemedButton({
   textType = "button2",
   text,
   bordered = false,
+  borderless = false,
   ...props
 }: TouchableOpacityProps & {
   text?: string;
   textType?: ThemedTextProps["type"];
   bordered?: boolean;
+  borderless?: boolean;
 }) {
   return (
     <TouchableOpacity
       {...props}
-      style={[props.style, styles.button, bordered && styles.bordered]}
+      style={[
+        props.style,
+        styles.button,
+        bordered && styles.bordered,
+        borderless && styles.borderless,
+      ]}
     >
       {props.children}
 
       {text ? (
         <ThemedText
           type={textType}
-          darkColor={bordered ? Colors.dark.accent : undefined}
-          lightColor={bordered ? Colors.light.accent : undefined}
+          darkColor={bordered || borderless ? Colors.dark.accent : undefined}
+          lightColor={bordered || borderless ? Colors.light.accent : undefined}
         >
           {text}
         </ThemedText>
