@@ -3,6 +3,7 @@ import IntroPager from "@/components/IntroPager";
 import BottomSheet from "@/components/shared/BottomSheet";
 import ThemedButton from "@/components/ThemedButton";
 import { ThemedText } from "@/components/ThemedText";
+import { Link } from "expo-router";
 import React, { useState } from "react";
 import { Image, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -110,11 +111,13 @@ function GettingStartedSheet({
         >
           <ThemedButton textType="buttonLarge" text="Connect Wallet" />
 
-          <ThemedButton
-            textType="buttonLarge"
-            text="Sign Up with Email"
-            bordered
-          />
+          <Link href="/auth/web2auth" asChild>
+            <ThemedButton
+              textType="buttonLarge"
+              text="Sign Up with Email"
+              bordered
+            />
+          </Link>
         </View>
       </View>
     </BottomSheet>
