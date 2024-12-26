@@ -6,7 +6,10 @@ import ThemedButton, { ThemedButtonProps } from "@/components/ThemedButton";
 import { ThemedText } from "@/components/ThemedText";
 import { Colors } from "@/constants/Colors";
 import { useThemeColor } from "@/hooks/useThemeColor";
-import { useNavigation } from "expo-router";
+import useWeb2Login from "@/net/queries/useWeb2Login";
+import useWeb2Signup from "@/net/queries/useWeb2Signup";
+import { AxiosError } from "axios";
+import { router, useNavigation } from "expo-router";
 import React, { useState } from "react";
 import { Image, ScrollView, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -73,10 +76,46 @@ function Content() {
 function Login() {
   const [rememberMeChecked, setRememberMeChecked] = useState(false);
 
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const { mutateAsync: login, isPending } = useWeb2Login();
+
+  async function onPressLogin() {
+    try {
+      await login({
+        emailOrUsername: email,
+        password,
+      });
+    } catch (e) {
+      console.log(e);
+      if (e instanceof AxiosError) {
+        console.log(e.response?.data);
+      }
+
+      // FIXME: report errors to UI
+
+      return;
+    }
+
+    router.dismissAll();
+    router.replace("/");
+  }
+
   return (
     <>
-      <ThemedTextInput label="Email" textContentType="emailAddress" />
-      <ThemedTextInput label="Password" password />
+      <ThemedTextInput
+        value={email}
+        onChangeText={setEmail}
+        label="Email"
+        textContentType="emailAddress"
+      />
+      <ThemedTextInput
+        value={password}
+        onChangeText={setPassword}
+        label="Password"
+        password
+      />
 
       <View
         style={{
@@ -94,7 +133,13 @@ function Login() {
         <ThemedButton borderless text="Forgot Password?" />
       </View>
 
-      <ThemedButton text="Log In" textType="buttonLarge" />
+      <ThemedButton
+        onPress={onPressLogin}
+        text="Log In"
+        textType="buttonLarge"
+        disabled={isPending}
+        loading={isPending}
+      />
 
       <Or />
 
@@ -104,12 +149,53 @@ function Login() {
 }
 
 function Signup() {
+  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+
+  const { mutateAsync: signup, isPending } = useWeb2Signup();
+
   const [rememberMeChecked, setRememberMeChecked] = useState(false);
+
+  async function onPressSignup() {
+    try {
+      await signup({
+        email: email,
+        username: username,
+        password,
+      });
+    } catch (e) {
+      console.log(e);
+      if (e instanceof AxiosError) {
+        console.log(e.response?.data);
+      }
+
+      // FIXME: report errors to UI
+
+      return;
+    }
+
+    router.dismissAll();
+    router.replace("/");
+  }
 
   return (
     <>
-      <ThemedTextInput label="Email" textContentType="emailAddress" />
       <ThemedTextInput
+        value={email}
+        onChangeText={setEmail}
+        label="Email"
+        textContentType="emailAddress"
+      />
+      <ThemedTextInput
+        value={username}
+        onChangeText={setUsername}
+        label="Username"
+        textContentType="username"
+      />
+      <ThemedTextInput
+        value={password}
+        onChangeText={setPassword}
         label="Password"
         password
         textContentType="newPassword"
@@ -121,7 +207,13 @@ function Signup() {
         label="Remember me"
       />
 
-      <ThemedButton text="Sign Up" textType="buttonLarge" />
+      <ThemedButton
+        onPress={onPressSignup}
+        text="Sign Up"
+        textType="buttonLarge"
+        disabled={isPending}
+        loading={isPending}
+      />
 
       <Or />
 
