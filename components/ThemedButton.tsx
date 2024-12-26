@@ -1,6 +1,11 @@
 import { Colors } from "@/constants/Colors";
 import React from "react";
-import { StyleSheet, TouchableOpacity, View } from "react-native";
+import {
+  ActivityIndicator,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { TouchableOpacityProps } from "react-native-gesture-handler";
 import { ThemedText, ThemedTextProps } from "./ThemedText";
 
@@ -32,6 +37,7 @@ export interface ThemedButtonProps extends TouchableOpacityProps {
   textType?: ThemedTextProps["type"];
   bordered?: boolean;
   borderless?: boolean;
+  loading?: boolean;
 }
 
 const ThemedButton = React.forwardRef<View, ThemedButtonProps>(
@@ -41,6 +47,7 @@ const ThemedButton = React.forwardRef<View, ThemedButtonProps>(
       text,
       bordered = false,
       borderless = false,
+      loading = false,
       ...props
     },
     ref
@@ -55,9 +62,15 @@ const ThemedButton = React.forwardRef<View, ThemedButtonProps>(
         props.style,
       ]}
     >
-      {props.children}
+      {loading && (
+        <ActivityIndicator
+          color={bordered || borderless ? Colors.dark.accent : Colors.dark.text}
+        />
+      )}
 
-      {text ? (
+      {!loading && props.children}
+
+      {!loading && text ? (
         <ThemedText
           type={textType}
           darkColor={bordered || borderless ? Colors.dark.accent : undefined}
