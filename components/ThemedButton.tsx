@@ -49,10 +49,10 @@ const ThemedButton = React.forwardRef<View, ThemedButtonProps>(
       {...props}
       ref={ref}
       style={[
-        props.style,
         styles.button,
         bordered && styles.bordered,
         borderless && styles.borderless,
+        props.style,
       ]}
     >
       {props.children}
