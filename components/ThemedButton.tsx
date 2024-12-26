@@ -27,7 +27,7 @@ const styles = StyleSheet.create({
   },
 });
 
-interface ThemedButtonProps extends TouchableOpacityProps {
+export interface ThemedButtonProps extends TouchableOpacityProps {
   text?: string;
   textType?: ThemedTextProps["type"];
   bordered?: boolean;
