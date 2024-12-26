@@ -1,12 +1,7 @@
-import { IconPoints } from "@/components/icons/icon-points";
-import { IconQR } from "@/components/icons/icon-qr";
-import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { Colors } from "@/constants/Colors";
 import React, { PropsWithChildren, useState } from "react";
 import {
-  Image,
-  Pressable,
   ScrollView,
   StyleSheet,
   Text,
@@ -17,9 +12,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Svg, {
   Defs,
   Ellipse,
-  LinearGradient,
   RadialGradient,
-  Rect,
   Stop,
 } from "react-native-svg";
 import {
@@ -29,6 +22,7 @@ import {
   TabView,
 } from "react-native-tab-view";
 import { Actions, Activity, Badges, PointsView, ProfileHeader } from "@/components/Profile";
+import { PostCard } from "@/components/timeline/postCard";
 
 const renderScene = SceneMap({
   profile: Profile,
@@ -72,7 +66,64 @@ function Profile() {
 }
 
 function Timeline() {
-  return <Text>Timeline</Text>;
+  const posts = [
+    {
+      id: "260",
+      title: "SubWallet Proposes to Build the Web3 Multivera Gateway for Polkad",
+      description: "Based on the income to the treasuries, the amounts getting burned and the amounts going to proposals, the treasury can be utilized more : this includes",
+      author: "jay_zega",
+      status: "published",
+      createdAt: "2024-12-25",
+      metrics: {
+        likes: 16,
+        dislikes: 1,
+        comments: 1,
+      },
+      interactions: {
+        isBookmarked: true,
+        isLiked: true,
+        isDisliked: false,
+      },
+      connectedLikes: [
+        { userId: "1", userName: "Amara", likeId: "like1" },
+        { userId: "2", userName: "John", likeId: "like2" },
+      ],
+    },
+    {
+      id: "214",
+      title: "SubWallet Proposes to Build the Web3 Multivera Gateway for Polkad",
+      description: "Based on the income to the treasuries, the amounts getting burned and the amounts going to proposals, the treasury can be utilized more : this includes",
+      author: "zay_jega",
+      status: "published",
+      createdAt: "2021-01-01",
+      metrics: {
+        likes: 12,
+        dislikes: 2,
+        comments: 5,
+      },
+      interactions: {
+        isBookmarked: false,
+        isLiked: false,
+        isDisliked: true,
+      },
+      connectedLikes: [
+        { userId: "1", userName: "Amara" },
+        { userId: "3", userName: "Sophia" },
+        { userId: "2", userName: "Amara" },
+        { userId: "4", userName: "Sophia" },
+      ],
+    },
+  ];
+  
+  return (
+    <ThemedView type="background" style={styles.container}>
+      <ScrollView style={styles.scrollView} contentContainerStyle={{gap: 20}}>
+        {posts.map((post) => (
+          <PostCard key={post.id} {...post} />
+        ))}
+      </ScrollView>
+    </ThemedView>
+  );
 }
 
 export default function Home() {
