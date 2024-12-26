@@ -1,7 +1,7 @@
 import Svg, { Path } from "react-native-svg";
 import { IconProps } from "../types";
 
-export function IconCalendar({ style, color }: IconProps) {
+export default function IconCalendar({ style, color }: IconProps) {
   return (
     <Svg width="25" height="22" viewBox="0 0 25 22" fill="none" style={style}>
       <Path

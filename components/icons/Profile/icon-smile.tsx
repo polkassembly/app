@@ -2,7 +2,7 @@ import React from "react";
 import Svg, { Path } from "react-native-svg";
 import { IconProps } from "../types";
 
-export function IconSmile({ style, color }: IconProps) {
+export default function IconSmile({ style, color }: IconProps) {
   return (
     <Svg width="20" height="20" viewBox="0 0 20 20" fill="none" style={style}>
       <Path

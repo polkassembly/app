@@ -1,7 +1,7 @@
 import Svg, { Path } from "react-native-svg";
 import { IconProps } from "../types";
 
-export function IconSettings({ style, color }: IconProps) {
+export default function IconSettings({ style, color }: IconProps) {
   return (
     <Svg width="27" height="28" viewBox="0 0 27 28" fill="none" style={style}>
       <Path
