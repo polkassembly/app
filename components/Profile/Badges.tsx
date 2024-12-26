@@ -3,7 +3,6 @@ import { View, Image, TouchableOpacity, StyleSheet } from "react-native";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "../ThemedView";
 import { useNavigation } from "@react-navigation/native";
-import { Ionicons } from "@expo/vector-icons";
 import { Asset } from "expo-asset";
 import { NavigateButton } from "../shared/NavigateButton";
 
@@ -46,10 +45,10 @@ export function Badges(): JSX.Element {
   return (
     <ThemedView type="container" style={styles.container}>
       <View>
-        <ThemedText type="title" style={styles.title}>
+        <ThemedText type="bodyMedium1" style={styles.title}>
           Badges
         </ThemedText>
-        <ThemedText type="default" style={styles.subtitle}>
+        <ThemedText type="bodySmall3" style={styles.subtitle}>
           16 earned
         </ThemedText>
       </View>

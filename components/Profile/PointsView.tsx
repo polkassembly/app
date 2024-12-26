@@ -52,7 +52,7 @@ export function PointsView() {
       {/* Points Content */}
       <View style={styles.pointsContainer}>
         <View style={{ display: "flex", flexDirection: "column", gap: 2 }}>
-          <ThemedText type="default" style={{ fontWeight: "400"}}>Your Points</ThemedText>
+          <ThemedText type="bodyMedium3" style={{ fontWeight: "400"}}>Your Points</ThemedText>
           <View
             style={{
               display: "flex",
@@ -62,7 +62,7 @@ export function PointsView() {
             }}
           >
             <IconPoints style={{ width: 24 }} />
-            <ThemedText type="title" style={{ fontWeight: "700", lineHeight: 37.5 }}>
+            <ThemedText type="titleLarge" style={{ fontWeight: "700", lineHeight: 37.5 }}>
               7,896
             </ThemedText>
           </View>

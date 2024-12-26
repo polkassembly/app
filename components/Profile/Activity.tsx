@@ -1,8 +1,7 @@
 import React from "react";
-import { StyleSheet, TouchableOpacity } from "react-native";
+import { IconEarnedPoints, IconSmile } from "../icons/Profile";
+import { StyleSheet } from "react-native";
 import { View } from "react-native";
-import { IconSmile } from "../icons/Profile/icon-smile";
-import { IconEarnedPoints } from "../icons/Profile/icon-earned-points";
 import { ThemedText } from "../ThemedText";
 import { NavigateButton } from "../shared/NavigateButton";
 import { ThemedView } from "../ThemedView";
@@ -42,7 +41,7 @@ type ActivityItemProps = {
 export function Activity() {
   return (
     <View style={styles.mainContainer}>
-      <ThemedText type="default">RECENT ACTIVITY</ThemedText>
+      <ThemedText type="bodySmall">RECENT ACTIVITY</ThemedText>
       {activityData.map((item) => (
         <ActivityItem key={item.id} item={item} />
       ))}
@@ -67,7 +66,7 @@ function ActivityItem({ item }: { item: ActivityItemProps }) {
         <>
           <View style={styles.iconTextContainer}>
             <IconSmile color="white" />
-            <ThemedText type="default">Liked a Proposal</ThemedText>
+            <ThemedText type="bodyMedium3">Liked a Proposal</ThemedText>
           </View>
           <NavigateButton containerSize={30} iconSize={15} onPress={handleNavigate} />
         </>
@@ -75,7 +74,7 @@ function ActivityItem({ item }: { item: ActivityItemProps }) {
         <>
           <View style={styles.iconTextContainer}>
             <IconEarnedPoints color="white" />
-            <ThemedText type="default">
+            <ThemedText type="bodyMedium3">
               Earned <ThemedText style={{ color: pointsColor }}>{formattedPoints}</ThemedText> for playing
             </ThemedText>
           </View>

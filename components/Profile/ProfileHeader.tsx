@@ -20,7 +20,7 @@ const styles = StyleSheet.create({
 export function ProfileHeader() {
   return (
     <View style={styles.headerContainer}>
-      <ThemedText type="title">GM, Zesha</ThemedText>
+      <ThemedText type="titleLarge">GM, Zesha</ThemedText>
       <Image style={styles.avatar} />
     </View>
   );
