@@ -33,6 +33,11 @@ const styles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 24,
   },
+  bodySmall1: {
+    fontSize: 12,
+    fontWeight: 500,
+    lineHeight: 20,
+  },
 
   /**
    * This font style is *not* documented in Figma as on of the
