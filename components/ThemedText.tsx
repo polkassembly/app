@@ -28,7 +28,7 @@ export function ThemedText({
   return <Text style={[{ color }, styles[type], style]} {...rest} />;
 }
 
-const styles = StyleSheet.create({
+export const styles = StyleSheet.create({
   bodyLarge: {
     fontSize: 16,
     lineHeight: 24,
