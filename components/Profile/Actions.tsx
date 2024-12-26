@@ -32,13 +32,13 @@ export function Actions() {
       />
 
       <View style={{ flexDirection: "column", gap: 20 }}>
-        <ThemedText type="default">EXPLORE ACTIONS</ThemedText>
+        <ThemedText type="bodySmall">EXPLORE ACTIONS</ThemedText>
         <View style={styles.container2}>
           <IconView Icon={IconVote} text="Batch Vote" />
           <IconView Icon={IconDelegate} text="Delegate" />
 
           <ThemedView type="container" style = {styles.referContainer}>
-            <ThemedText type="title">RDJ68</ThemedText>
+            <ThemedText type="titleMedium">RDJ68</ThemedText>
             <Ionicons name="copy" size={24} color="white" />
           </ThemedView>
         </View>
@@ -104,7 +104,7 @@ const styles = StyleSheet.create({
   }
 });
 
-export function IconView({
+function IconView({
   Icon,
   text,
 }: {
@@ -116,7 +116,7 @@ export function IconView({
       <ThemedView type="container" style={styles.iconContainer}>
         <Icon color="#FFF" size={30} />
       </ThemedView>
-      <ThemedText type="default">{text}</ThemedText>
+      <ThemedText type="bodySmall">{text}</ThemedText>
     </View>
   );
 }
