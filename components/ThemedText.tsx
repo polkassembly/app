@@ -33,6 +33,32 @@ export const styles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 24,
   },
+  bodyMedium1:{
+    fontSize: 16,
+    fontWeight: 600,
+    lineHeight: 19
+  },
+  bodyMedium2: {
+    fontSize: 14,
+    fontWeight: 500,
+    lineHeight: 21,
+
+  },
+  bodyMedium3: {
+    fontSize: 14,
+    fontWeight: 400,
+    lineHeight: 18,
+  },
+  bodySmall:{
+    fontSize: 12,
+    fontWeight: 500,
+    lineHeight: 18
+  },
+  bodySmall3: {
+    fontSize: 10, 
+    fontWeight: 500,
+    lineHeight: 15,
+  },
   bodySmall1: {
     fontSize: 12,
     fontWeight: 500,
@@ -56,8 +82,8 @@ export const styles = StyleSheet.create({
   },
   titleMedium: {
     fontSize: 20,
-    lineHeight: 30,
     fontWeight: 600,
+    lineHeight: 30,
   },
 
   /**
