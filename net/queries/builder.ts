@@ -1,13 +1,20 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { AxiosInstance, AxiosRequestConfig, mergeConfig, Method } from "axios";
+import { useMutation } from "@tanstack/react-query";
+import {
+  AxiosInstance,
+  AxiosRequestConfig,
+  AxiosResponse,
+  mergeConfig,
+  Method,
+} from "axios";
 
-abstract class HookBuilder<Params, Result> {
+abstract class HookBuilder<Params, Result = AxiosResponse> {
   _axios: AxiosInstance;
 
   _config: AxiosRequestConfig = {};
   _method: Method = "GET";
   _url: string = "";
   _requestTransform?: (req: Params) => any;
+  _responseTransform?: (res: AxiosResponse) => Result;
 
   constructor(axios: AxiosInstance) {
     this._axios = axios;
@@ -25,6 +32,11 @@ abstract class HookBuilder<Params, Result> {
 
   requestTransform(transformFn: (params: Params) => unknown) {
     this._requestTransform = transformFn;
+    return this;
+  }
+
+  responseTransform(transformFn: (res: AxiosResponse) => Result) {
+    this._responseTransform = transformFn;
     return this;
   }
 
@@ -46,11 +58,17 @@ export class MutationBuilder<
             ? this._requestTransform(params)
             : params;
 
-          return await this._axios.request({
+          const response = await this._axios.request({
             method: this._method,
             url: this._url,
             data,
           });
+
+          const result = this._responseTransform
+            ? this._responseTransform(response)
+            : response.data;
+
+          return result;
         },
       });
     };
