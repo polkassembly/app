@@ -66,7 +66,7 @@ function Content() {
   const [selectedTab, setSelectedTab] = useState<"login" | "signup">("login");
 
   return (
-    <ScrollView contentContainerStyle={styles.content}>
+    <ScrollView style={styles.scrollContainer} contentContainerStyle={styles.content}>
       <Tabs tabs={tabs} selectedTab={selectedTab} onChange={setSelectedTab} />
       {selectedTab === "login" ? <Login /> : <Signup />}
     </ScrollView>
@@ -302,13 +302,16 @@ const styles = StyleSheet.create({
     alignSelf: "flex-start",
   },
 
-  content: {
+  scrollContainer: {
     flex: 1,
+    backgroundColor: Colors.dark.background,
+  },
+
+  content: {
     flexDirection: "column",
     borderTopLeftRadius: 16,
     borderTopRightRadius: 16,
     padding: 14,
     gap: 16,
-    backgroundColor: Colors.dark.background,
   },
 });
