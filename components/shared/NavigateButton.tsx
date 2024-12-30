@@ -9,7 +9,7 @@ type NavigateButtonProps = {
   iconSize?: number; // Custom size for the icon
 };
 
-export const NavigateButton: React.FC<NavigateButtonProps> = ({
+const NavigateButton: React.FC<NavigateButtonProps> = ({
   onPress,
   containerSize = 52, // Default container size
   iconSize = 32, // Default icon size
@@ -34,3 +34,5 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
 });
+
+export default NavigateButton;

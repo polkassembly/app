@@ -3,7 +3,7 @@ import { IconEarnedPoints, IconSmile } from "../icons/Profile";
 import { StyleSheet } from "react-native";
 import { View } from "react-native";
 import { ThemedText } from "../ThemedText";
-import { NavigateButton } from "../shared/NavigateButton";
+import NavigateButton from "../shared/NavigateButton";
 import { ThemedView } from "../ThemedView";
 
 const activityData = [

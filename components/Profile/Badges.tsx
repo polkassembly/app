@@ -4,7 +4,7 @@ import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "../ThemedView";
 import { useNavigation } from "@react-navigation/native";
 import { Asset } from "expo-asset";
-import { NavigateButton } from "../shared/NavigateButton";
+import NavigateButton from "../shared/NavigateButton";
 
 // Define the structure of a badge item
 type Badge = {
