@@ -16,6 +16,8 @@ const queryClient = new QueryClient();
 
 export default function RootLayout() {
   const [loaded] = useFonts({
+    LilitaOneRegular: require("@/assets/fonts/LilitaOne-Regular.ttf"),
+    Recharge: require("@/assets/fonts/Recharge.ttf"),
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
   });
 
