@@ -33,7 +33,7 @@ export const styles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 24,
   },
-  bodyMedium1:{
+  bodyMedium1: {
     fontSize: 16,
     fontWeight: 600,
     lineHeight: 19
@@ -49,13 +49,13 @@ export const styles = StyleSheet.create({
     fontWeight: 400,
     lineHeight: 18,
   },
-  bodySmall:{
+  bodySmall: {
     fontSize: 12,
     fontWeight: 500,
     lineHeight: 18
   },
   bodySmall3: {
-    fontSize: 10, 
+    fontSize: 10,
     fontWeight: 500,
     lineHeight: 15,
   },
@@ -63,6 +63,17 @@ export const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: 500,
     lineHeight: 20,
+  },
+
+  /**
+   * This font style is not documented in Figma as on of the
+   * typography style but still uses repeatedly in the game screen.
+   */
+
+  bodySmall4: {
+    fontSize: 8,
+    fontWeight: 500,
+    lineHeight: 12,
   },
 
   /**
