@@ -11,11 +11,12 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { categories, games, playedGames } from "../data/mockData";
 import { GradientText, OutlinedText, ThemedTextInput } from "@/components/shared";
 import { IconFilterOption, IconFireworks, IconStar, IconTwinkle } from "@/components/icons/games";
-import { Video } from "expo-av";
+import { Video, ResizeMode } from "expo-av";
 import { LinearGradient } from "expo-linear-gradient";
 import IntroPager from "@/components/IntroPager";
 import { TextInput } from "react-native";
 import { IconSearch } from "@/components/icons/shared";
+import CircularProgressBar from "@/components/shared/CircularProgressBar";
 
 export default function GameScreen() {
   return (
@@ -63,13 +64,14 @@ function TitleSection() {
 }
 function HeroSection() {
   return (
-    <View style={{ overflow: "hidden", backgroundColor: "#ffffff" }}>
+    <View style={{ overflow: "hidden" }}>
       <Video
         source={require("@/assets/videos/game_hero.mp4")}
         style={styles.heroVideoBg}
         shouldPlay
         isLooping
         isMuted
+        resizeMode={ResizeMode.COVER}
       />
 
       {/* Linear gradient */}
@@ -278,6 +280,7 @@ function PlayedGamesCard({ title, image, levels, levelsCompleted }: playedGamesP
           <ThemedText type="bodySmall1" style={{ color: "#FFFFFF", fontWeight: 400, lineHeight: 12 }}>{levels} levels</ThemedText>
         </View>
       </View>
+      <CircularProgressBar percentage={(levelsCompleted / levels) * 100} radius={20} strokeWidth={4} color="#000000" backgroundColor="#FFFFFF" />
     </View>
   )
 }
