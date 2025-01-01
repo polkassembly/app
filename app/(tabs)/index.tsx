@@ -43,14 +43,13 @@ const styles = StyleSheet.create({
   scrollView: {
     paddingHorizontal: 16,
     marginTop: 16,
-    rowGap: 20,
   }
 });
 
 function Profile() {
   return (
     <ThemedView type="background" style={styles.container}>
-      <ScrollView style={styles.scrollView} contentContainerStyle={{gap: 20}}>
+      <ScrollView style={styles.scrollView} contentContainerStyle={{ gap: 20 }}>
         <ProfileHeader />
 
         <PointsView />
@@ -114,10 +113,10 @@ function Timeline() {
       ],
     },
   ];
-  
+
   return (
     <ThemedView type="background" style={styles.container}>
-      <ScrollView style={styles.scrollView} contentContainerStyle={{gap: 20}}>
+      <ScrollView style={styles.scrollView} contentContainerStyle={{ gap: 20 }}>
         {posts.map((post) => (
           <PostCard key={post.id} {...post} />
         ))}
