@@ -1,7 +1,8 @@
 import { Tabs } from "expo-router";
-import React from "react";
-import { Pressable, StyleSheet, View } from "react-native";
+import React, { Children } from "react";
+import { Pressable, StyleSheet, View, ViewStyle, Text } from "react-native";
 import Svg, { Ellipse } from "react-native-svg";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Colors } from "@/constants/Colors";
 import { BottomTabBarButtonProps } from "@react-navigation/bottom-tabs";
@@ -23,53 +24,58 @@ const styles = StyleSheet.create({
     height: largeIconSize,
     width: largeIconSize,
   },
+  tabBarStyle: {
+    elevation: 0,
+    height: 80,
+    paddingTop: 8,
+    borderTopWidth: 0,
+    backgroundColor: "transparent",
+    position: "absolute",
+    bottom: 0,
+  },
 });
 
 export default function TabLayout() {
   return (
-    <Tabs
-
-      screenOptions={{
-        tabBarShowLabel: false,
-        tabBarActiveTintColor: Colors["dark"].tint,
-        headerShown: false,
-        tabBarButton: TabBarButton,
-        tabBarBackground: TabBarBackground,
-        tabBarStyle: {
-          elevation: 0,
-          height: 80,
-          paddingTop: 8,
-          borderTopWidth: 0,
-        },
-      }}
-    >
-      <Tabs.Screen
-        name="game"
-        options={{
-          tabBarIcon: ({ color }) => (
-            <IconGame style={styles.smallIcon} color={color} />
-          ),
+    <SafeAreaView style={{ flex: 1 }}>
+      <Tabs
+        screenOptions={{
+          tabBarShowLabel: false,
+          tabBarActiveTintColor: Colors["dark"].tint,
+          headerShown: false,
+          tabBarButton: TabBarButton,
+          tabBarBackground: TabBarBackground,
+          tabBarStyle: styles.tabBarStyle
         }}
-      />
+      >
+        <Tabs.Screen
+          name="game"
+          options={{
+            tabBarIcon: ({ color }) => (
+              <IconGame style={styles.smallIcon} color={color} />
+            ),
+          }}
+        />
 
-      <Tabs.Screen
-        name="index"
-        options={{
-          tabBarIcon: ({ color }) => (
-            <IconProfile style={styles.largeIcon} color={color} />
-          ),
-        }}
-      />
+        <Tabs.Screen
+          name="index"
+          options={{
+            tabBarIcon: ({ color }) => (
+              <IconProfile style={styles.largeIcon} color={color} />
+            ),
+          }}
+        />
 
-      <Tabs.Screen
-        name="explore"
-        options={{
-          tabBarIcon: ({ color }) => (
-            <IconBrowser style={styles.smallIcon} color={color} />
-          ),
-        }}
-      />
-    </Tabs>
+        <Tabs.Screen
+          name="explore"
+          options={{
+            tabBarIcon: ({ color }) => (
+              <IconBrowser style={styles.smallIcon} color={color} />
+            ),
+          }}
+        />
+      </Tabs>
+    </SafeAreaView>
   );
 }
 

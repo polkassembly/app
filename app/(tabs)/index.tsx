@@ -4,11 +4,9 @@ import React, { PropsWithChildren, useState } from "react";
 import {
   ScrollView,
   StyleSheet,
-  Text,
   useWindowDimensions,
   View,
 } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Svg, {
   Defs,
   Ellipse,
@@ -23,6 +21,7 @@ import {
 } from "react-native-tab-view";
 import { Actions, Activity, Badges, PointsView, ProfileHeader } from "@/components/Profile";
 import { PostCard } from "@/components/timeline/postCard";
+import { EmptyViewWithTabBarHeight } from "./util";
 
 const renderScene = SceneMap({
   profile: Profile,
@@ -59,6 +58,7 @@ function Profile() {
         <Actions />
 
         <Activity />
+        <EmptyViewWithTabBarHeight />
       </ScrollView>
     </ThemedView>
   );
@@ -129,38 +129,33 @@ export default function Home() {
   const layout = useWindowDimensions();
   const [index, setIndex] = useState(0);
 
-  const insets = useSafeAreaInsets();
-
   return (
-    <TabView
-      style={{
-        paddingTop: insets.top,
-      }}
-      renderTabBar={(props) => (
-        <TabViewWrapper>
-          <TabBar
-            {...props}
-            style={{
-              height: 52,
-              backgroundColor: "#00000000",
-            }}
-            renderIndicator={(props) => (
-              <TabBarIndicator
-                {...props}
-                width={100}
-                style={StyleSheet.compose(props.style, {
-                  backgroundColor: Colors.dark.ctaStroke,
-                })}
-              />
-            )}
-          />
-        </TabViewWrapper>
-      )}
-      navigationState={{ index, routes }}
-      renderScene={renderScene}
-      onIndexChange={setIndex}
-      initialLayout={{ width: layout.width }}
-    />
+      <TabView
+        renderTabBar={(props) => (
+          <TabViewWrapper>
+            <TabBar
+              {...props}
+              style={{
+                height: 52,
+                backgroundColor: "#00000000",
+              }}
+              renderIndicator={(props) => (
+                <TabBarIndicator
+                  {...props}
+                  width={100}
+                  style={StyleSheet.compose(props.style, {
+                    backgroundColor: Colors.dark.ctaStroke,
+                  })}
+                />
+              )}
+            />
+          </TabViewWrapper>
+        )}
+        navigationState={{ index, routes }}
+        renderScene={renderScene}
+        onIndexChange={setIndex}
+        initialLayout={{ width: layout.width }}
+      />
   );
 }
 

@@ -17,6 +17,7 @@ import IntroPager from "@/components/IntroPager";
 import { TextInput } from "react-native";
 import { IconSearch } from "@/components/icons/shared";
 import CircularProgressBar from "@/components/shared/CircularProgressBar";
+import { EmptyViewWithTabBarHeight } from "./util";
 
 export default function GameScreen() {
   return (
@@ -28,19 +29,18 @@ export default function GameScreen() {
       <CuratedForYouSection />
       <UnfinishedBusinessSection />
       <CategoriesSection />
+      <EmptyViewWithTabBarHeight />
     </GameWrapper>
   );
 }
 
 function GameWrapper({ children }: PropsWithChildren) {
   return (
-    <SafeAreaView>
-      <ThemedView type="container" style={styles.mainContainer}>
-        <ScrollView style={styles.scrollView} contentContainerStyle={{ gap: 32 }}>
-          {children}
-        </ScrollView>
-      </ThemedView>
-    </SafeAreaView>
+    <ThemedView type="container" style={styles.mainContainer}>
+      <ScrollView style={styles.scrollView} contentContainerStyle={{ gap: 32 }}>
+        {children}
+      </ScrollView>
+    </ThemedView>
   );
 }
 
