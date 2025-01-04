@@ -40,6 +40,9 @@ export default function TabLayout() {
           height: 80,
           paddingTop: 8,
           borderTopWidth: 0,
+          backgroundColor: "transparent",
+          position: "absolute",
+          bottom: 0
         },
       }}
     >
