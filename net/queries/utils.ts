@@ -1,3 +1,4 @@
+import { KEY_ACCESS_TOKEN, KEY_REFRESH_TOKEN, storage } from "@/store";
 import { AxiosResponse } from "axios";
 
 export interface TokenPair {
@@ -20,6 +21,9 @@ export function tokenPairFromResponse(res: AxiosResponse): TokenPair {
     ?.find((it) => it.startsWith("refresh_token"))
     ?.split("=")[1]
     ?.trim();
+
+  if (accessToken) storage.set(KEY_ACCESS_TOKEN, accessToken);
+  if (refreshToken) storage.set(KEY_REFRESH_TOKEN, refreshToken);
 
   return {
     accessToken,
