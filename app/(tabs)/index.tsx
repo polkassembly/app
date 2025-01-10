@@ -27,12 +27,12 @@ import { EmptyViewWithTabBarHeight } from "../../components/util";
 
 const renderScene = SceneMap({
   profile: Profile,
-  timeline: Timeline,
+  feed: Feed,
 });
 
 const routes = [
   { key: "profile", title: "Profile" },
-  { key: "timeline", title: "Timeline" },
+  { key: "feed", title: "Feed" },
 ];
 
 const styles = StyleSheet.create({
@@ -66,7 +66,7 @@ function Profile() {
   );
 }
 
-function Timeline() {
+function Feed() {
   const { data } = useActivityFeed(undefined);
 
   return (
