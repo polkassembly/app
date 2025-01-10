@@ -14,6 +14,7 @@ import {
 import ThemedButton from "../ThemedButton";
 import { ThemedText } from "../ThemedText";
 import { ThemedView } from "../ThemedView";
+import RenderHTML from "react-native-render-html";
 
 type PostCardProps = {
   post: Post;
@@ -90,7 +91,9 @@ export function PostCard({ post }: PostCardProps) {
         {/* Post author name and creation time */}
         <View style={styles.flexRowJustifySpaceBetween}>
           <View style={styles.flexRowGap4}>
-            <ThemedText type="bodySmall3">{post.onChainInfo.proposer}</ThemedText>
+            <ThemedText type="bodySmall3">
+              {post.onChainInfo.proposer}
+            </ThemedText>
           </View>
           <View style={styles.flexRowGap4}>
             <TimeDisplay createdAt={post.onChainInfo.createdAt} />
@@ -101,9 +104,14 @@ export function PostCard({ post }: PostCardProps) {
         <ThemedText type="bodyMedium2" style={{ letterSpacing: 1 }}>
           {trimText(post.title, 80)}
         </ThemedText>
-        <ThemedText type="bodyMedium3">
-          {trimText(post.htmlContent, 120)}
-        </ThemedText>
+
+        <RenderHTML
+          source={{ html: trimText(post.htmlContent, 200) }}
+          baseStyle={{
+            color: Colors.dark.text,
+          }}
+        />
+
         <TouchableOpacity>
           <View style={{ flexDirection: "row", gap: 4 }}>
             <ThemedText type="bodySmall" style={styles.readMore}>
