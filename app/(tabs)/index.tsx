@@ -21,7 +21,7 @@ import {
 } from "react-native-tab-view";
 import { Actions, Activity, Badges, PointsView, ProfileHeader } from "@/components/Profile";
 import { PostCard } from "@/components/timeline/postCard";
-import { EmptyViewWithTabBarHeight } from "./util";
+import { EmptyViewWithTabBarHeight } from "../../components/util";
 
 const renderScene = SceneMap({
   profile: Profile,

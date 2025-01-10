@@ -16,7 +16,7 @@ import IntroPager from "@/components/IntroPager";
 import { TextInput } from "react-native";
 import { IconSearch } from "@/components/icons/shared";
 import CircularProgressBar from "@/components/shared/CircularProgressBar";
-import { EmptyViewWithTabBarHeight } from "./util";
+import { EmptyViewWithTabBarHeight } from "../../components/util";
 
 export default function GameScreen() {
   return (
