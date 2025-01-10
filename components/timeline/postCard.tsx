@@ -1,47 +1,35 @@
-import React, { useState } from "react";
 import { Colors } from "@/constants/Colors";
-import { StyleSheet, View, TouchableOpacity } from "react-native";
-import { ThemedView } from "../ThemedView";
-import { ThemedText } from "../ThemedText";
-import ThemedButton from "../ThemedButton";
+import { Post } from "@/net/queries/useActivityFeed";
 import { Ionicons } from "@expo/vector-icons";
-import { IconBookmark, IconComment, IconDislike, IconLike, IconShare, IconViewMore } from "../icons/shared";
+import React, { useState } from "react";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
+import {
+  IconBookmark,
+  IconComment,
+  IconDislike,
+  IconLike,
+  IconShare,
+  IconViewMore,
+} from "../icons/shared";
+import ThemedButton from "../ThemedButton";
+import { ThemedText } from "../ThemedText";
+import { ThemedView } from "../ThemedView";
 
 type PostCardProps = {
-  id: string;
-  title: string;
-  description: string;
-  author: string;
-  status: string;
-  createdAt: string;
-  metrics: {
-    likes: number;
-    dislikes: number;
-    comments: number;
-  };
-  interactions: {
-    isBookmarked: boolean;
-    isLiked: boolean;
-    isDisliked: boolean;
-  };
-  connectedLikes: {
-    userId: string;
-    userName: string;
-    likeId?: string;
-    dislikeId?: string;
-  }[];
+  post: Post;
 };
 
-export function PostCard(props: PostCardProps) {
-  const [isLiked, setIsLiked] = useState(props.interactions.isLiked);
-  const [isDisliked, setIsDisliked] = useState(props.interactions.isDisliked);
-  const [isBookmarked, setIsBookmarked] = useState(props.interactions.isBookmarked);
-  const [likes, setLikes] = useState(props.metrics.likes);
-  const [dislikes, setDislikes] = useState(props.metrics.dislikes);
-  const [comments, setComments] = useState(props.metrics.comments);
+export function PostCard({ post }: PostCardProps) {
+  // FIXME: determine if we have liked this post
+  const [isLiked, setIsLiked] = useState(false);
+  const [isDisliked, setIsDisliked] = useState(false);
+  const [isBookmarked, setIsBookmarked] = useState(false);
+  const [likes, setLikes] = useState(post.metrics.reactions.like);
+  const [dislikes, setDislikes] = useState(post.metrics.reactions.dislike);
+  const [comments, setComments] = useState(post.metrics.comments);
 
   const toggleLike = () => {
-    setLikes((prev) => isLiked ? prev - 1 : prev + 1);
+    setLikes((prev) => (isLiked ? prev - 1 : prev + 1));
     setIsLiked((prev) => !prev);
 
     if (isDisliked) {
@@ -51,7 +39,7 @@ export function PostCard(props: PostCardProps) {
   };
 
   const toggleDislike = () => {
-    setDislikes((prev) => isDisliked ? prev - 1 : prev + 1);
+    setDislikes((prev) => (isDisliked ? prev - 1 : prev + 1));
     setIsDisliked((prev) => !prev);
 
     if (isLiked) {
@@ -67,12 +55,13 @@ export function PostCard(props: PostCardProps) {
   const trimText = (text: string, limit: number) =>
     text.length > limit ? text.slice(0, limit).trim() + "..." : text;
 
-  const connectedLikesText =
-    props.connectedLikes.length > 1
-      ? `${props.connectedLikes[0].userName} & ${props.connectedLikes.length - 1} others liked the post`
-      : props.connectedLikes.length === 1
-      ? `${props.connectedLikes[0].userName} liked the post`
-      : "";
+  // FIXME: Restore this functionality?
+  const connectedLikesText = "";
+  // post.connectedLikes.length > 1
+  //   ? `${props.connectedLikes[0].userName} & ${props.connectedLikes.length - 1} others liked the post`
+  //   : props.connectedLikes.length === 1
+  //   ? `${props.connectedLikes[0].userName} liked the post`
+  //   : "";
 
   return (
     <ThemedView style={styles.container} type="container">
@@ -80,10 +69,10 @@ export function PostCard(props: PostCardProps) {
       <View style={styles.flexRowJustifySpaceBetween}>
         <View style={styles.flexRowGap4}>
           <ThemedText type="bodySmall3" style={styles.idText}>
-            #{props.id}
+            #{post.index}
           </ThemedText>
           <ThemedText type="bodySmall3" style={styles.statusText}>
-            {props.status.toUpperCase()}
+            {post.onChainInfo.status.toUpperCase()}
           </ThemedText>
         </View>
         <View style={styles.flexRowGap4}>
@@ -101,25 +90,31 @@ export function PostCard(props: PostCardProps) {
         {/* Post author name and creation time */}
         <View style={styles.flexRowJustifySpaceBetween}>
           <View style={styles.flexRowGap4}>
-            <ThemedText type="bodySmall3">{props.author}</ThemedText>
+            <ThemedText type="bodySmall3">{post.onChainInfo.proposer}</ThemedText>
           </View>
           <View style={styles.flexRowGap4}>
-            <TimeDisplay createdAt={props.createdAt} />
+            <TimeDisplay createdAt={post.onChainInfo.createdAt} />
           </View>
         </View>
 
         {/* Post title and description */}
         <ThemedText type="bodyMedium2" style={{ letterSpacing: 1 }}>
-          {trimText(props.title, 80)}
+          {trimText(post.title, 80)}
         </ThemedText>
-        <ThemedText type="bodyMedium3">{trimText(props.description, 120)}</ThemedText>
+        <ThemedText type="bodyMedium3">
+          {trimText(post.htmlContent, 120)}
+        </ThemedText>
         <TouchableOpacity>
-					<View style={{ flexDirection: "row", gap: 4, }}>
-						<ThemedText type="bodySmall" style={styles.readMore}>
-							Read More
-						</ThemedText>
-						<Ionicons name="chevron-down" size={16} color={Colors.dark.accent} />
-					</View>
+          <View style={{ flexDirection: "row", gap: 4 }}>
+            <ThemedText type="bodySmall" style={styles.readMore}>
+              Read More
+            </ThemedText>
+            <Ionicons
+              name="chevron-down"
+              size={16}
+              color={Colors.dark.accent}
+            />
+          </View>
         </TouchableOpacity>
       </View>
 
@@ -147,7 +142,10 @@ export function PostCard(props: PostCardProps) {
 
         <View style={{ flexDirection: "row", gap: 8 }}>
           <ThemedButton onPress={toggleBookmark} style={[styles.iconButton]}>
-            <IconBookmark color={isBookmarked ? "gold" : "gray"} filled={isBookmarked} />
+            <IconBookmark
+              color={isBookmarked ? "gold" : "gray"}
+              filled={isBookmarked}
+            />
           </ThemedButton>
 
           <ThemedButton style={[styles.iconButton]}>
@@ -155,7 +153,7 @@ export function PostCard(props: PostCardProps) {
           </ThemedButton>
         </View>
       </View>
-      
+
       {/* Connected likes */}
       {connectedLikesText && (
         <ThemedText type="bodySmall3" style={styles.connectedLikes}>
@@ -163,7 +161,16 @@ export function PostCard(props: PostCardProps) {
         </ThemedText>
       )}
 
-      <ThemedButton bordered style={{ borderRadius: 5, padding: 0, height: 40, flexDirection: "row", gap: 10 }}>
+      <ThemedButton
+        bordered
+        style={{
+          borderRadius: 5,
+          padding: 0,
+          height: 40,
+          flexDirection: "row",
+          gap: 10,
+        }}
+      >
         <ThemedText type="bodySmall" style={styles.viewMoreText}>
           View More
         </ThemedText>
@@ -240,21 +247,21 @@ const styles = StyleSheet.create({
   },
 });
 
-
 function TimeDisplay({ createdAt }: { createdAt: string }) {
   const createdDate = new Date(createdAt);
   const currentTime = new Date();
   const diffInMillis = currentTime.getTime() - createdDate.getTime();
   const diffInHours = Math.floor(diffInMillis / (1000 * 60 * 60)); // Convert to hours
 
-  let timeText = '';
-  if (diffInMillis < 86400000) { // Less than 24 hours
+  let timeText = "";
+  if (diffInMillis < 86400000) {
+    // Less than 24 hours
     timeText = `${diffInHours}hrs ago`;
   } else {
-    timeText = createdDate.toLocaleDateString('en-GB', {
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric'
+    timeText = createdDate.toLocaleDateString("en-GB", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
     });
   }
 
