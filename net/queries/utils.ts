@@ -22,8 +22,8 @@ export function tokenPairFromResponse(res: AxiosResponse): TokenPair {
     ?.split("=")[1]
     ?.trim();
 
-  if (accessToken) storage.set(KEY_ACCESS_TOKEN, accessToken);
-  if (refreshToken) storage.set(KEY_REFRESH_TOKEN, refreshToken);
+  if (accessToken) storage.setString(KEY_ACCESS_TOKEN, accessToken);
+  if (refreshToken) storage.setString(KEY_REFRESH_TOKEN, refreshToken);
 
   return {
     accessToken,
