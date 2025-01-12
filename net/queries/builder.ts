@@ -15,6 +15,7 @@ abstract class HookBuilder<Params, Result = AxiosResponse> {
   _url: string = "";
   _requestTransform?: (req: Params) => any;
   _responseTransform?: (res: AxiosResponse) => Result;
+  _postProcess?: (result: Result) => void;
 
   constructor(axios: AxiosInstance) {
     this._axios = axios;
@@ -37,6 +38,11 @@ abstract class HookBuilder<Params, Result = AxiosResponse> {
 
   responseTransform(transformFn: (res: AxiosResponse) => Result) {
     this._responseTransform = transformFn;
+    return this;
+  }
+
+  postProcess(postProcessFn: (result: Result) => void) {
+    this._postProcess = postProcessFn;
     return this;
   }
 
@@ -67,6 +73,10 @@ export class MutationBuilder<
           const result = this._responseTransform
             ? this._responseTransform(response)
             : response.data;
+
+          if (this._postProcess) {
+            this._postProcess(result);
+          }
 
           return result;
         },
