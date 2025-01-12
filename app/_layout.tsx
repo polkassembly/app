@@ -1,4 +1,5 @@
 import { NavigationDarkTheme } from "@/constants/Colors";
+import { KEY_ACCESS_TOKEN, storage } from "@/store";
 import { ThemeProvider } from "@react-navigation/native";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useFonts } from "expo-font";
@@ -40,8 +41,7 @@ export default function RootLayout() {
   );
 }
 
-// FIXME: *actually* perform a check if user is logged in
-const needsLogin = true;
+const needsLogin = storage.getString(KEY_ACCESS_TOKEN) === null;
 
 function Content() {
   const router = useRouter();
