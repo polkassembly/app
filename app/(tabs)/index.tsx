@@ -9,7 +9,7 @@ import { ThemedView } from "@/components/ThemedView";
 import { PostCard } from "@/components/timeline/postCard";
 import { Colors } from "@/constants/Colors";
 import useActivityFeed from "@/net/queries/useActivityFeed";
-import React, { PropsWithChildren, useState } from "react";
+import React, { PropsWithChildren, useEffect, useState } from "react";
 import {
   ScrollView,
   StyleSheet,
@@ -24,6 +24,8 @@ import {
   TabView,
 } from "react-native-tab-view";
 import { EmptyViewWithTabBarHeight } from "../../components/util";
+import { PROFILE_DATA, storage } from "@/store";
+import { ProfileData } from "@/util/jwt";
 
 const renderScene = SceneMap({
   profile: Profile,
@@ -48,10 +50,22 @@ const styles = StyleSheet.create({
 });
 
 function Profile() {
+  const [profile, setProfile] = useState({ username: "", avatarUrl: "", points: 0 });
+
+  useEffect(() => {
+    const profileData = storage.getObject(PROFILE_DATA) as ProfileData | null;
+    if (profileData) {
+      setProfile({
+        username: profileData.username,
+        avatarUrl: "",
+        points: 0
+      });
+    }
+  }, [])
   return (
     <ThemedView type="background" style={styles.container}>
       <ScrollView style={styles.scrollView} contentContainerStyle={{ gap: 20 }}>
-        <ProfileHeader />
+        <ProfileHeader username={profile.username} avatarUrl={profile.avatarUrl} />
 
         <PointsView />
 

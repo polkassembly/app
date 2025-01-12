@@ -17,11 +17,18 @@ const styles = StyleSheet.create({
   },
 });
 
-export function ProfileHeader() {
+interface ProfileHeaderProps {
+  username: string;
+  avatarUrl: string;
+}
+
+export function ProfileHeader({ username, avatarUrl }: ProfileHeaderProps) {
   return (
     <View style={styles.headerContainer}>
-      <ThemedText type="titleLarge">GM, Zesha</ThemedText>
-      <Image style={styles.avatar} />
+      <ThemedText type="titleLarge">
+        {username || "Loading..."}
+      </ThemedText>
+      <Image style={styles.avatar} source={{ uri: avatarUrl }} />
     </View>
   );
 }
