@@ -1,4 +1,5 @@
-import { KEY_ACCESS_TOKEN, KEY_REFRESH_TOKEN, storage } from "@/store";
+import { KEY_ACCESS_TOKEN, KEY_REFRESH_TOKEN, PROFILE_DATA, storage } from "@/store";
+import getProfileDataFromToken from "@/util/jwt";
 import { AxiosResponse } from "axios";
 
 export interface TokenPair {
@@ -29,4 +30,12 @@ export function tokenPairFromResponse(res: AxiosResponse): TokenPair {
     accessToken,
     refreshToken,
   };
+}
+
+export function saveProfileFromToken(token: string): void {
+  const profile = getProfileDataFromToken(token);
+
+  if (profile) {
+    storage.setObject(PROFILE_DATA, profile);
+  }
 }
