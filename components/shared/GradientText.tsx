@@ -14,8 +14,15 @@ function GradientText({
   text,
   style,
   colors = ["#D556FF", "#FFFFFF", "#D556FF"],
-  locations = [0, 0.52, 1]
+  locations = [0, 0.52, 1],
 }: GradientTextProps) {
+  return <Text style={style}>{text}</Text>;
+
+  /* 
+   * FIXME: MaskedView library is either buggy or not used correctly here,
+   * as it crashes in release builds.
+   * We skip rendering gradient as a dirty fix. Investigate in future.
+   */
   return (
     <MaskedView maskElement={<Text style={style}>{text}</Text>}>
       <LinearGradient
