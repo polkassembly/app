@@ -1,3 +1,4 @@
+import IconWarn from "@/components/icons/auth/icon-warn";
 import IconBack from "@/components/icons/icon-back";
 import Tabs from "@/components/shared/Tabs";
 import ThemedCheckbox from "@/components/shared/ThemedCheckbox";
@@ -66,7 +67,10 @@ function Content() {
   const [selectedTab, setSelectedTab] = useState<"login" | "signup">("login");
 
   return (
-    <ScrollView style={styles.scrollContainer} contentContainerStyle={styles.content}>
+    <ScrollView
+      style={styles.scrollContainer}
+      contentContainerStyle={styles.content}
+    >
       <Tabs tabs={tabs} selectedTab={selectedTab} onChange={setSelectedTab} />
       {selectedTab === "login" ? <Login /> : <Signup />}
     </ScrollView>
@@ -79,7 +83,7 @@ function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const { mutateAsync: login, isPending } = useWeb2Login();
+  const { mutateAsync: login, isPending, error } = useWeb2Login();
 
   async function onPressLogin() {
     try {
@@ -133,6 +137,8 @@ function Login() {
         <ThemedButton borderless text="Forgot Password?" />
       </View>
 
+      <ErrorView content={readableError(error)} />
+
       <ThemedButton
         onPress={onPressLogin}
         text="Log In"
@@ -153,7 +159,7 @@ function Signup() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
-  const { mutateAsync: signup, isPending } = useWeb2Signup();
+  const { mutateAsync: signup, isPending, error } = useWeb2Signup();
 
   const [rememberMeChecked, setRememberMeChecked] = useState(false);
 
@@ -206,6 +212,8 @@ function Signup() {
         onValueChange={setRememberMeChecked}
         label="Remember me"
       />
+
+      <ErrorView content={readableError(error)} />
 
       <ThemedButton
         onPress={onPressSignup}
@@ -275,6 +283,30 @@ function Separator({ style, ...props }: ViewProps) {
   );
 }
 
+function readableError(error: Error | null): string | null {
+  if (!error) return null;
+
+  if (error instanceof AxiosError && error.response)
+    return error.response.data.message;
+
+  return "An unknown error has occurred";
+}
+
+interface ErrorViewProps {
+  content: string | null;
+}
+
+function ErrorView({ content }: ErrorViewProps) {
+  if (!content) return <></>;
+
+  return (
+    <View style={styles.error}>
+      <IconWarn />
+      <ThemedText>{content}</ThemedText>
+    </View>
+  );
+}
+
 const styles = StyleSheet.create({
   root: {
     flex: 1,
@@ -313,5 +345,15 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 16,
     padding: 14,
     gap: 16,
+  },
+
+  error: {
+    flexDirection: "row",
+    gap: 8,
+    padding: 12,
+    backgroundColor: "#131833",
+    borderColor: "#1677FE",
+    borderWidth: 1,
+    borderRadius: 6,
   },
 });
