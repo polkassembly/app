@@ -66,7 +66,7 @@ export interface Post {
 }
 
 interface Feed {
-  posts: Post[];
+  items: Post[];
   totalCount: string;
 }
 

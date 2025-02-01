@@ -86,9 +86,10 @@ function Feed() {
   return (
     <ThemedView type="background" style={styles.container}>
       <ScrollView style={styles.scrollView} contentContainerStyle={{ gap: 20 }}>
-        {data?.posts.map((post) => (
+        {data?.items.map((post) => (
           <PostCard key={post.index} post={post} />
         ))}
+        <EmptyViewWithTabBarHeight />
       </ScrollView>
     </ThemedView>
   );
