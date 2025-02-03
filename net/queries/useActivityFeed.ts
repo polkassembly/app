@@ -72,7 +72,7 @@ interface Feed {
 
 const useActivityFeed = new QueryBuilder<undefined, Feed>(client)
   .method("GET")
-  .url("activityFeed")
+  .url("activity-feed")
   .build();
 
 export default useActivityFeed;

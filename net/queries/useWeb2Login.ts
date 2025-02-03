@@ -9,7 +9,7 @@ export interface Web2LoginRequest {
 
 const useWeb2Login = new MutationBuilder<Web2LoginRequest, TokenPair>(client)
   .method("POST")
-  .url("auth/actions/web2Login")
+  .url("auth/actions/web2-login")
   .responseTransform(tokenPairFromResponse)
   .postProcess(({ accessToken }) => {
     if (accessToken) {
