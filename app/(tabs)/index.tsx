@@ -8,13 +8,16 @@ import {
 import { ThemedView } from "@/components/ThemedView";
 import { PostCard } from "@/components/timeline/postCard";
 import { Colors } from "@/constants/Colors";
-import useActivityFeed from "@/net/queries/useActivityFeed";
+import useActivityFeed, { Post } from "@/net/queries/useActivityFeed";
 import React, { PropsWithChildren, useEffect, useState } from "react";
 import {
+  ActivityIndicator,
+  FlatList,
   ScrollView,
   StyleSheet,
   useWindowDimensions,
   View,
+  Text,
 } from "react-native";
 import Svg, { Defs, Ellipse, RadialGradient, Stop } from "react-native-svg";
 import {
@@ -81,16 +84,47 @@ function Profile() {
 }
 
 function Feed() {
-  const { data } = useActivityFeed(undefined);
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading,
+  } = useActivityFeed({ limit: 10 });
+
+  const renderItem = ({ item }: { item: Post }) => (
+    <>
+    <PostCard key={item.index} post={item} />
+    <Text style={{ color: "white"}}>{item.index}</Text>
+    </>
+  );
+
+  useEffect(() => {
+    if (data) {
+      console.log(data.pages.length);
+    }
+  }, [data]);
 
   return (
     <ThemedView type="background" style={styles.container}>
-      <ScrollView style={styles.scrollView} contentContainerStyle={{ gap: 20 }}>
-        {data?.items.map((post) => (
-          <PostCard key={post.index} post={post} />
-        ))}
-        <EmptyViewWithTabBarHeight />
-      </ScrollView>
+      
+      <FlatList
+        data={data?.pages.flatMap((page) => page.items)} 
+        renderItem={renderItem}
+        keyExtractor={(item) => item.index.toString()}
+        onEndReached={() => {
+          if (hasNextPage && !isFetchingNextPage) {
+            fetchNextPage();
+          }
+        }}
+        onEndReachedThreshold={0.5}
+        ListFooterComponent={
+          isFetchingNextPage ? (
+            <ActivityIndicator size="small" style={{ marginVertical: 10 }} />
+          ) : null
+        }
+        ListEmptyComponent={<EmptyViewWithTabBarHeight />}
+      />
     </ThemedView>
   );
 }
