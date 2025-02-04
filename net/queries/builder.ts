@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useMutation, useQuery } from "@tanstack/react-query";
 import {
   AxiosInstance,
   AxiosRequestConfig,
@@ -109,6 +109,48 @@ export class QueryBuilder<
 
           return result;
         },
+      });
+    };
+  }
+}
+
+export class InfiniteQueryBuilder<
+  Params = unknown,
+  Result = unknown
+> extends HookBuilder<Params, Result> {
+  private _getNextPageParam!: (lastPage: Result, allPages: Result[]) => any;
+
+  getNextPageParam(fn: (lastPage: Result, allPages: Result[]) => any) {
+    this._getNextPageParam = fn;
+    return this;
+  }
+
+  build() {
+    return (params: Params) => {
+      return useInfiniteQuery<Result, Error>({
+        queryKey: [`${this._method} ${this._url}`, params],
+        queryFn: async ({ pageParam }) => {
+
+          const requestData = this._requestTransform
+            ? this._requestTransform({ ...params, page: pageParam })
+            : { ...params, page: pageParam };
+
+          const response = await this._axios.request({
+            method: this._method,
+            url: this._url,
+            params: requestData,
+          });
+
+          const result = this._responseTransform
+            ? this._responseTransform(response)
+            : (response.data as Result);
+
+          console.log('fetching page', pageParam);  
+
+          return result;
+        },
+        initialPageParam: 1,
+        getNextPageParam: this._getNextPageParam,
       });
     };
   }

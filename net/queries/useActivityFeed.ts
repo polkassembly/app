@@ -1,5 +1,5 @@
 import client from "../client";
-import { QueryBuilder } from "./builder";
+import { InfiniteQueryBuilder } from "./builder";
 
 // FIXME: Add other variants to the sum-type
 type ProposalType = "ReferendumV2";
@@ -65,14 +65,25 @@ export interface Post {
   };
 }
 
+interface FeedRequest {
+  limit: number;
+}
+
 interface Feed {
   items: Post[];
   totalCount: string;
 }
 
-const useActivityFeed = new QueryBuilder<undefined, Feed>(client)
+const useActivityFeed = new InfiniteQueryBuilder<FeedRequest, Feed>(client)
   .method("GET")
   .url("activity-feed")
+  .getNextPageParam((lastPage, allPages) => {
+    const totalCount = Number(lastPage.totalCount);
+    const itemsPerPage = 10;
+    return totalCount > allPages.length * itemsPerPage
+      ? allPages.length + 1
+      : undefined;
+  })
   .build();
 
 export default useActivityFeed;
