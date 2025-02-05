@@ -1,6 +1,6 @@
 import client from "../client";
 import { MutationBuilder } from "./builder";
-import { saveProfileFromToken, TokenPair, tokenPairFromResponse } from "./utils";
+import { saveIdFromToken, TokenPair, tokenPairFromResponse } from "./utils";
 
 export interface Web2SignupRequest {
   email: string;
@@ -14,7 +14,7 @@ const useWeb2Signup = new MutationBuilder<unknown, unknown, Web2SignupRequest, T
   .responseTransform(tokenPairFromResponse)
   .postProcess(({ accessToken }) => {
     if (accessToken) {
-      saveProfileFromToken(accessToken);
+      saveIdFromToken(accessToken);
     }
   })
   .build();

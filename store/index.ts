@@ -3,7 +3,7 @@ import * as SecureStore from "expo-secure-store";
 // Define constants for keys
 export const KEY_ACCESS_TOKEN = "auth.access";
 export const KEY_REFRESH_TOKEN = "auth.refresh";
-export const PROFILE_DATA = "profile";
+export const KEY_ID = "auth.id";
 
 // An abstraction for SecureStore
 export const storage = {
