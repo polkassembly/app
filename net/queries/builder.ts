@@ -1,4 +1,4 @@
-import { useInfiniteQuery, useMutation, useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useInfiniteQuery } from "@tanstack/react-query";
 import {
   AxiosInstance,
   AxiosRequestConfig,
@@ -7,23 +7,20 @@ import {
   mergeConfig,
 } from "axios";
 
-/**
- * Represents parameters for API requests, including query and body parameters.
- */
-interface RequestParams<Query = unknown, Body = unknown> {
-  queryParams?: Query;
-  bodyParams?: Body;
+interface RequestParams<PathParams = unknown, QueryParams = unknown, BodyParams = unknown> {
+  pathParams?: PathParams;
+  queryParams?: QueryParams;
+  bodyParams?: BodyParams;
 }
 
-abstract class HookBuilder<Params extends RequestParams, Result = unknown> {
-  _axios: AxiosInstance;
-
-  _config: AxiosRequestConfig = {};
-  _method: Method = "GET";
-  _url: string = "";
-  _requestTransform?: (req: Params) => any;
-  _responseTransform?: (res: AxiosResponse) => Result;
-  _postProcess?: (result: Result) => void;
+abstract class HookBuilder<PathParams, QueryParams, BodyParams, Result> {
+  protected _axios: AxiosInstance;
+  protected _config: AxiosRequestConfig = {};
+  protected _method: Method = "GET";
+  protected _url: string = "";
+  protected _requestTransform?: (req: RequestParams<PathParams, QueryParams, BodyParams>) => RequestParams<PathParams, QueryParams, BodyParams>;
+  protected _responseTransform?: (res: AxiosResponse) => Result;
+  protected _postProcess?: (result: Result) => void;
 
   constructor(axios: AxiosInstance) {
     this._axios = axios;
@@ -39,7 +36,7 @@ abstract class HookBuilder<Params extends RequestParams, Result = unknown> {
     return this;
   }
 
-  requestTransform(transformFn: (params: Params) => unknown) {
+  requestTransform(transformFn: (params: RequestParams<PathParams, QueryParams, BodyParams>) => RequestParams<PathParams, QueryParams, BodyParams>) {
     this._requestTransform = transformFn;
     return this;
   }
@@ -58,36 +55,33 @@ abstract class HookBuilder<Params extends RequestParams, Result = unknown> {
     this._url = url;
     return this;
   }
+
+  protected resolveUrl(pathParams?: PathParams): string {
+    if (!pathParams) return this._url;
+    let resolvedUrl = this._url;
+    Object.entries(pathParams as Record<string, string>).forEach(([key, value]) => {
+      resolvedUrl = resolvedUrl.replace(`{${key}}`, value);
+    });
+    return resolvedUrl;
+  }
 }
 
-export class MutationBuilder<
-  Query = unknown,
-  Body = unknown,
-  Result = unknown
-> extends HookBuilder<RequestParams<Query, Body>, Result> {
+export class MutationBuilder<PathParams = unknown, QueryParams = unknown, BodyParams = unknown, Result = unknown>
+  extends HookBuilder<PathParams, QueryParams, BodyParams, Result> {
   build() {
     return () => {
-      return useMutation<Result, Error, RequestParams<Query, Body>>({
-        mutationFn: async ({ queryParams, bodyParams }) => {
-          const data = this._requestTransform
-            ? this._requestTransform({ queryParams, bodyParams })
-            : bodyParams;
-
+      return useMutation<Result, Error, RequestParams<PathParams, QueryParams, BodyParams>>({
+        mutationFn: async (params) => {
+          const transformedParams = this._requestTransform ? this._requestTransform(params) : params;
+          const resolvedUrl = this.resolveUrl(transformedParams.pathParams);
           const response = await this._axios.request({
             method: this._method,
-            url: this._url,
-            params: queryParams,
-            data,
+            url: resolvedUrl,
+            params: transformedParams.queryParams,
+            data: transformedParams.bodyParams,
           });
-
-          const result = this._responseTransform
-            ? this._responseTransform(response)
-            : response.data;
-
-          if (this._postProcess) {
-            this._postProcess(result);
-          }
-
+          const result = this._responseTransform ? this._responseTransform(response) : response.data as Result;
+          if (this._postProcess) this._postProcess(result);
           return result;
         },
       });
@@ -95,42 +89,33 @@ export class MutationBuilder<
   }
 }
 
-export class QueryBuilder<
-  Query = unknown,
-  Body = unknown,
-  Result = unknown
-> extends HookBuilder<RequestParams<Query, Body>, Result> {
+export class QueryBuilder<PathParams = unknown, QueryParams = unknown, BodyParams = unknown, Result = unknown>
+  extends HookBuilder<PathParams, QueryParams, BodyParams, Result> {
   build() {
-    return (params: RequestParams<Query, Body>) => {
+    return (params: RequestParams<PathParams, QueryParams, BodyParams>) => {
+      const transformedParams = this._requestTransform ? this._requestTransform(params) : params;
+      const resolvedUrl = this.resolveUrl(transformedParams.pathParams);
+      
       return useQuery<Result, Error>({
-        queryKey: [`${this._method} ${this._url}`, params],
+        queryKey: [`${this._method} ${resolvedUrl}`, JSON.stringify(transformedParams)],
         queryFn: async () => {
-          const requestData = this._requestTransform
-            ? this._requestTransform(params)
-            : params.bodyParams;
-
+          console.log("queryFn", resolvedUrl);
           const response = await this._axios.request({
             method: this._method,
-            url: this._url,
-            params: params.queryParams,
-            data: requestData,
-          });;
-
-          return this._responseTransform
-            ? this._responseTransform(response)
-            : (response.data as Result);
+            url: resolvedUrl,
+            params: transformedParams.queryParams,
+            data: transformedParams.bodyParams,
+          });
+          return this._responseTransform ? this._responseTransform(response) : (response.data as Result);
         },
       });
     };
   }
 }
 
-export class InfiniteQueryBuilder<
-  Query = unknown,
-  Body = unknown,
-  Result = unknown
-> extends HookBuilder<RequestParams<Query, Body>, Result> {
-  private _getNextPageParam!: (lastPage: Result, allPages: Result[]) => any;
+export class InfiniteQueryBuilder<PathParams = unknown, QueryParams = unknown, BodyParams = unknown, Result = unknown>
+  extends HookBuilder<PathParams, QueryParams, BodyParams, Result> {
+  private _getNextPageParam: (lastPage: Result, allPages: Result[]) => any = () => null;
 
   getNextPageParam(fn: (lastPage: Result, allPages: Result[]) => any) {
     this._getNextPageParam = fn;
@@ -138,24 +123,20 @@ export class InfiniteQueryBuilder<
   }
 
   build() {
-    return (params: RequestParams<Query, Body>) => {
-      return useInfiniteQuery<Result, Error>({
-        queryKey: [`${this._method} ${this._url}`, params],
-        queryFn: async ({ pageParam }) => {
-          const requestData = this._requestTransform
-            ? this._requestTransform(params)
-            : { ...params.bodyParams };
+    return (params: RequestParams<PathParams, QueryParams, BodyParams>) => {
+      const transformedParams = this._requestTransform ? this._requestTransform(params) : params;
+      const resolvedUrl = this.resolveUrl(transformedParams.pathParams);
 
+      return useInfiniteQuery<Result, Error>({
+        queryKey: [`${this._method} ${resolvedUrl}`, JSON.stringify(transformedParams)],
+        queryFn: async ({ pageParam }) => {
           const response = await this._axios.request({
             method: this._method,
-            url: this._url,
-            params: { ...params.queryParams, page: pageParam },
-            data: requestData,
+            url: resolvedUrl,
+            params: { ...transformedParams.queryParams, page: pageParam },
+            data: transformedParams.bodyParams,
           });
-
-          return this._responseTransform
-            ? this._responseTransform(response)
-            : (response.data as Result);
+          return this._responseTransform ? this._responseTransform(response) : (response.data as Result);
         },
         initialPageParam: 1,
         getNextPageParam: this._getNextPageParam,
