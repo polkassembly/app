@@ -3,11 +3,19 @@ import {
   AxiosInstance,
   AxiosRequestConfig,
   AxiosResponse,
-  mergeConfig,
   Method,
+  mergeConfig,
 } from "axios";
 
-abstract class HookBuilder<Params, Result = AxiosResponse> {
+/**
+ * Represents parameters for API requests, including query and body parameters.
+ */
+interface RequestParams<Query = unknown, Body = unknown> {
+  queryParams?: Query;
+  bodyParams?: Body;
+}
+
+abstract class HookBuilder<Params extends RequestParams, Result = unknown> {
   _axios: AxiosInstance;
 
   _config: AxiosRequestConfig = {};
@@ -53,20 +61,22 @@ abstract class HookBuilder<Params, Result = AxiosResponse> {
 }
 
 export class MutationBuilder<
-  Params = unknown,
+  Query = unknown,
+  Body = unknown,
   Result = unknown
-> extends HookBuilder<Params, Result> {
+> extends HookBuilder<RequestParams<Query, Body>, Result> {
   build() {
     return () => {
-      return useMutation<Result, Error, Params>({
-        mutationFn: async (params) => {
+      return useMutation<Result, Error, RequestParams<Query, Body>>({
+        mutationFn: async ({ queryParams, bodyParams }) => {
           const data = this._requestTransform
-            ? this._requestTransform(params)
-            : params;
+            ? this._requestTransform({ queryParams, bodyParams })
+            : bodyParams;
 
           const response = await this._axios.request({
             method: this._method,
             url: this._url,
+            params: queryParams,
             data,
           });
 
@@ -86,28 +96,29 @@ export class MutationBuilder<
 }
 
 export class QueryBuilder<
-  Params = unknown,
+  Query = unknown,
+  Body = unknown,
   Result = unknown
-> extends HookBuilder<Params, Result> {
+> extends HookBuilder<RequestParams<Query, Body>, Result> {
   build() {
-    return (params: Params) => {
-      return useQuery<Result, Error, Result>({
+    return (params: RequestParams<Query, Body>) => {
+      return useQuery<Result, Error>({
         queryKey: [`${this._method} ${this._url}`, params],
-
         queryFn: async () => {
-          const data = this._requestTransform
+          const requestData = this._requestTransform
             ? this._requestTransform(params)
-            : params;
+            : params.bodyParams;
+
           const response = await this._axios.request({
             method: this._method,
             url: this._url,
-            data,
-          });
-          const result = this._responseTransform
+            params: params.queryParams,
+            data: requestData,
+          });;
+
+          return this._responseTransform
             ? this._responseTransform(response)
             : (response.data as Result);
-
-          return result;
         },
       });
     };
@@ -115,9 +126,10 @@ export class QueryBuilder<
 }
 
 export class InfiniteQueryBuilder<
-  Params = unknown,
+  Query = unknown,
+  Body = unknown,
   Result = unknown
-> extends HookBuilder<Params, Result> {
+> extends HookBuilder<RequestParams<Query, Body>, Result> {
   private _getNextPageParam!: (lastPage: Result, allPages: Result[]) => any;
 
   getNextPageParam(fn: (lastPage: Result, allPages: Result[]) => any) {
@@ -126,28 +138,24 @@ export class InfiniteQueryBuilder<
   }
 
   build() {
-    return (params: Params) => {
+    return (params: RequestParams<Query, Body>) => {
       return useInfiniteQuery<Result, Error>({
         queryKey: [`${this._method} ${this._url}`, params],
         queryFn: async ({ pageParam }) => {
-
           const requestData = this._requestTransform
-            ? this._requestTransform({ ...params, page: pageParam })
-            : { ...params, page: pageParam };
+            ? this._requestTransform(params)
+            : { ...params.bodyParams };
 
           const response = await this._axios.request({
             method: this._method,
             url: this._url,
-            params: requestData,
+            params: { ...params.queryParams, page: pageParam },
+            data: requestData,
           });
 
-          const result = this._responseTransform
+          return this._responseTransform
             ? this._responseTransform(response)
             : (response.data as Result);
-
-          console.log('fetching page', pageParam);  
-
-          return result;
         },
         initialPageParam: 1,
         getNextPageParam: this._getNextPageParam,
