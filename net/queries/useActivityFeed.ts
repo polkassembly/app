@@ -75,7 +75,7 @@ interface Feed {
   totalCount: string;
 }
 
-const useActivityFeed = new InfiniteQueryBuilder<FeedRequest, unknown, Feed>(client)
+const useActivityFeed = new InfiniteQueryBuilder<unknown, FeedRequest, unknown, Feed>(client)
   .method("GET")
   .url("activity-feed")
   .getNextPageParam((lastPage, allPages) => {

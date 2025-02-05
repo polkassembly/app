@@ -8,7 +8,7 @@ export interface Web2SignupRequest {
   password: string;
 }
 
-const useWeb2Signup = new MutationBuilder<unknown, Web2SignupRequest, TokenPair>(client)
+const useWeb2Signup = new MutationBuilder<unknown, unknown, Web2SignupRequest, TokenPair>(client)
   .method("POST")
   .url("auth/web2-auth/signup")
   .responseTransform(tokenPairFromResponse)
