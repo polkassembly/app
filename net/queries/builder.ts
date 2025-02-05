@@ -99,7 +99,6 @@ export class QueryBuilder<PathParams = unknown, QueryParams = unknown, BodyParam
       return useQuery<Result, Error>({
         queryKey: [`${this._method} ${resolvedUrl}`, JSON.stringify(transformedParams)],
         queryFn: async () => {
-          console.log("queryFn", resolvedUrl);
           const response = await this._axios.request({
             method: this._method,
             url: resolvedUrl,

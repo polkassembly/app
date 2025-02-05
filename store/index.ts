@@ -28,7 +28,6 @@ export const storage = {
   deleteString: async (key: string): Promise<void> => {
     try {
       await SecureStore.deleteItemAsync(key);
-      console.log(`Deleted key: ${key}`);
     } catch (error) {
       console.error(`Error deleting key: ${key}`, error);
     }

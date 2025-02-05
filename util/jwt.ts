@@ -50,8 +50,8 @@ import { jwtDecode } from "jwt-decode";
 // };
 
 function getIdFromToken(token: string): string | null {
-  const decodedToken = jwtDecode<{ id: string }>(token);
-  return decodedToken.id || null;
+  const decodedToken = jwtDecode<{ id: number}>(token);
+  return String(decodedToken.id) || null;
 }
 
 export default getIdFromToken;
