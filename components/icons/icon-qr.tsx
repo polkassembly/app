@@ -1,9 +1,9 @@
 import Svg, { Path } from "react-native-svg";
 import { IconProps } from "./types";
 
-export function IconQR({ style }: IconProps) {
+export function IconQR({ style, iconWidth, iconHeight }: IconProps) {
   return (
-    <Svg width="16" height="17" viewBox="0 0 16 17" fill="none" style={style}>
+    <Svg width={iconWidth} height={iconHeight} viewBox="0 0 16 17" fill="none" style={style}>
       <Path
         d="M2.27295 4.68129C2.27295 3.78134 2.27295 3.33136 2.55253 3.05178C2.83211 2.7722 3.28209 2.7722 4.18204 2.7722C5.08199 2.7722 5.53197 2.7722 5.81155 3.05178C6.09113 3.33136 6.09113 3.78134 6.09113 4.68129C6.09113 5.58124 6.09113 6.03122 5.81155 6.3108C5.53197 6.59038 5.08199 6.59038 4.18204 6.59038C3.28209 6.59038 2.83211 6.59038 2.55253 6.3108C2.27295 6.03122 2.27295 5.58124 2.27295 4.68129Z"
         stroke="white"

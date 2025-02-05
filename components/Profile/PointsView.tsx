@@ -26,7 +26,11 @@ const styles = StyleSheet.create({
   },
 });
 
-export function PointsView() {
+interface pointsViewProps {
+  points: number;
+}
+
+export function PointsView( { points }: pointsViewProps ) {
   return (
     <View style={styles.pointsWrapper}>
       {/* Background SVG */}
@@ -63,7 +67,7 @@ export function PointsView() {
           >
             <IconPoints style={{ width: 24 }} />
             <ThemedText type="titleLarge" style={{ fontWeight: "700", lineHeight: 37.5 }}>
-              7,896
+              {points}
             </ThemedText>
           </View>
         </View>
@@ -74,7 +78,7 @@ export function PointsView() {
             borderRadius: 8,
           }}
         >
-          <IconQR style={{ width: 16 }} />
+          <IconQR iconHeight={28} iconWidth={28} />
         </Pressable>
       </View>
     </View>
