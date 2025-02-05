@@ -22,13 +22,15 @@ interface ProfileHeaderProps {
   avatarUrl: string;
 }
 
+const defaultAvatarUri = "@/assets/images/profile/default-avatar.png";
+
 export function ProfileHeader({ username, avatarUrl }: ProfileHeaderProps) {
   return (
     <View style={styles.headerContainer}>
       <ThemedText type="titleLarge">
-        {username || "Loading..."}
+        {username.toUpperCase()}
       </ThemedText>
-      <Image style={styles.avatar} source={{ uri: avatarUrl }} />
+      <Image style={styles.avatar} source={avatarUrl ? { uri: avatarUrl } : require(defaultAvatarUri)} />
     </View>
   );
 }
