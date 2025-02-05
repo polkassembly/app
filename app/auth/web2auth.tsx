@@ -88,8 +88,10 @@ function Login() {
   async function onPressLogin() {
     try {
       await login({
-        emailOrUsername: email,
-        password,
+        bodyParams: {
+          emailOrUsername: email,
+          password,
+        }
       });
     } catch (e) {
       console.log(e);
@@ -166,9 +168,11 @@ function Signup() {
   async function onPressSignup() {
     try {
       await signup({
-        email: email,
-        username: username,
-        password,
+        bodyParams: {
+          email: email,
+          username: username,
+          password,
+        }
       });
     } catch (e) {
       console.log(e);

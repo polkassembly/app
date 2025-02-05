@@ -90,7 +90,7 @@ function Feed() {
     hasNextPage,
     isFetchingNextPage,
     isLoading,
-  } = useActivityFeed({ limit: 10 });
+  } = useActivityFeed({ queryParams: { limit: 10 } });
 
   const renderItem = ({ item }: { item: Post }) => (
     <>
@@ -99,15 +99,16 @@ function Feed() {
     </>
   );
 
-  useEffect(() => {
-    if (data) {
-      console.log(data.pages.length);
-    }
-  }, [data]);
+  if (isLoading) {
+    return (
+      <ThemedView type="background" style={styles.container}>
+        <ActivityIndicator size="large" style={{ marginTop: 20 }} />
+      </ThemedView>
+    );
+  }
 
   return (
     <ThemedView type="background" style={styles.container}>
-      
       <FlatList
         data={data?.pages.flatMap((page) => page.items)} 
         renderItem={renderItem}
