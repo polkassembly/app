@@ -1,4 +1,5 @@
-import { KEY_ACCESS_TOKEN, KEY_REFRESH_TOKEN, PROFILE_DATA, storage } from "@/store";
+import { KEY_ACCESS_TOKEN, KEY_REFRESH_TOKEN, KEY_ID, storage } from "@/store";
+import getIdFromToken from "@/util/jwt";
 import getProfileDataFromToken from "@/util/jwt";
 import { AxiosResponse } from "axios";
 
@@ -7,7 +8,7 @@ export interface TokenPair {
   refreshToken?: string;
 }
 
-export function tokenPairFromResponse(res: AxiosResponse): TokenPair {
+function tokenPairFromResponse(res: AxiosResponse): TokenPair {
   const [accessTokenRaw, refreshTokenRaw] =
     res.headers["set-cookie"]?.[0].split(", ") ?? [];
 
@@ -32,10 +33,9 @@ export function tokenPairFromResponse(res: AxiosResponse): TokenPair {
   };
 }
 
-export function saveProfileFromToken(token: string): void {
-  const profile = getProfileDataFromToken(token);
-
-  if (profile) {
-    storage.setObject(PROFILE_DATA, profile);
-  }
+function saveIdFromToken(token: string): void {
+  const id = getIdFromToken(token);
+  if (id) storage.setString(KEY_ID, id);
 }
+
+export { tokenPairFromResponse, saveIdFromToken };
