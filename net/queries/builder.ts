@@ -1,4 +1,4 @@
-import { useQuery, useMutation, useInfiniteQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useInfiniteQuery, UseQueryOptions, UseMutationOptions } from "@tanstack/react-query";
 import {
   AxiosInstance,
   AxiosRequestConfig,
@@ -92,10 +92,13 @@ export class MutationBuilder<PathParams = unknown, QueryParams = unknown, BodyPa
 export class QueryBuilder<PathParams = unknown, QueryParams = unknown, BodyParams = unknown, Result = unknown>
   extends HookBuilder<PathParams, QueryParams, BodyParams, Result> {
   build() {
-    return (params: RequestParams<PathParams, QueryParams, BodyParams>) => {
+    return (
+      params: RequestParams<PathParams, QueryParams, BodyParams>,
+      queryOptions?: Omit<UseQueryOptions<Result, Error>, "queryKey">
+    ) => {
       const transformedParams = this._requestTransform ? this._requestTransform(params) : params;
       const resolvedUrl = this.resolveUrl(transformedParams.pathParams);
-      
+
       return useQuery<Result, Error>({
         queryKey: [`${this._method} ${resolvedUrl}`, JSON.stringify(transformedParams)],
         queryFn: async () => {
@@ -107,6 +110,7 @@ export class QueryBuilder<PathParams = unknown, QueryParams = unknown, BodyParam
           });
           return this._responseTransform ? this._responseTransform(response) : (response.data as Result);
         },
+        ...queryOptions,
       });
     };
   }
@@ -122,7 +126,9 @@ export class InfiniteQueryBuilder<PathParams = unknown, QueryParams = unknown, B
   }
 
   build() {
-    return (params: RequestParams<PathParams, QueryParams, BodyParams>) => {
+    return (
+      params: RequestParams<PathParams, QueryParams, BodyParams>,
+    ) => {
       const transformedParams = this._requestTransform ? this._requestTransform(params) : params;
       const resolvedUrl = this.resolveUrl(transformedParams.pathParams);
 
