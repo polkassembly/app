@@ -9,4 +9,5 @@ interface GetUserByIdRequest {
 const useGetUserById = new QueryBuilder<GetUserByIdRequest, unknown, unknown, UserProfile>(client)
 	.method("GET")
 	.url(`users/id/{userId}`)
+	.build();
 export default useGetUserById;
