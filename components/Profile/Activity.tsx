@@ -1,110 +1,96 @@
 import React from "react";
-import { IconEarnedPoints, IconSmile } from "../icons/Profile";
-import { StyleSheet } from "react-native";
-import { View } from "react-native";
+import { IconPoints } from "../icons/icon-points";
+import { StyleSheet, Image, View } from "react-native";
 import { ThemedText } from "../ThemedText";
-import NavigateButton from "../shared/NavigateButton";
 import { ThemedView } from "../ThemedView";
+import { UserActivity } from "@/net/queries/actions/type";
+import useGetUserActivity from "@/net/queries/actions/useGetUserActivity";
+import { Skeleton } from "moti/skeleton";
+import { Link } from "expo-router";
+import { toTitleCase } from "@/util/stringUtil";
 
-const activityData = [
-  {
-    id: 1,
-    type: "like" as "like",
-    link: "post link",
-  },
-  {
-    id: 2,
-    type: "points" as "points",
-    points: 10,
-    link: "game link",
-  },
-  {
-    id: 3,
-    type: "like" as "like",
-    link: "post link",
-  },
-  {
-    id: 4,
-    type: "points" as "points",
-    points: -20,
-    link: "action link",
-  },
-];
 
-type ActivityItemProps = {
-  id: number;
-  type: "like" | "points";
-  points?: number;
-  link: string;
-};
+const Activity = ({ userId }: { userId: string }) => {
+  const { data, isLoading } = useGetUserActivity({ pathParams: { userId } }, { refetchOnWindowFocus: true });
 
-export function Activity() {
+  if (isLoading) return <ActivitySkeleton />;
+  if (!data || data.length === 0) return <NoActivity />;
+
   return (
     <View style={styles.mainContainer}>
       <ThemedText type="bodySmall">RECENT ACTIVITY</ThemedText>
-      {activityData.map((item) => (
+      {data.slice(0, 10).map((item) => (
         <ActivityItem key={item.id} item={item} />
       ))}
     </View>
   );
-}
+};
 
-function ActivityItem({ item }: { item: ActivityItemProps }) {
-  const handleNavigate = () => {
-    console.log(`Navigating to: ${item.link}`);
-  };
+const ActivityItem = ({ item }: { item: UserActivity }) => (
+  <ThemedView type="container" style={styles.activityItemContainer}>
+    <IconPoints color="white" iconWidth={24} iconHeight={24} />
+    <ThemedText type="bodyMedium2">{toTitleCase(item.name.replaceAll("_", " "))}</ThemedText>
+  </ThemedView>
+);
 
-  // Format points with "+" for positive, "-" for negative
-  const formattedPoints = item.points ? `${item.points > 0 ? '+' : ''}${item.points}pts` : '';
-
-  // Determine text color based on the points
-  const pointsColor = item.points && item.points > 0 ? 'green' : item.points && item.points < 0 ? 'red' : 'white';
-
-  return (
-    <ThemedView type="container" style={styles.activityItemContainer}>
-      {item.type === "like" ? (
-        <>
-          <View style={styles.iconTextContainer}>
-            <IconSmile color="white" />
-            <ThemedText type="bodyMedium3">Liked a Proposal</ThemedText>
-          </View>
-          <NavigateButton containerSize={30} iconSize={15} onPress={handleNavigate} />
-        </>
-      ) : (
-        <>
-          <View style={styles.iconTextContainer}>
-            <IconEarnedPoints color="white" />
-            <ThemedText type="bodyMedium3">
-              Earned <ThemedText style={{ color: pointsColor }}>{formattedPoints}</ThemedText> for playing
-            </ThemedText>
-          </View>
-          <NavigateButton containerSize={30} iconSize={15} onPress={handleNavigate} />
-        </>
-      )}
+const NoActivity = () => (
+  <ThemedView style={styles.noActivityContainer}>
+    <Image
+      style={styles.emptyImage}
+      resizeMode="contain"
+      source={require("@/assets/images/profile/empty-activity.png")}
+    />
+    <ThemedView style={styles.noActivityTextContainer}>
+      <ThemedText>No Activity Yet.</ThemedText>
+      <Link href="/(tabs)">
+        <ThemedText colorName="accent">Vote Now!</ThemedText>
+      </Link>
     </ThemedView>
-  );
-}
+  </ThemedView>
+);
+
+const ActivitySkeleton = () => (
+  <View style={styles.mainContainer}>
+    <ThemedText type="bodySmall">RECENT ACTIVITY</ThemedText>
+    {Array(4)
+      .fill(null)
+      .map((_, index) => (
+        <SkeletonItem key={index} />
+      ))}
+  </View>
+);
+
+const SkeletonItem = () => (
+  <ThemedView type="container" style={styles.activityItemContainer}>
+    <Skeleton height={24} width={24} radius={12} />
+    <Skeleton height={24} width={100} />
+  </ThemedView>
+);
 
 const styles = StyleSheet.create({
   mainContainer: {
-    display: "flex",
     flexDirection: "column",
     gap: 16,
   },
   activityItemContainer: {
-    display: "flex",
     flexDirection: "row",
-    width: "100%",
-    justifyContent: "space-between",
+    gap: 8,
     padding: 12,
     alignItems: "center",
     borderRadius: 34,
   },
-  iconTextContainer: {
-    display: "flex",
-    flexDirection: "row",
-    gap: 8,
-    justifyContent: "center",
+  noActivityContainer: {
     alignItems: "center",
   },
+  emptyImage: {
+    width: 170,
+    height: 170,
+  },
+  noActivityTextContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 5,
+  },
 });
+
+export { Activity, ActivitySkeleton };
