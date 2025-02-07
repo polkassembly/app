@@ -1,69 +1,107 @@
 import React from "react";
-import { View, Image, TouchableOpacity, StyleSheet } from "react-native";
+import { View, StyleSheet, Image } from "react-native";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "../ThemedView";
-import { useNavigation } from "@react-navigation/native";
-import { Asset } from "expo-asset";
-import NavigateButton from "../shared/NavigateButton";
+import { badgeDetails as badgeData, BadgeDetails } from "../util/badgeInfo";
+import { UserBadgeDetails } from "@/net/queries/profile/types";
+import { Skeleton } from "moti/skeleton";
 
-// Define the structure of a badge item
-type Badge = {
-  id: number;
-  name: string;
-  description: string;
-  icon: string;
+// Predefined Mapping of Images (Static Require)
+const badgeImages: Record<string, any> = {
+  "Decentralised Voice": require("@/assets/images/profile/badges/decentralised_voice.png"),
+  "Decentralised Voice Locked": require("@/assets/images/profile/badges/decentralised_voice_locked.png"),
+  "Fellow": require("@/assets/images/profile/badges/fellow.png"),
+  "Fellow Locked": require("@/assets/images/profile/badges/fellow_locked.png"),
+  "Council Member": require("@/assets/images/profile/badges/council.png"),
+  "Council Member Locked": require("@/assets/images/profile/badges/council_locked.png"),
+  "Active Voter": require("@/assets/images/profile/badges/active_voter.png"),
+  "Active Voter Locked": require("@/assets/images/profile/badges/active_voter_locked.png"),
+  "Whale": require("@/assets/images/profile/badges/whale.png"),
+  "Whale Locked": require("@/assets/images/profile/badges/whale_locked.png"),
 };
 
-const testBadges: Badge[] = [
-  {
-    id: 1,
-    name: "Top Contributor",
-    description: "Awarded for being a top contributor this month",
-    icon: Asset.fromModule(require('@/assets/images/crown.png')).uri,
-  },
-  {
-    id: 2,
-    name: "Bug Hunter",
-    description: "Awarded for identifying critical bugs",
-    icon: Asset.fromModule(require('@/assets/images/sword.png')).uri,
-  },
-  {
-    id: 3,
-    name: "Early Adopter",
-    description: "Awarded for being an early adopter of our platform",
-    icon: Asset.fromModule(require('@/assets/images/shield.png')).uri, 
-  },
-];
+interface BadgesProps {
+  badges?: UserBadgeDetails[];
+}
 
-export function Badges(): JSX.Element {
-  const navigation = useNavigation();
+function Badges({ badges }: BadgesProps): JSX.Element {
+  const badgesToShow: (BadgeDetails & { isUnlocked: boolean })[] = badgeData.map((badge) => {
+    const unlocked = badges?.find((b) => b.name === badge.name && b.check);
+    return {
+      ...badge,
+      isUnlocked: !!unlocked,
+    };
+  });
 
-  const handleNavigate = () => {
-    // Handle navigation logic here
-  };
+  // Get unlocked badges
+  const unlockedBadges = badgesToShow.filter((badge) => badge.isUnlocked);
+
+  // Ensure we have 3 badges, filling the rest with locked ones if needed
+  let displayedBadges = unlockedBadges.slice(0, 4);
+
+  while (displayedBadges.length < 4) {
+    const lockedBadge = badgesToShow.find(
+      (badge) => !badge.isUnlocked && !displayedBadges.some(b => b.name === badge.name)
+    );
+
+    if (!lockedBadge) break; // No more unique locked badges available
+
+    displayedBadges.push(lockedBadge);
+  }
+
+
+  const earnedCount = unlockedBadges.length;
 
   return (
     <ThemedView type="container" style={styles.container}>
       <View>
-        <ThemedText type="bodyMedium1" style={styles.title}>
-          Badges
-        </ThemedText>
-        <ThemedText type="bodySmall3" style={styles.subtitle}>
-          16 earned
-        </ThemedText>
+        <ThemedText type="bodyMedium1" style={styles.title}>Badges</ThemedText>
+        {
+          earnedCount > 0 && (
+            <ThemedText type="bodySmall" style={styles.subtitle}>
+              {earnedCount} Badges Earned
+            </ThemedText>
+          )
+        }
       </View>
 
-      {testBadges.slice(0, 3).map((badge) => (
-          <ThemedView key={badge.id} style={styles.badgeIconContainer} type="secondaryContainer">
-            <Image source={{ uri: badge.icon }} style={ styles.badgeImage }/>
+      <View style={styles.badgesRow}>
+        {displayedBadges.map((badge) => (
+          <ThemedView type="background" key={badge.name} style={styles.badgeIconContainer}>
+            <Image
+              source={badge.isUnlocked ? badgeImages[badge.name] : badgeImages[`${badge.name} Locked`]}
+              style={styles.badgeImage}
+              resizeMode="contain"
+            />
           </ThemedView>
-      ))}
-      
-      <NavigateButton onPress={handleNavigate} containerSize={52} iconSize={32}/>
-
+        ))}
+      </View>
     </ThemedView>
   );
 }
+
+const BadgesSkeleton = () => (
+  <ThemedView type="container" style={styles.container}>
+    <View>
+      <ThemedText type="bodyMedium1" style={styles.title}>Badges</ThemedText>
+      <Skeleton height={12} width={100} />
+    </View>
+
+    <View style={styles.badgesRow}>
+      {Array(4)
+        .fill(null)
+        .map((_, index) => (
+          <SkeletonBadge key={index} />
+        ))}
+    </View>
+  </ThemedView>
+);
+
+const SkeletonBadge = () => (
+  <ThemedView type="background" style={styles.badgeIconContainer}>
+    <Skeleton height={50} width={50} radius={25} />
+  </ThemedView>
+);
 
 const styles = StyleSheet.create({
   container: {
@@ -71,8 +109,8 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     display: "flex",
     flexDirection: "row",
-    justifyContent: "space-between",
     alignItems: "center",
+    gap: 20,
   },
   title: {
     fontSize: 18,
@@ -81,17 +119,23 @@ const styles = StyleSheet.create({
     fontSize: 10,
     lineHeight: 15,
   },
-  badgeIconContainer: {
-    borderRadius: 25,
-    width: 52,
-    height: 52,
-    display: "flex",
-    justifyContent: "center",
+  badgesRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
     alignItems: "center",
   },
+  badgeIconContainer: {
+    borderRadius: 25,
+    justifyContent: "center",
+    alignItems: "center",
+    marginHorizontal: 10,
+    width: 52,
+    height: 52,
+  },
   badgeImage: {
-    width: 32,
-    height: 32,
-    
-  },  
+    width: 50,
+    height: 50,
+  },
 });
+
+export { Badges, BadgesSkeleton };
