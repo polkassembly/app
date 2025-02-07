@@ -1,5 +1,5 @@
-export { ProfileHeader } from "./ProfileHeader";
-export { PointsView } from "./PointsView";
+export { ProfileHeader, ProfileHeaderSkeleton } from "./ProfileHeader";
+export { PointsView, PointsViewSkeleton } from "./PointsView";
 export { Badges, BadgesSkeleton } from "./Badges";
-export { Actions } from "./Actions";
+export { Actions, ActionsSkeleton } from "./Actions";
 export { Activity, ActivitySkeleton } from "./Activity";

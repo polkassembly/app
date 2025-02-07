@@ -51,7 +51,6 @@ const NoActivity = () => (
 
 const ActivitySkeleton = () => (
   <View style={styles.mainContainer}>
-    <ThemedText type="bodySmall">RECENT ACTIVITY</ThemedText>
     {Array(4)
       .fill(null)
       .map((_, index) => (

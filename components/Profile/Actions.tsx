@@ -6,8 +6,9 @@ import { LinearGradient } from "expo-linear-gradient";
 import { IconBounties, IconDelegate, IconVote, IconCalendar, IconNews, IconSettings } from "../icons/Profile";
 import { ThemedText } from "../ThemedText";
 import { Ionicons } from "@expo/vector-icons";
+import { Skeleton } from "moti/skeleton";
 
-export function Actions() {
+function Actions() {
   const screenWidth = Dimensions.get("window").width; // Get the full screen width
 
   return (
@@ -53,6 +54,31 @@ export function Actions() {
     </ThemedView>
   );
 }
+
+const ActionsSkeleton = () => (
+  <ThemedView type="secondaryBackground" style={{padding: 10}}>
+    <View style={styles.actionsWrapper}>
+      <Skeleton height={16} width={120} />
+      <View style={styles.actionsRow}>
+        {Array(4).fill(null).map((_, index) => (
+          <SkeletonAction key={index} />
+        ))}
+      </View>
+      <View style={styles.actionsRow}>
+        {Array(4).fill(null).map((_, index) => (
+          <SkeletonAction key={index} />
+        ))}
+      </View>
+    </View>
+  </ThemedView>
+);
+
+const SkeletonAction = () => (
+  <View style={styles.iconWrapper}>
+    <Skeleton height={50} width={50} radius={25} />
+    <Skeleton height={12} width={60} />
+  </View>
+);
 
 const styles = StyleSheet.create({
   container: {
@@ -101,7 +127,18 @@ const styles = StyleSheet.create({
     borderColor: "#383838",
     flexDirection: "row",
     gap: 10,
-  }
+  },
+  actionsWrapper: {
+    flexDirection: "column",
+    gap: 20,
+  },
+  actionsRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+  iconWrapper: {
+    alignItems: "center",
+  },
 });
 
 function IconView({
@@ -120,3 +157,5 @@ function IconView({
     </View>
   );
 }
+
+export { Actions, ActionsSkeleton };
