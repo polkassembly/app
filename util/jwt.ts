@@ -21,7 +21,7 @@ import { jwtDecode } from "jwt-decode";
 //  */
 // const getProfileDataFromToken = (token: string): ProfileData | null => {
 //   try {
-    
+
 //     const decodedToken = jwtDecode<ProfileData & { iat: number; exp: number }>(token);
 
 //     const profileData: ProfileData = {
@@ -50,8 +50,16 @@ import { jwtDecode } from "jwt-decode";
 // };
 
 function getIdFromToken(token: string): string | null {
-  const decodedToken = jwtDecode<{ id: number}>(token);
-  return String(decodedToken.id) || null;
+  try {
+    const decodedToken = jwtDecode<{ id: number }>(token);
+    if (!decodedToken.id) {
+      return null;
+    }
+    return String(decodedToken.id);
+  }catch (error) {
+    console.error('Failed to decode token:', error);
+    return null;
+  }
 }
 
 export default getIdFromToken;
