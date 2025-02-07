@@ -1,15 +1,20 @@
 import {
   Actions,
+  ActionsSkeleton,
   Activity,
+  ActivitySkeleton,
   Badges,
+  BadgesSkeleton,
   PointsView,
+  PointsViewSkeleton,
   ProfileHeader,
+  ProfileHeaderSkeleton,
 } from "@/components/Profile";
 import { ThemedView } from "@/components/ThemedView";
 import { PostCard } from "@/components/timeline/postCard";
 import { Colors } from "@/constants/Colors";
 import useActivityFeed, { Post } from "@/net/queries/useActivityFeed";
-import React, { PropsWithChildren, useEffect, useState } from "react";
+import React, { PropsWithChildren, useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
@@ -27,8 +32,9 @@ import {
   TabView,
 } from "react-native-tab-view";
 import { EmptyViewWithTabBarHeight } from "../../components/util";
-import { PROFILE_DATA, storage } from "@/store";
-import { ProfileData } from "@/util/jwt";
+import { KEY_ID, storage } from "@/store";
+import { useGetUserById } from "@/net/queries/profile";
+import { router } from "expo-router";
 
 const renderScene = SceneMap({
   profile: Profile,
@@ -53,35 +59,46 @@ const styles = StyleSheet.create({
 });
 
 function Profile() {
-  const [profile, setProfile] = useState({ username: "", avatarUrl: "", points: 0 });
+  const id = storage.getString(KEY_ID);
 
-  useEffect(() => {
-    const profileData = storage.getObject(PROFILE_DATA) as ProfileData | null;
-    if (profileData) {
-      setProfile({
-        username: profileData.username,
-        avatarUrl: "",
-        points: 0
-      });
-    }
-  }, [])
+  if (!id) {
+    router.replace("/auth");
+    return
+  }
+
+  const { data, isLoading } = useGetUserById({ pathParams: { userId: id } });
+
+  if(isLoading || data === undefined) {
+    return (
+      <ProfileSkeleton />
+    );
+  }
+
   return (
     <ThemedView type="background" style={styles.container}>
       <ScrollView style={styles.scrollView} contentContainerStyle={{ gap: 20 }}>
-        <ProfileHeader username={profile.username} avatarUrl={profile.avatarUrl} />
 
-        <PointsView />
-
+        <ProfileHeader username={data.username} avatarUrl={data.profileDetails.coverImage} />
+        <PointsView points={data.profileScore} />
         <Badges />
-
         <Actions />
-
-        <Activity />
+        <Activity userId={id}/>
         <EmptyViewWithTabBarHeight />
+
       </ScrollView>
     </ThemedView>
   );
 }
+
+const ProfileSkeleton = () => (
+  <ThemedView type="background" style={{ gap: 20,marginTop: 16, paddingHorizontal: 16 }}>
+    <ProfileHeaderSkeleton />
+    <PointsViewSkeleton />
+    <BadgesSkeleton />
+    <ActionsSkeleton />
+    <ActivitySkeleton />
+  </ThemedView>
+);
 
 function Feed() {
   const {
@@ -94,8 +111,7 @@ function Feed() {
 
   const renderItem = ({ item }: { item: Post }) => (
     <>
-    <PostCard key={item.index} post={item} />
-    <Text style={{ color: "white"}}>{item.index}</Text>
+      <PostCard key={item.index} post={item} />
     </>
   );
 
@@ -110,7 +126,7 @@ function Feed() {
   return (
     <ThemedView type="background" style={styles.container}>
       <FlatList
-        data={data?.pages.flatMap((page) => page.items)} 
+        data={data?.pages.flatMap((page) => page.items)}
         renderItem={renderItem}
         keyExtractor={(item) => item.index.toString()}
         onEndReached={() => {

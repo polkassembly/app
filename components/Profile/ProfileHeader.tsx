@@ -1,6 +1,7 @@
 import React from "react";
 import { Image, StyleSheet, View } from "react-native";
 import { ThemedText } from "@/components/ThemedText";
+import { Skeleton } from "moti/skeleton";
 
 const styles = StyleSheet.create({
   headerContainer: {
@@ -24,7 +25,7 @@ interface ProfileHeaderProps {
 
 const defaultAvatarUri = "@/assets/images/profile/default-avatar.png";
 
-export function ProfileHeader({ username, avatarUrl }: ProfileHeaderProps) {
+function ProfileHeader({ username, avatarUrl }: ProfileHeaderProps) {
   return (
     <View style={styles.headerContainer}>
       <ThemedText type="titleLarge">
@@ -34,3 +35,12 @@ export function ProfileHeader({ username, avatarUrl }: ProfileHeaderProps) {
     </View>
   );
 }
+
+const ProfileHeaderSkeleton = () => (
+  <View style={styles.headerContainer}>
+    <Skeleton height={24} width={120} />
+    <Skeleton height={42} width={42} radius={21} />
+  </View>
+);
+
+export { ProfileHeader, ProfileHeaderSkeleton }; 

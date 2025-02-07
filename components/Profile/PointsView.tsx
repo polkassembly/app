@@ -4,33 +4,13 @@ import Svg, { Defs, LinearGradient, Rect, Stop } from "react-native-svg";
 import { IconPoints } from "@/components/icons/icon-points";
 import { IconQR } from "@/components/icons/icon-qr";
 import { ThemedText } from "@/components/ThemedText";
-
-const styles = StyleSheet.create({
-  pointsWrapper: {
-    width: "100%",
-  },
-  pointsContainer: {
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingVertical: 16,
-    paddingHorizontal: 20,
-  },
-  background: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    height: "100%",
-    width: "100%",
-  },
-});
+import { Skeleton } from "moti/skeleton";
 
 interface pointsViewProps {
   points: number;
 }
 
-export function PointsView( { points }: pointsViewProps ) {
+function PointsView( { points }: pointsViewProps ) {
   return (
     <View style={styles.pointsWrapper}>
       {/* Background SVG */}
@@ -84,3 +64,38 @@ export function PointsView( { points }: pointsViewProps ) {
     </View>
   );
 }
+
+const PointsViewSkeleton = () => (
+  <View style={styles.pointsWrapper}>
+    <View style={styles.pointsContainer}>
+      <View>
+        <Skeleton height={12} width={100} />
+        <Skeleton height={24} width={80} />
+      </View>
+      <Skeleton height={28} width={28} radius={8} />
+    </View>
+  </View>
+);
+
+const styles = StyleSheet.create({
+  pointsWrapper: {
+    width: "100%",
+  },
+  pointsContainer: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingVertical: 16,
+    paddingHorizontal: 20,
+  },
+  background: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    height: "100%",
+    width: "100%",
+  },
+});
+
+export { PointsView, PointsViewSkeleton };

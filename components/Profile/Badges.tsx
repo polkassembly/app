@@ -83,15 +83,14 @@ function Badges({ badges }: BadgesProps): JSX.Element {
 const BadgesSkeleton = () => (
   <ThemedView type="container" style={styles.container}>
     <View>
-      <ThemedText type="bodyMedium1" style={styles.title}>Badges</ThemedText>
-      <Skeleton height={12} width={100} />
+      <Skeleton height={12} width={80} />
     </View>
 
     <View style={styles.badgesRow}>
       {Array(4)
         .fill(null)
         .map((_, index) => (
-          <SkeletonBadge key={index} />
+          <SkeletonBadge key={index}/>
         ))}
     </View>
   </ThemedView>
@@ -99,7 +98,7 @@ const BadgesSkeleton = () => (
 
 const SkeletonBadge = () => (
   <ThemedView type="background" style={styles.badgeIconContainer}>
-    <Skeleton height={50} width={50} radius={25} />
+    <Skeleton height={45} width={45} radius={25} />
   </ThemedView>
 );
 
