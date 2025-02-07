@@ -1,6 +1,5 @@
 import { KEY_ACCESS_TOKEN, KEY_REFRESH_TOKEN, KEY_ID, storage } from "@/store";
 import getIdFromToken from "@/util/jwt";
-import getProfileDataFromToken from "@/util/jwt";
 import { AxiosResponse } from "axios";
 
 export interface TokenPair {

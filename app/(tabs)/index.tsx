@@ -66,7 +66,16 @@ function Profile() {
     return
   }
 
-  const { data, isLoading } = useGetUserById({ pathParams: { userId: id } });
+  const { data, isLoading, isError } = useGetUserById({ pathParams: { userId: id } });
+
+  // TODO: Handle error state
+  if (isError) {
+    return (
+      <ThemedView type="background" style={styles.container}>
+        <Text>Error loading profile</Text>
+      </ThemedView>
+    );
+  }
 
   if(isLoading || data === undefined) {
     return (
