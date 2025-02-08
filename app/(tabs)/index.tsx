@@ -31,7 +31,7 @@ import {
   TabBarIndicator,
   TabView,
 } from "react-native-tab-view";
-import { EmptyViewWithTabBarHeight } from "../../components/util";
+import { EmptyViewWithTabBarHeight } from "@/components/util";
 import { KEY_ID, storage } from "@/store";
 import { useGetUserById } from "@/net/queries/profile";
 import { usePathname, useRouter } from "expo-router";
