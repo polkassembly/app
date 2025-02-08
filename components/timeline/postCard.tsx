@@ -15,6 +15,7 @@ import ThemedButton from "../ThemedButton";
 import { ThemedText } from "../ThemedText";
 import { ThemedView } from "../ThemedView";
 import RenderHTML from "react-native-render-html";
+import { formatTime } from "../util/time";
 
 type PostCardProps = {
   post: Post;
@@ -256,22 +257,6 @@ const styles = StyleSheet.create({
 });
 
 function TimeDisplay({ createdAt }: { createdAt: string }) {
-  const createdDate = new Date(createdAt);
-  const currentTime = new Date();
-  const diffInMillis = currentTime.getTime() - createdDate.getTime();
-  const diffInHours = Math.floor(diffInMillis / (1000 * 60 * 60)); // Convert to hours
-
-  let timeText = "";
-  if (diffInMillis < 86400000) {
-    // Less than 24 hours
-    timeText = `${diffInHours}hrs ago`;
-  } else {
-    timeText = createdDate.toLocaleDateString("en-GB", {
-      day: "2-digit",
-      month: "short",
-      year: "numeric",
-    });
-  }
-
-  return <ThemedText type="bodySmall3">{timeText}</ThemedText>;
+  const readableTime = formatTime(new Date(createdAt));
+  return <ThemedText type="bodySmall3">{readableTime}</ThemedText>;
 }
