@@ -41,16 +41,16 @@ export default function RootLayout() {
   );
 }
 
-const needsLogin = storage.getString(KEY_ACCESS_TOKEN) === null;
-
 function Content() {
   const router = useRouter();
+  
+  const needsLogin = storage.getString(KEY_ACCESS_TOKEN) === null;
 
   useEffect(() => {
     if (needsLogin) {
       router.replace("/auth");
     }
-  }, [needsLogin]);
+  }, []);
 
   return (
     <ThemeProvider value={NavigationDarkTheme}>

@@ -14,7 +14,7 @@ import { ThemedView } from "@/components/ThemedView";
 import { PostCard } from "@/components/timeline/postCard";
 import { Colors } from "@/constants/Colors";
 import useActivityFeed, { Post } from "@/net/queries/useActivityFeed";
-import React, { PropsWithChildren, useState } from "react";
+import React, { PropsWithChildren, useState, useEffect } from "react";
 import {
   ActivityIndicator,
   FlatList,
@@ -34,7 +34,6 @@ import {
 import { EmptyViewWithTabBarHeight } from "../../components/util";
 import { KEY_ID, storage } from "@/store";
 import { useGetUserById } from "@/net/queries/profile";
-import { router } from "expo-router";
 
 const renderScene = SceneMap({
   profile: Profile,
@@ -51,7 +50,6 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
   },
-
   scrollView: {
     paddingHorizontal: 16,
     marginTop: 16,
@@ -59,16 +57,11 @@ const styles = StyleSheet.create({
 });
 
 function Profile() {
-  const id = storage.getString(KEY_ID);
-
-  if (!id) {
-    router.replace("/auth");
-    return
-  }
+  const id = storage.getString(KEY_ID) || "";
 
   const { data, isLoading, isError } = useGetUserById({ pathParams: { userId: id } });
 
-  // TODO: Handle error state
+  // Handle error state
   if (isError) {
     return (
       <ThemedView type="background" style={styles.container}>
@@ -77,30 +70,26 @@ function Profile() {
     );
   }
 
-  if(isLoading || data === undefined) {
-    return (
-      <ProfileSkeleton />
-    );
+  if (isLoading || !data) {
+    return <ProfileSkeleton />;
   }
 
   return (
     <ThemedView type="background" style={styles.container}>
       <ScrollView style={styles.scrollView} contentContainerStyle={{ gap: 20 }}>
-
-        <ProfileHeader username={data.username} avatarUrl={data.profileDetails.coverImage} />
+        <ProfileHeader username={data.username} avatarUrl={data.profileDetails?.coverImage} />
         <PointsView points={data.profileScore} />
         <Badges />
         <Actions />
-        <Activity userId={id}/>
+        <Activity userId={id} />
         <EmptyViewWithTabBarHeight />
-
       </ScrollView>
     </ThemedView>
   );
 }
 
 const ProfileSkeleton = () => (
-  <ThemedView type="background" style={{ gap: 20,marginTop: 16, paddingHorizontal: 16 }}>
+  <ThemedView type="background" style={{ gap: 20, marginTop: 16, paddingHorizontal: 16 }}>
     <ProfileHeaderSkeleton />
     <PointsViewSkeleton />
     <BadgesSkeleton />
@@ -118,11 +107,7 @@ function Feed() {
     isLoading,
   } = useActivityFeed({ queryParams: { limit: 10 } });
 
-  const renderItem = ({ item }: { item: Post }) => (
-    <>
-      <PostCard key={item.index} post={item} />
-    </>
-  );
+  const renderItem = ({ item }: { item: Post }) => <PostCard post={item} />; // Removed unnecessary `key`
 
   if (isLoading) {
     return (
@@ -145,9 +130,7 @@ function Feed() {
         }}
         onEndReachedThreshold={0.5}
         ListFooterComponent={
-          isFetchingNextPage ? (
-            <ActivityIndicator size="small" style={{ marginVertical: 10 }} />
-          ) : null
+          isFetchingNextPage ? <ActivityIndicator size="small" style={{ marginVertical: 10 }} /> : null
         }
         ListEmptyComponent={<EmptyViewWithTabBarHeight />}
       />
@@ -204,19 +187,10 @@ function TabViewWrapper({ children }: PropsWithChildren) {
       >
         <Defs>
           <RadialGradient id="grad">
-            <Stop
-              offset="0"
-              stopColor={Colors.dark.ctaStroke}
-              stopOpacity={1}
-            />
-            <Stop
-              offset="1"
-              stopColor={Colors.dark.ctaStroke}
-              stopOpacity={0}
-            />
+            <Stop offset="0" stopColor={Colors.dark.ctaStroke} stopOpacity={1} />
+            <Stop offset="1" stopColor={Colors.dark.ctaStroke} stopOpacity={0} />
           </RadialGradient>
         </Defs>
-
         <Ellipse cx="5" cy="40" rx="40" ry="40" fill="url(#grad)" />
       </Svg>
       {children}
