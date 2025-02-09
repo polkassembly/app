@@ -1,5 +1,5 @@
 import { SafeAreaView } from "react-native-safe-area-context";
-import { StyleSheet, View, Text, Image } from "react-native";
+import { StyleSheet, View, Text, Image, ActivityIndicator } from "react-native";
 import { CameraView, useCameraPermissions, BarcodeScanningResult } from "expo-camera";
 import useQrAuth from "@/net/queries/auth/useQrAuth";
 import { useRouter } from "expo-router";
@@ -117,6 +117,11 @@ const QrCodeScanner = () => {
         )}
       </View>
       {loginError && <ErrorView content={loginError} />}
+      {isProcessing &&
+        <View style={{ position: 'absolute' }}>
+          <ActivityIndicator size={100} color="#E5007A" />
+        </View>
+      }
     </View>
   );
 };
