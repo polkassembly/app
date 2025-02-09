@@ -71,8 +71,8 @@ function Profile() {
 
 
   useEffect(() => {
-    if(!id && pathName == "/(tabs)") router.replace("/auth");
-  }, [id])
+    if (!id && pathName === "/(tabs)") router.replace("/auth");
+  }, [id, router, pathName])
 
   const { data, isLoading, isError, error } = useGetUserById({ pathParams: { userId: id } });
 
