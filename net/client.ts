@@ -13,10 +13,14 @@ const client = axios.create({
 });
 
 function authenticate(config: InternalAxiosRequestConfig) {
-  const token = storage.getString(KEY_ACCESS_TOKEN);
 
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
+  try {
+    const token = storage.getString(KEY_ACCESS_TOKEN);
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+  } catch (error) {
+    console.error("Failed to authenticate request:", error);
   }
 
   return config;

@@ -44,7 +44,13 @@ export default function RootLayout() {
 function Content() {
   const router = useRouter();
   
-  const needsLogin = storage.getString(KEY_ACCESS_TOKEN) === null;
+  let needsLogin;
+  try {
+    needsLogin = storage.getString(KEY_ACCESS_TOKEN) === null;
+  }catch (error) {
+    console.error("Failed to read access token:", error);
+    needsLogin = true;
+  }
 
   useEffect(() => {
     if (needsLogin) {
