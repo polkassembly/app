@@ -84,6 +84,7 @@ export class MutationBuilder<PathParams = unknown, QueryParams = unknown, BodyPa
           if (this._postProcess) this._postProcess(result);
           return result;
         },
+        retry: 3,
       });
     };
   }
