@@ -1,10 +1,8 @@
-import IconGettingStarted from "@/components/icons/auth/icon-getting-started";
 import IntroPager from "@/components/IntroPager";
-import BottomSheet from "@/components/shared/BottomSheet";
 import ThemedButton from "@/components/ThemedButton";
 import { ThemedText } from "@/components/ThemedText";
 import { Link } from "expo-router";
-import React, { useState } from "react";
+import React from "react";
 import { Image, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -41,86 +39,22 @@ const styles = StyleSheet.create({
 });
 
 export default function IntroScreen() {
-  const [sheetOpen, setSheetOpen] = useState(false);
-
   return (
     <View style={styles.container}>
-      <GettingStartedSheet
-        open={sheetOpen}
-        onClose={() => setSheetOpen(false)}
-      />
 
       <SafeAreaView style={styles.container}>
         <Slides />
 
         <View style={styles.bottom}>
-          <ThemedButton
-            textType="bodyLarge"
-            onPress={() => setSheetOpen((it) => !it)}
-            text="Get Started"
-          />
-        </View>
-      </SafeAreaView>
-    </View>
-  );
-}
-
-function GettingStartedSheet({
-  open,
-  onClose,
-}: {
-  open: boolean;
-  onClose: () => void;
-}) {
-  return (
-    <BottomSheet open={open} onClose={onClose}>
-      <View
-        style={{
-          flexDirection: "column",
-        }}
-      >
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "space-between",
-            marginBottom: 12,
-          }}
-        >
-          <IconGettingStarted />
-        </View>
-
-        <View
-          style={{
-            flexDirection: "column",
-            gap: 4,
-          }}
-        >
-          <ThemedText type="titleLarge">Get Started</ThemedText>
-
-          <ThemedText>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit.
-          </ThemedText>
-        </View>
-
-        <View
-          style={{
-            marginTop: 24,
-            flexDirection: "column",
-            gap: 8,
-          }}
-        >
-          <ThemedButton textType="buttonLarge" text="Connect Wallet" />
-
-          <Link href="/auth/web2auth" asChild>
+          <Link href="/auth/qrAuth" asChild>
             <ThemedButton
-              textType="buttonLarge"
-              text="Sign Up with Email"
-              bordered
+              textType="bodyLarge"
+              text="Get Started"
             />
           </Link>
         </View>
-      </View>
-    </BottomSheet>
+      </SafeAreaView>
+    </View>
   );
 }
 
@@ -129,9 +63,6 @@ function Slides() {
     <IntroPager style={styles.slides}>
       <Slide1 />
       <Slide2 />
-      <Slide3 />
-      <Slide4 />
-      <Slide5 />
     </IntroPager>
   );
 }
@@ -142,7 +73,7 @@ function Slide1() {
       <Image
         style={{ flexGrow: 1, flexBasis: 0 }}
         resizeMode="contain"
-        source={require("@/assets/images/bg-intro-1.png")}
+        source={require("@/assets/images/auth/bg-intro-1.png")}
       />
 
       <View style={{ marginInline: 8, gap: 8 }}>
@@ -150,9 +81,8 @@ function Slide1() {
           The Ultimate Hub for Polkadot Governance
         </ThemedText>
 
-        <ThemedText style={{ textAlign: "center" }}>
-          Vestibulum nec leo at dui euismod lacinia non quis risus. Vivamus
-          lobortis felis lectus, et consequat lacus dapibus in. Noits....
+        <ThemedText style={{ textAlign: "center", color: "#79767D" }}>
+          Welcome to Polkassembly! Engage with the Polkadot ecosystem: vote, participate in discussions, and help shape the future.
         </ThemedText>
       </View>
     </View>
@@ -162,93 +92,25 @@ function Slide1() {
 function Slide2() {
   return (
     <View style={styles.slideContainer}>
-      <ThemedText type="titleMedium">
-        Hi, I am Polka- your friendly goto...
-      </ThemedText>
+      <Image
+        style={{ width: 160, height: 50 }}
+        resizeMode="contain"
+        source={require("@/assets/images/logo-wide.png")}
+      />
 
       <Image
         style={{ flexGrow: 1, flexBasis: 0 }}
         resizeMode="contain"
-        source={require("@/assets/images/bg-intro-2.png")}
+        source={require("@/assets/images/auth/bg-intro-2.gif")}
       />
 
       <View style={{ marginInline: 8, gap: 8 }}>
         <ThemedText type="display" style={{ textAlign: "center" }}>
-          Lorem Ipsum - New Feature
+          Meet Polka, Your Governance Buddy!
         </ThemedText>
 
-        <ThemedText style={{ textAlign: "center" }}>
-          Vestibulum nec leo at dui euismod lacinia non quis risus. Vivamus
-          lobortis felis lectus, et consequat lacus dapibus in. Noits....
-        </ThemedText>
-      </View>
-    </View>
-  );
-}
-
-function Slide3() {
-  return (
-    <View style={styles.slideContainer}>
-      <Image
-        style={{ flexGrow: 1, flexBasis: 0 }}
-        resizeMode="contain"
-        source={require("@/assets/images/bg-intro-3.png")}
-      />
-
-      <View style={{ marginInline: 8, gap: 8 }}>
-        <ThemedText type="display" style={{ textAlign: "center" }}>
-          Create Proposals and Participate in Voting!
-        </ThemedText>
-
-        <ThemedText style={{ textAlign: "center" }}>
-          Vestibulum nec leo at dui euismod lacinia non quis risus. Vivamus
-          lobortis felis lectus, et consequat lacus dapibus in. Noits....
-        </ThemedText>
-      </View>
-    </View>
-  );
-}
-
-function Slide4() {
-  return (
-    <View style={styles.slideContainer}>
-      <Image
-        style={{ flexGrow: 1, flexBasis: 0 }}
-        resizeMode="contain"
-        source={require("@/assets/images/bg-intro-4.png")}
-      />
-
-      <View style={{ marginInline: 8, gap: 8 }}>
-        <ThemedText type="display" style={{ textAlign: "center" }}>
-          Create Discussions and Engage with Comm.!
-        </ThemedText>
-
-        <ThemedText style={{ textAlign: "center" }}>
-          Vestibulum nec leo at dui euismod lacinia non quis risus. Vivamus
-          lobortis felis lectus, et consequat lacus dapibus in. Noits....
-        </ThemedText>
-      </View>
-    </View>
-  );
-}
-
-function Slide5() {
-  return (
-    <View style={styles.slideContainer}>
-      <Image
-        style={{ flexGrow: 1, flexBasis: 0 }}
-        resizeMode="contain"
-        source={require("@/assets/images/bg-intro-5.png")}
-      />
-
-      <View style={{ marginInline: 8, gap: 8 }}>
-        <ThemedText type="display" style={{ textAlign: "center" }}>
-          Batch Voting
-        </ThemedText>
-
-        <ThemedText style={{ textAlign: "center" }}>
-          Vestibulum nec leo at dui euismod lacinia non quis risus. Vivamus
-          lobortis felis lectus, et consequat lacus dapibus in. Noits....
+        <ThemedText style={{ textAlign: "center", color: "#79767D" }}>
+          Polka's here to guide you through voting, discussions, and making an impact in the Polkadot ecosystem!
         </ThemedText>
       </View>
     </View>
