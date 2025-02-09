@@ -7,7 +7,6 @@ export default function Layout() {
         headerShown: false,
       }}
     >
-      <Slot />
     </Stack>
   );
 }
