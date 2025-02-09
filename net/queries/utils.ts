@@ -7,6 +7,13 @@ export interface TokenPair {
   refreshToken?: string;
 }
 
+/**
+ * Extracts access and refresh tokens from an Axios response.
+ * Throws an error if the tokens are missing or if storing them fails.
+ * @param res - The Axios response containing cookies
+ * @returns {TokenPair} The extracted access and refresh tokens
+ * @throws {Error} If tokens are not found or storage fails
+ */
 function tokenPairFromResponse(res: AxiosResponse): TokenPair {
   const [accessTokenRaw, refreshTokenRaw] =
     res.headers["set-cookie"]?.[0].split(", ") ?? [];
@@ -23,8 +30,21 @@ function tokenPairFromResponse(res: AxiosResponse): TokenPair {
     ?.split("=")[1]
     ?.trim();
 
-  if (accessToken) storage.setString(KEY_ACCESS_TOKEN, accessToken);
-  if (refreshToken) storage.setString(KEY_REFRESH_TOKEN, refreshToken);
+  if (!accessToken || !refreshToken) {
+    throw new Error("Token not found");
+  }
+
+  try {
+    if (accessToken) {
+      storage.setString(KEY_ACCESS_TOKEN, accessToken);
+    }
+    if (refreshToken) {
+      storage.setString(KEY_REFRESH_TOKEN, refreshToken);
+    }
+  } catch (error) {
+    console.error("Failed to save token:", error);
+    throw error;
+  }
 
   return {
     accessToken,
@@ -32,9 +52,23 @@ function tokenPairFromResponse(res: AxiosResponse): TokenPair {
   };
 }
 
+/**
+ * Extracts user ID from a token and stores it.
+ * Throws an error if the ID is not found or if storage fails.
+ * @param token - The access token
+ * @throws {Error} If ID is not found or storage fails
+ */
 function saveIdFromToken(token: string): void {
   const id = getIdFromToken(token);
-  if (id) storage.setString(KEY_ID, id);
+
+  if (!id) throw new Error("Id not found");
+
+  try {
+    storage.setString(KEY_ID, id);
+  } catch (error) {
+    console.error("Failed to save id:", error);
+    throw error;
+  }
 }
 
 export { tokenPairFromResponse, saveIdFromToken };

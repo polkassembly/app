@@ -9,11 +9,20 @@ export interface QrAuthRequest {
 const useQrAuth = new MutationBuilder<unknown, unknown, QrAuthRequest, TokenPair>(client)
 	.method("POST")
 	.url("auth/qr-session")
-	.responseTransform(tokenPairFromResponse)
+	.responseTransform((res) => {
+		try {
+			return tokenPairFromResponse(res)
+		}catch(error){
+			throw error
+		}
+	})
 	.postProcess(({ accessToken }) => {
-    if (accessToken) {
-      saveIdFromToken(accessToken);
-    }
+    if(!accessToken) throw new Error("access token not found")
+		try{
+			saveIdFromToken(accessToken);
+		}catch(error){
+			throw error;
+		}
   }).build();
 
 export default useQrAuth;

@@ -34,6 +34,8 @@ import {
 import { EmptyViewWithTabBarHeight } from "../../components/util";
 import { KEY_ID, storage } from "@/store";
 import { useGetUserById } from "@/net/queries/profile";
+import { usePathname, useRouter } from "expo-router";
+import { AxiosError } from "axios";
 
 const renderScene = SceneMap({
   profile: Profile,
@@ -57,12 +59,28 @@ const styles = StyleSheet.create({
 });
 
 function Profile() {
-  const id = storage.getString(KEY_ID) || "";
+  const router = useRouter();
+  const pathName = usePathname()
+  let id = "";
 
-  const { data, isLoading, isError } = useGetUserById({ pathParams: { userId: id } });
+  try {
+    id = storage.getString(KEY_ID) || "";
+  } catch (error) {
+    console.error("Failed to read user ID:", error);
+  }
+
+
+  useEffect(() => {
+    if(!id && pathName == "/(tabs)") router.replace("/auth");
+  }, [id])
+
+  const { data, isLoading, isError, error } = useGetUserById({ pathParams: { userId: id } });
 
   // Handle error state
   if (isError) {
+    if (error instanceof AxiosError && error.response?.status === 401) {
+      router.replace("/auth");
+    }
     return (
       <ThemedView type="background" style={styles.container}>
         <Text>Error loading profile</Text>
@@ -107,7 +125,7 @@ function Feed() {
     isLoading,
   } = useActivityFeed({ queryParams: { limit: 10 } });
 
-  const renderItem = ({ item }: { item: Post }) => <PostCard post={item} />; // Removed unnecessary `key`
+  const renderItem = ({ item }: { item: Post }) => <PostCard post={item} />;
 
   if (isLoading) {
     return (
