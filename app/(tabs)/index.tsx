@@ -11,7 +11,7 @@ import {
   ProfileHeaderSkeleton,
 } from "@/components/Profile";
 import { ThemedView } from "@/components/ThemedView";
-import { PostCard } from "@/components/timeline/postCard";
+import { PostCard } from "@/components/feed/postCard";
 import { Colors } from "@/constants/Colors";
 import useActivityFeed, { Post } from "@/net/queries/useActivityFeed";
 import React, { PropsWithChildren, useState, useEffect } from "react";
