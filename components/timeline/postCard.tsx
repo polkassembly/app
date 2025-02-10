@@ -17,6 +17,7 @@ import { ContainerType, ThemedView } from "../ThemedView";
 import RenderHTML from "react-native-render-html";
 import { formatTime } from "../util/time";
 import { Link } from "expo-router";
+import HorizontalSeparator from "../shared/HorizontalSeparator";
 
 type PostCardProps = {
   post: Post;
@@ -93,7 +94,7 @@ export function PostCard({
       </View>
 
       {/* Horizontal line full width */}
-      <View style={styles.horizontalLine} />
+      <HorizontalSeparator />
 
       <View style={{ flexDirection: "column", gap: 8 }}>
         {/* Post author name and creation time */}
@@ -135,7 +136,7 @@ export function PostCard({
       </View>
 
       {/* Horizontal line full width */}
-      <View style={styles.horizontalLine} />
+      <HorizontalSeparator />
 
       {/* Action icons */}
       <View style={styles.flexRowJustifySpaceBetween}>
@@ -248,11 +249,6 @@ const styles = StyleSheet.create({
   },
   viewMoreText: {
     color: Colors.dark.accent,
-  },
-  horizontalLine: {
-    width: "100%",
-    height: 1,
-    backgroundColor: "#383838",
   },
   connectedLikes: {
     marginTop: 8,
