@@ -1,5 +1,5 @@
 import { Colors } from "@/constants/Colors";
-import { Post } from "@/net/queries/useActivityFeed";
+import { Post } from "@/shared/types";
 import { Ionicons } from "@expo/vector-icons";
 import React, { useState } from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
@@ -64,6 +64,8 @@ export function PostCard({ post }: PostCardProps) {
   //   ? `${props.connectedLikes[0].userName} liked the post`
   //   : "";
 
+  console.log(typeof post?.onChainInfo?.createdAt, post?.onChainInfo?.createdAt);
+
   return (
     <ThemedView style={styles.container} type="container">
       {/* Id, status and currency */}
@@ -73,7 +75,7 @@ export function PostCard({ post }: PostCardProps) {
             #{post.index}
           </ThemedText>
           <ThemedText type="bodySmall3" style={styles.statusText}>
-            {post.onChainInfo.status.toUpperCase()}
+            {post?.onChainInfo?.status.toUpperCase()}
           </ThemedText>
         </View>
         <View style={styles.flexRowGap4}>
@@ -92,11 +94,11 @@ export function PostCard({ post }: PostCardProps) {
         <View style={styles.flexRowJustifySpaceBetween}>
           <View style={styles.flexRowGap4}>
             <ThemedText type="bodySmall3">
-              {post.onChainInfo.proposer}
+              {post?.onChainInfo?.proposer}
             </ThemedText>
           </View>
           <View style={styles.flexRowGap4}>
-            <TimeDisplay createdAt={post.onChainInfo.createdAt} />
+            <TimeDisplay createdDate={post?.onChainInfo?.createdAt} />
           </View>
         </View>
 
@@ -255,8 +257,9 @@ const styles = StyleSheet.create({
   },
 });
 
-function TimeDisplay({ createdAt }: { createdAt: string }) {
-  const createdDate = new Date(createdAt);
+function TimeDisplay({ createdDate }: { createdDate : Date | undefined }) {
+  if(true) return null;
+
   const currentTime = new Date();
   const diffInMillis = currentTime.getTime() - createdDate.getTime();
   const diffInHours = Math.floor(diffInMillis / (1000 * 60 * 60)); // Convert to hours

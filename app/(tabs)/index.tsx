@@ -13,7 +13,8 @@ import {
 import { ThemedView } from "@/components/ThemedView";
 import { PostCard } from "@/components/feed/postCard";
 import { Colors } from "@/constants/Colors";
-import useActivityFeed, { Post } from "@/net/queries/useActivityFeed";
+import useActivityFeed from "@/net/queries/post/useActivityFeed";
+import { Post } from "@/shared/types";
 import React, { PropsWithChildren, useState, useEffect } from "react";
 import {
   ActivityIndicator,

@@ -95,7 +95,7 @@ export class QueryBuilder<PathParams = unknown, QueryParams = unknown, BodyParam
   build() {
     return (
       params: RequestParams<PathParams, QueryParams, BodyParams>,
-      queryOptions?: Omit<UseQueryOptions<Result, Error>, "queryKey">
+      queryOptions?: Omit<UseQueryOptions<Result, Error>, "queryKey"> & { queryKey?: string[] },
     ) => {
       const transformedParams = this._requestTransform ? this._requestTransform(params) : params;
       const resolvedUrl = this.resolveUrl(transformedParams.pathParams);
