@@ -2,10 +2,12 @@ import { View, type ViewProps } from 'react-native';
 
 import { useThemeColor } from '@/hooks/useThemeColor';
 
+export type ContainerType = 'background' | 'secondaryBackground' | 'container' | 'secondaryContainer'
+
 export type ThemedViewProps = ViewProps & {
   lightColor?: string;
   darkColor?: string;
-  type?: 'background' | 'secondaryBackground' | 'container' | 'secondaryContainer';
+  type?: ContainerType;
 };
 
 export function ThemedView({ style, lightColor, darkColor, type = 'background', ...otherProps }: ThemedViewProps) {
