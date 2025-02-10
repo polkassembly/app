@@ -1,6 +1,5 @@
 import client from "../client";
 import { InfiniteQueryBuilder } from "./builder";
-import useGetUserByAddress from "./profile/useGetUserByAddress";
 
 // FIXME: Add other variants to the sum-type
 type ProposalType = "ReferendumV2";
@@ -64,6 +63,15 @@ export interface Post {
     ];
     decisionPeriodEndsAt: string;
   };
+
+  publicUser: {
+    id: number;
+    username: string;
+    profileScore: number,
+    createdAt: string;
+    rank: number;
+    addresses: string[];
+  }
 }
 
 interface FeedRequest {
