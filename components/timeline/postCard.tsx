@@ -16,6 +16,7 @@ import { ThemedText } from "../ThemedText";
 import { ThemedView } from "../ThemedView";
 import RenderHTML from "react-native-render-html";
 import { formatTime } from "../util/time";
+import { Link } from "expo-router";
 
 type PostCardProps = {
   post: Post;
@@ -170,21 +171,23 @@ export function PostCard({ post }: PostCardProps) {
         </ThemedText>
       )}
 
-      <ThemedButton
-        bordered
-        style={{
-          borderRadius: 5,
-          padding: 0,
-          height: 40,
-          flexDirection: "row",
-          gap: 10,
-        }}
-      >
-        <ThemedText type="bodySmall" style={styles.viewMoreText}>
-          View More
-        </ThemedText>
-        <IconViewMore />
-      </ThemedButton>
+      <Link href={`/proposal/${post.index}`} asChild>
+        <ThemedButton
+          bordered
+          style={{
+            borderRadius: 5,
+            padding: 0,
+            height: 40,
+            flexDirection: "row",
+            gap: 10,
+          }}
+        >
+          <ThemedText type="bodySmall" style={styles.viewMoreText}>
+            View More
+          </ThemedText>
+          <IconViewMore />
+        </ThemedButton>
+      </Link>
     </ThemedView>
   );
 }
