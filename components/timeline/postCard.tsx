@@ -13,16 +13,22 @@ import {
 } from "../icons/shared";
 import ThemedButton from "../ThemedButton";
 import { ThemedText } from "../ThemedText";
-import { ThemedView } from "../ThemedView";
+import { ContainerType, ThemedView } from "../ThemedView";
 import RenderHTML from "react-native-render-html";
 import { formatTime } from "../util/time";
 import { Link } from "expo-router";
 
 type PostCardProps = {
   post: Post;
+  withoutViewMore?: boolean;
+  containerType?: ContainerType;
 };
 
-export function PostCard({ post }: PostCardProps) {
+export function PostCard({
+  post,
+  withoutViewMore = false,
+  containerType = "container",
+}: PostCardProps) {
   // FIXME: determine if we have liked this post
   const [isLiked, setIsLiked] = useState(false);
   const [isDisliked, setIsDisliked] = useState(false);
@@ -67,7 +73,7 @@ export function PostCard({ post }: PostCardProps) {
   //   : "";
 
   return (
-    <ThemedView style={styles.container} type="container">
+    <ThemedView style={styles.container} type={containerType}>
       {/* Id, status and currency */}
       <View style={styles.flexRowJustifySpaceBetween}>
         <View style={styles.flexRowGap4}>
@@ -171,23 +177,25 @@ export function PostCard({ post }: PostCardProps) {
         </ThemedText>
       )}
 
-      <Link href={`/proposal/${post.index}`} asChild>
-        <ThemedButton
-          bordered
-          style={{
-            borderRadius: 5,
-            padding: 0,
-            height: 40,
-            flexDirection: "row",
-            gap: 10,
-          }}
-        >
-          <ThemedText type="bodySmall" style={styles.viewMoreText}>
-            View More
-          </ThemedText>
-          <IconViewMore />
-        </ThemedButton>
-      </Link>
+      {!withoutViewMore && (
+        <Link href={`/proposal/${post.index}`} asChild>
+          <ThemedButton
+            bordered
+            style={{
+              borderRadius: 5,
+              padding: 0,
+              height: 40,
+              flexDirection: "row",
+              gap: 10,
+            }}
+          >
+            <ThemedText type="bodySmall" style={styles.viewMoreText}>
+              View More
+            </ThemedText>
+            <IconViewMore />
+          </ThemedButton>
+        </Link>
+      )}
     </ThemedView>
   );
 }
