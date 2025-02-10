@@ -1,3 +1,4 @@
+import IconArrowRightEnclosed from "@/components/icons/icon-arrow-right-enclosed";
 import IconBack from "@/components/icons/icon-back";
 import { IconPoints } from "@/components/icons/icon-points";
 import HorizontalSeparator from "@/components/shared/HorizontalSeparator";
@@ -11,7 +12,7 @@ import { Link, useLocalSearchParams } from "expo-router";
 import React from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import Svg, { G, Rect } from "react-native-svg";
+import Svg, { Rect } from "react-native-svg";
 
 export function TopBar() {
   const textColor = useThemeColor({}, "text");
@@ -88,6 +89,8 @@ export default function ProposalDetailScreen() {
           />
 
           <Summary status={proposal.onChainInfo.status} />
+
+          <SeeDetails />
         </View>
       </View>
     </SafeAreaView>
@@ -259,6 +262,36 @@ function VoteRatioIndicator({ aye }: VoteRatioIndicatorProps) {
         fill={colorNay}
       />
     </Svg>
+  );
+}
+
+interface SeeDetailsProps {}
+
+function SeeDetails({}: SeeDetailsProps) {
+  const backgroundColor = useThemeColor({}, "background");
+
+  return (
+    <Link href={".."} asChild>
+      <TouchableOpacity>
+        <View
+          style={[
+            styles.box,
+            {
+              flexDirection: "row",
+              paddingInline: 16,
+              paddingBlock: 16,
+              backgroundColor: backgroundColor,
+              alignContent: "center",
+              justifyContent: "space-between",
+              gap: 16,
+            },
+          ]}
+        >
+          <ThemedText type="bodyMedium1">See Full Details</ThemedText>
+          <IconArrowRightEnclosed />
+        </View>
+      </TouchableOpacity>
+    </Link>
   );
 }
 
