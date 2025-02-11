@@ -1,5 +1,5 @@
 import { Colors } from "@/constants/Colors";
-import { Post } from "@/net/queries/useActivityFeed";
+import { Post } from "@/types";
 import { Ionicons } from "@expo/vector-icons";
 import React, { useState } from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
@@ -82,7 +82,7 @@ export function PostCard({
             #{post.index}
           </ThemedText>
           <ThemedText type="bodySmall3" style={styles.statusText}>
-            {post.onChainInfo.status.toUpperCase()}
+            {post.onChainInfo?.status?.toUpperCase()}
           </ThemedText>
         </View>
         <View style={styles.flexRowGap4}>
@@ -101,12 +101,14 @@ export function PostCard({
         <View style={styles.flexRowJustifySpaceBetween}>
           <View style={styles.flexRowGap4}>
             <ThemedText type="bodySmall3">
-              {post.onChainInfo.proposer}
+              {post?.onChainInfo?.proposer}
             </ThemedText>
           </View>
-          <View style={styles.flexRowGap4}>
-            <TimeDisplay createdAt={post.onChainInfo.createdAt} />
-          </View>
+          {post?.onChainInfo?.createdAt && (
+            <View style={styles.flexRowGap4}>
+              <TimeDisplay createdAt={post?.onChainInfo?.createdAt} />
+            </View>
+          )}
         </View>
 
         {/* Post title and description */}

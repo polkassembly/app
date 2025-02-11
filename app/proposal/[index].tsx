@@ -4,7 +4,7 @@ import { IconPoints } from "@/components/icons/icon-points";
 import HorizontalSeparator from "@/components/shared/HorizontalSeparator";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
-import { PostCard } from "@/components/timeline/postCard";
+import { PostCard } from "@/components/feed/postCard";
 import { Colors } from "@/constants/Colors";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import useProposalByIndex from "@/net/queries/useProposalByIndex";
@@ -80,7 +80,7 @@ export default function ProposalDetailScreen() {
         <View style={{ paddingInline: 16, paddingBottom: 16, gap: 8 }}>
           <ThemedText type="titleLarge">Proposal #{index}</ThemedText>
 
-          <StatusBar status={proposal.onChainInfo.status} dot={2500} />
+          <StatusBar status={proposal?.onChainInfo?.status} dot={2500} />
 
           <PostCard
             post={proposal}
@@ -88,7 +88,7 @@ export default function ProposalDetailScreen() {
             containerType="background"
           />
 
-          <Summary status={proposal.onChainInfo.status} />
+          <Summary status={proposal?.onChainInfo?.status} />
 
           <SeeDetails />
         </View>
@@ -98,7 +98,7 @@ export default function ProposalDetailScreen() {
 }
 
 interface StatusBarProps {
-  status: string;
+  status: string | undefined;
   dot: number;
 }
 
@@ -123,7 +123,7 @@ function StatusBar({ status, dot }: StatusBarProps) {
 }
 
 interface SummaryProps {
-  status: string;
+  status: string | undefined;
 }
 
 function Summary({ status }: SummaryProps) {
@@ -208,7 +208,7 @@ function Summary({ status }: SummaryProps) {
 }
 
 interface StatusChipProps {
-  status: string;
+  status: string | undefined;
 }
 
 function StatusChip({ status }: StatusChipProps) {
@@ -221,13 +221,15 @@ function StatusChip({ status }: StatusChipProps) {
         backgroundColor: "#5BC044",
       }}
     >
-      <ThemedText
-        type="bodySmall"
-        colorName="background"
-        style={{ textTransform: "uppercase" }}
-      >
-        {status}
-      </ThemedText>
+      {status && (
+        <ThemedText
+          type="bodySmall"
+          colorName="background"
+          style={{ textTransform: "uppercase" }}
+        >
+          {status}
+        </ThemedText>
+      )}
     </View>
   );
 }

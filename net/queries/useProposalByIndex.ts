@@ -1,6 +1,6 @@
 import client from "../client";
 import { QueryBuilder } from "./builder";
-import { Post } from "./useActivityFeed";
+import { Post } from "@/types";
 
 interface PathParams {
     // FIXME: Enumerate the possible values for a better API
