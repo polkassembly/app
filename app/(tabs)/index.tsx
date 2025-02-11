@@ -138,6 +138,10 @@ function Feed() {
   return (
     <ThemedView type="background" style={styles.container}>
       <FlatList
+        contentContainerStyle={{
+          gap: 8,
+          paddingInline: 8,
+        }}
         data={data?.pages.flatMap((page) => page.items)}
         renderItem={renderItem}
         keyExtractor={(item) => item.index.toString()}
