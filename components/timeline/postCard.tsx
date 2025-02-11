@@ -208,6 +208,7 @@ const styles = StyleSheet.create({
     gap: 12,
     borderRadius: 12,
     borderWidth: 1,
+    borderColor: Colors.dark.stroke,
     overflow: "hidden",
     flexDirection: "column",
   },
