@@ -1,5 +1,5 @@
-import { NavigationDarkTheme } from "@/constants/Colors";
-import { KEY_ACCESS_TOKEN, storage } from "@/store";
+import { NavigationDarkTheme } from "@/lib/constants/Colors";
+import { KEY_ACCESS_TOKEN, storage } from "@/lib/store";
 import { ThemeProvider } from "@react-navigation/native";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useFonts } from "expo-font";
