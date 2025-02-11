@@ -1,6 +1,6 @@
-import IntroPager from "@/components/IntroPager";
-import ThemedButton from "@/components/ThemedButton";
-import { ThemedText } from "@/components/ThemedText";
+import IntroPager from "@/lib/components/IntroPager";
+import ThemedButton from "@/lib/components/ThemedButton";
+import { ThemedText } from "@/lib/components/ThemedText";
 import { Link } from "expo-router";
 import React from "react";
 import { Image, StyleSheet, View } from "react-native";

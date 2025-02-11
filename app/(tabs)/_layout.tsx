@@ -4,11 +4,11 @@ import { Pressable, StyleSheet, View, ViewStyle, Text } from "react-native";
 import Svg, { Ellipse } from "react-native-svg";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { Colors } from "@/constants/Colors";
+import { Colors } from "@/lib/constants/Colors";
 import { BottomTabBarButtonProps } from "@react-navigation/bottom-tabs";
-import { IconBrowser } from "@/components/icons/icon-browser";
-import { IconGame } from "@/components/icons/icon-game";
-import { IconProfile } from "@/components/icons/icon-profile";
+import { IconBrowser } from "@/lib/components/icons/icon-browser";
+import { IconGame } from "@/lib/components/icons/icon-game";
+import { IconProfile } from "@/lib/components/icons/icon-profile";
 
 const smallIconSize = 32;
 const largeIconSize = 44;

@@ -9,11 +9,11 @@ import {
   PointsViewSkeleton,
   ProfileHeader,
   ProfileHeaderSkeleton,
-} from "@/components/Profile";
-import { ThemedView } from "@/components/ThemedView";
-import { PostCard } from "@/components/feed/postCard";
-import { Colors } from "@/constants/Colors";
-import useActivityFeed from "@/net/queries/post/useActivityFeed";
+} from "@/lib/components/Profile";
+import { ThemedView } from "@/lib/components/ThemedView";
+import { PostCard } from "@/lib/components/feed/postCard";
+import { Colors } from "@/lib/constants/Colors";
+import useActivityFeed from "@/lib/net/queries/post/useActivityFeed";
 import React, { PropsWithChildren, useState, useEffect } from "react";
 import {
   ActivityIndicator,
@@ -31,12 +31,12 @@ import {
   TabBarIndicator,
   TabView,
 } from "react-native-tab-view";
-import { EmptyViewWithTabBarHeight } from "@/components/util";
-import { KEY_ID, storage } from "@/store";
-import { useGetUserById } from "@/net/queries/profile";
+import { EmptyViewWithTabBarHeight } from "@/lib/components/util";
+import { KEY_ID, storage } from "@/lib/store";
+import { useGetUserById } from "@/lib/net/queries/profile";
 import { usePathname, useRouter } from "expo-router";
 import { AxiosError } from "axios";
-import { Post } from "@/types";
+import { Post } from "@/lib/types";
 
 const renderScene = SceneMap({
   profile: Profile,

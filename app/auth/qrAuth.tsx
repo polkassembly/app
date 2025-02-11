@@ -1,14 +1,14 @@
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StyleSheet, View, Text, Image, ActivityIndicator } from "react-native";
 import { CameraView, useCameraPermissions, BarcodeScanningResult } from "expo-camera";
-import useQrAuth from "@/net/queries/auth/useQrAuth";
+import useQrAuth from "@/lib/net/queries/auth/useQrAuth";
 import { useRouter } from "expo-router";
-import { ThemedView } from "@/components/ThemedView";
+import { ThemedView } from "@/lib/components/ThemedView";
 import { useState, useEffect } from "react";
-import { ThemedText } from "@/components/ThemedText";
-import { useThemeColor } from "@/hooks/useThemeColor";
-import ThemedButton from "@/components/ThemedButton";
-import IconWarn from "@/components/icons/auth/icon-warn";
+import { ThemedText } from "@/lib/components/ThemedText";
+import { useThemeColor } from "@/lib/hooks/useThemeColor";
+import ThemedButton from "@/lib/components/ThemedButton";
+import IconWarn from "@/lib/components/icons/auth/icon-warn";
 
 const Colors = {
   primaryBackground: "#222121",

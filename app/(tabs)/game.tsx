@@ -1,22 +1,22 @@
 import React from "react";
-import { Colors } from "@/constants/Colors";
-import { IconGame } from "@/components/icons/icon-game";
-import { IconPoints } from "@/components/icons/icon-points";
-import { ThemedText } from "@/components/ThemedText";
-import { ThemedView } from "@/components/ThemedView";
+import { Colors } from "@/lib/constants/Colors";
+import { IconGame } from "@/lib/components/icons/icon-game";
+import { IconPoints } from "@/lib/components/icons/icon-points";
+import { ThemedText } from "@/lib/components/ThemedText";
+import { ThemedView } from "@/lib/components/ThemedView";
 import { PropsWithChildren } from "react";
 import { Image, StyleSheet, TouchableOpacity, View, ImageBackground, Text, TouchableOpacityProps } from "react-native";
 import { ScrollView } from "react-native";
 import { categories, games, playedGames } from "@/data/mockData";
-import { GradientText, OutlinedText, ThemedTextInput } from "@/components/shared";
-import { IconFilterOption, IconFireworks, IconStar, IconTwinkle } from "@/components/icons/games";
+import { GradientText, OutlinedText, ThemedTextInput } from "@/lib/components/shared";
+import { IconFilterOption, IconFireworks, IconStar, IconTwinkle } from "@/lib/components/icons/games";
 import { Video, ResizeMode } from "expo-av";
 import { LinearGradient } from "expo-linear-gradient";
-import IntroPager from "@/components/IntroPager";
+import IntroPager from "@/lib/components/IntroPager";
 import { TextInput } from "react-native";
-import { IconSearch } from "@/components/icons/shared";
-import CircularProgressBar from "@/components/shared/CircularProgressBar";
-import { EmptyViewWithTabBarHeight } from "@/components/util";
+import { IconSearch } from "@/lib/components/icons/shared";
+import CircularProgressBar from "@/lib/components/shared/CircularProgressBar";
+import { EmptyViewWithTabBarHeight } from "@/lib/components/util";
 
 export default function GameScreen() {
   return (
