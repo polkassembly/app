@@ -13,7 +13,7 @@ import {
 import { ThemedView } from "@/components/ThemedView";
 import { PostCard } from "@/components/feed/postCard";
 import { Colors } from "@/constants/Colors";
-import useActivityFeed, { Post } from "@/net/queries/useActivityFeed";
+import useActivityFeed from "@/net/queries/post/useActivityFeed";
 import React, { PropsWithChildren, useState, useEffect } from "react";
 import {
   ActivityIndicator,
@@ -36,6 +36,7 @@ import { KEY_ID, storage } from "@/store";
 import { useGetUserById } from "@/net/queries/profile";
 import { usePathname, useRouter } from "expo-router";
 import { AxiosError } from "axios";
+import { Post } from "@/types";
 
 const renderScene = SceneMap({
   profile: Profile,
