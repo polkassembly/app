@@ -1,0 +1,30 @@
+images:
+  - name: discord-banner
+    parameters:
+      - name: last_online
+        type: string
+      - name: avatar_url
+        type: string
+      - name: qr_data
+        type: string
+    width: 500
+    height: 500
+
+    contents:
+      - row:
+        modifiers:
+         - fullWidth
+         - align: center
+         - arrange: start
+
+        children:
+          - image:
+            - url: $avatar_url
+            - modifiers:
+              - size: 50
+              - clip: "circle"
+
+          - column:
+            - modifiers:
+              - align: start
+              - arrange: start
