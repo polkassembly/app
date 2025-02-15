@@ -4,7 +4,7 @@ import { IconPoints } from "@/lib/components/icons/icon-points";
 import HorizontalSeparator from "@/lib/components/shared/HorizontalSeparator";
 import { ThemedText } from "@/lib/components/ThemedText";
 import { ThemedView } from "@/lib/components/ThemedView";
-import { PostCard } from "@/lib/components/feed/postCard";
+import PostCard from "@/lib/components/feed/postCard";
 import { Colors } from "@/lib/constants/Colors";
 import { useThemeColor } from "@/lib/hooks/useThemeColor";
 import { useProposalByIndex } from "@/lib/net/queries/post/useProposalByIndex";

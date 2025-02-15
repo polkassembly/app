@@ -6,5 +6,9 @@ function toTitleCase(str: string): string {
     .join(' ');
 }
 
+function trimText(text: string, maxLength: number): string {
+  return text.length > maxLength ? `${text.slice(0, maxLength)}...` : text;
+}
 
-export { toTitleCase };
+
+export { trimText, toTitleCase };

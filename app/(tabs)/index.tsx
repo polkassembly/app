@@ -11,7 +11,7 @@ import {
   ProfileHeaderSkeleton,
 } from "@/lib/components/Profile";
 import { ThemedView } from "@/lib/components/ThemedView";
-import { PostCard } from "@/lib/components/feed/postCard";
+import PostCard from "@/lib/components/feed/postCard";
 import { Colors } from "@/lib/constants/Colors";
 import { useActivityFeed } from "@/lib/net/queries/post/useActivityFeed";
 import React, { PropsWithChildren, useState, useEffect } from "react";
@@ -50,8 +50,7 @@ const routes = [
 
 const styles = StyleSheet.create({
   container: {
-    width: "100%",
-    height: "100%",
+    flex: 1
   },
   scrollView: {
     paddingHorizontal: 16,
@@ -130,7 +129,7 @@ function Feed() {
 
   if (isLoading) {
     return (
-      <ThemedView type="background" style={styles.container}>
+      <ThemedView type="background" style={[styles.container, { justifyContent: "center" }]}>
         <ActivityIndicator size="large" style={{ marginTop: 20 }} />
       </ThemedView>
     );
@@ -157,6 +156,7 @@ function Feed() {
         }
         ListEmptyComponent={<EmptyViewWithTabBarHeight />}
       />
+      <EmptyViewWithTabBarHeight />
     </ThemedView>
   );
 }
