@@ -160,7 +160,7 @@ export interface OnChainPostInfo {
 
 export interface Post {
   id: "";
-  index: number;
+  index: string;
   title: string;
   content: {};
   htmlContent: string;
@@ -178,5 +178,10 @@ export interface Post {
     comments: number;
   };
   onChainInfo?: OnChainPostInfo;
-  userReactions?: Reaction[];
+  userReaction?: Reaction;
+}
+
+export interface Feed {
+  items: Post[];
+  totalCount: string;
 }

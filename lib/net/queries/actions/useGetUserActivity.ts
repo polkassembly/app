@@ -1,14 +1,22 @@
+import { useQuery } from "@tanstack/react-query";
 import client from "@/lib/net/client";
-import { QueryBuilder } from "../builder";
 import { UserActivity } from "./type";
 
 interface GetUserActivityPathParams {
-	userId: string;
+  userId: string;
 }
 
-const useGetUserActivity =  new QueryBuilder< GetUserActivityPathParams, unknown, unknown, UserActivity[]>(client)
-	.method("GET")
-	.url(`users/id/{userId}/activities`)
-	.build();
+const buildUserActivityQueryKey = (params: GetUserActivityPathParams) => ["user-activity", params];
 
-export default useGetUserActivity;
+const useGetUserActivity = (params: GetUserActivityPathParams) => {
+  return useQuery<UserActivity[], Error>({
+    queryKey: buildUserActivityQueryKey(params),
+    queryFn: async () => {
+      const response = await client.get<UserActivity[]>(`users/id/${params.userId}/activities`);
+      return response.data;
+    },
+		refetchOnWindowFocus: true,
+  });
+};
+
+export { useGetUserActivity, buildUserActivityQueryKey };

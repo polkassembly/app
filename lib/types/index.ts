@@ -1,1 +1,1 @@
-export { Post, EProposalType, EReaction } from "./post";
+export { Feed, EProposalType, EReaction, Post } from "./post";

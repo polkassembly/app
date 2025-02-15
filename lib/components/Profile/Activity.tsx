@@ -4,14 +4,14 @@ import { StyleSheet, Image, View } from "react-native";
 import { ThemedText } from "../ThemedText";
 import { ThemedView } from "../ThemedView";
 import { UserActivity } from "@/lib/net/queries/actions/type";
-import useGetUserActivity from "@/lib/net/queries/actions/useGetUserActivity";
+import { useGetUserActivity } from "@/lib/net/queries/actions/useGetUserActivity";
 import { Skeleton } from "moti/skeleton";
 import { Link } from "expo-router";
 import { toTitleCase } from "@/lib/util/stringUtil";
 
 
 const Activity = ({ userId }: { userId: string }) => {
-  const { data, isLoading } = useGetUserActivity({ pathParams: { userId } }, { refetchOnWindowFocus: true });
+  const { data, isLoading } = useGetUserActivity({ userId});
 
   if (isLoading) return <ActivitySkeleton />;
   if (!data || data.length === 0) return <NoActivity />;

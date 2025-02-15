@@ -13,7 +13,7 @@ import {
 import { ThemedView } from "@/lib/components/ThemedView";
 import { PostCard } from "@/lib/components/feed/postCard";
 import { Colors } from "@/lib/constants/Colors";
-import useActivityFeed from "@/lib/net/queries/post/useActivityFeed";
+import { useActivityFeed } from "@/lib/net/queries/post/useActivityFeed";
 import React, { PropsWithChildren, useState, useEffect } from "react";
 import {
   ActivityIndicator,
@@ -124,7 +124,7 @@ function Feed() {
     hasNextPage,
     isFetchingNextPage,
     isLoading,
-  } = useActivityFeed({ queryParams: { limit: 10 } });
+  } = useActivityFeed({ limit: 10 });
 
   const renderItem = ({ item }: { item: Post }) => <PostCard post={item} />;
 

@@ -17,6 +17,7 @@ const useQrAuth = () => {
         saveIdFromToken(tokenPair.accessToken);
         return tokenPair;
       } catch (error) {
+        console.error("Failed to authenticate", error);
 				throw new Error("Failed to authenticate");
       }
     },

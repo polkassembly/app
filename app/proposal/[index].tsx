@@ -59,8 +59,6 @@ export function TopBar() {
 
 export default function ProposalDetailScreen() {
   const { index, proposalType } = useLocalSearchParams<{ index: string, proposalType: EProposalType }>();
-  console.log(index, proposalType);
-  console.log("hello")
   const [open, setOpen] = useState(false);
   const { data: proposal, isLoading } = useProposalByIndex({ proposalType: proposalType, indexOrHash: index });
 
