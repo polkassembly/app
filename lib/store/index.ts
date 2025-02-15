@@ -4,6 +4,7 @@ import * as SecureStore from "expo-secure-store";
 export const KEY_ACCESS_TOKEN = "auth.access";
 export const KEY_REFRESH_TOKEN = "auth.refresh";
 export const KEY_ID = "auth.id";
+export const KEY_COOKIE = "cookie";
 
 // An abstraction for SecureStore
 export const storage = {
