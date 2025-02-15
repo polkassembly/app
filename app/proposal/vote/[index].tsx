@@ -10,7 +10,9 @@ import { ThemedView } from "@/lib/components/ThemedView";
 import { TopBar } from "@/lib/components/Topbar";
 import { Colors } from "@/lib/constants/Colors";
 import { useThemeColor } from "@/lib/hooks/useThemeColor";
+import useAddCartItem from "@/lib/net/queries/actions/useAddCartItem";
 import Slider from "@react-native-community/slider";
+import { AxiosError } from "axios";
 import { useLocalSearchParams } from "expo-router";
 import { FunctionComponent, useState } from "react";
 import {
@@ -25,12 +27,35 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 type Vote = "aye" | "nay" | "abstain";
 
+type Params = {
+  index: string;
+};
+
+const ERROR_DEFAULT = "Something went wrong";
+
 export default function BatchVotingScreen() {
-  const { index } = useLocalSearchParams();
+  const { index } = useLocalSearchParams<Params>();
+
+  const { mutateAsync, error } = useAddCartItem();
 
   const [vote, setVote] = useState<Vote>("aye");
   const [amount, setAmount] = useState<number>(0);
   const [conviction, setConviction] = useState<number>(0);
+
+  async function onPressAddToCart() {
+    const res = await mutateAsync({
+      amount: {
+        [vote]: amount.toString(),
+      },
+      conviction,
+      decision: vote,
+      postIndexOrHash: index,
+      // FIXME: are other possible values any good?
+      // This will likely have to come from navigation params
+      proposalType: "ReferendumV2",
+    });
+    console.log(res);
+  }
 
   return (
     <SafeAreaView style={styles.root}>
@@ -48,10 +73,22 @@ export default function BatchVotingScreen() {
           onChangeConviction={setConviction}
         />
 
-        <Note />
+        <Note content="NOTE: Login Via web view to confirm your vote" />
+
+        {error && (
+          <Note
+            content={
+              error instanceof AxiosError &&
+              error.response &&
+              error.response.data?.message
+                ? error.response.data.message
+                : ERROR_DEFAULT
+            }
+          />
+        )}
       </ScrollView>
 
-      <BottomButton>Add to Cart</BottomButton>
+      <BottomButton onPress={onPressAddToCart}>Add to Cart</BottomButton>
     </SafeAreaView>
   );
 }
@@ -315,7 +352,11 @@ function AmountInput({ value, onChange }: AmountInputProps) {
   );
 }
 
-function Note() {
+interface NoteProps {
+  content: string;
+}
+
+function Note({ content }: NoteProps) {
   return (
     <View
       style={{
@@ -324,11 +365,10 @@ function Note() {
         gap: 16,
         borderRadius: 8,
         flexDirection: "row",
-        alignItems: "center",
       }}
     >
       <IconInfo />
-      <ThemedText>NOTE: Login Via web view to confirm your vote</ThemedText>
+      <ThemedText>{content}</ThemedText>
     </View>
   );
 }
