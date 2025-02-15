@@ -85,7 +85,7 @@ const QrCodeScanner = () => {
         return;
       }
 
-      await claimSession({ bodyParams: { sessionId } });
+      await claimSession({ sessionId });  
 
       if (isError) {
         setLoginError("Login failed");

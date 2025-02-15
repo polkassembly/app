@@ -1,28 +1,27 @@
+import { useMutation } from "@tanstack/react-query";
 import client from "@/lib/net/client";
-import { MutationBuilder } from "../builder";
 import { saveIdFromToken, TokenPair, tokenPairFromResponse } from "../utils";
 
 export interface QrAuthRequest {
-		sessionId: string;
+  sessionId: string;
 }
 
-const useQrAuth = new MutationBuilder<unknown, unknown, QrAuthRequest, TokenPair>(client)
-	.method("POST")
-	.url("auth/qr-session")
-	.responseTransform((res) => {
-		try {
-			return tokenPairFromResponse(res)
-		}catch(error){
-			throw error
-		}
-	})
-	.postProcess(({ accessToken }) => {
-    if(!accessToken) throw new Error("access token not found")
-		try{
-			saveIdFromToken(accessToken);
-		}catch(error){
-			throw error;
-		}
-  }).build();
+const useQrAuth = () => {
+  return useMutation<TokenPair, Error, QrAuthRequest>({
+    mutationFn: async (params) => {
+      try {
+        const response = await client.post("auth/qr-session", params);
+        const tokenPair = tokenPairFromResponse(response);
+        if (!tokenPair.accessToken) throw new Error("Access token not found");
+
+        saveIdFromToken(tokenPair.accessToken);
+        return tokenPair;
+      } catch (error) {
+				throw new Error("Failed to authenticate");
+      }
+    },
+    retry: 3,
+  });
+};
 
 export default useQrAuth;
