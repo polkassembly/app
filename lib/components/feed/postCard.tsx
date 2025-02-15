@@ -181,7 +181,7 @@ export function PostCard({
       )}
 
       {!withoutViewMore && (
-        <Link href={`/proposal/${post.index}`} asChild>
+        <Link href={`/proposal/${post.index}?proposalType=${post.proposalType}`} asChild>
           <ThemedButton
             bordered
             style={{

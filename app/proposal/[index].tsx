@@ -7,12 +7,15 @@ import { ThemedView } from "@/lib/components/ThemedView";
 import { PostCard } from "@/lib/components/feed/postCard";
 import { Colors } from "@/lib/constants/Colors";
 import { useThemeColor } from "@/lib/hooks/useThemeColor";
-import useProposalByIndex from "@/lib/net/queries/useProposalByIndex";
+import { useProposalByIndex } from "@/lib/net/queries/post/useProposalByIndex";
 import { Link, useLocalSearchParams } from "expo-router";
-import React from "react";
+import React, { useState } from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Svg, { Rect } from "react-native-svg";
+import { BottomSheet } from "@/lib/components/shared";
+import { PostFullDetails } from "@/lib/components/feed/postFullDetails";
+import { EProposalType } from "@/lib/types";
 
 export function TopBar() {
   const textColor = useThemeColor({}, "text");
@@ -55,15 +58,11 @@ export function TopBar() {
 }
 
 export default function ProposalDetailScreen() {
-  const { index } = useLocalSearchParams<{ index: string }>();
-  const { data: proposal, isLoading } = useProposalByIndex({
-    pathParams: {
-      // FIXME: are other possible values any good?
-      proposalType: "ReferendumV2",
-
-      indexOrHash: index,
-    },
-  });
+  const { index, proposalType } = useLocalSearchParams<{ index: string, proposalType: EProposalType }>();
+  console.log(index, proposalType);
+  console.log("hello")
+  const [open, setOpen] = useState(false);
+  const { data: proposal, isLoading } = useProposalByIndex({ proposalType: proposalType, indexOrHash: index });
 
   const backgroundColor = useThemeColor({}, "secondaryBackground");
 
@@ -73,27 +72,33 @@ export default function ProposalDetailScreen() {
   }
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor }}>
-      <View>
-        <TopBar />
+    <>
+      <SafeAreaView style={{ flex: 1, backgroundColor }}>
+        <View>
+          <TopBar />
 
-        <View style={{ paddingInline: 16, paddingBottom: 16, gap: 8 }}>
-          <ThemedText type="titleLarge">Proposal #{index}</ThemedText>
+          <View style={{ paddingInline: 16, paddingBottom: 16, gap: 8 }}>
+            <ThemedText type="titleLarge">Proposal #{index}</ThemedText>
 
-          <StatusBar status={proposal?.onChainInfo?.status} dot={2500} />
+            <StatusBar status={proposal?.onChainInfo?.status} dot={2500} />
 
-          <PostCard
-            post={proposal}
-            withoutViewMore
-            containerType="background"
-          />
+            <PostCard
+              post={proposal}
+              withoutViewMore
+              containerType="background"
+            />
 
-          <Summary status={proposal?.onChainInfo?.status} />
+            <Summary status={proposal?.onChainInfo?.status} />
 
-          <SeeDetails />
+            <SeeDetails setOpen={setOpen} />
+          </View>
         </View>
-      </View>
-    </SafeAreaView>
+      </SafeAreaView>
+
+      <BottomSheet open={open} onClose={() => setOpen(false)}>
+        <PostFullDetails onClose={() => setOpen(false)} post={proposal} />
+      </BottomSheet>
+    </>
   );
 }
 
@@ -267,14 +272,16 @@ function VoteRatioIndicator({ aye }: VoteRatioIndicatorProps) {
   );
 }
 
-interface SeeDetailsProps {}
+interface SeeDetailsProps {
+  setOpen: (open: boolean) => void;
+}
 
-function SeeDetails({}: SeeDetailsProps) {
+function SeeDetails({ setOpen }: SeeDetailsProps) {
   const backgroundColor = useThemeColor({}, "background");
 
   return (
-    <Link href={".."} asChild>
-      <TouchableOpacity>
+    <>
+      <TouchableOpacity onPress={() => setOpen(true)}>
         <View
           style={[
             styles.box,
@@ -293,7 +300,7 @@ function SeeDetails({}: SeeDetailsProps) {
           <IconArrowRightEnclosed />
         </View>
       </TouchableOpacity>
-    </Link>
+    </>
   );
 }
 
