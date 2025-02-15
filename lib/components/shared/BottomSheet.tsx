@@ -8,21 +8,8 @@ interface BottomSheetProps extends PropsWithChildren {
   style?: StyleProp<ViewStyle>;
 }
 
-export default function BottomSheet({
-  open,
-  onClose,
-  children,
-  style,
-}: BottomSheetProps) {
-  /**
-   * TODO: we probably want to animate this to
-   * enter screen white sliding into the view.
-   * Or perhaps use a third party library for bottom sheets?
-   */
-
+export default function BottomSheet({ open, onClose, children, style }: BottomSheetProps) {
   const backdropColor = useThemeColor({}, "backdrop");
-  const sheetColor = useThemeColor({}, "container");
-
   return (
     <View
       onTouchStart={onClose}
@@ -33,8 +20,8 @@ export default function BottomSheet({
       ]}
     >
       <View
-        onTouchStart={(e) => e.stopPropagation()}
-        style={[styles.sheet, { backgroundColor: sheetColor }]}
+        onTouchStart={(e) => e.stopPropagation()} // Prevent closing when tapping on the sheet
+        style={{ flex: 1, justifyContent: "flex-end" }}
       >
         {children}
       </View>
@@ -48,21 +35,13 @@ const styles = StyleSheet.create({
     position: "absolute",
     height: "100%",
     width: "100%",
-    top: 1,
-    left: 1,
+    top: 0,
+    left: 0,
     zIndex: 100,
 
     // put the sheet on bottom
     flexDirection: "column",
     justifyContent: "flex-end",
-
     opacity: 65,
-  },
-
-  sheet: {
-    marginInline: 8,
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
-    padding: 24,
   },
 });
