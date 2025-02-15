@@ -31,6 +31,7 @@ export function ThemedText({
 export const styles = StyleSheet.create({
   bodyLarge: {
     fontSize: 16,
+    fontWeight: 600,
     lineHeight: 24,
   },
   bodyMedium1: {
@@ -100,6 +101,11 @@ export const styles = StyleSheet.create({
   /**
    * Not part of the design spec. Marked for removal.
    */
+  titleSmall: {
+    fontSize: 16,
+    fontWeight: 600,
+    lineHeight: 27,
+  },
   link: {
     lineHeight: 30,
     fontSize: 16,
