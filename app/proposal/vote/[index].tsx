@@ -1,21 +1,24 @@
 import IconAbstain from "@/lib/components/icons/shared/icon-abstain";
 import IconAye from "@/lib/components/icons/shared/icon-aye";
+import IconInfo from "@/lib/components/icons/shared/icon-info";
 import IconNay from "@/lib/components/icons/shared/icon-nay";
+import IconPadlock from "@/lib/components/icons/shared/icon-padlock";
 import { IconProps } from "@/lib/components/icons/types";
 import { ThemedText } from "@/lib/components/ThemedText";
 import { ThemedView } from "@/lib/components/ThemedView";
 import { TopBar } from "@/lib/components/Topbar";
 import { Colors } from "@/lib/constants/Colors";
 import { useThemeColor } from "@/lib/hooks/useThemeColor";
+import Slider from "@react-native-community/slider";
 import { useLocalSearchParams } from "expo-router";
 import { FunctionComponent, useState } from "react";
 import {
-    Image,
-    ScrollView,
-    StyleSheet,
-    TextInput,
-    TouchableOpacity,
-    View,
+  Image,
+  ScrollView,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -26,6 +29,7 @@ export default function BatchVotingScreen() {
 
   const [vote, setVote] = useState<Vote>("aye");
   const [amount, setAmount] = useState<number>(0);
+  const [conviction, setConviction] = useState<number>(0);
 
   return (
     <SafeAreaView style={styles.root}>
@@ -39,7 +43,11 @@ export default function BatchVotingScreen() {
           onVoteChange={setVote}
           amount={amount}
           onChangeAmount={setAmount}
+          conviction={conviction}
+          onChangeConviction={setConviction}
         />
+
+        <Note />
       </ScrollView>
     </SafeAreaView>
   );
@@ -51,6 +59,9 @@ interface VoteCardProps {
 
   amount: number;
   onChangeAmount: (amount: number) => void;
+
+  conviction: number;
+  onChangeConviction: (conviction: number) => void;
 }
 
 function VoteCard({
@@ -58,6 +69,8 @@ function VoteCard({
   onVoteChange,
   amount,
   onChangeAmount,
+  conviction,
+  onChangeConviction,
 }: VoteCardProps) {
   return (
     <ThemedView style={[styles.card, { gap: 16 }]}>
@@ -77,7 +90,85 @@ function VoteCard({
       </View>
 
       <AmountInput value={amount} onChange={onChangeAmount} />
+
+      <ThemedText type="bodyMedium1">Conviction</ThemedText>
+      <ConvictionSlider
+        conviction={conviction}
+        onConvictionChange={onChangeConviction}
+      />
+
+      <ThemedView
+        type="secondaryBackground"
+        style={{
+          flexDirection: "row",
+          justifyContent: "space-between",
+          borderColor: Colors.dark.stroke,
+          padding: 16,
+          borderRadius: 8,
+        }}
+      >
+        <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+          <IconPadlock />
+          <ThemedText colorName="mediumText">Locking Period</ThemedText>
+        </View>
+        <ThemedText>No Lockup Period</ThemedText>
+      </ThemedView>
     </ThemedView>
+  );
+}
+
+interface ConvictionSliderProps {
+  conviction: number;
+  onConvictionChange: (value: number) => void;
+}
+
+function ConvictionSlider({
+  conviction,
+  onConvictionChange,
+}: ConvictionSliderProps) {
+  const STEPS = 6;
+
+  function transformOut(value: number) {
+    return Math.floor(Math.max(Math.min(value * STEPS, STEPS), 0));
+  }
+
+  function transformIn(value: number) {
+    return value / STEPS;
+  }
+
+  const color = useThemeColor({}, "accent");
+
+  return (
+    <View>
+      <Slider
+        style={{ flex: 1 }}
+        value={transformIn(conviction)}
+        thumbImage={require("@/assets/images/slider-thumb.png")}
+        thumbTintColor={color}
+        minimumTrackTintColor={color}
+        step={1 / STEPS}
+        lowerLimit={0}
+        upperLimit={1}
+        onValueChange={(value) => {
+          onConvictionChange(transformOut(value));
+        }}
+      />
+      <View
+        style={{
+          flex: 1,
+          flexDirection: "row",
+          justifyContent: "space-between",
+        }}
+      >
+        <ThemedText>0.1x</ThemedText>
+        <ThemedText>1x</ThemedText>
+        <ThemedText>2x</ThemedText>
+        <ThemedText>3x</ThemedText>
+        <ThemedText>4x</ThemedText>
+        <ThemedText>5x</ThemedText>
+        <ThemedText>6x</ThemedText>
+      </View>
+    </View>
   );
 }
 
@@ -217,6 +308,24 @@ function AmountInput({ value, onChange }: AmountInputProps) {
         }}
         style={{ flex: 1, textAlign: "right", color }}
       />
+    </View>
+  );
+}
+
+function Note() {
+  return (
+    <View
+      style={{
+        backgroundColor: "#002C4F",
+        padding: 8,
+        gap: 16,
+        borderRadius: 8,
+        flexDirection: "row",
+        alignItems: "center",
+      }}
+    >
+      <IconInfo />
+      <ThemedText>NOTE: Login Via web view to confirm your vote</ThemedText>
     </View>
   );
 }
