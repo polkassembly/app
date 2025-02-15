@@ -10,11 +10,27 @@ import { useThemeColor } from "@/lib/hooks/useThemeColor";
 import useProposalByIndex from "@/lib/net/queries/useProposalByIndex";
 import { Link, useLocalSearchParams } from "expo-router";
 import React from "react";
-import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
+import {
+  ActivityIndicator,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Svg, { Rect } from "react-native-svg";
 
 export default function ProposalDetailScreen() {
+  const backgroundColor = useThemeColor({}, "secondaryBackground");
+  return (
+    <SafeAreaView style={{ flex: 1, backgroundColor }}>
+      <TopBar />
+      <ProposalDetailScreenImpl />
+    </SafeAreaView>
+  );
+}
+
+function ProposalDetailScreenImpl() {
   const { index } = useLocalSearchParams<{ index: string }>();
   const { data: proposal, isLoading } = useProposalByIndex({
     pathParams: {
@@ -25,17 +41,20 @@ export default function ProposalDetailScreen() {
     },
   });
 
-  const backgroundColor = useThemeColor({}, "secondaryBackground");
+  const accentColor = useThemeColor({}, "accent");
 
   if (isLoading || !proposal) {
-    // FIXME: Loading screen?
-    return <></>;
+    return (
+      <View
+        style={{ flex: 1, justifyContent: "center", alignContent: "center" }}
+      >
+        <ActivityIndicator color={accentColor} size="large" />
+      </View>
+    );
   }
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor }}>
-      <TopBar />
-
+    <>
       <ScrollView contentContainerStyle={{ paddingBottom: 32 }}>
         <View style={{ paddingInline: 16, paddingBottom: 16, gap: 8 }}>
           <ThemedText type="titleLarge">Proposal #{index}</ThemedText>
@@ -57,7 +76,7 @@ export default function ProposalDetailScreen() {
       <Link asChild href={`/proposal/vote/${index}`}>
         <BottomButton>Cast Your Vote</BottomButton>
       </Link>
-    </SafeAreaView>
+    </>
   );
 }
 
