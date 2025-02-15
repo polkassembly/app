@@ -4,6 +4,7 @@ import IconInfo from "@/lib/components/icons/shared/icon-info";
 import IconNay from "@/lib/components/icons/shared/icon-nay";
 import IconPadlock from "@/lib/components/icons/shared/icon-padlock";
 import { IconProps } from "@/lib/components/icons/types";
+import BottomButton from "@/lib/components/shared/BottomButton";
 import { ThemedText } from "@/lib/components/ThemedText";
 import { ThemedView } from "@/lib/components/ThemedView";
 import { TopBar } from "@/lib/components/Topbar";
@@ -49,6 +50,8 @@ export default function BatchVotingScreen() {
 
         <Note />
       </ScrollView>
+
+      <BottomButton>Add to Cart</BottomButton>
     </SafeAreaView>
   );
 }
