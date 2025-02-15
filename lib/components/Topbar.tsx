@@ -1,6 +1,6 @@
 import { Link } from "expo-router";
 import { View } from "moti";
-import { TouchableOpacity } from "react-native-gesture-handler";
+import { TouchableOpacity } from "react-native";
 import { useThemeColor } from "../hooks/useThemeColor";
 import IconBack from "./icons/icon-back";
 import { IconPoints } from "./icons/icon-points";

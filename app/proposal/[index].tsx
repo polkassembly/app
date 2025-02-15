@@ -1,19 +1,18 @@
+import { PostCard } from "@/lib/components/feed/postCard";
 import IconArrowRightEnclosed from "@/lib/components/icons/icon-arrow-right-enclosed";
-import IconBack from "@/lib/components/icons/icon-back";
-import { IconPoints } from "@/lib/components/icons/icon-points";
+import BottomButton from "@/lib/components/shared/BottomButton";
 import HorizontalSeparator from "@/lib/components/shared/HorizontalSeparator";
 import { ThemedText } from "@/lib/components/ThemedText";
 import { ThemedView } from "@/lib/components/ThemedView";
-import { PostCard } from "@/lib/components/feed/postCard";
+import { TopBar } from "@/lib/components/Topbar";
 import { Colors } from "@/lib/constants/Colors";
 import { useThemeColor } from "@/lib/hooks/useThemeColor";
 import useProposalByIndex from "@/lib/net/queries/useProposalByIndex";
 import { Link, useLocalSearchParams } from "expo-router";
 import React from "react";
-import { StyleSheet, TouchableOpacity, View } from "react-native";
+import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Svg, { Rect } from "react-native-svg";
-import { TopBar } from "@/lib/components/Topbar";
 
 export default function ProposalDetailScreen() {
   const { index } = useLocalSearchParams<{ index: string }>();
@@ -35,9 +34,9 @@ export default function ProposalDetailScreen() {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor }}>
-      <View>
-        <TopBar />
+      <TopBar />
 
+      <ScrollView contentContainerStyle={{ paddingBottom: 32 }}>
         <View style={{ paddingInline: 16, paddingBottom: 16, gap: 8 }}>
           <ThemedText type="titleLarge">Proposal #{index}</ThemedText>
 
@@ -53,7 +52,11 @@ export default function ProposalDetailScreen() {
 
           <SeeDetails />
         </View>
-      </View>
+      </ScrollView>
+
+      <Link asChild href={`/proposal/vote/${index}`}>
+        <BottomButton>Cast Your Vote</BottomButton>
+      </Link>
     </SafeAreaView>
   );
 }
