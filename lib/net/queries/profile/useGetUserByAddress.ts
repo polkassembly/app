@@ -1,6 +1,6 @@
 import client from "@/lib/net/client";
 import { QueryBuilder } from "../builder";
-import UserProfile from "./types";
+import { UserProfile } from "@/lib/types";
 
 interface GetUserByAddressRequest {
 	address: string;

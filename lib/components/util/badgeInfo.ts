@@ -1,4 +1,5 @@
-import { EUserBadge } from "@/lib/net/queries/profile/types";
+import { EUserBadge } from "@/lib/types/user";
+
 
 export interface BadgeDetails {
 	img: string;

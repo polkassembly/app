@@ -35,4 +35,4 @@ interface UserProfile {
     profileDetails: ProfileDetails;
 };
 
-export default UserProfile;
+export { UserProfile };
