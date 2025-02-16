@@ -13,7 +13,7 @@ import { useThemeColor } from "@/lib/hooks/useThemeColor";
 import useAddCartItem from "@/lib/net/queries/actions/useAddCartItem";
 import Slider from "@react-native-community/slider";
 import { AxiosError } from "axios";
-import { useLocalSearchParams } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { FunctionComponent, useState } from "react";
 import {
   Image,
@@ -43,7 +43,7 @@ export default function BatchVotingScreen() {
   const [conviction, setConviction] = useState<number>(0);
 
   async function onPressAddToCart() {
-    const res = await mutateAsync({
+    await mutateAsync({
       amount: {
         [vote]: amount.toString(),
       },
@@ -54,7 +54,8 @@ export default function BatchVotingScreen() {
       // This will likely have to come from navigation params
       proposalType: "ReferendumV2",
     });
-    console.log(res);
+
+    router.push(`/proposal/vote/success/${conviction}/${amount}`);
   }
 
   return (
