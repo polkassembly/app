@@ -4,6 +4,7 @@ import NavigateButton from "./NavigateButton";
 import OutlinedText from "./OutlinedText";
 import ThemedCheckbox from "./ThemedCheckbox";
 import ThemedTextInput from "./ThemedTextInput";
+import UserAvatar from "./UserAvatar";
 
 export {
 	BottomSheet,
@@ -11,5 +12,6 @@ export {
 	NavigateButton,
 	OutlinedText,
 	ThemedCheckbox,
-	ThemedTextInput
+	ThemedTextInput,
+	UserAvatar
 };

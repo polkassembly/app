@@ -16,7 +16,7 @@ interface postFullDetailsProps {
 	onClose: () => void;
 }
 
-export function PostFullDetails({ post, onClose }: postFullDetailsProps) {
+function PostFullDetails({ post, onClose }: postFullDetailsProps) {
 
 	if (post.onChainInfo === undefined) return null;
 
@@ -180,3 +180,5 @@ const styles = StyleSheet.create({
 		justifyContent: "space-between",
 	}
 });
+
+export default PostFullDetails;

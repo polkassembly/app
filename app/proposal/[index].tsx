@@ -4,34 +4,45 @@ import { IconPoints } from "@/lib/components/icons/icon-points";
 import HorizontalSeparator from "@/lib/components/shared/HorizontalSeparator";
 import { ThemedText } from "@/lib/components/ThemedText";
 import { ThemedView } from "@/lib/components/ThemedView";
-import PostCard from "@/lib/components/feed/postCard";
 import { Colors } from "@/lib/constants/Colors";
 import { useThemeColor } from "@/lib/hooks/useThemeColor";
 import { useProposalByIndex } from "@/lib/net/queries/post/useProposalByIndex";
 import { Link, useLocalSearchParams } from "expo-router";
 import React, { useState } from "react";
-import { StyleSheet, TouchableOpacity, View } from "react-native";
+import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Svg, { Rect } from "react-native-svg";
 import { BottomSheet } from "@/lib/components/shared";
-import { PostFullDetails } from "@/lib/components/feed/postFullDetails";
 import { EProposalType } from "@/lib/types";
+import { useProposalComments } from "@/lib/net/queries/post/useProposalComment";
+import { CommentList, PostCard, PostFullDetails } from "@/lib/components/feed";
+import { useGetUserById } from "@/lib/net/queries/profile";
+import { KEY_ID, storage } from "@/lib/store";
+import { isLoading } from "expo-font";
+import { Skeleton } from "moti/skeleton";
 
 export function TopBar() {
   const textColor = useThemeColor({}, "text");
   const backgroundColor = useThemeColor({}, "secondaryBackground");
 
-  // FIXME: fetch balance
-  const coins = 7896;
+  const id = storage.getString(KEY_ID)
+
+  if (!id) {
+    return;
+  }
+
+  const { data: user, isLoading: isUserLoading, isError: isUserError } = useGetUserById({ pathParams: { userId: id } })
 
   return (
     <View
       style={{
-        paddingInline: 8,
-        paddingBlock: 16,
+        paddingHorizontal: 8,
+        paddingVertical: 16,
         backgroundColor: backgroundColor,
         flexDirection: "row",
         justifyContent: "space-between",
+        alignContent: "center",
+        marginTop: 20
       }}
     >
       <Link asChild href={".."}>
@@ -46,36 +57,55 @@ export function TopBar() {
         style={{
           flexDirection: "row",
           gap: 16,
-          paddingInline: 8,
+          paddingHorizontal: 8,
           alignItems: "center",
         }}
       >
-        <IconPoints />
-        <ThemedText type="titleLarge">{coins}</ThemedText>
+        {
+          !isUserError &&
+          <>
+            <IconPoints />
+            {
+              isUserLoading ?
+                <Skeleton width={90} /> :
+                <ThemedText type="titleLarge">{user?.profileScore}</ThemedText>
+
+            }
+          </>
+        }
       </View>
     </View>
   );
 }
 
 export default function ProposalDetailScreen() {
-  const { index, proposalType } = useLocalSearchParams<{ index: string, proposalType: EProposalType }>();
+  const { index, proposalType } = useLocalSearchParams<{
+    index: string;
+    proposalType: EProposalType;
+  }>();
   const [open, setOpen] = useState(false);
-  const { data: proposal, isLoading } = useProposalByIndex({ proposalType: proposalType, indexOrHash: index });
+  const { data: proposal, isLoading } = useProposalByIndex({
+    proposalType: proposalType,
+    indexOrHash: index,
+  });
+
+  // Fetch comments for the proposal using the new hook.
+  const { data: comments, isLoading: commentsLoading } = useProposalComments({ proposalType: proposalType, proposalId: index });
 
   const backgroundColor = useThemeColor({}, "secondaryBackground");
 
   if (isLoading || !proposal) {
-    // FIXME: Loading screen?
+    // FIXME: Replace with a proper loading indicator.
     return <></>;
   }
 
   return (
     <>
       <SafeAreaView style={{ flex: 1, backgroundColor }}>
-        <View>
+        <ScrollView>
           <TopBar />
 
-          <View style={{ paddingInline: 16, paddingBottom: 16, gap: 8 }}>
+          <View style={{ paddingHorizontal: 16, paddingBottom: 16, gap: 8 }}>
             <ThemedText type="titleLarge">Proposal #{index}</ThemedText>
 
             <StatusBar status={proposal?.onChainInfo?.status} dot={2500} />
@@ -89,8 +119,26 @@ export default function ProposalDetailScreen() {
             <Summary status={proposal?.onChainInfo?.status} />
 
             <SeeDetails setOpen={setOpen} />
+
+            {/* Comments Section */}
+            <ThemedView type="background" style={[
+              styles.box,
+              {
+                alignContent: "stretch",
+                gap: 16,
+              },
+            ]}>
+              <ThemedText type="titleMedium">Replies</ThemedText>
+              {commentsLoading ? (
+                <ThemedText type="bodyMedium1">
+                  Loading comments...
+                </ThemedText>
+              ) : (
+                <CommentList comments={comments || []} />
+              )}
+            </ThemedView>
           </View>
-        </View>
+        </ScrollView>
       </SafeAreaView>
 
       <BottomSheet open={open} onClose={() => setOpen(false)}>
@@ -218,8 +266,8 @@ function StatusChip({ status }: StatusChipProps) {
   return (
     <View
       style={{
-        paddingBlock: 2,
-        paddingInline: 4,
+        paddingVertical: 2,
+        paddingHorizontal: 4,
         borderRadius: 4,
         backgroundColor: "#5BC044",
       }}
@@ -249,7 +297,7 @@ function VoteRatioIndicator({ aye }: VoteRatioIndicatorProps) {
   const nayPerc = 100 - ayePerc;
 
   return (
-    <Svg height={5} viewBox="0 0 100% 100%">
+    <Svg height={5} viewBox="0 0 100 5">
       <Rect
         width={`${ayePerc}%`}
         height={"100%"}
@@ -278,27 +326,25 @@ function SeeDetails({ setOpen }: SeeDetailsProps) {
   const backgroundColor = useThemeColor({}, "background");
 
   return (
-    <>
-      <TouchableOpacity onPress={() => setOpen(true)}>
-        <View
-          style={[
-            styles.box,
-            {
-              flexDirection: "row",
-              paddingInline: 16,
-              paddingBlock: 16,
-              backgroundColor: backgroundColor,
-              alignContent: "center",
-              justifyContent: "space-between",
-              gap: 16,
-            },
-          ]}
-        >
-          <ThemedText type="bodyMedium1">See Full Details</ThemedText>
-          <IconArrowRightEnclosed />
-        </View>
-      </TouchableOpacity>
-    </>
+    <TouchableOpacity onPress={() => setOpen(true)}>
+      <View
+        style={[
+          styles.box,
+          {
+            flexDirection: "row",
+            paddingHorizontal: 16,
+            paddingVertical: 16,
+            backgroundColor: backgroundColor,
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: 16,
+          },
+        ]}
+      >
+        <ThemedText type="bodyMedium1">See Full Details</ThemedText>
+        <IconArrowRightEnclosed />
+      </View>
+    </TouchableOpacity>
   );
 }
 
@@ -306,8 +352,8 @@ const styles = StyleSheet.create({
   box: {
     borderColor: Colors.dark.stroke,
     borderWidth: 1,
-    paddingInline: 12,
-    paddingBlock: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 12,
     borderRadius: 12,
   },
 });
