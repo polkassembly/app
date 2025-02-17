@@ -124,8 +124,9 @@ function VoteCard({
           <ThemedText type="bodySmall" colorName="mediumText">
             Available:{" "}
           </ThemedText>
+          {/* FIXME: Fetch balance from wallet */}
           <ThemedText type="bodySmall" colorName="ctaText">
-            25k DOT{" "}
+            
           </ThemedText>
         </View>
       </View>
@@ -190,7 +191,7 @@ function ConvictionSlider({
         step={1 / STEPS}
         lowerLimit={0}
         upperLimit={1}
-        onValueChange={(value) => {
+        onValueChange={(value: number) => {
           onConvictionChange(transformOut(value));
         }}
       />

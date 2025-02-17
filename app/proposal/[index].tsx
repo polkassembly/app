@@ -22,18 +22,9 @@ import { BottomSheet } from "@/lib/components/shared";
 import { EProposalType } from "@/lib/types";
 import { useProposalComments } from "@/lib/net/queries/post/useProposalComment";
 import { CommentList, PostCard, PostFullDetails } from "@/lib/components/feed";
+import { EmptyViewWithTabBarHeight } from "@/lib/components/util";
 
-export default function ProposalDetailScreen() {
-  const backgroundColor = useThemeColor({}, "secondaryBackground");
-  return (
-    <SafeAreaView style={{ flex: 1, backgroundColor }}>
-      <TopBar />
-      <ProposalDetailScreenImpl />
-    </SafeAreaView>
-  );
-}
-
-function ProposalDetailScreenImpl() {
+export default function ProposalDetailScreenImpl() {
   const [open, setOpen] = useState(false);
   const { index, proposalType } = useLocalSearchParams<{ index: string, proposalType: EProposalType }>();
   const { data: proposal, isLoading } = useProposalByIndex({
@@ -60,44 +51,53 @@ function ProposalDetailScreenImpl() {
 
   return (
     <>
-      <ScrollView contentContainerStyle={{ paddingBottom: 32 }}>
-        <View style={{ paddingInline: 16, paddingBottom: 16, gap: 8 }}>
-          <ThemedText type="titleLarge">Proposal #{index}</ThemedText>
+      <SafeAreaView style={{ flex: 1, backgroundColor }}>
+        <TopBar />
+        <ScrollView>
+          <View style={{ paddingInline: 16, paddingBottom: 16, gap: 8 }}>
+            <ThemedText type="titleLarge">Proposal #{index}</ThemedText>
 
-          <StatusBar status={proposal?.onChainInfo?.status} dot={2500} />
+            <StatusBar status={proposal?.onChainInfo?.status} dot={2500} />
 
-          <PostCard
-            post={proposal}
-            withoutViewMore
-            containerType="background"
-          />
+            <PostCard
+              post={proposal}
+              withoutViewMore
+              containerType="background"
+            />
 
-          <Summary status={proposal?.onChainInfo?.status} />
+            <Summary status={proposal?.onChainInfo?.status} />
 
-          <SeeDetails setOpen={setOpen} />
+            <SeeDetails setOpen={() => {
+              setOpen(false);
+            }} />
 
-          {/* Comments Section */}
-          <ThemedView type="background" style={[
-            styles.box,
-            {
-              alignContent: "stretch",
-              gap: 16,
-            },
-          ]}>
-            <ThemedText type="titleMedium">Replies</ThemedText>
-            {commentsLoading ? (
-              <ThemedText type="bodyMedium1">
-                Loading comments...
-              </ThemedText>
-            ) : (
-              <CommentList comments={comments || []} />
-            )}
-          </ThemedView>
-          <Link asChild href={`/proposal/vote/${index}`}>
-            <BottomButton>Cast Your Vote</BottomButton>
-          </Link>
-        </View>
-      </ScrollView>
+            {/* Comments Section */}
+            <ThemedView type="background" style={[
+              styles.box,
+              {
+                alignContent: "stretch",
+                gap: 16,
+                marginBottom: 50
+              },
+            ]}>
+              <ThemedText type="titleMedium">Replies</ThemedText>
+              {commentsLoading ? (
+                <ThemedText type="bodyMedium1">
+                  Loading comments...
+                </ThemedText>
+              ) : (
+                <CommentList comments={comments || []} />
+              )}
+            </ThemedView>
+          </View>
+        </ScrollView>
+
+      </SafeAreaView>
+      <View style={{ position: "absolute", bottom: -10, left: 0, right: 0 }}>
+        <Link asChild href={`/proposal/vote/${index}`}>
+          <BottomButton>Cast Your Vote</BottomButton>
+        </Link>
+      </View>
 
       <BottomSheet open={open} onClose={() => setOpen(false)}>
         <PostFullDetails onClose={() => setOpen(false)} post={proposal} />

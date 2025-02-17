@@ -30,6 +30,7 @@ const BottomButton = forwardRef<View, ButtonButtonProps>(
             borderTopEndRadius: "100%",
             borderWidth: 1,
             borderColor: colorStroke,
+            backgroundColor: "#000000"
           },
           style,
         ]}
