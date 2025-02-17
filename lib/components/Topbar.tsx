@@ -5,22 +5,26 @@ import { useThemeColor } from "../hooks/useThemeColor";
 import IconBack from "./icons/icon-back";
 import { IconPoints } from "./icons/icon-points";
 import { ThemedText } from "./ThemedText";
+import { KEY_ID, storage } from "../store";
+import { useGetUserById } from "../net/queries/profile";
+import { Skeleton } from "moti/skeleton";
 
 export function TopBar() {
   const textColor = useThemeColor({}, "text");
   const backgroundColor = useThemeColor({}, "secondaryBackground");
 
-  // FIXME: fetch balance
-  const coins = 7896;
+  const id = storage.getString(KEY_ID);
+
+  const { data: userInfo, isLoading: isUserInfoLoading } = useGetUserById({ pathParams: { userId: id || "" } })
 
   return (
     <View
       style={{
         paddingInline: 8,
-        paddingBlock: 16,
         backgroundColor: backgroundColor,
         flexDirection: "row",
         justifyContent: "space-between",
+        marginTop: 40
       }}
     >
       <Link asChild href={".."}>
@@ -40,7 +44,9 @@ export function TopBar() {
         }}
       >
         <IconPoints />
-        <ThemedText type="titleLarge">{coins}</ThemedText>
+        {
+          isUserInfoLoading ? <Skeleton width={50} /> : <ThemedText type="titleLarge">{userInfo?.profileScore}</ThemedText>
+        }
       </View>
     </View>
   );
