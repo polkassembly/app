@@ -65,6 +65,7 @@ function Content() {
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="+not-found" />
         <Stack.Screen name="proposal" options={{ headerShown: false }} />
+        <Stack.Screen name="batch-vote" options={{ headerShown: false}} />
       </Stack>
       <StatusBar style="auto" />
     </ThemeProvider>

@@ -1,6 +1,7 @@
+import React, { ReactNode } from "react";
+import { StyleProp, ViewStyle, TouchableOpacity } from "react-native";
 import { Link } from "expo-router";
 import { View } from "moti";
-import { TouchableOpacity } from "react-native";
 import { useThemeColor } from "../hooks/useThemeColor";
 import IconBack from "./icons/icon-back";
 import { IconPoints } from "./icons/icon-points";
@@ -9,45 +10,59 @@ import { KEY_ID, storage } from "../store";
 import { useGetUserById } from "../net/queries/profile";
 import { Skeleton } from "moti/skeleton";
 
-export function TopBar() {
+interface TopBarProps {
+  style?: StyleProp<ViewStyle>;
+  childrenLink?: string;
+  children?: ReactNode;
+}
+
+export function TopBar({
+  style,
+  children,
+  childrenLink,
+}: TopBarProps): JSX.Element {
   const textColor = useThemeColor({}, "text");
   const backgroundColor = useThemeColor({}, "secondaryBackground");
 
   const id = storage.getString(KEY_ID);
-
-  const { data: userInfo, isLoading: isUserInfoLoading } = useGetUserById({ pathParams: { userId: id || "" } })
+  const { data: userInfo, isLoading: isUserInfoLoading } = useGetUserById({
+    pathParams: { userId: id || "" },
+  });
 
   return (
     <View
-      style={{
-        paddingInline: 8,
-        backgroundColor: backgroundColor,
-        flexDirection: "row",
-        justifyContent: "space-between",
-        marginTop: 40
-      }}
-    >
-      <Link asChild href={".."}>
-        <TouchableOpacity>
-          <View style={{ padding: 8 }}>
-            <IconBack color={textColor} iconWidth={24} iconHeight={24} />
-          </View>
-        </TouchableOpacity>
-      </Link>
-
-      <View
-        style={{
-          flexDirection: "row",
-          gap: 16,
-          paddingInline: 8,
-          alignItems: "center",
-        }}
-      >
-        <IconPoints />
+      style={[
         {
-          isUserInfoLoading ? <Skeleton width={50} /> : <ThemedText type="titleLarge">{userInfo?.profileScore}</ThemedText>
+          paddingHorizontal: 8,
+          backgroundColor,
+          flexDirection: "row",
+          alignItems: "center",
+          marginTop: 20,
+        },
+        style,
+      ]}
+    >
+      <View style={{ flex: 1, flexDirection: "row", justifyContent: "flex-start" ,alignItems: "center", gap: 10}}>
+        <Link asChild href="..">
+          <TouchableOpacity>
+            <View style={{ padding: 8 }}>
+              <IconBack color={textColor} iconWidth={24} iconHeight={24} />
+            </View>
+          </TouchableOpacity>
+        </Link>
+        {
+          children
         }
       </View>
+
+      <IconPoints />
+      {isUserInfoLoading ? (
+        <Skeleton width={50} />
+      ) : (
+        <ThemedText type="titleLarge">
+          {userInfo?.profileScore}
+        </ThemedText>
+      )}
     </View>
   );
 }

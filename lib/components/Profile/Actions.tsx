@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, Dimensions, View } from "react-native";
+import { StyleSheet, Dimensions, View, Touchable, TouchableOpacity } from "react-native";
 import { ThemedView } from "../ThemedView";
 import { Video, ResizeMode } from "expo-av";
 import { LinearGradient } from "expo-linear-gradient";
@@ -7,6 +7,7 @@ import { IconBounties, IconDelegate, IconVote, IconCalendar, IconNews, IconSetti
 import { ThemedText } from "../ThemedText";
 import { Ionicons } from "@expo/vector-icons";
 import { Skeleton } from "moti/skeleton";
+import { router } from "expo-router";
 
 function Actions() {
   const screenWidth = Dimensions.get("window").width; // Get the full screen width
@@ -35,7 +36,9 @@ function Actions() {
       <View style={{ flexDirection: "column", gap: 20 }}>
         <ThemedText type="bodySmall">EXPLORE ACTIONS</ThemedText>
         <View style={styles.container2}>
+          <TouchableOpacity onPress={() => router.push("/batch-vote")}>
           <IconView Icon={IconVote} text="Batch Vote" />
+          </TouchableOpacity>
           <IconView Icon={IconDelegate} text="Delegate" />
 
           <ThemedView type="container" style = {styles.referContainer}>
