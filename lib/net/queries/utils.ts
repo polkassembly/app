@@ -71,4 +71,17 @@ function saveIdFromToken(token: string): void {
   }
 }
 
-export { tokenPairFromResponse, saveIdFromToken };
+function getUserIdFromStorage(): string {
+  try {
+    const id = storage.getString(KEY_ID);
+    if (!id) {
+      throw new Error("User ID not present in store.");
+    }
+    return id;
+  } catch (e) {
+    console.error("Unable to read user's ID: ", e);
+    throw e;
+  }
+}
+
+export { getUserIdFromStorage, tokenPairFromResponse, saveIdFromToken };

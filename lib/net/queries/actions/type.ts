@@ -152,3 +152,14 @@ export interface UserActivity {
 	updatedAt: Date;
 	message?: string;
 }
+export interface CartItemParams {
+  postIndexOrHash: string;
+  proposalType: string;
+  decision: "aye" | "nay" | "abstain";
+  amount: {
+    aye?: string;
+    nay?: string;
+    abstain?: string;
+  };
+  conviction: number;
+}
