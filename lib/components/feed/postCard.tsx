@@ -37,7 +37,10 @@ import { KEY_ID, storage } from "@/lib/store";
 type PostCardProps = {
   post: Post;
   withoutViewMore?: boolean;
+  withoutActions?: boolean;
   containerType?: ContainerType;
+  descriptionLength?: number;
+  children?: React.ReactNode;
 };
 
 const defaultAvatarUri = "@/assets/images/profile/default-avatar.png";
@@ -45,7 +48,10 @@ const defaultAvatarUri = "@/assets/images/profile/default-avatar.png";
 function PostCard({
   post,
   withoutViewMore = false,
+  withoutActions = false,
   containerType = "container",
+  descriptionLength = 300,
+  children,
 }: PostCardProps) {
   const [isLiked, setIsLiked] = useState<boolean>(
     post.userReaction?.reaction === EReaction.like
@@ -58,7 +64,6 @@ function PostCard({
     post.metrics.reactions.dislike
   );
   const [comments, setComments] = useState<number>(post.metrics.comments);
-
   const [showCommentBox, setShowCommentBox] = useState<boolean>(false);
   const [commentText, setCommentText] = useState<string>("");
 
@@ -159,19 +164,24 @@ function PostCard({
         htmlContent={post.htmlContent}
         createdAt={post.onChainInfo?.createdAt}
         proposerUsername={proposerInfo?.username || "User"}
+        descriptionLength={descriptionLength}
       />
+      {/* Render children between read-more and actions */}
+      {children}
       <HorizontalSeparator />
-      <PostActions
-        isLiked={isLiked}
-        isDisliked={isDisliked}
-        likes={likes}
-        dislikes={dislikes}
-        comments={comments}
-        onLike={handleLike}
-        onDislike={handleDislike}
-        onToggleComment={() => setShowCommentBox((prev) => !prev)}
-        onBookmark={toggleBookmark}
-      />
+      {!withoutActions && (
+        <PostActions
+          isLiked={isLiked}
+          isDisliked={isDisliked}
+          likes={likes}
+          dislikes={dislikes}
+          comments={comments}
+          onLike={handleLike}
+          onDislike={handleDislike}
+          onToggleComment={() => setShowCommentBox((prev) => !prev)}
+          onBookmark={toggleBookmark}
+        />
+      )}
       {showCommentBox && (
         <CommentBox
           commentText={commentText}
@@ -225,6 +235,7 @@ interface PostDetailsProps {
   htmlContent: string;
   createdAt?: string;
   proposerUsername: string;
+  descriptionLength?: number;
 }
 
 function PostDetails({
@@ -232,15 +243,16 @@ function PostDetails({
   htmlContent,
   createdAt,
   proposerUsername,
+  descriptionLength = 300,
 }: PostDetailsProps) {
   const [isReadMoreClicked, setIsReadMoreClicked] = useState(false);
   const [postDescriptionHTML, setPostDescriptionHTML] = useState(
-    trimText(htmlContent, 300)
+    trimText(htmlContent, descriptionLength)
   );
 
   const toggleReadMore = () => {
     if (isReadMoreClicked) {
-      setPostDescriptionHTML(trimText(htmlContent, 300));
+      setPostDescriptionHTML(trimText(htmlContent, descriptionLength));
     } else {
       setPostDescriptionHTML(htmlContent);
     }
@@ -269,7 +281,9 @@ function PostDetails({
         baseStyle={{ color: Colors.dark.text }}
         contentWidth={300}
       />
-      <TouchableOpacity onPress={toggleReadMore}>
+      {
+      htmlContent.length > descriptionLength &&
+        <TouchableOpacity onPress={toggleReadMore}>
         <View style={styles.readMoreContainer}>
           <ThemedText type="bodySmall" style={styles.readMore}>
             Read {isReadMoreClicked ? "Less" : "More"}
@@ -281,6 +295,7 @@ function PostDetails({
           />
         </View>
       </TouchableOpacity>
+      }
     </View>
   );
 }
