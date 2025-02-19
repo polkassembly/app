@@ -2,7 +2,9 @@ import { Colors } from "@/lib/constants/Colors";
 import React from "react";
 import {
   ActivityIndicator,
+  StyleProp,
   StyleSheet,
+  TextStyle,
   TouchableOpacity,
   View,
 } from "react-native";
@@ -35,6 +37,7 @@ const styles = StyleSheet.create({
 export interface ThemedButtonProps extends TouchableOpacityProps {
   text?: string;
   textType?: ThemedTextProps["type"];
+  textStyle?: StyleProp<TextStyle>;
   bordered?: boolean;
   borderless?: boolean;
   loading?: boolean;
@@ -48,6 +51,7 @@ const ThemedButton = React.forwardRef<View, ThemedButtonProps>(
       bordered = false,
       borderless = false,
       loading = false,
+      textStyle,
       ...props
     },
     ref
@@ -75,6 +79,7 @@ const ThemedButton = React.forwardRef<View, ThemedButtonProps>(
           type={textType}
           darkColor={bordered || borderless ? Colors.dark.accent : undefined}
           lightColor={bordered || borderless ? Colors.light.accent : undefined}
+          style={textStyle}
         >
           {text}
         </ThemedText>
