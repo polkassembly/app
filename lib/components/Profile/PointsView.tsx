@@ -1,8 +1,7 @@
 import React from "react";
-import { Pressable, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import Svg, { Defs, LinearGradient, Rect, Stop } from "react-native-svg";
 import { IconPoints } from "@/lib/components/icons/icon-points";
-import { IconQR } from "@/lib/components/icons/icon-qr";
 import { ThemedText } from "@/lib/components/ThemedText";
 import { Skeleton } from "moti/skeleton";
 
@@ -14,7 +13,7 @@ function PointsView( { points }: pointsViewProps ) {
   return (
     <View style={styles.pointsWrapper}>
       {/* Background SVG */}
-      <Svg style={styles.background} viewBox="0 0 100% 100%">
+      <Svg style={styles.background} height="100%" width="100%">
         <Defs>
           <LinearGradient id="grad" gradientTransform="rotate(45)">
             <Stop offset="0" stopColor="#df6a7d" stopOpacity={1} />
@@ -51,15 +50,6 @@ function PointsView( { points }: pointsViewProps ) {
             </ThemedText>
           </View>
         </View>
-        <Pressable
-          style={{
-            backgroundColor: "#FFFFFF12",
-            padding: 8,
-            borderRadius: 8,
-          }}
-        >
-          <IconQR iconHeight={28} iconWidth={28} />
-        </Pressable>
       </View>
     </View>
   );
@@ -84,7 +74,7 @@ const styles = StyleSheet.create({
   pointsContainer: {
     display: "flex",
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "flex-start",
     alignItems: "center",
     paddingVertical: 16,
     paddingHorizontal: 20,
