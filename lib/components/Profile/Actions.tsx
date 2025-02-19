@@ -1,13 +1,14 @@
-import React from "react";
-import { StyleSheet, Dimensions, View, Touchable, TouchableOpacity } from "react-native";
-import { ThemedView } from "../ThemedView";
-import { Video, ResizeMode } from "expo-av";
-import { LinearGradient } from "expo-linear-gradient";
-import { IconBounties, IconDelegate, IconVote, IconCalendar, IconNews, IconSettings } from "../icons/Profile";
-import { ThemedText } from "../ThemedText";
 import { Ionicons } from "@expo/vector-icons";
-import { Skeleton } from "moti/skeleton";
+import { ResizeMode, Video } from "expo-av";
+import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
+import { openBrowserAsync } from "expo-web-browser";
+import { Skeleton } from "moti/skeleton";
+import React from "react";
+import { Dimensions, StyleSheet, TouchableOpacity, View } from "react-native";
+import { IconBounties, IconCalendar, IconDelegate, IconNews, IconSettings, IconVote } from "../icons/Profile";
+import { ThemedText } from "../ThemedText";
+import { ThemedView } from "../ThemedView";
 
 function Actions() {
   const screenWidth = Dimensions.get("window").width; // Get the full screen width
@@ -39,17 +40,11 @@ function Actions() {
           <TouchableOpacity onPress={() => router.push("/batch-vote")}>
           <IconView Icon={IconVote} text="Batch Vote" />
           </TouchableOpacity>
-          <IconView Icon={IconDelegate} text="Delegate" />
 
-          <ThemedView type="container" style = {styles.referContainer}>
-            <ThemedText type="titleMedium">RDJ68</ThemedText>
-            <Ionicons name="copy" size={24} color="white" />
-          </ThemedView>
-        </View>
+          <TouchableOpacity onPress={() => openBrowserAsync("https://polkadot.polkassembly.io/delegation")}>
+            <IconView Icon={IconDelegate} text="Delegate" />
+          </TouchableOpacity>
 
-        <View style={styles.container2}>
-          <IconView Icon={IconBounties} text="Bounties" />
-          <IconView Icon={IconCalendar} text="Calendar" />
           <IconView Icon={IconNews} text="News" />
           <IconView Icon={IconSettings} text="Settings" />
         </View>
