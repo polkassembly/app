@@ -135,9 +135,7 @@ export default function Browser() {
 function TitleSection() {
   const id = storage.getString(KEY_ID);
 
-  const { data } = useGetUserById({
-    pathParams: { userId: id ?? "" },
-  });
+  const { data } = useGetUserById(id || "");
 
   return (
     <ThemedView type="container" style={styles.titleContainer}>
