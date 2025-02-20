@@ -1,13 +1,18 @@
+import { useQuery } from "@tanstack/react-query";
 import client from "@/lib/net/client";
-import { QueryBuilder } from "../builder";
 import { UserProfile } from "@/lib/types";
 
-interface GetUserByIdRequest {
-	userId: string;
-}
+const buildUserByIdQueryKey = (userId: string) => ["user", "id", userId];
 
-const useGetUserById = new QueryBuilder<GetUserByIdRequest, unknown, unknown, UserProfile>(client)
-	.method("GET")
-	.url(`users/id/{userId}`)
-	.build();
-export default useGetUserById;
+const useGetUserById = (userId: string) => {
+  return useQuery<UserProfile, Error>({
+    queryKey: buildUserByIdQueryKey(userId),
+    queryFn: async () => {
+      const response = await client.get<UserProfile>(`users/id/${userId}`);
+      return response.data;
+    },
+    refetchOnWindowFocus: false,
+  });
+};
+
+export { useGetUserById, buildUserByIdQueryKey };

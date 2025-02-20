@@ -1,4 +1,5 @@
-import useGetUserByAddress from "./useGetUserByAddress";
-import useGetUserById from "./useGetUserById";
+import useEditProfile from "./useEditProfile";
+import { useGetUserByAddress } from "./useGetUserByAddress";
+import { useGetUserById } from "./useGetUserById";
 
-export { useGetUserByAddress, useGetUserById };
+export { useEditProfile, useGetUserByAddress, useGetUserById };
