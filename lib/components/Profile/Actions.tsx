@@ -45,7 +45,10 @@ function Actions() {
             <IconView Icon={IconDelegate} text="Delegate" />
           </TouchableOpacity>
 
-          <IconView Icon={IconNews} text="News" />
+          <TouchableOpacity onPress={() => router.push("/news")}>
+            <IconView Icon={IconNews} text="News" />
+          </TouchableOpacity>
+
           <IconView Icon={IconSettings} text="Settings" />
         </View>
       </View>
