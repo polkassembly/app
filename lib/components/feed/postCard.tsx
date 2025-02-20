@@ -78,7 +78,7 @@ function PostCard({
     isError: isUserInfoError,
   } = useGetUserById(id || "");
 
-  const { data: proposerInfo } = useGetUserByAddress(id || "");
+  const { data: proposerInfo } = useGetUserByAddress(post.onChainInfo?.proposer || "");
 
   const handleLike = () => {
     if (isLiked) {
@@ -281,19 +281,19 @@ function PostDetails({
         contentWidth={300}
       />
       {
-      htmlContent.length > descriptionLength &&
+        htmlContent.length > descriptionLength &&
         <TouchableOpacity onPress={toggleReadMore}>
-        <View style={styles.readMoreContainer}>
-          <ThemedText type="bodySmall" style={styles.readMore}>
-            Read {isReadMoreClicked ? "Less" : "More"}
-          </ThemedText>
-          <Ionicons
-            name={isReadMoreClicked ? "chevron-up" : "chevron-down"}
-            size={16}
-            color={Colors.dark.accent}
-          />
-        </View>
-      </TouchableOpacity>
+          <View style={styles.readMoreContainer}>
+            <ThemedText type="bodySmall" style={styles.readMore}>
+              Read {isReadMoreClicked ? "Less" : "More"}
+            </ThemedText>
+            <Ionicons
+              name={isReadMoreClicked ? "chevron-up" : "chevron-down"}
+              size={16}
+              color={Colors.dark.accent}
+            />
+          </View>
+        </TouchableOpacity>
       }
     </View>
   );
