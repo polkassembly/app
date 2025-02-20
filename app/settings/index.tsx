@@ -42,7 +42,7 @@ export default function Settings() {
   const [isSaving, setIsSaving] = useState(false);
 
   const { data: user, isLoading: isUserLoading, isError: isUserError } = useGetUserById(userId || "");
-  const { mutate: editProfile} = useEditProfile();
+  const { mutate: editProfile } = useEditProfile();
 
   useEffect(() => {
     if (user) {
@@ -92,48 +92,49 @@ export default function Settings() {
   // Save profile data
   async function handleSave() {
     setIsSaving(true);
-    let uploadedImageUrl: string | undefined;
-    if (user?.profileDetails?.image !== userProfilePicture && userProfilePicture) { 
-      let imageUri: string;
-      // If not a string, convert the asset to a URI
-      if (typeof userProfilePicture === "string") {
-        imageUri = userProfilePicture;
-      } else {
-        const asset = Asset.fromModule(userProfilePicture);
-        if (!asset.localUri) {
-          await asset.downloadAsync();
+    try {
+      let uploadedImageUrl: string | undefined;
+      if (user?.profileDetails?.image !== userProfilePicture && userProfilePicture) {
+        let imageUri: string;
+        // If not a string, convert the asset to a URI
+        if (typeof userProfilePicture === "string") {
+          imageUri = userProfilePicture;
+        } else {
+          const asset = Asset.fromModule(userProfilePicture);
+          if (!asset.localUri) {
+            await asset.downloadAsync();
+          }
+          if (!asset.localUri) {
+            Toast.show({
+              type: "error",
+              text1: "Upload Error",
+              text2: "Failed to process image.",
+            });
+            setIsSaving(false);
+            return;
+          }
+          imageUri = asset.localUri;
         }
-        Toast.show({
-          type: "error",
-          text1: "Upload Error",
-          text2: "Failed to process image.",
-        });
-        if (!asset.localUri) {
-          Toast.show({
-            type: "error",
-            text1: "Upload Error",
-            text2: "Failed to process image.",
-          });
-          return;
-        }
-        imageUri = asset.localUri;
-      }
-      try {
         uploadedImageUrl = await uploadImageToStorage(imageUri);
-      } catch (error) {
-        Toast.show({
-          type: "error",
-          text1: "Upload Error",
-          text2: "Failed to upload image. Please try again.",
-        });
-        return;
       }
+      editProfile({
+        username,
+        image: uploadedImageUrl,
+      });
+      Toast.show({
+        type: "success",
+        text1: "Success",
+        text2: "Profile updated successfully",
+      });
+      setIsSaving(false);
+    } catch (error) {
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: error instanceof Error ? error.message : "Failed to update profile",
+      });
+      setIsSaving(false);
     }
-    editProfile({
-      username,
-      image: uploadedImageUrl,
-    });
-    setIsSaving(false);
   }
 
   // Default avatars to choose from.

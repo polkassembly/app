@@ -39,11 +39,6 @@ export async function uploadImageToStorage(imageUri: string): Promise<string> {
       },
     });
 
-    if (!res.ok) {
-      throw new Error("Image upload failed with status " + res.status);
-    }
-
-
     const uploadData = await res.json();
     if (uploadData?.success) {
       return uploadData.data.url;
