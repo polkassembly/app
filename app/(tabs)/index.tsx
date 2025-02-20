@@ -74,7 +74,7 @@ function Profile() {
     if (!id && pathName === "/(tabs)") router.replace("/auth");
   }, [id, router, pathName])
 
-  const { data, isLoading, isError, error } = useGetUserById({ pathParams: { userId: id } });
+  const { data, isLoading, isError, error } = useGetUserById(id);
 
   // Handle error state
   if (isError) {
@@ -95,7 +95,7 @@ function Profile() {
   return (
     <ThemedView type="background" style={styles.container}>
       <ScrollView style={styles.scrollView} contentContainerStyle={{ gap: 20 }}>
-        <ProfileHeader username={data.username} avatarUrl={data.profileDetails?.coverImage} />
+        <ProfileHeader username={data.username} avatarUrl={data.profileDetails?.image} />
         <PointsView points={data.profileScore} />
         <Badges />
         <Actions />

@@ -45,11 +45,7 @@ function PostFullDetails({ post, onClose }: postFullDetailsProps) {
 function OnChainUserInfo({ address }: { address: string | undefined }) {
 	if (!address) return null;
 
-	const { data, isLoading, isError } = useGetUserByAddress({
-		pathParams: {
-			address
-		}
-	})
+	const { data, isLoading, isError } = useGetUserByAddress(address)
 
 	if (isError) return (
 		<View style={{ flexDirection: "row", gap: 8, alignItems: "center" }}>

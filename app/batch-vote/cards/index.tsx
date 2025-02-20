@@ -5,7 +5,6 @@ import {
   TouchableOpacity,
   Text,
   ActivityIndicator,
-  ScrollView,
 } from "react-native";
 import Swiper from "react-native-deck-swiper";
 import { useLocalSearchParams, useRouter } from "expo-router";
@@ -206,7 +205,7 @@ const ProposalVotingScreen: React.FC = () => {
               <ThemedText style={{ color: "#000" }}>Preview</ThemedText>
               <ThemedText style={{ color: colorStroke }}>{cartItems.length} Proposals</ThemedText>
             </View>
-            <TouchableOpacity onPress={() => router.push("batch-vote/voted-proposals")}>
+            <TouchableOpacity onPress={() => router.push("/batch-vote/voted-proposals")}>
               <View style={[styles.iconView, { backgroundColor: accent }]}>
                 <Ionicons name="chevron-forward" color="white" size={30} />
               </View>

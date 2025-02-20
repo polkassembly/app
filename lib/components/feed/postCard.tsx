@@ -76,10 +76,9 @@ function PostCard({
     data: userInfo,
     isLoading: isUserInfoLoading,
     isError: isUserInfoError,
-  } = useGetUserById({ pathParams: { userId: id || "" } });
-  const { data: proposerInfo } = useGetUserByAddress({
-    pathParams: { address: post.onChainInfo?.proposer || "" },
-  });
+  } = useGetUserById(id || "");
+
+  const { data: proposerInfo } = useGetUserByAddress(id || "");
 
   const handleLike = () => {
     if (isLiked) {

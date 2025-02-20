@@ -19,21 +19,17 @@ interface TopBarProps {
 export function TopBar({
   style,
   children,
-  childrenLink,
 }: TopBarProps): JSX.Element {
   const textColor = useThemeColor({}, "text");
   const backgroundColor = useThemeColor({}, "secondaryBackground");
 
   const id = storage.getString(KEY_ID);
-  const { data: userInfo, isLoading: isUserInfoLoading } = useGetUserById({
-    pathParams: { userId: id || "" },
-  });
+  const { data: userInfo, isLoading: isUserInfoLoading } = useGetUserById(id || "");
 
   return (
     <View
       style={[
         {
-          paddingHorizontal: 8,
           backgroundColor,
           flexDirection: "row",
           alignItems: "center",
@@ -42,11 +38,11 @@ export function TopBar({
         style,
       ]}
     >
-      <View style={{ flex: 1, flexDirection: "row", justifyContent: "flex-start" ,alignItems: "center", gap: 10}}>
+      <View style={{ flex: 1, flexDirection: "row", justifyContent: "flex-start" ,alignItems: "center"}}>
         <Link asChild href="..">
           <TouchableOpacity>
-            <View style={{ padding: 8 }}>
-              <IconBack color={textColor} iconWidth={24} iconHeight={24} />
+            <View style={{ paddingVertical: 10 }}>
+              <IconBack color={textColor} iconWidth={30} iconHeight={30} />
             </View>
           </TouchableOpacity>
         </Link>
@@ -54,7 +50,6 @@ export function TopBar({
           children
         }
       </View>
-
       <IconPoints />
       {isUserInfoLoading ? (
         <Skeleton width={50} />
