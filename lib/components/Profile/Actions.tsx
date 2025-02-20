@@ -37,11 +37,11 @@ function Actions() {
         <ThemedText type="bodySmall">EXPLORE ACTIONS</ThemedText>
         <View style={styles.container2}>
           <TouchableOpacity onPress={() => router.push("/batch-vote")}>
-          <IconView Icon={IconVote} text="Batch Vote" />
+            <IconView Icon={IconVote} text="Batch Vote" />
           </TouchableOpacity>
           <IconView Icon={IconDelegate} text="Delegate" />
 
-          <ThemedView type="container" style = {styles.referContainer}>
+          <ThemedView type="container" style={styles.referContainer}>
             <ThemedText type="titleMedium">RDJ68</ThemedText>
             <Ionicons name="copy" size={24} color="white" />
           </ThemedView>
@@ -51,7 +51,9 @@ function Actions() {
           <IconView Icon={IconBounties} text="Bounties" />
           <IconView Icon={IconCalendar} text="Calendar" />
           <IconView Icon={IconNews} text="News" />
-          <IconView Icon={IconSettings} text="Settings" />
+          <TouchableOpacity onPress={() => router.push("/settings")}>
+            <IconView Icon={IconSettings} text="Settings" />
+          </TouchableOpacity>
         </View>
       </View>
     </ThemedView>
@@ -59,7 +61,7 @@ function Actions() {
 }
 
 const ActionsSkeleton = () => (
-  <ThemedView type="secondaryBackground" style={{padding: 10}}>
+  <ThemedView type="secondaryBackground" style={{ padding: 10 }}>
     <View style={styles.actionsWrapper}>
       <Skeleton height={16} width={120} />
       <View style={styles.actionsRow}>
@@ -90,15 +92,15 @@ const styles = StyleSheet.create({
     paddingVertical: 29,
     flexDirection: "column",
     position: "relative",
-    overflow: "hidden", 
+    overflow: "hidden",
   },
   video: {
     ...StyleSheet.absoluteFillObject,
-    top: 0, 
-    left: 0, 
+    top: 0,
+    left: 0,
   },
   gradient: {
-    ...StyleSheet.absoluteFillObject, 
+    ...StyleSheet.absoluteFillObject,
     top: 0,
     left: 0,
   },

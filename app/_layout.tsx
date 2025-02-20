@@ -63,6 +63,7 @@ function Content() {
       <Stack>
         <Stack.Screen name="auth" options={{ headerShown: false }} />
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen name="settings" options={{ headerShown: false }} />
         <Stack.Screen name="+not-found" />
         <Stack.Screen name="proposal" options={{ headerShown: false }} />
         <Stack.Screen name="batch-vote" options={{ headerShown: false}} />
