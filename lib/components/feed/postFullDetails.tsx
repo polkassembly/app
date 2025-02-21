@@ -13,6 +13,7 @@ import VerticalSeprator from "../shared/VerticalSeprator";
 import { UserAvatar } from "../shared";
 import { formatBnBalance } from "@/lib/util";
 import { NETWORKS_DETAILS } from "@/lib/constants/networks";
+import ProposalPeriodStatus from "./ProposalPeriodStatus";
 
 interface postFullDetailsProps {
 	post: Post;
@@ -38,6 +39,7 @@ function PostFullDetails({ post, onClose }: postFullDetailsProps) {
 				<View style={{ gap: 20 }}>
 					<ProposerInfo address={post.onChainInfo?.proposer} amount={0} />
 					<BenificiariesInfo benificiaries={post.onChainInfo?.beneficiaries || []} />
+					<ProposalPeriodStatus proposal={post} />
 					<Timeline timeline={post.onChainInfo?.timeline || []} proposalType={post.proposalType} />
 				</View>
 			</ScrollView>
@@ -45,7 +47,7 @@ function PostFullDetails({ post, onClose }: postFullDetailsProps) {
 	);
 }
 
-function OnChainUserInfo({ address, amount, assetId }: { address: string | undefined, amount?: string, assetId?: string | null }) {
+function UserInfo({ address, amount, assetId }: { address: string | undefined, amount?: string, assetId?: string | null }) {
 	if (!address) return null;
 
 	const { data: user, isLoading, isError } = useGetUserByAddress(address)
@@ -85,7 +87,7 @@ function ProposerInfo({ address, amount }: { address: string | undefined; amount
 		<ThemedView type="background" style={styles.proposerInfo}>
 			<View style={styles.flexRowJustifySpaceBetween}>
 				<ThemedText type="bodyLarge">Proposer</ThemedText>
-				<OnChainUserInfo address={address} />
+				<UserInfo address={address} />
 			</View>
 			{/* <View style={styles.flexRowJustifySpaceBetween}>
 				<ThemedText type="bodyLarge">Deposit</ThemedText>
@@ -101,9 +103,8 @@ function BenificiariesInfo({ benificiaries }: { benificiaries: IBeneficiary[] })
 			<ThemedText type="bodyLarge">Benificiaries</ThemedText>
 			<View style={{ flexDirection: "column", gap: 8}}>
 			{benificiaries.map((benificary) => (
-				console.log(benificary),
 				<View style={{ flexDirection: "row", gap: 8, alignItems: "center" }}>
-					<OnChainUserInfo key={benificary.address} address={benificary.address} amount={benificary.amount} assetId={benificary.assetId}/>
+					<UserInfo key={benificary.address} address={benificary.address} amount={benificary.amount} assetId={benificary.assetId}/>
 				</View>
 			))}
 			</View>
