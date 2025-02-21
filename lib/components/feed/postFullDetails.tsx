@@ -6,7 +6,7 @@ import IconClose from "../icons/shared/icon-close";
 import HorizontalSeparator from "../shared/HorizontalSeparator";
 import { useGetUserByAddress } from "@/lib/net/queries/profile";
 import { Skeleton } from "moti/skeleton";
-import { ENetwork, EProposalStatus, EProposalType, IBeneficiary, IStatusHistoryItem } from "@/lib/types/post";
+import { ENetwork, EProposalStatus, EProposalType, IBeneficiary, IStatusHistoryItem, OnChainPostInfo } from "@/lib/types/post";
 import { getFormattedDateTime } from "@/lib/util/dateUtil";
 import IconEdit from "../icons/proposals/icon-edit";
 import VerticalSeprator from "../shared/VerticalSeprator";
@@ -14,6 +14,8 @@ import { UserAvatar } from "../shared";
 import { formatBnBalance } from "@/lib/util";
 import { NETWORKS_DETAILS } from "@/lib/constants/networks";
 import ProposalPeriodStatus from "./ProposalPeriodStatus";
+import { pascalToNormal } from "@/lib/util/stringUtil";
+import { Dayjs } from "dayjs";
 
 interface postFullDetailsProps {
 	post: Post;
@@ -41,6 +43,7 @@ function PostFullDetails({ post, onClose }: postFullDetailsProps) {
 					<BenificiariesInfo benificiaries={post.onChainInfo?.beneficiaries || []} />
 					<ProposalPeriodStatus proposal={post} />
 					<Timeline timeline={post.onChainInfo?.timeline || []} proposalType={post.proposalType} />
+					<OnChainInfo onChainInfo={post.onChainInfo} />
 				</View>
 			</ScrollView>
 		</ThemedView>
@@ -62,20 +65,20 @@ function UserInfo({ address, amount, assetId }: { address: string | undefined, a
 
 	return (
 		<View style={{ flexDirection: "row", gap: 8, alignItems: "center" }}>
-			<View style={{ width: 24, height: 24, borderRadius: 12}}>
-			{
-				user.profileDetails.image ? (
-					<UserAvatar avatarUrl={user.profileDetails.image} width={24} height={24} />
-				) : (
-					// Implement Identicon
-					<UserAvatar avatarUrl="" width={24} height={24} />
-				)
-			}
+			<View style={{ width: 24, height: 24, borderRadius: 12 }}>
+				{
+					user.profileDetails.image ? (
+						<UserAvatar avatarUrl={user.profileDetails.image} width={24} height={24} />
+					) : (
+						// Implement Identicon
+						<UserAvatar avatarUrl="" width={24} height={24} />
+					)
+				}
 			</View>
 			<ThemedText type="bodySmall">{user?.username}</ThemedText>
 			{
 				amount && assetId && (
-					<ThemedText>{"(" + formatBnBalance(amount, {withUnit: true, numberAfterComma: 2, compactNotation: true }, ENetwork.POLKADOT, assetId === NETWORKS_DETAILS[`${ENetwork.POLKADOT}`].tokenSymbol? null: assetId)  + ")"}</ThemedText>
+					<ThemedText>{"(" + formatBnBalance(amount, { withUnit: true, numberAfterComma: 2, compactNotation: true }, ENetwork.POLKADOT, assetId === NETWORKS_DETAILS[`${ENetwork.POLKADOT}`].tokenSymbol ? null : assetId) + ")"}</ThemedText>
 				)
 			}
 		</View>
@@ -101,12 +104,12 @@ function BenificiariesInfo({ benificiaries }: { benificiaries: IBeneficiary[] })
 	return (
 		<ThemedView type="background" style={[styles.proposerInfo, styles.flexRowJustifySpaceBetween]}>
 			<ThemedText type="bodyLarge">Benificiaries</ThemedText>
-			<View style={{ flexDirection: "column", gap: 8}}>
-			{benificiaries.map((benificary) => (
-				<View style={{ flexDirection: "row", gap: 8, alignItems: "center" }}>
-					<UserInfo key={benificary.address} address={benificary.address} amount={benificary.amount} assetId={benificary.assetId}/>
-				</View>
-			))}
+			<View style={{ flexDirection: "column", gap: 8 }}>
+				{benificiaries.map((benificary) => (
+					<View style={{ flexDirection: "row", gap: 8, alignItems: "center" }}>
+						<UserInfo key={benificary.address} address={benificary.address} amount={benificary.amount} assetId={benificary.assetId} />
+					</View>
+				))}
 			</View>
 		</ThemedView>
 	);
@@ -128,7 +131,7 @@ function Timeline({ timeline, proposalType }: TimelineItemProps) {
 
 				<View style={{ flexDirection: "column", gap: 15, flex: 1 }}>
 					<ThemedText type="bodyLarge" colorName="accent">{proposalType}</ThemedText>
-					<View style = {{ gap : 16}}>
+					<View style={{ gap: 16 }}>
 						{timeline.map((item) => (
 							<View key={item.timestamp + item.status} style={{ gap: 8 }}>
 								<TimelineItem item={item} />
@@ -167,6 +170,51 @@ function TimelineItemStatus({ status }: { status: EProposalStatus }) {
 		<View style={{ flexDirection: "row", gap: 8, alignItems: "center" }}>
 			<ThemedText type="bodySmall" style={{ backgroundColor: colorMap[status] || "#666666", paddingHorizontal: 4, paddingVertical: 2, borderRadius: 4 }}>{status}</ThemedText>
 		</View>
+	)
+}
+
+function OnChainInfo({ onChainInfo }: { onChainInfo: OnChainPostInfo }) {
+	return (
+		<ThemedView type="background" style={styles.proposerInfo}>
+			<ThemedText type="bodyMedium1">Metadata</ThemedText>
+
+			<View style={{ flexDirection: "column", gap: 16, width: "100%" }}>
+				<View style={{ flexDirection: "row" }}>
+					<ThemedText style={{ width: "30%" }} type="bodySmall">Proposal Hash</ThemedText>
+					<ThemedText style={{ flex: 1, flexWrap: "wrap" }} type="bodySmall">{onChainInfo.hash}</ThemedText>
+				</View>
+				<HorizontalSeparator />
+				<View style={{ flexDirection: "row" }}>
+					<ThemedText style={{ width: "30%" }} type="bodySmall">Origin</ThemedText>
+					<ThemedText type="bodySmall">{pascalToNormal(onChainInfo.origin || "")}</ThemedText>
+				</View>
+				<HorizontalSeparator />
+				{
+					onChainInfo.createdAt && (
+						<>
+							<View style={{ flexDirection: "row" }}>
+								<ThemedText style={{ width: "30%" }} type="bodySmall">Created At</ThemedText>
+								<ThemedText type="bodySmall">{(new Date(onChainInfo.createdAt)).toLocaleDateString()}</ThemedText>
+							</View>
+							<HorizontalSeparator />
+						</>
+					)
+				}
+
+				<View style={{ flexDirection: "row" }}>
+					<ThemedText style={{ width: "30%" }} type="bodySmall">Description</ThemedText>
+					<ThemedText type="bodySmall">{onChainInfo.description}</ThemedText>
+				</View>
+				<HorizontalSeparator />
+
+				<View style={{ flexDirection: "row" }}>
+					<ThemedText style={{ width: "30%" }} type="bodySmall">Status</ThemedText>
+					<ThemedText type="bodySmall">{pascalToNormal(onChainInfo.status)}</ThemedText>
+				</View>
+				<HorizontalSeparator />
+
+			</View>
+		</ThemedView>
 	)
 }
 
