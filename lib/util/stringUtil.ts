@@ -1,3 +1,7 @@
+function pascalToNormal(text: string): string {
+  return text.replace(/([A-Z])/g, ' $1').trim();
+};
+
 function toTitleCase(str: string): string {
   return str
     .toLowerCase()
@@ -11,4 +15,4 @@ function trimText(text: string, maxLength: number): string {
 }
 
 
-export { trimText, toTitleCase };
+export { pascalToNormal, trimText, toTitleCase };
