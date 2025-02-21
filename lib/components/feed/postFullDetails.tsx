@@ -6,10 +6,13 @@ import IconClose from "../icons/shared/icon-close";
 import HorizontalSeparator from "../shared/HorizontalSeparator";
 import { useGetUserByAddress } from "@/lib/net/queries/profile";
 import { Skeleton } from "moti/skeleton";
-import { EProposalStatus, EProposalType, IBeneficiary, IStatusHistoryItem } from "@/lib/types/post";
+import { ENetwork, EProposalStatus, EProposalType, IBeneficiary, IStatusHistoryItem } from "@/lib/types/post";
 import { getFormattedDateTime } from "@/lib/util/dateUtil";
 import IconEdit from "../icons/proposals/icon-edit";
 import VerticalSeprator from "../shared/VerticalSeprator";
+import { UserAvatar } from "../shared";
+import { formatBnBalance } from "@/lib/util";
+import { NETWORKS_DETAILS } from "@/lib/constants/networks";
 
 interface postFullDetailsProps {
 	post: Post;
@@ -33,7 +36,7 @@ function PostFullDetails({ post, onClose }: postFullDetailsProps) {
 				<HorizontalSeparator style={{ marginTop: 15, marginBottom: 25 }} />
 
 				<View style={{ gap: 20 }}>
-					<ProposerInfo address={post.onChainInfo?.proposer} coins={7000000} />
+					<ProposerInfo address={post.onChainInfo?.proposer} amount={0} />
 					<BenificiariesInfo benificiaries={post.onChainInfo?.beneficiaries || []} />
 					<Timeline timeline={post.onChainInfo?.timeline || []} proposalType={post.proposalType} />
 				</View>
@@ -42,52 +45,68 @@ function PostFullDetails({ post, onClose }: postFullDetailsProps) {
 	);
 }
 
-function OnChainUserInfo({ address }: { address: string | undefined }) {
+function OnChainUserInfo({ address, amount, assetId }: { address: string | undefined, amount?: string, assetId?: string | null }) {
 	if (!address) return null;
 
-	const { data, isLoading, isError } = useGetUserByAddress(address)
+	const { data: user, isLoading, isError } = useGetUserByAddress(address)
 
 	if (isError) return (
 		<View style={{ flexDirection: "row", gap: 8, alignItems: "center" }}>
-			<ThemedText type="bodySmall">User</ThemedText>
 			<View style={{ width: 24, height: 24, backgroundColor: "grey", borderRadius: 12 }} />
+			<ThemedText type="bodySmall">User</ThemedText>
 		</View>
 	)
-	if (isLoading || !data) return <Skeleton width={116} />
+	if (isLoading || !user) return <Skeleton width={116} />
 
 	return (
 		<View style={{ flexDirection: "row", gap: 8, alignItems: "center" }}>
-			<ThemedText type="bodySmall">{data?.username}</ThemedText>
-			{/* Implement identicon */}
-			<View style={{ width: 24, height: 24, backgroundColor: "grey" }} />
+			<View style={{ width: 24, height: 24, borderRadius: 12}}>
+			{
+				user.profileDetails.image ? (
+					<UserAvatar avatarUrl={user.profileDetails.image} width={24} height={24} />
+				) : (
+					// Implement Identicon
+					<UserAvatar avatarUrl="" width={24} height={24} />
+				)
+			}
+			</View>
+			<ThemedText type="bodySmall">{user?.username}</ThemedText>
+			{
+				amount && assetId && (
+					<ThemedText>{"(" + formatBnBalance(amount, {withUnit: true, numberAfterComma: 2, compactNotation: true }, ENetwork.POLKADOT, assetId === NETWORKS_DETAILS[`${ENetwork.POLKADOT}`].tokenSymbol? null: assetId)  + ")"}</ThemedText>
+				)
+			}
 		</View>
 	)
 }
 
-function ProposerInfo({ address, coins }: { address: string | undefined; coins: number }) {
+function ProposerInfo({ address, amount }: { address: string | undefined; amount: number }) {
 	return (
 		<ThemedView type="background" style={styles.proposerInfo}>
 			<View style={styles.flexRowJustifySpaceBetween}>
 				<ThemedText type="bodyLarge">Proposer</ThemedText>
 				<OnChainUserInfo address={address} />
 			</View>
-			<View style={styles.flexRowJustifySpaceBetween}>
-				<ThemedText type="bodyLarge">Coins</ThemedText>
+			{/* <View style={styles.flexRowJustifySpaceBetween}>
+				<ThemedText type="bodyLarge">Deposit</ThemedText>
 				<ThemedText type="bodySmall">{coins}</ThemedText>
-			</View>
+			</View> */}
 		</ThemedView>
 	);
 }
 
 function BenificiariesInfo({ benificiaries }: { benificiaries: IBeneficiary[] }) {
 	return (
-		<ThemedView type="background" style={styles.proposerInfo}>
+		<ThemedView type="background" style={[styles.proposerInfo, styles.flexRowJustifySpaceBetween]}>
 			<ThemedText type="bodyLarge">Benificiaries</ThemedText>
+			<View style={{ flexDirection: "column", gap: 8}}>
 			{benificiaries.map((benificary) => (
+				console.log(benificary),
 				<View style={{ flexDirection: "row", gap: 8, alignItems: "center" }}>
-					<OnChainUserInfo key={benificary.address} address={benificary.address} />
+					<OnChainUserInfo key={benificary.address} address={benificary.address} amount={benificary.amount} assetId={benificary.assetId}/>
 				</View>
 			))}
+			</View>
 		</ThemedView>
 	);
 }
@@ -108,7 +127,7 @@ function Timeline({ timeline, proposalType }: TimelineItemProps) {
 
 				<View style={{ flexDirection: "column", gap: 15, flex: 1 }}>
 					<ThemedText type="bodyLarge" colorName="accent">{proposalType}</ThemedText>
-					<View>
+					<View style = {{ gap : 16}}>
 						{timeline.map((item) => (
 							<View key={item.timestamp + item.status} style={{ gap: 8 }}>
 								<TimelineItem item={item} />

@@ -22,7 +22,10 @@ import { BottomSheet } from "@/lib/components/shared";
 import { EProposalType } from "@/lib/types";
 import { useProposalComments } from "@/lib/net/queries/post/useProposalComment";
 import { CommentList, PostCard, PostFullDetails } from "@/lib/components/feed";
-import { EmptyViewWithTabBarHeight } from "@/lib/components/util";
+import { ENetwork, IVoteMetrics } from "@/lib/types/post";
+import { formatBnBalance } from "@/lib/util";
+import BN from "bn.js";
+import { calculatePercentage } from "@/lib/util/calculatePercentage";
 
 export default function ProposalDetailScreenImpl() {
   const [open, setOpen] = useState(false);
@@ -49,6 +52,13 @@ export default function ProposalDetailScreenImpl() {
     );
   }
 
+
+  const ayeValue = new BN(proposal.onChainInfo?.voteMetrics?.aye.value || '0');
+  const nayValue = new BN(proposal.onChainInfo?.voteMetrics?.nay.value || '0');
+  const totalValue = ayeValue.add(nayValue);
+  const ayePercent = calculatePercentage(proposal.onChainInfo?.voteMetrics?.aye.value || '0', totalValue);
+  const nayPercent = calculatePercentage(proposal.onChainInfo?.voteMetrics?.nay.value || '0', totalValue);
+
   return (
     <>
       <SafeAreaView style={{ flex: 1, backgroundColor }}>
@@ -57,18 +67,21 @@ export default function ProposalDetailScreenImpl() {
           <View style={{ paddingInline: 16, paddingBottom: 16, gap: 8 }}>
             <ThemedText type="titleLarge">Proposal #{index}</ThemedText>
 
-            <StatusBar status={proposal?.onChainInfo?.status} dot={2500} />
-
             <PostCard
               post={proposal}
               withoutViewMore
               containerType="background"
             />
 
-            <Summary status={proposal?.onChainInfo?.status} />
+            <Summary
+              status={proposal?.onChainInfo?.status}
+              voteMetrics={proposal.onChainInfo?.voteMetrics}
+              ayePercent={ayePercent}
+              nayPercent={nayPercent}
+            />
 
             <SeeDetails setOpen={() => {
-              setOpen(false);
+              setOpen(true);
             }} />
 
             {/* Comments Section */}
@@ -133,10 +146,18 @@ function StatusBar({ status, dot }: StatusBarProps) {
 
 interface SummaryProps {
   status: string | undefined;
+  voteMetrics: IVoteMetrics | undefined;
+  ayePercent: number;
+  nayPercent: number;
 }
 
-function Summary({ status }: SummaryProps) {
+function Summary({ ayePercent, status, voteMetrics, nayPercent }: SummaryProps) {
   const backgroundColor = useThemeColor({}, "background");
+
+  const formatter = new Intl.NumberFormat('en-US', { notation: 'compact' });
+  const formatBalance = (balance: string) => {
+    return formatter.format(Number(formatBnBalance(balance, { withThousandDelimitor: false }, ENetwork.POLKADOT)));
+  };
 
   return (
     <ThemedView
@@ -162,17 +183,17 @@ function Summary({ status }: SummaryProps) {
       </View>
 
       <View style={{ gap: 4 }}>
-        <VoteRatioIndicator aye={0.3} />
+        <VoteRatioIndicator ayePercent={ayePercent} nayPercent={nayPercent} />
 
         <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
           <ThemedText type="bodySmall" colorName="mediumText">
-            Aye:
+            Aye: {ayePercent}%
           </ThemedText>
           <ThemedText type="bodySmall" colorName="mediumText">
-            To pass:
+            To pass: 50%
           </ThemedText>
           <ThemedText type="bodySmall" colorName="mediumText">
-            Nay:
+            Nay: {nayPercent}%
           </ThemedText>
         </View>
       </View>
@@ -187,29 +208,41 @@ function Summary({ status }: SummaryProps) {
       >
         <View
           style={{
-            gap: 16,
+            marginHorizontal: 8,
             flexDirection: "row",
             justifyContent: "space-between",
           }}
         >
-          <ThemedText>Aye</ThemedText>
-          <ThemedText colorName="mediumText">23K KSM</ThemedText>
+          <View style={{ flexDirection: "row", gap: 16 }}>
+            <ThemedText>Aye</ThemedText>
+            <ThemedText colorName="mediumText">{
+              formatBnBalance(
+                voteMetrics?.aye.value,
+                {
+                  withUnit: true,
+                  numberAfterComma: 2,
+                  compactNotation: true,
+                },
+                ENetwork.POLKADOT,
+              )
+            }</ThemedText>
+          </View>
 
-          <ThemedText>Issuance</ThemedText>
-          <ThemedText colorName="mediumText">23K KSM</ThemedText>
-        </View>
-        <View
-          style={{
-            gap: 16,
-            flexDirection: "row",
-            justifyContent: "space-between",
-          }}
-        >
-          <ThemedText>Nay</ThemedText>
-          <ThemedText colorName="mediumText">23K KSM</ThemedText>
-
-          <ThemedText>Support</ThemedText>
-          <ThemedText colorName="mediumText">23K KSM</ThemedText>
+          <View style={{ flexDirection: "row", gap:  16}}>
+            <ThemedText>Nay</ThemedText>
+            <ThemedText colorName="mediumText">{
+              formatBnBalance(
+                voteMetrics?.nay.value,
+                {
+                  withUnit: true,
+                  numberAfterComma: 2,
+                  compactNotation: true,
+                },
+                ENetwork.POLKADOT,
+              )
+            }
+            </ThemedText>
+          </View>
         </View>
       </View>
     </ThemedView>
@@ -244,18 +277,19 @@ function StatusChip({ status }: StatusChipProps) {
 }
 
 interface VoteRatioIndicatorProps {
-  aye: number;
+  ayePercent: number;
+  nayPercent: number
 }
 
-function VoteRatioIndicator({ aye }: VoteRatioIndicatorProps) {
+function VoteRatioIndicator({ ayePercent, nayPercent }: VoteRatioIndicatorProps) {
   const colorAye = "#31C766";
   const colorNay = "#E5304F";
 
-  const ayePerc = aye * 100;
-  const nayPerc = 100 - ayePerc;
+  const ayePerc = ayePercent < 1 ? ayePercent * 100 : ayePercent;
+  const nayPerc = nayPercent < 1 ? nayPercent * 100 : nayPercent;
 
   return (
-    <Svg height={5} viewBox="0 0 100 5">
+    <Svg height={5}>
       <Rect
         width={`${ayePerc}%`}
         height={"100%"}
@@ -300,7 +334,7 @@ function SeeDetails({ setOpen }: SeeDetailsProps) {
         ]}
       >
         <ThemedText type="bodyMedium1">See Full Details</ThemedText>
-        <IconArrowRightEnclosed />
+        <IconArrowRightEnclosed iconWidth={30} iconHeight={30} color="#FFF" />
       </View>
     </TouchableOpacity>
   );

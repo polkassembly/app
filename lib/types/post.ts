@@ -1,3 +1,14 @@
+export enum EGovType {
+	GOV_1 = 'gov_1',
+	OPENGOV = 'opengov'
+}
+
+export enum EAssets {
+	DED = 'DED',
+	USDT = 'USDT',
+	USDC = 'USDC'
+}
+
 export enum EReaction {
   like = "like",
   dislike = "dislike",
@@ -179,6 +190,7 @@ export interface Post {
   };
   onChainInfo?: OnChainPostInfo;
   userReaction?: Reaction;
+  preimageArgs?: Record<string, unknown>;
 }
 
 export interface Feed {
