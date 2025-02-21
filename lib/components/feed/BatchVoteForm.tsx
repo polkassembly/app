@@ -11,13 +11,7 @@ import { Colors } from "@/lib/constants/Colors";
 import { useThemeColor } from "@/lib/hooks/useThemeColor";
 import Slider from "@react-native-community/slider";
 import { FunctionComponent } from "react";
-import {
-  Image,
-  StyleSheet,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Image, StyleSheet, TextInput, TouchableOpacity, View } from "react-native";
 
 export type Vote = "aye" | "nay" | "abstain";
 
@@ -26,7 +20,7 @@ function getLockPeriodText(conviction: number): string {
   return `${(2 ** (conviction - 1)) * 7} Days Lockup`;
 }
 
-interface BatchVoteFormProps {
+export interface BatchVoteFormProps {
   vote: Vote;
   onVoteChange: (value: Vote) => void;
   ayeAmount: number;
@@ -41,6 +35,7 @@ interface BatchVoteFormProps {
   singleVoteMode?: boolean;
   onConfirm?: () => void;
   onCancel?: () => void;
+  hideButtons?: boolean; // New prop to conditionally hide the button group
 }
 
 export function BatchVoteForm({
@@ -58,6 +53,7 @@ export function BatchVoteForm({
   singleVoteMode = false,
   onConfirm,
   onCancel,
+  hideButtons = false,
 }: BatchVoteFormProps) {
   const handleVoteChange = (nextVote: Vote) => {
     onVoteChange(nextVote);
@@ -71,6 +67,7 @@ export function BatchVoteForm({
   return (
     <ThemedView style={[styles.card, { gap: 16 }]}>
       <TriStateButtons selected={vote} onSelectionChanged={handleVoteChange} />
+
       {vote === "aye" && (
         <>
           <SectionHeader title="Aye Amount" Icon={IconAye} color="#2ED47A" />
@@ -89,8 +86,10 @@ export function BatchVoteForm({
           <AmountInput value={abstainAmount} onChange={setAbstainAmount} />
         </>
       )}
+
       <ThemedText type="bodyMedium1">Conviction</ThemedText>
       <ConvictionSlider conviction={conviction} onConvictionChange={setConviction} />
+
       <ThemedView
         type="secondaryBackground"
         style={{
@@ -107,29 +106,32 @@ export function BatchVoteForm({
         </View>
         <ThemedText>{getLockPeriodText(conviction)}</ThemedText>
       </ThemedView>
-      {singleVoteMode ? (
-        <View style={{ flexDirection: "row", gap: 8 }}>
+
+      {/* Render the buttons only if hideButtons is false */}
+      {!hideButtons &&
+        (singleVoteMode ? (
+          <View style={{ flexDirection: "row", gap: 8 }}>
+            <ThemedButton
+              onPress={onCancel}
+              text="Cancel"
+              textType="titleMedium"
+              style={{ flex: 1, paddingVertical: 8 }}
+            />
+            <ThemedButton
+              onPress={onConfirm}
+              text="Confirm"
+              textType="titleMedium"
+              style={{ flex: 1, paddingVertical: 8 }}
+            />
+          </View>
+        ) : (
           <ThemedButton
-            onPress={onCancel}
-            text="Cancel"
+            onPress={onSaveAndNext}
+            text="Save and Next"
             textType="titleMedium"
-            style={{ flex: 1, paddingVertical: 8 }}
+            style={{ paddingVertical: 8 }}
           />
-          <ThemedButton
-            onPress={onConfirm}
-            text="Confirm"
-            textType="titleMedium"
-            style={{ flex: 1, paddingVertical: 8 }}
-          />
-        </View>
-      ) : (
-        <ThemedButton
-          onPress={onSaveAndNext}
-          text="Save and Next"
-          textType="titleMedium"
-          style={{ paddingVertical: 8 }}
-        />
-      )}
+        ))}
     </ThemedView>
   );
 }
