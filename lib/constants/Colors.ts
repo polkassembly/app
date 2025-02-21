@@ -1,19 +1,8 @@
-/**
- * Below are the colors that are used in the app. The colors are defined in the light and dark mode.
- * There are many other ways to style your app. For example, [Nativewind](https://www.nativewind.dev/), [Tamagui](https://tamagui.dev/), [unistyles](https://reactnativeunistyles.vercel.app), etc.
- */
-
+// Colors.ts
 import { DarkTheme, DefaultTheme } from "@react-navigation/native";
 
 const tintColorDark = "#fff";
 const tintColorLight = "#fff";
-
-/**
- * The primary color of the app. While design spec has 'ctaStroke' and 'ctaText'
- * which are the exact same colors, those names do not match the semantics of
- * how the color is actually used. Hence this alias.
- * This occurs as background of buttons, links text color and other things with emphasis.
- */
 const colorAccent = "#E5007A";
 
 export const Colors = {
@@ -62,6 +51,29 @@ export const Colors = {
     backdrop: "#222121A6",
   },
 };
+
+export const bgColors = {
+  light: {
+    originBadges: {
+      default: "#ECECEC",
+      auction: "#ffede5",
+      community: "#dff4ff",
+      council: "#FFEDF2",
+      technical: "#FEF7DD",
+      general: "#FDF5F0",
+    },
+  }, 
+  dark: {
+    originBadges: {
+      default: "#333333",
+      auction: "#FFF4EB",
+      community: "#1C2945",
+      council: "#C8D9FE",
+      technical: "#302921",
+      general: "#380E0E",
+    },
+  }
+}
 
 export const NavigationLightTheme = {
   ...DefaultTheme,

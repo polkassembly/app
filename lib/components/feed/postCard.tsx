@@ -5,6 +5,7 @@ import {
   View,
   TextInput,
   Image,
+  Share,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import RenderHTML from "react-native-render-html";
@@ -33,6 +34,11 @@ import useDeleteReaction from "@/lib/net/queries/actions/useDeleteReaction";
 import useAddComment from "@/lib/net/queries/actions/useAddComment";
 import { useGetUserByAddress, useGetUserById } from "@/lib/net/queries/profile";
 import { KEY_ID, storage } from "@/lib/store";
+import { formatBnBalance, getOriginBadgeStyle } from "@/lib/util";
+import { NETWORKS_DETAILS } from "@/lib/constants/networks";
+import { groupBeneficiariesByAsset } from "@/lib/util/groupBenificaryByAsset";
+import { ENetwork, EPostOrigin } from "@/lib/types/post";
+import VerticalSeprator from "../shared/VerticalSeprator";
 
 type PostCardProps = {
   post: Post;
@@ -41,6 +47,10 @@ type PostCardProps = {
   containerType?: ContainerType;
   descriptionLength?: number;
   children?: React.ReactNode;
+};
+
+const formatOriginText = (text: string): string => {
+  return text.replace(/([A-Z])/g, " $1").trim();
 };
 
 const defaultAvatarUri = "@/assets/images/profile/default-avatar.png";
@@ -78,7 +88,9 @@ function PostCard({
     isError: isUserInfoError,
   } = useGetUserById(id || "");
 
-  const { data: proposerInfo } = useGetUserByAddress(post.onChainInfo?.proposer || "");
+  const { data: proposerInfo } = useGetUserByAddress(
+    post.onChainInfo?.proposer || ""
+  );
 
   const handleLike = () => {
     if (isLiked) {
@@ -154,9 +166,20 @@ function PostCard({
     setComments((prev) => prev + 1);
   };
 
+  const handleShare = async () => {
+    try {
+      // Update the share URL as needed for your app
+      const shareUrl = `https://example.com/proposal/${post.index}?proposalType=${post.proposalType}`;
+      const message = `Check out this post: "${post.title}"\n\nRead more: ${shareUrl}`;
+      await Share.share({ message });
+    } catch (error: any) {
+      console.error("Error sharing:", error.message);
+    }
+  };
+
   return (
     <ThemedView style={styles.container} type={containerType}>
-      <PostHeader index={post.index} status={post.onChainInfo?.status} />
+      <PostHeader index={post.index} status={post.onChainInfo?.status} post={post} />
       <HorizontalSeparator />
       <PostDetails
         title={post.title}
@@ -164,6 +187,7 @@ function PostCard({
         createdAt={post.onChainInfo?.createdAt}
         proposerUsername={proposerInfo?.username || "User"}
         descriptionLength={descriptionLength}
+        origin={post.onChainInfo?.origin}
       />
       {/* Render children between read-more and actions */}
       {children}
@@ -179,6 +203,7 @@ function PostCard({
           onDislike={handleDislike}
           onToggleComment={() => setShowCommentBox((prev) => !prev)}
           onBookmark={toggleBookmark}
+          onShare={handleShare}
         />
       )}
       {showCommentBox && (
@@ -192,10 +217,7 @@ function PostCard({
         />
       )}
       {!withoutViewMore && (
-        <ViewMoreButton
-          index={post.index}
-          proposalType={post.proposalType}
-        />
+        <ViewMoreButton index={post.index} proposalType={post.proposalType} />
       )}
     </ThemedView>
   );
@@ -204,9 +226,11 @@ function PostCard({
 function PostHeader({
   index,
   status,
+  post,
 }: {
   index: number | string;
   status?: string;
+  post: Post;
 }) {
   return (
     <View style={styles.headerContainer}>
@@ -220,6 +244,39 @@ function PostHeader({
           </ThemedText>
         )}
       </View>
+      {post.onChainInfo?.beneficiaries?.length !== 0 && (
+        <ThemedText
+          type="bodySmall"
+          style={{
+            backgroundColor: "#FFE3BB",
+            paddingHorizontal: 4,
+            borderRadius: 4,
+            color: "#000",
+          }}
+        >
+          {Object.entries(
+            groupBeneficiariesByAsset(
+              post.onChainInfo?.beneficiaries,
+              post.network as ENetwork
+            )
+          )
+            .map(([assetId, amount]) =>
+              formatBnBalance(
+                amount.toString(),
+                {
+                  withUnit: true,
+                  numberAfterComma: 2,
+                  compactNotation: true,
+                },
+                ENetwork.POLKADOT,
+                assetId === NETWORKS_DETAILS[`${ENetwork.POLKADOT}`].tokenSymbol
+                  ? null
+                  : assetId
+              )
+            )
+            .join(", ")}
+        </ThemedText>
+      )}
     </View>
   );
 }
@@ -235,6 +292,7 @@ interface PostDetailsProps {
   createdAt?: string;
   proposerUsername: string;
   descriptionLength?: number;
+  origin?: EPostOrigin;
 }
 
 function PostDetails({
@@ -243,6 +301,7 @@ function PostDetails({
   createdAt,
   proposerUsername,
   descriptionLength = 300,
+  origin,
 }: PostDetailsProps) {
   const [isReadMoreClicked, setIsReadMoreClicked] = useState(false);
   const [postDescriptionHTML, setPostDescriptionHTML] = useState(
@@ -260,12 +319,13 @@ function PostDetails({
 
   return (
     <View style={styles.detailsContainer}>
-      <View style={styles.flexRowJustifySpaceBetween}>
-        <View style={styles.flexRowGap4}>
-          <ThemedText type="bodySmall3">
-            {proposerUsername.toUpperCase() || "User"}
-          </ThemedText>
-        </View>
+      <View style={{ flexDirection: "row", gap: 12, alignItems: "center" }}>
+        <ThemedText type="bodySmall3">
+          {proposerUsername || "User"}
+        </ThemedText>
+
+        {origin && <OriginBadge origin={origin} />}
+        <View style={{ width: 1, height: "100%", backgroundColor: "#383838" }} />
         {createdAt && (
           <View style={styles.flexRowGap4}>
             <TimeDisplay createdAt={createdAt} />
@@ -280,8 +340,7 @@ function PostDetails({
         baseStyle={{ color: Colors.dark.text }}
         contentWidth={300}
       />
-      {
-        htmlContent.length > descriptionLength &&
+      {htmlContent.length > descriptionLength && (
         <TouchableOpacity onPress={toggleReadMore}>
           <View style={styles.readMoreContainer}>
             <ThemedText type="bodySmall" style={styles.readMore}>
@@ -294,9 +353,33 @@ function PostDetails({
             />
           </View>
         </TouchableOpacity>
-      }
+      )}
     </View>
   );
+}
+
+function OriginBadge({ origin }: { origin: EPostOrigin }) {
+  return (
+    <ThemedText
+      type="bodySmall3"
+      style={[styles.originBadge, getOriginBadgeStyle(origin)]}
+    >
+      {formatOriginText(origin)}
+    </ThemedText>
+  );
+}
+
+interface PostActionsProps {
+  isLiked: boolean;
+  isDisliked: boolean;
+  likes: number;
+  dislikes: number;
+  comments: number;
+  onLike: () => void;
+  onDislike: () => void;
+  onToggleComment: () => void;
+  onBookmark: () => void;
+  onShare: () => void;
 }
 
 function PostActions({
@@ -309,17 +392,8 @@ function PostActions({
   onDislike,
   onToggleComment,
   onBookmark,
-}: {
-  isLiked: boolean;
-  isDisliked: boolean;
-  likes: number;
-  dislikes: number;
-  comments: number;
-  onLike: () => void;
-  onDislike: () => void;
-  onToggleComment: () => void;
-  onBookmark: () => void;
-}) {
+  onShare,
+}: PostActionsProps) {
   return (
     <View style={styles.actionsContainer}>
       <View style={styles.leftActions}>
@@ -337,10 +411,10 @@ function PostActions({
         </ThemedButton>
       </View>
       <View style={styles.rightActions}>
-        <ThemedButton onPress={onBookmark} style={styles.iconButton}>
+        {/* <ThemedButton onPress={onBookmark} style={styles.iconButton}>
           <IconBookmark color="white" filled={false} />
-        </ThemedButton>
-        <ThemedButton style={styles.iconButton}>
+        </ThemedButton> */}
+        <ThemedButton onPress={onShare} style={styles.iconButton}>
           <IconShare color="white" />
         </ThemedButton>
       </View>
@@ -365,9 +439,9 @@ function CommentBox({
 }) {
   return (
     <View style={styles.commentBox}>
-      {(isUserInfoLoading ||
-        isUserInfoError ||
-        !userInfo?.profileDetails?.image) ? (
+      {isUserInfoLoading ||
+      isUserInfoError ||
+      !userInfo?.profileDetails?.image ? (
         <Image source={require(defaultAvatarUri)} style={styles.avatar} />
       ) : (
         <Image
@@ -523,6 +597,11 @@ const styles = StyleSheet.create({
   },
   viewMoreText: {
     color: Colors.dark.accent,
+  },
+  originBadge: {
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 4,
   },
 });
 
