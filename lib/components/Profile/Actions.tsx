@@ -6,7 +6,7 @@ import { openBrowserAsync } from "expo-web-browser";
 import { Skeleton } from "moti/skeleton";
 import React from "react";
 import { Dimensions, StyleSheet, TouchableOpacity, View } from "react-native";
-import { IconBounties, IconCalendar, IconDelegate, IconNews, IconSettings, IconVote } from "../icons/Profile";
+import { IconBounties, IconDelegate, IconSettings, IconVote } from "../icons/Profile";
 import { ThemedText } from "../ThemedText";
 import { ThemedView } from "../ThemedView";
 
@@ -45,7 +45,9 @@ function Actions() {
             <IconView Icon={IconDelegate} text="Delegate" />
           </TouchableOpacity>
 
-          <IconView Icon={IconNews} text="News" />
+          <TouchableOpacity onPress={() => openBrowserAsync("https://polkadot.polkassembly.io/bounties")}>
+            <IconView Icon={IconBounties} text="Bounties" />
+          </TouchableOpacity>
           <TouchableOpacity onPress={() => router.push("/settings")}>
             <IconView Icon={IconSettings} text="Settings" />
           </TouchableOpacity>
