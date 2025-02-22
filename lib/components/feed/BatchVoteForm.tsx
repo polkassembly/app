@@ -165,7 +165,7 @@ function ConvictionSlider({ conviction, onConvictionChange }: ConvictionSliderPr
   return (
     <View>
       <Slider
-        style={{ flex: 1 }}
+        style={{ width: "100%", height: 30 }}
         value={transformIn(conviction)}
         thumbImage={require("@/assets/images/slider-thumb.png")}
         thumbTintColor={color}
