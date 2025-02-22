@@ -14,6 +14,10 @@ import { View } from "react-native";
  * 
  * @returns A view element with a fixed height of 80 units, matching the tab bar height.
  */
-export function EmptyViewWithTabBarHeight() {
-  return <View style={{ height: 80 }} />;
+export function EmptyViewWithTabBarHeight({ children }: { children?: React.ReactNode }) {
+  return(
+    <View style={{ marginBottom: 60 }}>
+      {children}
+    </View>
+  );
 }

@@ -37,6 +37,9 @@ import { useGetUserById } from "@/lib/net/queries/profile";
 import { usePathname, useRouter } from "expo-router";
 import { AxiosError } from "axios";
 import { Post } from "@/lib/types";
+import { ThemedText } from "@/lib/components/ThemedText";
+import { useTheme } from "@react-navigation/native";
+import { useThemeColor } from "@/lib/hooks/useThemeColor";
 
 const renderScene = SceneMap({
   profile: Profile,
@@ -126,11 +129,12 @@ function Feed() {
   } = useActivityFeed({ limit: 10 });
 
   const renderItem = ({ item }: { item: Post }) => <PostCard post={item} />;
+  const accentColor = useThemeColor({}, "accent");
 
   if (isLoading) {
     return (
       <ThemedView type="background" style={[styles.container, { justifyContent: "center" }]}>
-        <ActivityIndicator size="large" style={{ marginTop: 20 }} />
+        <ActivityIndicator size="large" color={accentColor} style={{ marginTop: 20 }} />
       </ThemedView>
     );
   }
@@ -152,11 +156,12 @@ function Feed() {
         }}
         onEndReachedThreshold={0.5}
         ListFooterComponent={
-          isFetchingNextPage ? <ActivityIndicator size="small" style={{ marginVertical: 10 }} /> : null
+          <EmptyViewWithTabBarHeight>
+          {isFetchingNextPage ? <ActivityIndicator size="small" color={accentColor} style={{ marginBottom: 20 }} /> : <ThemedText></ThemedText>}
+          </EmptyViewWithTabBarHeight>
         }
         ListEmptyComponent={<EmptyViewWithTabBarHeight />}
       />
-      <EmptyViewWithTabBarHeight />
     </ThemedView>
   );
 }
