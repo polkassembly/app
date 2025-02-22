@@ -12,7 +12,7 @@ import RenderHTML from "react-native-render-html";
 import { Link } from "expo-router";
 
 import { Colors } from "@/lib/constants/Colors";
-import { Post, EReaction } from "@/lib/types";
+import { Post, EReaction, UserProfile } from "@/lib/types";
 import { trimText } from "@/lib/util/stringUtil";
 import { formatTime } from "../util/time";
 import ThemedButton from "../ThemedButton";
@@ -39,6 +39,8 @@ import { NETWORKS_DETAILS } from "@/lib/constants/networks";
 import { groupBeneficiariesByAsset } from "@/lib/util/groupBenificaryByAsset";
 import { ENetwork, EPostOrigin } from "@/lib/types/post";
 import VerticalSeprator from "../shared/VerticalSeprator";
+import StatusTag from "./StatusTag";
+import { UserAvatar } from "../shared";
 
 type PostCardProps = {
   post: Post;
@@ -185,7 +187,7 @@ function PostCard({
         title={post.title}
         htmlContent={post.htmlContent}
         createdAt={post.onChainInfo?.createdAt}
-        proposerUsername={proposerInfo?.username || "User"}
+        proposerInfo={proposerInfo}
         descriptionLength={descriptionLength}
         origin={post.onChainInfo?.origin}
       />
@@ -239,9 +241,7 @@ function PostHeader({
           #{index}
         </ThemedText>
         {status && (
-          <ThemedText type="bodySmall3" style={styles.statusText}>
-            {status.toUpperCase()}
-          </ThemedText>
+          <StatusTag status={status} />
         )}
       </View>
       {post.onChainInfo?.beneficiaries?.length !== 0 && (
@@ -290,7 +290,7 @@ interface PostDetailsProps {
   title: string;
   htmlContent: string;
   createdAt?: string;
-  proposerUsername: string;
+  proposerInfo: UserProfile | undefined;
   descriptionLength?: number;
   origin?: EPostOrigin;
 }
@@ -299,7 +299,7 @@ function PostDetails({
   title,
   htmlContent,
   createdAt,
-  proposerUsername,
+  proposerInfo,
   descriptionLength = 300,
   origin,
 }: PostDetailsProps) {
@@ -320,9 +320,15 @@ function PostDetails({
   return (
     <View style={styles.detailsContainer}>
       <View style={{ flexDirection: "row", gap: 12, alignItems: "center" }}>
-        <ThemedText type="bodySmall3">
-          {proposerUsername || "User"}
-        </ThemedText>
+
+        <View style={styles.flexRowGap4}>
+          <View style={{ width: 15, height: 15, borderRadius: 16 }}>
+            <UserAvatar avatarUrl={proposerInfo?.profileDetails?.image || ""} width={15} height={15} />
+          </View>
+          <ThemedText type="bodySmall3">
+            {proposerInfo?.username || "User"}
+          </ThemedText>
+        </View>
 
         {origin && <OriginBadge origin={origin} />}
         <View style={{ width: 1, height: "100%", backgroundColor: "#383838" }} />
@@ -440,8 +446,8 @@ function CommentBox({
   return (
     <View style={styles.commentBox}>
       {isUserInfoLoading ||
-      isUserInfoError ||
-      !userInfo?.profileDetails?.image ? (
+        isUserInfoError ||
+        !userInfo?.profileDetails?.image ? (
         <Image source={require(defaultAvatarUri)} style={styles.avatar} />
       ) : (
         <Image
