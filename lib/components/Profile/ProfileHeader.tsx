@@ -30,7 +30,7 @@ function ProfileHeader({ username, avatarUrl }: ProfileHeaderProps) {
   return (
     <View style={styles.headerContainer}>
       <ThemedText type="titleLarge">
-        {username.toUpperCase()}
+        {"GM, " + username}
       </ThemedText>
       <Image style={styles.avatar} source={avatarUrl ? { uri: avatarUrl } : require(defaultAvatarUri)} />
     </View>
