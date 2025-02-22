@@ -5,21 +5,23 @@ import { ThemedText } from "@/lib/components/ThemedText";
 import { Colors } from "@/lib/constants/Colors";
 import WebView from "react-native-webview";
 import { Asset } from "expo-asset";
+import * as FileSystem from "expo-file-system";
 
 export default function NewsScreen() {
-  const [htmlUri, setHtmlUri] = useState<string | null>(null);
+  const [htmlContent, setHtmlContent] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function loadHtmlAsset() {
       const asset = Asset.fromModule(require("@/assets/x-timeline-embed.html"));
       await asset.downloadAsync();
-      setHtmlUri(asset.uri);
+      const content = await FileSystem.readAsStringAsync(asset.localUri || asset.uri);
+      setHtmlContent(content);
     }
     loadHtmlAsset();
   }, []);
 
-  if (!htmlUri) {
+  if (!htmlContent) {
     return (
       <View style={[styles.root, styles.center]}>
         <ActivityIndicator size="large" color={Colors.dark.tint} />
@@ -34,24 +36,24 @@ export default function NewsScreen() {
         <ThemedText type="titleMedium">News</ThemedText>
       </View>
       <View style={styles.twitterContainer}>
-        <TwitterEmbed htmlUri={htmlUri} loading={loading} setLoading={setLoading} />
+        <TwitterEmbed htmlContent={htmlContent} loading={loading} setLoading={setLoading} />
       </View>
     </View>
   );
 }
 
 interface TwitterEmbedProps {
-  htmlUri: string;
+  htmlContent: string;
   loading: boolean;
   setLoading: (loading: boolean) => void;
 }
 
-function TwitterEmbed({ htmlUri, loading, setLoading }: TwitterEmbedProps) {
+function TwitterEmbed({ htmlContent, loading, setLoading }: TwitterEmbedProps) {
   return (
     <View style={{ flex: 1 }}>
       <WebView
         originWhitelist={["*"]}
-        source={{ uri: htmlUri }}
+        source={{ html: htmlContent }}
         style={styles.webview}
         scrollEnabled={true}
         onLoadStart={() => setLoading(true)}
