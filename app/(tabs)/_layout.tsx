@@ -7,8 +7,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Colors } from "@/lib/constants/Colors";
 import { BottomTabBarButtonProps } from "@react-navigation/bottom-tabs";
 import { IconBrowser } from "@/lib/components/icons/icon-browser";
-import { IconGame } from "@/lib/components/icons/icon-game";
 import { IconProfile } from "@/lib/components/icons/icon-profile";
+import { IconNews } from "@/lib/components/icons/Profile";
 
 const smallIconSize = 32;
 const largeIconSize = 44;
@@ -49,10 +49,10 @@ export default function TabLayout() {
         }}
       >
         <Tabs.Screen
-          name="game"
+          name="news"
           options={{
             tabBarIcon: ({ color }) => (
-              <IconGame style={styles.smallIcon} color={color} />
+              <IconNews style={styles.smallIcon} color={color} />
             ),
           }}
         />

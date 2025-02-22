@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Twitter Timeline Embed & Top Coins</title>
+    <style>
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        background-color: #000;
+        color: #fff;
+        overflow-y: auto;
+        font-family: sans-serif;
+      }
+      /* Loading overlay and spinner */
+      #loading {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+      }
+      .spinner {
+        border: 4px solid #f3f3f3;
+        border-top: 4px solid #E5007A;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        animation: spin 1s linear infinite;
+      }
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+      /* Top Coins Section */
+      #top-coins {
+        padding: 16px;
+      }
+      #top-coins h2 {
+        margin: 0 0 16px 0;
+        font-size: 20px;
+      }
+      #coins-container {
+        display: flex;
+        justify-content: space-between;
+        gap: 16px;
+      }
+      .coin-box {
+        flex: 1;
+        background-color: #000;
+        padding: 16Px;
+        border-radius: 8px;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        border: 2px solid #383838;
+      }
+      .coin-box .coin-name {
+        font-size: 24px; /* large font */
+        color: #ffffff; /* white */
+        margin-bottom: 8px;
+      }
+      .coin-box .coin-val {
+        font-size: 16px; /* smaller font */
+        color: #e0e0e0; /* off-white */
+        margin-bottom: 8px;
+      }
+      .coin-box canvas {
+        width: 100%;
+        height: 50px;
+      }
+      /* Twitter timeline container: no fixed height, so all content scrolls together */
+      #twitter-container {
+        padding: 16px;
+      }
+      #bottom-div {
+        height: 10vh;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Loading overlay -->
+    <div id="loading">
+      <div class="spinner"></div>
+    </div>
+    <!-- Top Coins Section -->
+    <div id="top-coins">
+      <h2>Top Coins</h2>
+      <div id="coins-container">
+        <div class="coin-box" id="coin-polkadot">
+          <div class="coin-name">Polkadot</div>
+          <div class="coin-val" id="polkadot-price">$--</div>
+          <canvas id="polkadot-canvas"></canvas>
+        </div>
+        <div class="coin-box" id="coin-kusama">
+          <div class="coin-name">Kusama</div>
+          <div class="coin-val" id="kusama-price">$--</div>
+          <canvas id="kusama-canvas"></canvas>
+        </div>
+      </div>
+    </div>
+    <!-- Twitter timeline container -->
+    <div id="twitter-container"></div>
+    <div id="bottom-div"></div>
+    <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+    <script>
+      // Hide the loading spinner once timeline is embedded
+      function hideLoading() {
+        var loadingElem = document.getElementById("loading");
+        if (loadingElem) {
+          loadingElem.style.display = "none";
+        }
+      }
+      
+      // Draw a simple sparkline in a canvas element
+      function drawSparkline(canvas, data) {
+        if (!canvas.getContext) return;
+        var ctx = canvas.getContext("2d");
+        var width = canvas.width;
+        var height = canvas.height;
+        ctx.clearRect(0, 0, width, height);
+        ctx.strokeStyle = "#3498db";
+        ctx.lineWidth = 2;
+        var min = Math.min.apply(null, data);
+        var max = Math.max.apply(null, data);
+        var range = max - min || 1;
+        var step = width / (data.length - 1);
+        ctx.beginPath();
+        data.forEach(function(point, i) {
+          var x = i * step;
+          var y = height - ((point - min) / range) * height;
+          if (i === 0) {
+            ctx.moveTo(x, y);
+          } else {
+            ctx.lineTo(x, y);
+          }
+        });
+        ctx.stroke();
+      }
+      
+      // Fetch coin data for Polkadot and Kusama from CoinGecko
+      fetch("https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=polkadot,kusama&sparkline=true")
+        .then(response => response.json())
+        .then(data => {
+          data.forEach(coin => {
+            if (coin.id === "polkadot") {
+              document.getElementById("polkadot-price").textContent =
+                "$" + coin.current_price.toFixed(2);
+              var canvas = document.getElementById("polkadot-canvas");
+              canvas.width = canvas.offsetWidth;
+              canvas.height = canvas.offsetHeight;
+              drawSparkline(canvas, coin.sparkline_in_7d.price);
+            }
+            if (coin.id === "kusama") {
+              document.getElementById("kusama-price").textContent =
+                "$" + coin.current_price.toFixed(2);
+              var canvas = document.getElementById("kusama-canvas");
+              canvas.width = canvas.offsetWidth;
+              canvas.height = canvas.offsetHeight;
+              drawSparkline(canvas, coin.sparkline_in_7d.price);
+            }
+          });
+        })
+        .catch(error => {
+          console.error("Error fetching coin data:", error);
+        });
+      
+      // Embed the Twitter timeline into the container
+      window.onload = function () {
+        if (window.twttr && twttr.widgets) {
+          twttr.widgets
+            .createTimeline(
+              {
+                sourceType: "profile",
+                screenName: "Polkadot"
+              },
+              document.getElementById("twitter-container"),
+              {
+                chrome: "noheader nofooter noborders noscrollbar",
+                theme: "dark",
+                tweetLimit: 10
+              }
+            )
+            .then(function (el) {
+              hideLoading();
+            });
+        }
+      };
+    </script>
+  </body>
+</html>
