@@ -12,7 +12,6 @@ import IconWarn from "@/lib/components/icons/auth/icon-warn";
 
 const Colors = {
   primaryBackground: "#222121",
-  secondaryBackground: "#1D1D1D",
   textPrimary: "#C6C5C8",
   textSecondary: "#79767D",
   errorBackground: "#6C0516",
@@ -30,7 +29,7 @@ export default function QrAuthScreen() {
           <Image style={styles.qrScreenImage} source={require("@/assets/images/auth/qr-auth-screen.gif")} />
           <View style={styles.loginText}>
             <ThemedText type="display">Login to the App</ThemedText>
-            <ThemedText type="bodyMedium2" style={styles.subText}>
+            <ThemedText type="bodyMedium2" colorName="secondaryText">
               Explore Proposals on the go and add your vote!
             </ThemedText>
           </View>
@@ -152,9 +151,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     paddingVertical: 40,
-  },
-  subText: {
-    color: Colors.textSecondary,
   },
   qrCodeScannerContainer: {
     position: "absolute",

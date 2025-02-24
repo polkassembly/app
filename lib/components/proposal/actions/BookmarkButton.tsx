@@ -4,7 +4,7 @@ import { StyleSheet } from "react-native";
 
 function BookmarkButton() {
 	return (
-		<ThemedButton style={styles.iconButton}>
+		<ThemedButton buttonBgColor="selectedIcon" style={styles.iconButton}>
 			<IconBookmark color="white" />
 		</ThemedButton>
 
@@ -22,7 +22,6 @@ const styles = StyleSheet.create(
 			alignItems: "center",
 			flexDirection: "row",
 			gap: 4,
-			backgroundColor: "#1D1D1D",
 		}
 	}
 )

@@ -102,7 +102,7 @@ const ProposalVotingScreen: React.FC = () => {
     });
 
     setCurrentIndex(cardIndex + 1);
-    if (proposals.length - (cardIndex + 1) <= 2 && hasNextPage) {
+    if (proposals.length - (cardIndex + 1) <= 4 && hasNextPage) {
       fetchNextPage();
     }
   };

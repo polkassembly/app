@@ -120,31 +120,6 @@ export default function ProposalDetailScreenImpl() {
   );
 }
 
-interface StatusBarProps {
-  status: string | undefined;
-  dot: number;
-}
-
-function StatusBar({ status, dot }: StatusBarProps) {
-  return (
-    <ThemedView
-      type="background"
-      style={[
-        styles.box,
-        {
-          flexDirection: "row",
-          justifyContent: "space-between",
-          alignItems: "center",
-        },
-      ]}
-    >
-      <StatusChip status={status} />
-
-      <ThemedText type="bodyLarge">{dot}</ThemedText>
-    </ThemedView>
-  );
-}
-
 interface SummaryProps {
   status: string | undefined;
   voteMetrics: IVoteMetrics | undefined;

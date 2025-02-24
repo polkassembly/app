@@ -107,15 +107,15 @@ export default function CommentCard({ comment }: CommentCardProps) {
 					baseStyle={{ color: Colors.dark.mediumText }}
 				/>
 				<View style={styles.commentActionsContainer}>
-					<ThemedButton onPress={onLike} style={styles.iconButton}>
+					<ThemedButton onPress={onLike} buttonBgColor="selectedIcon" style={styles.iconButton}>
 						<IconLike color="white" filled={isLiked} />
 						<ThemedText type="bodySmall">{likes}</ThemedText>
 					</ThemedButton>
-					<ThemedButton onPress={onDislike} style={styles.iconButton}>
+					<ThemedButton onPress={onDislike} buttonBgColor="selectedIcon" style={styles.iconButton}>
 						<IconDislike color="white" filled={isDisliked} />
 						<ThemedText type="bodySmall">{dislikes}</ThemedText>
 					</ThemedButton>
-					<ThemedButton onPress={onToggleComment} style={styles.iconButton}>
+					<ThemedButton onPress={onToggleComment} buttonBgColor="selectedIcon" style={styles.iconButton}>
 						<IconComment color="white" filled={false} />
 						<ThemedText type="bodySmall">{commentsCount}</ThemedText>
 					</ThemedButton>
@@ -175,7 +175,6 @@ const styles = StyleSheet.create({
 		justifyContent: "center",
 		alignItems: "center",
 		flexDirection: "row",
-		backgroundColor: "#1D1D1D",
 		marginRight: 8,
 	},
 	repliesContainer: {

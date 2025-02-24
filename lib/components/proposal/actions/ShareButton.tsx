@@ -22,7 +22,7 @@ function ShareButton({ proposalId, proposalTitle }: ShareButtonProps) {
 		};
 
 	return (
-		<ThemedButton onPress={onShare} style={styles.iconButton}>
+		<ThemedButton onPress={onShare} buttonBgColor="selectedIcon" style={styles.iconButton}>
 			<IconShare color="white" />
 		</ThemedButton>
 	);
@@ -39,7 +39,6 @@ const styles = StyleSheet.create(
 			alignItems: "center",
 			flexDirection: "row",
 			gap: 4,
-			backgroundColor: "#1D1D1D",
 		}
 	}
 )

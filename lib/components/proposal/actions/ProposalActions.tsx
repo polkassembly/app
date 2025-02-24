@@ -96,15 +96,15 @@ function ProposalActions({
 		<>
 			<View style={styles.flexRowJustifySpaceBetween}>
 				<View style={styles.flexRowGap8}>
-					<ThemedButton onPress={handleLike} style={styles.iconButton}>
+					<ThemedButton onPress={handleLike} buttonBgColor="selectedIcon" style={styles.iconButton}>
 						<IconLike color="white" filled={isLiked} />
 						<ThemedText type="bodySmall">{likes}</ThemedText>
 					</ThemedButton>
-					<ThemedButton onPress={handleDislike} style={styles.iconButton}>
+					<ThemedButton onPress={handleDislike} buttonBgColor="selectedIcon" style={styles.iconButton}>
 						<IconDislike color="white" filled={isDisliked} />
 						<ThemedText type="bodySmall">{dislikes}</ThemedText>
 					</ThemedButton>
-					<ThemedButton onPress={() => setShowCommentBox((prev) => !prev)} style={styles.iconButton}>
+					<ThemedButton onPress={() => setShowCommentBox((prev) => !prev)}  buttonBgColor="selectedIcon"style={styles.iconButton}>
 						<IconComment color="white" filled={false} />
 						<ThemedText type="bodySmall">{comments}</ThemedText>
 					</ThemedButton>
@@ -149,7 +149,6 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 		flexDirection: "row",
 		gap: 4,
-		backgroundColor: "#1D1D1D",
 	}
 })
 

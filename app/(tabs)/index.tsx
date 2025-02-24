@@ -130,7 +130,7 @@ function Feed() {
   const renderItem = ({ item }: { item: Post }) => <ProposalCard post={item} />;
   const accentColor = useThemeColor({}, "accent");
 
-  if (isLoading) {
+  if (isLoading || !data) {
     return (
       <ThemedView type="background" style={[styles.container, { justifyContent: "center" }]}>
 

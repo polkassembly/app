@@ -10,6 +10,9 @@ import {
 } from "react-native";
 import { TouchableOpacityProps } from "react-native-gesture-handler";
 import { ThemedText, ThemedTextProps } from "./ThemedText";
+import { useThemeColor } from "../hooks/useThemeColor";
+
+type ColorName = keyof typeof Colors.dark & keyof typeof Colors.light;
 
 const styles = StyleSheet.create({
   button: {
@@ -41,6 +44,9 @@ export interface ThemedButtonProps extends TouchableOpacityProps {
   bordered?: boolean;
   borderless?: boolean;
   loading?: boolean;
+  buttonBgLightColor?: string;
+  buttonBgDarkColor?: string;
+  buttonBgColor?: ColorName;
 }
 
 const ThemedButton = React.forwardRef<View, ThemedButtonProps>(
@@ -52,40 +58,52 @@ const ThemedButton = React.forwardRef<View, ThemedButtonProps>(
       borderless = false,
       loading = false,
       textStyle,
+      buttonBgDarkColor,
+      buttonBgLightColor,
+      buttonBgColor,
       ...props
     },
     ref
-  ) => (
-    <TouchableOpacity
-      {...props}
-      ref={ref}
-      style={[
-        styles.button,
-        bordered && styles.bordered,
-        borderless && styles.borderless,
-        props.style,
-      ]}
-    >
-      {loading && (
-        <ActivityIndicator
-          color={bordered || borderless ? Colors.dark.accent : Colors.dark.text}
-        />
-      )}
+  ) => {
 
-      {!loading && props.children}
+    const color = useThemeColor(
+      { light: buttonBgLightColor, dark: buttonBgDarkColor },
+      buttonBgColor ?? "accent"
+    );
+    
+    return (
+      <TouchableOpacity
+        {...props}
+        ref={ref}
+        style={[
+          styles.button,
+          { backgroundColor: color },
+          bordered && styles.bordered,
+          borderless && styles.borderless,
+          props.style,
+        ]}
+      >
+        {loading && (
+          <ActivityIndicator
+            color={bordered || borderless ? Colors.dark.accent : Colors.dark.text}
+          />
+        )}
 
-      {!loading && text ? (
-        <ThemedText
-          type={textType}
-          darkColor={bordered || borderless ? Colors.dark.accent : undefined}
-          lightColor={bordered || borderless ? Colors.light.accent : undefined}
-          style={textStyle}
-        >
-          {text}
-        </ThemedText>
-      ) : null}
-    </TouchableOpacity>
-  )
+        {!loading && props.children}
+
+        {!loading && text ? (
+          <ThemedText
+            type={textType}
+            darkColor={bordered || borderless ? Colors.dark.accent : undefined}
+            lightColor={bordered || borderless ? Colors.light.accent : undefined}
+            style={textStyle}
+          >
+            {text}
+          </ThemedText>
+        ) : null}
+      </TouchableOpacity>
+    );
+  }
 );
 
 export default ThemedButton;
