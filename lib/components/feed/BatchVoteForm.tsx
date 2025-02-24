@@ -165,10 +165,10 @@ function ConvictionSlider({ conviction, onConvictionChange }: ConvictionSliderPr
   return (
     <View>
       <Slider
-        style={{ width: "100%", height: 30 }}
+        style={{ width: "100%", height: 20 }}
         value={transformIn(conviction)}
         thumbImage={require("@/assets/images/slider-thumb.png")}
-        thumbTintColor={color}
+        tapToSeek={true}
         minimumTrackTintColor={color}
         step={1 / STEPS}
         onValueChange={(value: number) => onConvictionChange(transformOut(value))}
