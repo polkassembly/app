@@ -10,7 +10,7 @@ import { ProposalActions } from "./actions";
 import { ProposalHeader, ProposalHeaderSkeleton } from "./header/ProposalHeader";
 import { ProposalBody, ProposalBodySkeleton } from "./body";
 import ViewMoreButton from "./ViewMoreButton";
-import { Colors } from "react-native/Libraries/NewAppScreen";
+import { useThemeColor } from "@/lib/hooks/useThemeColor";
 
 type ProposalCardProps = {
 	post: Post;
@@ -39,8 +39,10 @@ function ProposalCard({
 		post.onChainInfo?.proposer || ""
 	);
 
+	const colorStroke = useThemeColor({}, "stroke")
+
 	return (
-		<ThemedView style={styles.container} type={containerType}>
+		<ThemedView style={[styles.container, { borderColor: colorStroke }]} type={containerType}>
 			<ProposalHeader
 				index={post.index}
 				status={post.onChainInfo?.status}
@@ -70,7 +72,7 @@ function ProposalCard({
 	);
 }
 
-function ProposalCardSkeleton(){
+function ProposalCardSkeleton() {
 	return (
 		<View style={styles.container}>
 			<ProposalHeaderSkeleton />
@@ -86,7 +88,6 @@ const styles = StyleSheet.create({
 		gap: 12,
 		borderRadius: 12,
 		borderWidth: 1,
-		borderColor: Colors.dark.stroke,
 		overflow: "hidden",
 		flexDirection: "column",
 	}

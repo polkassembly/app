@@ -104,7 +104,7 @@ function ProposalActions({
 						<IconDislike color="white" filled={isDisliked} />
 						<ThemedText type="bodySmall">{dislikes}</ThemedText>
 					</ThemedButton>
-					<ThemedButton onPress={() => setShowCommentBox((prev) => !prev)}  buttonBgColor="selectedIcon"style={styles.iconButton}>
+					<ThemedButton onPress={() => setShowCommentBox((prev) => !prev)} buttonBgColor="selectedIcon" style={styles.iconButton}>
 						<IconComment color="white" filled={false} />
 						<ThemedText type="bodySmall">{comments}</ThemedText>
 					</ThemedButton>
@@ -122,7 +122,7 @@ function ProposalActions({
 						post={post}
 						onCommentSubmitted={() => {
 							setShowCommentBox(false)
-							setComments((prev) => prev+1)
+							setComments((prev) => prev + 1)
 						}}
 					/>
 				)
