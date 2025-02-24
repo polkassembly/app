@@ -21,11 +21,12 @@ import Svg, { Rect } from "react-native-svg";
 import { BottomSheet } from "@/lib/components/shared";
 import { EProposalType } from "@/lib/types";
 import { useProposalComments } from "@/lib/net/queries/post/useProposalComment";
-import { CommentList, PostCard, PostFullDetails } from "@/lib/components/feed";
+import { CommentList, PostFullDetails } from "@/lib/components/feed";
 import { ENetwork, IVoteMetrics } from "@/lib/types/post";
 import { formatBnBalance } from "@/lib/util";
 import BN from "bn.js";
 import { calculatePercentage } from "@/lib/util/calculatePercentage";
+import ProposalCard from "@/lib/components/proposal/ProposalCard";
 
 export default function ProposalDetailScreenImpl() {
   const [open, setOpen] = useState(false);
@@ -67,7 +68,7 @@ export default function ProposalDetailScreenImpl() {
           <View style={{ paddingInline: 16, paddingBottom: 16, gap: 8 }}>
             <ThemedText type="titleLarge">Proposal #{index}</ThemedText>
 
-            <PostCard
+            <ProposalCard
               post={proposal}
               withoutViewMore
               containerType="background"

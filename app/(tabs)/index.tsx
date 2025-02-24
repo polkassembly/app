@@ -11,7 +11,6 @@ import {
   ProfileHeaderSkeleton,
 } from "@/lib/components/Profile";
 import { ThemedView } from "@/lib/components/ThemedView";
-import PostCard from "@/lib/components/feed/postCard";
 import { Colors } from "@/lib/constants/Colors";
 import { useActivityFeed } from "@/lib/net/queries/post/useActivityFeed";
 import React, { PropsWithChildren, useState, useEffect } from "react";
@@ -40,6 +39,7 @@ import { Post } from "@/lib/types";
 import { ThemedText } from "@/lib/components/ThemedText";
 import { useTheme } from "@react-navigation/native";
 import { useThemeColor } from "@/lib/hooks/useThemeColor";
+import ProposalCard from "@/lib/components/proposal/ProposalCard";
 
 const renderScene = SceneMap({
   profile: Profile,
@@ -128,7 +128,7 @@ function Feed() {
     isLoading,
   } = useActivityFeed({ limit: 10 });
 
-  const renderItem = ({ item }: { item: Post }) => <PostCard post={item} />;
+  const renderItem = ({ item }: { item: Post }) => <ProposalCard post={item} />;
   const accentColor = useThemeColor({}, "accent");
 
   if (isLoading) {

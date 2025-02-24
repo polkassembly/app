@@ -11,7 +11,6 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import useAddCartItem from "@/lib/net/queries/actions/useAddCartItem";
 import { useActivityFeed } from "@/lib/net/queries/post/useActivityFeed";
-import { PostCard } from "@/lib/components/feed";
 import { TopBar } from "@/lib/components/Topbar";
 import { useThemeColor } from "@/lib/hooks/useThemeColor";
 import IconAye from "@/lib/components/icons/shared/icon-aye";
@@ -21,6 +20,7 @@ import { useGetCartItems } from "@/lib/net/queries/actions/useGetCartItem";
 import { Ionicons } from "@expo/vector-icons";
 import { ThemedText } from "@/lib/components/ThemedText";
 import IconVotedProposal from "@/lib/components/icons/proposals/icon-voted-proposal";
+import ProposalCard from "@/lib/components/proposal/ProposalCard";
 
 const ProposalVotingScreen: React.FC = () => {
   // Get defaults from search params
@@ -140,13 +140,12 @@ const ProposalVotingScreen: React.FC = () => {
             cardIndex={currentIndex}
             renderCard={(card) => (
               <View style={{ borderRadius: 12, padding: 10, backgroundColor: backgroundColor, borderWidth: 1, borderColor: colorStroke, flex: 1, maxHeight: "85%", overflow: "hidden"}}>
-                <PostCard
+                <ProposalCard
                   post={card}
                   descriptionLength={600}
                   withoutActions
                   withoutViewMore
-                >
-                </PostCard>
+                />
               </View>
             )}
             onSwipedLeft={(cardIndex) => onSwiped("nay", cardIndex)}
