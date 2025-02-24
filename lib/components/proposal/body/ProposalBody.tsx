@@ -12,6 +12,7 @@ import { ThemedText } from "../../ThemedText";
 import OriginBadge from "./OriginBadge";
 import TimeDisplay from "./TimeDisplay";
 import { useThemeColor } from "@/lib/hooks/useThemeColor";
+import { Skeleton } from "moti/skeleton";
 
 interface ProposalBodyProps {
 	title: string;
@@ -87,6 +88,24 @@ function ProposalBody({
 	);
 }
 
+function ProposalBodySkeleton() {
+	return (
+		<View style={styles.flexColumnGap8}>
+			<View style={{ flexDirection: "row", gap: 12, alignItems: "center" }}>
+
+				<View style={styles.flexRowGap4}>
+					<View style={{ width: 15, height: 15, borderRadius: 16 }}>
+						<Skeleton />
+					</View>
+					<Skeleton width={50} />
+				</View>
+			</View>
+			<Skeleton width={70} />
+			<Skeleton width="100%" height={100} />
+		</View>
+	)
+}
+
 const styles = StyleSheet.create({
 	flexColumnGap8: {
 		flexDirection: "column",
@@ -98,4 +117,4 @@ const styles = StyleSheet.create({
 	},
 })
 
-export default ProposalBody;
+export { ProposalBody, ProposalBodySkeleton };

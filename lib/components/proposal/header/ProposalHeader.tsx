@@ -5,6 +5,7 @@ import { groupBeneficiariesByAsset } from "@/lib/util/groupBenificaryByAsset";
 import { StyleSheet, View } from "react-native";
 import { ThemedText } from "../../ThemedText";
 import StatusTag from "./StatusTag";
+import { Skeleton } from "moti/skeleton";
 
 const CURRENT_NETWORK = ENetwork.POLKADOT
 
@@ -66,6 +67,20 @@ function ProposalHeader({
   );
 }
 
+function ProposalHeaderSkeleton(){
+  return (
+    <View style = {styles.flexDirectionJustifyBetween}>
+      <View style={styles.flexRowGap4}>
+        <Skeleton width={50} />
+        <Skeleton width={60} />
+      </View>
+      <View>
+        <Skeleton width={50} />
+      </View>
+    </View>
+  )
+}
+
 const styles = StyleSheet.create({
 	flexDirectionJustifyBetween: {
 		flexDirection: "row",
@@ -84,4 +99,4 @@ const styles = StyleSheet.create({
   }
 })
 
-export default ProposalHeader;
+export { ProposalHeader, ProposalHeaderSkeleton };

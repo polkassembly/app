@@ -26,7 +26,7 @@ import { ENetwork, IVoteMetrics } from "@/lib/types/post";
 import { formatBnBalance } from "@/lib/util";
 import BN from "bn.js";
 import { calculatePercentage } from "@/lib/util/calculatePercentage";
-import ProposalCard from "@/lib/components/proposal/ProposalCard";
+import { ProposalCard } from "@/lib/components/proposal/ProposalCard";
 
 export default function ProposalDetailScreenImpl() {
   const [open, setOpen] = useState(false);
@@ -229,7 +229,7 @@ function Summary({ ayePercent, status, voteMetrics, nayPercent }: SummaryProps) 
             }</ThemedText>
           </View>
 
-          <View style={{ flexDirection: "row", gap:  16}}>
+          <View style={{ flexDirection: "row", gap: 16 }}>
             <ThemedText>Nay</ThemedText>
             <ThemedText colorName="mediumText">{
               formatBnBalance(

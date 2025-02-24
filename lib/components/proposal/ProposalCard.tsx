@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { StyleSheet } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { ContainerType, ThemedView } from "../ThemedView";
 import HorizontalSeparator from "../shared/HorizontalSeparator";
 
@@ -7,8 +7,8 @@ import { useGetUserByAddress, useGetUserById } from "@/lib/net/queries/profile";
 import { KEY_ID, storage } from "@/lib/store";
 import { ENetwork, Post } from "@/lib/types/post";
 import { ProposalActions } from "./actions";
-import ProposalHeader from "./header/ProposalHeader";
-import { ProposalBody } from "./body";
+import { ProposalHeader, ProposalHeaderSkeleton } from "./header/ProposalHeader";
+import { ProposalBody, ProposalBodySkeleton } from "./body";
 import ViewMoreButton from "./ViewMoreButton";
 import { Colors } from "react-native/Libraries/NewAppScreen";
 
@@ -70,6 +70,15 @@ function ProposalCard({
 	);
 }
 
+function ProposalCardSkeleton(){
+	return (
+		<View style={styles.container}>
+			<ProposalHeaderSkeleton />
+			<ProposalBodySkeleton />
+		</View>
+	)
+}
+
 const styles = StyleSheet.create({
 	container: {
 		width: "100%",
@@ -83,4 +92,4 @@ const styles = StyleSheet.create({
 	}
 });
 
-export default ProposalCard;
+export { ProposalCard, ProposalCardSkeleton };

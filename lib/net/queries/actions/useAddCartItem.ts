@@ -25,7 +25,6 @@ export default function useAddCartItem() {
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
         userId: Number(getUserIdFromStorage()),
-        // If needed, add any additional placeholder properties (adjust these as necessary)
         proposalType: "",
         postIndexOrHash: "",
         network: "",

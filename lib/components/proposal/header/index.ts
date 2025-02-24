@@ -1,3 +1,3 @@
-import ProposalHeader from "./ProposalHeader";
+import { ProposalHeader, ProposalHeaderSkeleton} from "./ProposalHeader";
 
-export { ProposalHeader }
+export { ProposalHeader, ProposalHeaderSkeleton }

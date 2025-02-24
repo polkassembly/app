@@ -20,7 +20,7 @@ import { useGetCartItems } from "@/lib/net/queries/actions/useGetCartItem";
 import { Ionicons } from "@expo/vector-icons";
 import { ThemedText } from "@/lib/components/ThemedText";
 import IconVotedProposal from "@/lib/components/icons/proposals/icon-voted-proposal";
-import ProposalCard from "@/lib/components/proposal/ProposalCard";
+import { ProposalCard } from "@/lib/components/proposal/ProposalCard";
 
 const ProposalVotingScreen: React.FC = () => {
   // Get defaults from search params
@@ -64,7 +64,7 @@ const ProposalVotingScreen: React.FC = () => {
   const swiperRef = useRef<any>(null);
 
   const { data: cartItems } = useGetCartItems();
-  // Router to navigate to voted proposals screen
+
   const router = useRouter();
 
   const onSwiped = (direction: "aye" | "nay" | "abstain", cardIndex: number) => {
@@ -96,10 +96,8 @@ const ProposalVotingScreen: React.FC = () => {
 
     voteMutation.mutate(params, {
       onSuccess: () => {
-        // Additional onSuccess logic if needed.
       },
       onError: (error) => {
-        // Handle errors if needed.
       },
     });
 
@@ -139,7 +137,7 @@ const ProposalVotingScreen: React.FC = () => {
             cards={proposals}
             cardIndex={currentIndex}
             renderCard={(card) => (
-              <View style={{ borderRadius: 12, padding: 10, backgroundColor: backgroundColor, borderWidth: 1, borderColor: colorStroke, flex: 1, maxHeight: "85%", overflow: "hidden"}}>
+              <View style={{ borderRadius: 12, padding: 10, backgroundColor: backgroundColor, borderWidth: 1, borderColor: colorStroke, flex: 1, maxHeight: "85%", overflow: "hidden" }}>
                 <ProposalCard
                   post={card}
                   descriptionLength={600}

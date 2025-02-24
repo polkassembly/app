@@ -1,3 +1,3 @@
-import ProposalBody from "./ProposalBody";
+import { ProposalBody, ProposalBodySkeleton} from "./ProposalBody";
 
-export { ProposalBody };
+export { ProposalBody, ProposalBodySkeleton };

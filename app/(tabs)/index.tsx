@@ -37,9 +37,8 @@ import { usePathname, useRouter } from "expo-router";
 import { AxiosError } from "axios";
 import { Post } from "@/lib/types";
 import { ThemedText } from "@/lib/components/ThemedText";
-import { useTheme } from "@react-navigation/native";
 import { useThemeColor } from "@/lib/hooks/useThemeColor";
-import ProposalCard from "@/lib/components/proposal/ProposalCard";
+import { ProposalCard, ProposalCardSkeleton } from "@/lib/components/proposal/ProposalCard";
 
 const renderScene = SceneMap({
   profile: Profile,
@@ -134,7 +133,10 @@ function Feed() {
   if (isLoading) {
     return (
       <ThemedView type="background" style={[styles.container, { justifyContent: "center" }]}>
-        <ActivityIndicator size="large" color={accentColor} style={{ marginTop: 20 }} />
+
+        <ProposalCardSkeleton />
+        <ProposalCardSkeleton />
+        <ProposalCardSkeleton />
       </ThemedView>
     );
   }
@@ -157,7 +159,7 @@ function Feed() {
         onEndReachedThreshold={0.5}
         ListFooterComponent={
           <EmptyViewWithTabBarHeight>
-          {isFetchingNextPage ? <ActivityIndicator size="small" color={accentColor} style={{ marginBottom: 20 }} /> : <ThemedText></ThemedText>}
+            {isFetchingNextPage ? <ActivityIndicator size="small" color={accentColor} style={{ marginBottom: 20 }} /> : <ThemedText></ThemedText>}
           </EmptyViewWithTabBarHeight>
         }
         ListEmptyComponent={<EmptyViewWithTabBarHeight />}
