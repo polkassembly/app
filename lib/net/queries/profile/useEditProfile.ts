@@ -4,7 +4,7 @@ import { getUserIdFromStorage } from "../utils";
 import { buildUserByIdQueryKey } from "./useGetUserById";
 import { UserProfile } from "@/lib/types";
 
-interface EditProfileParams {
+export interface EditProfileParams {
   email?: string;
   username?: string;
   bio?: string;
@@ -59,11 +59,15 @@ function useEditProfile() {
       if (context?.previousData) {
         queryClient.setQueryData(buildUserByIdQueryKey(id), context.previousData);
       }
+
+      console.error("An error occurred while editing the profile:", error);
+      throw error;
     },
     onSuccess: () => {
-      // Optionally, you could also update the cache with the fresh data from the server,
-      // but here we simply invalidate the query to refetch it.
-      queryClient.invalidateQueries({ queryKey: [buildUserByIdQueryKey(id)] });
+      // Since the user profile updation doesn't return any ids, we don't need to invalidate any queries
+      // We can keep the manually updated cache as it is
+      
+      // queryClient.invalidateQueries({ queryKey: [buildUserByIdQueryKey(id)] });
     },
   });
 }
