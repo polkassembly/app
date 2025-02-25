@@ -20,7 +20,7 @@ const useProposalComments = ({ proposalType, proposalId }: ProposalCommentsParam
     queryKey,
     queryFn: async () => {
       const response = await client.get(`/${proposalType}/${proposalId}/comments`);
-      return response.data;
+      return response.data as ICommentResponse[];
     },
   });
 };

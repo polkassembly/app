@@ -19,7 +19,7 @@ const useProposalByIndex = ({ proposalType, indexOrHash }: PathParams) => {
     queryKey,
     queryFn: async () => {
       const response = await client.get(`/${proposalType}/${indexOrHash}`);
-      return response.data;
+      return response.data as Post;
     },
   });
 };
