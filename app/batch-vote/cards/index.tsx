@@ -21,6 +21,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { ThemedText } from "@/lib/components/ThemedText";
 import IconVotedProposal from "@/lib/components/icons/proposals/icon-voted-proposal";
 import { ProposalCard } from "@/lib/components/proposal/ProposalCard";
+import { ProposalContentSummary } from "@/lib/components/proposal";
 
 const ProposalVotingScreen: React.FC = () => {
   // Get defaults from search params
@@ -140,10 +141,12 @@ const ProposalVotingScreen: React.FC = () => {
               <View style={{ borderRadius: 12, padding: 10, backgroundColor: backgroundColor, borderWidth: 1, borderColor: colorStroke, flex: 1, maxHeight: "85%", overflow: "hidden" }}>
                 <ProposalCard
                   post={card}
-                  descriptionLength={600}
+                  descriptionLength={500}
                   withoutActions
                   withoutViewMore
                 />
+
+                <ProposalContentSummary proposalType={card.proposalType} indexOrHash={card.index} />
               </View>
             )}
             onSwipedLeft={(cardIndex) => onSwiped("nay", cardIndex)}

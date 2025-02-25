@@ -197,3 +197,13 @@ export interface Feed {
   items: Post[];
   totalCount: string;
 }
+
+export interface ContentSummary {
+  id: string,
+  indexOrHash: string,
+  postSummary: string,
+  proposalType: EProposalType,
+  network: ENetwork,
+  createdAt: string,
+  updatedAt: string,
+}
