@@ -35,7 +35,7 @@ export interface BatchVoteFormProps {
   singleVoteMode?: boolean;
   onConfirm?: () => void;
   onCancel?: () => void;
-  hideButtons?: boolean; // New prop to conditionally hide the button group
+  hideButtons?: boolean;
 }
 
 export function BatchVoteForm({
@@ -69,34 +69,35 @@ export function BatchVoteForm({
       <TriStateButtons selected={vote} onSelectionChanged={handleVoteChange} />
 
       {vote === "aye" && (
-        <>
+        <View style={{ gap: 8 }}>
           <SectionHeader title="Aye Amount" Icon={IconAye} color="#2ED47A" />
           <AmountInput value={ayeAmount} onChange={setAyeAmount} />
-        </>
+        </View>
       )}
       {vote === "nay" && (
-        <>
+        <View style={{ gap: 8 }}>
           <SectionHeader title="Nay Amount" Icon={IconNay} color="#F53C3C" />
           <AmountInput value={nayAmount} onChange={setNayAmount} />
-        </>
+        </View>
       )}
       {vote === "abstain" && (
-        <>
+        <View style={{ gap: 8 }}>
           <SectionHeader title="Abstain Amount" Icon={IconAbstain} color="#FFA013" />
           <AmountInput value={abstainAmount} onChange={setAbstainAmount} />
-        </>
+        </View>
       )}
 
-      <ThemedText type="bodyMedium2">Set Conviction</ThemedText>
-      <ConvictionSlider conviction={conviction} onConvictionChange={setConviction} />
-
+      <View style={{ gap: 8 }}>
+        <ThemedText type="bodyMedium2">Set Conviction</ThemedText>
+        <ConvictionSlider conviction={conviction} onConvictionChange={setConviction} />
+      </View>
       <ThemedView
         type="secondaryBackground"
         style={{
           flexDirection: "row",
           justifyContent: "space-between",
           borderColor: Colors.dark.stroke,
-          padding: 16,
+          padding: 12,
           borderRadius: 8,
         }}
       >
@@ -104,7 +105,7 @@ export function BatchVoteForm({
           <IconPadlock />
           <ThemedText colorName="mediumText" type="bodyMedium3">Locking Period</ThemedText>
         </View>
-        <ThemedText type="bodyMedium3">{getLockPeriodText(conviction)}</ThemedText>
+        <ThemedText type="bodyMedium2">{getLockPeriodText(conviction)}</ThemedText>
       </ThemedView>
 
       {/* Render the buttons only if hideButtons is false */}
@@ -146,7 +147,7 @@ function SectionHeader({ title, Icon, color }: SectionHeaderProps) {
   return (
     <View style={styles.sectionHeader}>
       <Icon color={color} />
-      <ThemedText type="bodyMedium1">{title}</ThemedText>
+      <ThemedText type="bodyMedium2">{title}</ThemedText>
     </View>
   );
 }
@@ -170,6 +171,7 @@ function ConvictionSlider({ conviction, onConvictionChange }: ConvictionSliderPr
         thumbImage={require("@/assets/images/slider-thumb.png")}
         tapToSeek={true}
         minimumTrackTintColor={color}
+        maximumTrackTintColor="#39383A"
         step={1 / STEPS}
         onValueChange={(value: number) => onConvictionChange(transformOut(value))}
       />
@@ -288,7 +290,8 @@ function AmountInput({ value, onChange }: AmountInputProps) {
         }}
       >
         <Image
-          style={{ height: 32, width: 32 }}
+          style={{ height: 24, width: 24 }}
+          resizeMode="contain"
           source={require("@/assets/images/icon-polkadot.png")}
         />
         <ThemedText type="bodySmall">DOT</ThemedText>
