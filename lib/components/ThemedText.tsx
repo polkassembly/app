@@ -97,6 +97,11 @@ export const styles = StyleSheet.create({
     fontWeight: 600,
     lineHeight: 30,
   },
+  titleMedium1: {
+    fontSize: 18,
+    fontWeight: 600,
+    lineHeight: 27,
+  },
 
   /**
    * Not part of the design spec. Marked for removal.
