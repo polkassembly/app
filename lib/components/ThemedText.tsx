@@ -33,38 +33,46 @@ export const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 600,
     lineHeight: 24,
+    fontFamily: "PoppinsMedium",
   },
   bodyMedium1: {
     fontSize: 16,
     fontWeight: 600,
-    lineHeight: 19
+    lineHeight: 19,
+    fontFamily: "PoppinsSemiBold",
   },
   bodyMedium2: {
     fontSize: 14,
     fontWeight: 500,
     lineHeight: 21,
+    fontFamily: "PoppinsMedium",
 
   },
   bodyMedium3: {
     fontSize: 14,
     fontWeight: 400,
     lineHeight: 18,
+    fontFamily: "PoppinsRegular",
   },
   bodySmall: {
     fontSize: 12,
     fontWeight: 500,
-    lineHeight: 18
-  },
-  bodySmall3: {
-    fontSize: 10,
-    fontWeight: 500,
-    lineHeight: 15,
+    lineHeight: 18,
+    fontFamily: "PoppinsRegular",
   },
   bodySmall1: {
     fontSize: 12,
     fontWeight: 500,
     lineHeight: 20,
+    fontFamily: "PoppinsMedium",
   },
+  bodySmall3: {
+    fontSize: 10,
+    fontWeight: 500,
+    lineHeight: 15,
+    fontFamily: "PoppinsRegular",
+  },
+
 
   /**
    * This font style is not documented in Figma as on of the
@@ -75,6 +83,7 @@ export const styles = StyleSheet.create({
     fontSize: 8,
     fontWeight: 500,
     lineHeight: 12,
+    fontFamily: "PoppinsRegular",
   },
 
   /**
@@ -85,22 +94,26 @@ export const styles = StyleSheet.create({
     fontSize: 28,
     fontWeight: 600,
     lineHeight: 42,
+    fontFamily: "PoppinsSemiBold",
   },
 
   titleLarge: {
     fontSize: 24,
     fontWeight: 500,
     lineHeight: 36,
+    fontFamily: "PoppinsSemiBold",
   },
   titleMedium: {
     fontSize: 20,
     fontWeight: 600,
     lineHeight: 30,
+    fontFamily: "PoppinsSemiBold",
   },
   titleMedium1: {
     fontSize: 18,
     fontWeight: 600,
     lineHeight: 27,
+    fontFamily: "PoppinsSemiBold",
   },
 
   /**
@@ -110,11 +123,13 @@ export const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 600,
     lineHeight: 27,
+    fontFamily: "PoppinsRegular",
   },
   link: {
     lineHeight: 30,
     fontSize: 16,
     color: "#0a7ea4",
+    fontFamily: "PoppinsRegular",
   },
 
   /**
@@ -125,6 +140,7 @@ export const styles = StyleSheet.create({
     lineHeight: 24,
     fontSize: 16,
     fontWeight: 600,
+    fontFamily: "PoppinsSemiBold",
   },
 
   button1: {
@@ -132,10 +148,12 @@ export const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: 500,
     textTransform: "capitalize",
+    fontFamily: "PoppinsMedium",
   },
   button2: {
     lineHeight: 21,
     fontSize: 14,
     fontWeight: 500,
+    fontFamily: "PoppinsMedium",
   },
 });

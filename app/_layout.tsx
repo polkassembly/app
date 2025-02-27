@@ -20,6 +20,9 @@ export default function RootLayout() {
     LilitaOneRegular: require("@/assets/fonts/LilitaOne-Regular.ttf"),
     Recharge: require("@/assets/fonts/Recharge.ttf"),
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
+    PoppinsRegular: require("../assets/fonts/Poppins-Regular.ttf"),
+    PoppinsMedium: require("../assets/fonts/Poppins-Medium.ttf"),
+    PoppinsSemiBold: require("../assets/fonts/Poppins-SemiBold.ttf"),
   });
 
   useEffect(() => {
