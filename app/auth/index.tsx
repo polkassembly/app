@@ -1,6 +1,8 @@
 import IntroPager from "@/lib/components/IntroPager";
+import { GradientText } from "@/lib/components/shared";
 import ThemedButton from "@/lib/components/ThemedButton";
 import { ThemedText } from "@/lib/components/ThemedText";
+import { useThemeColor } from "@/lib/hooks/useThemeColor";
 import { Link } from "expo-router";
 import React from "react";
 import { Image, StyleSheet, View } from "react-native";
@@ -26,7 +28,8 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "column",
     justifyContent: "flex-end",
-    margin: 22,
+    marginHorizontal: 22,
+    marginBottom: 16,
   },
 
   slideContainer: {
@@ -39,8 +42,10 @@ const styles = StyleSheet.create({
 });
 
 export default function IntroScreen() {
+
+  const bgColor = useThemeColor({}, "container")
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: bgColor}]}>
 
       <SafeAreaView style={styles.container}>
         <Slides />
@@ -76,9 +81,9 @@ function Slide1() {
         source={require("@/assets/images/auth/bg-intro-1.png")}
       />
 
-      <View style={{ marginInline: 8, gap: 8 }}>
+      <View style={{ marginInline: 8, gap: 8, marginTop: 32 }}>
         <ThemedText type="display" style={{ textAlign: "center" }}>
-          The Ultimate Hub for Polkadot Governance
+          The Ultimate Hub for{"\n"} Polkadot Governance
         </ThemedText>
 
         <ThemedText style={{ textAlign: "center", color: "#79767D" }}>
@@ -104,9 +109,9 @@ function Slide2() {
         source={require("@/assets/images/auth/bg-intro-2.gif")}
       />
 
-      <View style={{ marginInline: 8, gap: 8 }}>
+      <View style={{ marginInline: 32, gap: 8 }}>
         <ThemedText type="display" style={{ textAlign: "center" }}>
-          Meet Polka, Your Governance Buddy!
+          Meet Polka, Your {"\n"} Governance Buddy!
         </ThemedText>
 
         <ThemedText style={{ textAlign: "center", color: "#79767D" }}>

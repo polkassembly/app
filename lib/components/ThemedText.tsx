@@ -94,7 +94,7 @@ export const styles = StyleSheet.create({
     fontSize: 28,
     fontWeight: 600,
     lineHeight: 42,
-    fontFamily: "PoppinsSemiBold",
+    fontFamily: "PoppinsMedium",
   },
 
   titleLarge: {
