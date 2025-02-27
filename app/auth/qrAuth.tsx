@@ -26,10 +26,10 @@ export default function QrAuthScreen() {
       <SafeAreaView style={[styles.safeAreaView, { backgroundColor: secondaryBackgroundColor }]}>
         <View style={styles.headerContainer}>
           <Image style={styles.logo} source={require("@/assets/images/logo-wide.png")} />
-          <Image style={styles.qrScreenImage} source={require("@/assets/images/auth/qr-auth-screen.gif")} />
+          <Image style={{ flexGrow: 0.8, flexBasis: 0}} resizeMode="contain" source={require("@/assets/images/auth/qr-auth-screen.gif")} />
           <View style={styles.loginText}>
             <ThemedText type="display">Login to the App</ThemedText>
-            <ThemedText type="bodyMedium2" colorName="secondaryText">
+            <ThemedText type="bodyMedium2" colorName="mediumText">
               Explore Proposals on the go and add your vote!
             </ThemedText>
           </View>
@@ -150,7 +150,7 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
-    paddingVertical: 40,
+    flex: 1,
   },
   qrCodeScannerContainer: {
     position: "absolute",
@@ -174,8 +174,8 @@ const styles = StyleSheet.create({
     height: "95%",
   },
   logo: {
-    width: 159,
-    height: 51,
+    width: 160,
+    height: 50,
     resizeMode: "contain",
   },
   loginText: {
@@ -183,13 +183,13 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
-    gap: 12,
+    gap: 8,
   },
   loginDescContainer: {
     display: "flex",
     flexDirection: "column",
     padding: 24,
-    gap: 24,
+    gap: 20,
   },
   loginDescText: {
     backgroundColor: Colors.primaryBackground,
@@ -199,8 +199,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
   },
   qrScreenImage: {
-    width: 350,
-    height: 350,
+    flexGrow: 1,
     resizeMode: "contain",
   },
   maskLayer: {
