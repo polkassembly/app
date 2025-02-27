@@ -207,16 +207,16 @@ export default function Settings() {
         <View style={{ gap: 32 }}>
           <View style={styles.header}>
             <IconSettings color="white" iconWidth={24} iconHeight={24} />
-            <ThemedText type="titleLarge">Settings</ThemedText>
+            <ThemedText type="titleMedium">Settings</ThemedText>
           </View>
           <View style={{ gap: 8, marginTop: 20 }}>
-            <ThemedText type="bodyMedium1">USERNAME</ThemedText>
+            <ThemedText type="bodySmall">USERNAME</ThemedText>
             {isUserLoading || !user ? (
               <Skeleton width={150} height={12} />
             ) : (
               <View style={styles.userNameContainer}>
                 <TextInput
-                  style={{ color: "white", flex: 1, fontSize: 16, }}
+                  style={{ color: "white", flex: 1, fontSize: 16, padding: 8 }}
                   placeholder="Username"
                   value={username}
                   onChangeText={setUsername}
@@ -226,7 +226,7 @@ export default function Settings() {
             )}
           </View>
           <View style={{ gap: 16 }}>
-            <ThemedText>PROFILE PICTURE</ThemedText>
+            <ThemedText type="bodySmall">PROFILE PICTURE</ThemedText>
             <View style={styles.profilePictureContainer}>
               <View style={{ maxWidth: "50%" }}>
                 <Image
