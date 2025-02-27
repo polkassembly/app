@@ -79,11 +79,11 @@ async function processImageForUpload(image: string | number): Promise<string> {
       { compress, format: ImageManipulator.SaveFormat.JPEG }
     );
     const info = await FileSystem.getInfoAsync(manipulatedResult.uri);
-    if(info.exists === false) {
+    if (info.exists === false) {
       throw new Error("File does not exist");
     }
 
-    const fileSize = info.size ?? 0; 
+    const fileSize = info.size ?? 0;
     // If file is larger than 500KB and quality can be reduced further, try again.
     if (fileSize > 500 * 1024 && compress > 0.1) {
       return compressImage(currentUri, compress - 0.1);
@@ -216,7 +216,7 @@ export default function Settings() {
             ) : (
               <View style={styles.userNameContainer}>
                 <TextInput
-                  style={{ color: "white", flex: 1, fontSize: 16,  }}
+                  style={{ color: "white", flex: 1, fontSize: 16, }}
                   placeholder="Username"
                   value={username}
                   onChangeText={setUsername}
@@ -228,17 +228,19 @@ export default function Settings() {
           <View style={{ gap: 16 }}>
             <ThemedText>PROFILE PICTURE</ThemedText>
             <View style={styles.profilePictureContainer}>
-              <Image
-                source={
-                  userProfilePicture
-                    ? typeof userProfilePicture === "string"
-                      ? { uri: userProfilePicture }
-                      : Image.resolveAssetSource(userProfilePicture)
-                    : Image.resolveAssetSource(defaultAvatar)
-                }
-                style={{ borderRadius: 100, height: 180, width: 180 }}
-              />
-              <View>
+              <View style={{ maxWidth: "50%" }}>
+                <Image
+                  source={
+                    userProfilePicture
+                      ? typeof userProfilePicture === "string"
+                        ? { uri: userProfilePicture }
+                        : Image.resolveAssetSource(userProfilePicture)
+                      : Image.resolveAssetSource(defaultAvatar)
+                  }
+                  style={{ borderRadius: 100, flex: 1, flexGrow: 1, aspectRatio: 1 }}
+                />
+              </View>
+              <View style={{ width: "50%" }}>
                 <ThemedText type="bodyMedium2" style={{ color: colorStroke }}>
                   Options:
                 </ThemedText>
@@ -343,18 +345,19 @@ const styles = StyleSheet.create({
     gap: 20,
   },
   avatarButton: {
-    width: 45,
-    height: 45,
     borderRadius: 25,
     borderWidth: 1,
     borderColor: "#ccc",
     justifyContent: "center",
     alignItems: "center",
     margin: 5,
+    flex: 1,
+    flexGrow: 1,
+    aspectRatio: 1,
   },
   avatarImage: {
-    width: 40,
-    height: 40,
+    width: "90%",
+    height: "90%",
     borderRadius: 20,
   },
   savingOverlay: {
