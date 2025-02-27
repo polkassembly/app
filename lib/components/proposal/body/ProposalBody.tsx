@@ -62,13 +62,19 @@ function ProposalBody({
 					createdAt && <TimeDisplay createdAt={createdAt} />
 				}
 			</View>
-			<ThemedText type="bodyMedium2" style={{ letterSpacing: 1 }}>
+
+			<ThemedText type="bodyMedium3" style={{ letterSpacing: 1 }}>
 				{trimText(title, 80)}
 			</ThemedText>
 			<RenderHTML
 				source={{ html: postDescriptionHTML }}
-				baseStyle={{ color: colorText }}
+				baseStyle={{ color: colorText, fontFamily: "PoppinsRegular", fontSize: 12, lineHeight: 18, fontWeight: 400 }}
 				contentWidth={300}
+				tagsStyles={{
+					body: { padding: 0, margin: 0 },
+					p: { padding: 0, margin: 0 },
+					span: { padding: 0, margin: 0 },
+				}}
 			/>
 			{htmlContent.length > descriptionLength && (
 				<TouchableOpacity onPress={toggleReadMore}>
