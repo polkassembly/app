@@ -65,7 +65,7 @@ export function BatchVoteForm({
   };
 
   return (
-    <ThemedView style={[styles.card, { gap: 16 }]}>
+    <ThemedView style={[styles.card, { gap: 24 }]}>
       <TriStateButtons selected={vote} onSelectionChanged={handleVoteChange} />
 
       {vote === "aye" && (
@@ -87,7 +87,7 @@ export function BatchVoteForm({
         </>
       )}
 
-      <ThemedText type="bodyMedium1">Conviction</ThemedText>
+      <ThemedText type="bodyMedium2">Set Conviction</ThemedText>
       <ConvictionSlider conviction={conviction} onConvictionChange={setConviction} />
 
       <ThemedView
@@ -102,9 +102,9 @@ export function BatchVoteForm({
       >
         <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
           <IconPadlock />
-          <ThemedText colorName="mediumText">Locking Period</ThemedText>
+          <ThemedText colorName="mediumText" type="bodyMedium3">Locking Period</ThemedText>
         </View>
-        <ThemedText>{getLockPeriodText(conviction)}</ThemedText>
+        <ThemedText type="bodyMedium3">{getLockPeriodText(conviction)}</ThemedText>
       </ThemedView>
 
       {/* Render the buttons only if hideButtons is false */}
@@ -114,13 +114,13 @@ export function BatchVoteForm({
             <ThemedButton
               onPress={onCancel}
               text="Cancel"
-              textType="titleMedium"
+              textType="bodyMedium3"
               style={{ flex: 1, paddingVertical: 8 }}
             />
             <ThemedButton
               onPress={onConfirm}
               text="Confirm"
-              textType="titleMedium"
+              textType="bodyMedium3"
               style={{ flex: 1, paddingVertical: 8 }}
             />
           </View>
@@ -128,7 +128,7 @@ export function BatchVoteForm({
           <ThemedButton
             onPress={onSaveAndNext}
             text="Save and Next"
-            textType="titleMedium"
+            textType="bodyMedium3"
             style={{ paddingVertical: 8 }}
           />
         ))}
@@ -174,13 +174,13 @@ function ConvictionSlider({ conviction, onConvictionChange }: ConvictionSliderPr
         onValueChange={(value: number) => onConvictionChange(transformOut(value))}
       />
       <View style={{ flex: 1, flexDirection: "row", justifyContent: "space-between" }}>
-        <ThemedText>0.1x</ThemedText>
-        <ThemedText>1x</ThemedText>
-        <ThemedText>2x</ThemedText>
-        <ThemedText>3x</ThemedText>
-        <ThemedText>4x</ThemedText>
-        <ThemedText>5x</ThemedText>
-        <ThemedText>6x</ThemedText>
+        <ThemedText type="bodyMedium3">0.1x</ThemedText>
+        <ThemedText type="bodyMedium3">1x</ThemedText>
+        <ThemedText type="bodyMedium3">2x</ThemedText>
+        <ThemedText type="bodyMedium3">3x</ThemedText>
+        <ThemedText type="bodyMedium3">4x</ThemedText>
+        <ThemedText type="bodyMedium3">5x</ThemedText>
+        <ThemedText type="bodyMedium3">6x</ThemedText>
       </View>
     </View>
   );
@@ -246,7 +246,7 @@ function TriStateButton({ color, Icon, selected, onPress, children }: TriStateBu
         <ThemedText
           darkColor={selected ? Colors.dark.secondaryBackground : color}
           lightColor={selected ? Colors.dark.secondaryBackground : color}
-          type="bodyMedium1"
+          type="bodySmall"
         >
           {children}
         </ThemedText>
@@ -291,7 +291,7 @@ function AmountInput({ value, onChange }: AmountInputProps) {
           style={{ height: 32, width: 32 }}
           source={require("@/assets/images/icon-polkadot.png")}
         />
-        <ThemedText>DOT</ThemedText>
+        <ThemedText type="bodySmall">DOT</ThemedText>
       </View>
       <TextInput
         keyboardType="numeric"
@@ -300,7 +300,7 @@ function AmountInput({ value, onChange }: AmountInputProps) {
           const parsed = parseInt(text);
           onChange(isNaN(parsed) ? 0 : parsed);
         }}
-        placeholder="Add default amount"
+        placeholder="0"
         placeholderTextColor={color}
         style={{ flex: 1, textAlign: "right", color }}
       />
@@ -326,7 +326,7 @@ export function Note({ content }: NoteProps) {
       }}
     >
       <IconInfo />
-      <ThemedText type="bodyMedium3" style={{ flex: 1 }}>
+      <ThemedText type="bodySmall3" style={{ flex: 1 }}>
         {content}
       </ThemedText>
     </View>

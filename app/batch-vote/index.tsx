@@ -25,9 +25,9 @@ export default function BatchVotingScreen() {
     <SafeAreaView style={styles.root}>
       <TopBar style={{ marginTop: 10 }} />
       <ScrollView style={styles.scrollView} contentContainerStyle={{ gap: 16 }}>
-        <ThemedText type="titleLarge">Batch Voting</ThemedText>
+        <ThemedText type="titleMedium">Batch Voting</ThemedText>
         <ThemedView type="container" style={[styles.card, { gap: 15 }]}>
-          <ThemedText type="titleLarge">Set Defaults</ThemedText>
+          <ThemedText type="titleMedium1">Set Defaults</ThemedText>
           <Note content="Select default values for votes. These can be edited before making a final transaction" />
           <BatchVoteForm
             vote={vote}
