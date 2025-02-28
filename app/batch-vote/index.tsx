@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ScrollView, StyleSheet } from "react-native";
+import { ScrollView, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
 import { ThemedText } from "@/lib/components/ThemedText";
@@ -7,6 +7,7 @@ import { ThemedView } from "@/lib/components/ThemedView";
 import { TopBar } from "@/lib/components/Topbar";
 import { Colors } from "@/lib/constants/Colors";
 import { Vote, Note, BatchVoteForm } from "@/lib/components/feed/BatchVoteForm";
+import { IconVote } from "@/lib/components/icons/Profile";
 
 export default function BatchVotingScreen() {
   const [vote, setVote] = useState<Vote>("aye");
@@ -23,9 +24,12 @@ export default function BatchVotingScreen() {
 
   return (
     <SafeAreaView style={styles.root}>
-      <TopBar style={{ marginTop: 10 }} />
+      <TopBar style={{ paddingHorizontal: 8}}/>
       <ScrollView style={styles.scrollView} contentContainerStyle={{ gap: 16 }}>
-        <ThemedText type="titleMedium">Batch Voting</ThemedText>
+        <View style={{ flexDirection: "row", alignItems: "center", gap: 4}}>
+          <IconVote iconWidth={21} iconHeight={21} color="white" />
+          <ThemedText type="titleMedium" style={{ fontWeight: 500 }}>Batch Voting</ThemedText>
+        </View>
         <ThemedView type="container" style={[styles.card, { gap: 15 }]}>
           <ThemedText type="titleMedium1">Set Defaults</ThemedText>
           <Note content="Select default values for votes. These can be edited before making a final transaction" />
