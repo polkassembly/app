@@ -72,7 +72,7 @@ export default function Browser() {
             </Text>
 
             <Image
-              style={{ height: 70 }}
+              style={{ height: 36, width: 102 }}
               source={require("@/assets/images/browser/polkaassembly.png")}
             />
           </View>
@@ -176,30 +176,32 @@ function QuickActions() {
         }}
       />
 
-      <ThemedText
-        style={[
-          styles.quickActionHeading,
-          {
-            textShadowColor: Colors.dark.accent,
-            fontSize: 12,
-          },
-        ]}
-      >
-        POLKASSEMBLY
-      </ThemedText>
+      <View>
+        <ThemedText
+          style={[
+            styles.quickActionHeading,
+            {
+              textShadowColor: Colors.dark.accent,
+              fontSize: 12,
+            },
+          ]}
+        >
+          POLKASSEMBLY
+        </ThemedText>
 
-      <ThemedText
-        style={[
-          styles.quickActionHeading,
-          {
-            textShadowColor: "#4766F9",
-            fontSize: 24,
-            color: "#F0B44F",
-          },
-        ]}
-      >
-        QUICK ACTIONS
-      </ThemedText>
+        <ThemedText
+          style={[
+            styles.quickActionHeading,
+            {
+              textShadowColor: "#4766F9",
+              fontSize: 24,
+              color: "#F0B44F",
+            },
+          ]}
+        >
+          QUICK ACTIONS
+        </ThemedText>
+      </View>
 
       <Carousel
         defaultIndex={1}
@@ -265,7 +267,7 @@ function QuickActionCard({
     <ThemedView
       type="secondaryBackground"
       style={{
-        borderWidth: 2,
+        borderWidth: 1,
         borderColor: "#383838",
         paddingBlock: 16,
         paddingInline: 24,
