@@ -33,12 +33,11 @@ export function TopBar({
           backgroundColor,
           flexDirection: "row",
           alignItems: "center",
-          marginTop: 20,
         },
         style,
       ]}
     >
-      <View style={{ flex: 1, flexDirection: "row", justifyContent: "flex-start" ,alignItems: "center"}}>
+      <View style={{ flex: 1, flexDirection: "row", justifyContent: "flex-start", alignItems: "center" }}>
         <Link asChild href="..">
           <TouchableOpacity>
             <View style={{ paddingVertical: 10 }}>
@@ -50,14 +49,16 @@ export function TopBar({
           children
         }
       </View>
-      <IconPoints />
-      {isUserInfoLoading ? (
-        <Skeleton width={50} />
-      ) : (
-        <ThemedText type="titleLarge">
-          {userInfo?.profileScore}
-        </ThemedText>
-      )}
+      <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
+        <IconPoints iconWidth={24} iconHeight={24} />
+        {isUserInfoLoading ? (
+          <Skeleton width={50} />
+        ) : (
+          <ThemedText type="titleMedium" style={{ fontWeight: 700 }}>
+            {userInfo?.profileScore}
+          </ThemedText>
+        )}
+      </View>
     </View>
   );
 }

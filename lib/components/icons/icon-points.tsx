@@ -1,9 +1,9 @@
 import Svg, { Path } from "react-native-svg";
 import { IconProps } from "./types";
 
-export function IconPoints({ style, color }: IconProps) {
+export function IconPoints({ iconWidth, iconHeight, style, color }: IconProps) {
   return (
-    <Svg width="24" height="24" viewBox="0 0 24 24" style={style}>
+    <Svg width={iconWidth} height={iconHeight} viewBox="0 0 24 24" style={style}>
       <Path
         fillRule="evenodd"
         clipRule="evenodd"
