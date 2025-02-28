@@ -21,12 +21,12 @@ import { Skeleton } from "moti/skeleton";
 import { useState } from "react";
 import { ActivityIndicator, ScrollView, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import IconPencil from "@/lib/components/icons/shared/icon-pencil";
 
 export default function VotedProposals() {
 	const { data: cart, isLoading: isCartLoading } = useGetCartItems();
 	const [showEdit, setShowEdit] = useState(false);
 	const [cartItem, setCartItem] = useState<CartItem | null>(null);
-	const [showBottomView, setShowBottomView] = useState(true)
 	const colorStroke = useThemeColor({}, "stroke");
 	const background = useThemeColor({}, "container");
 
@@ -38,20 +38,22 @@ export default function VotedProposals() {
 		<>
 			<SafeAreaView style={{ backgroundColor: background, flex: 1 }}>
 				<TopBar />
-				<ScrollView>
+				<ScrollView style={{ padding: 20}}>
+					<TouchableOpacity style={{ flexDirection: "row", alignItems: "center", marginBottom: 20, gap: 6 }} onPress={() => router.dismiss()}>
+						<Ionicons name="chevron-back" size={15} color="white" />
+						<ThemedText type="bodySmall">Back To Swiping</ThemedText>
+					</TouchableOpacity>
 					<ThemedView
 						type="container"
 						style={{
 							gap: 20,
 							padding: 10,
-							margin: 20,
 							borderRadius: 10,
 							borderWidth: 1,
 							borderColor: colorStroke,
 						}}
 					>
-						<ThemedText type="titleMedium">Voted Proposals</ThemedText>
-						<HorizontalSeparator />
+						<ThemedText type="bodyLarge">Voted Proposals{`(${cart?.length || 0})`}</ThemedText>
 						{cart?.map((item) => (
 							<CartItemCard
 								key={item.id}
@@ -109,12 +111,22 @@ function CartItemCard({ cartItem, onEdit }: CartItemCardProps) {
 				borderColor: colorStroke,
 			}}
 		>
-			<View style={{ flexDirection: "row", gap: 10 }}>
-				<ThemedText>{cartItem.postIndexOrHash}</ThemedText>
+			<View style={{ flexDirection: "row", gap: 10, alignContent: "center" }}>
+				<ThemedText
+					type="bodySmall"
+					colorName="mediumText"
+					style={{
+						backgroundColor: "#EAEDF0",
+						borderRadius: 4,
+						paddingHorizontal: 4,
+						fontSize: 10,
+					}}>
+					#{cartItem.postIndexOrHash}
+				</ThemedText>
 				{isPostLoading ? (
 					<Skeleton width={50} />
 				) : (
-					<ThemedText>{trimText(post?.title || "", 30)}</ThemedText>
+					<ThemedText type="bodySmall">{trimText(post?.title || "", 30)}</ThemedText>
 				)}
 			</View>
 			<HorizontalSeparator />
@@ -126,14 +138,14 @@ function CartItemCard({ cartItem, onEdit }: CartItemCardProps) {
 				}}
 			>
 				<VoteType decision={cartItem.decision} />
-				<ThemedText>{cartItem.conviction}x</ThemedText>
+				<ThemedText type="bodySmall">{cartItem.conviction}x</ThemedText>
 				<View style={{ flexDirection: "row", gap: 20, alignItems: "center" }}>
 					<TouchableOpacity onPress={() => onEdit(cartItem)}>
-						<IconEdit color="green" />
+						<IconPencil color="#79767D" iconHeight={20} iconWidth={20} />
 					</TouchableOpacity>
 					<TouchableOpacity onPress={handleDelete}>
 						{
-							isDeleting ? <ActivityIndicator color="red" /> : <Ionicons name="trash" size={24} color="red" />
+							isDeleting ? <ActivityIndicator color="#79767D" /> : <Ionicons name="trash" size={20} color="#79767D" />
 						}
 					</TouchableOpacity>
 				</View>
@@ -209,30 +221,28 @@ function EditCartItem({ cartItem, onClose }: EditCartItemProps) {
 						marginHorizontal: 16,
 					}}
 				>
-					<ThemedText type="titleSmall">Edit Vote Details</ThemedText>
+					<ThemedText type="titleMedium">Edit Vote Details</ThemedText>
 					<TouchableOpacity onPress={onClose} style={{ padding: 5 }}>
 						<IconClose iconWidth={14} iconHeight={14} color="#79767D" />
 					</TouchableOpacity>
 				</View>
 				<HorizontalSeparator style={{ marginTop: 15, marginBottom: 25 }} />
-				<View style={{ marginHorizontal: 16, marginBottom: 20 }}>
-					<ThemedText>Editing Vote Details for Proposal:</ThemedText>
-					{isPostLoading && !post ? (
+				<View style={{ flexDirection: "row", gap: 10, alignContent: "center", marginBottom: 16 }}>
+					<ThemedText
+						type="bodySmall"
+						colorName="mediumText"
+						style={{
+							backgroundColor: "#EAEDF0",
+							borderRadius: 4,
+							paddingHorizontal: 4,
+							fontSize: 10,
+						}}>
+						#{cartItem.postIndexOrHash}
+					</ThemedText>
+					{isPostLoading ? (
 						<Skeleton width={50} />
 					) : (
-						<View style={{ flexDirection: "row", gap: 10, marginTop: 8 }}>
-							<ThemedText
-								style={{
-									backgroundColor: "white",
-									color: colorStroke,
-									borderRadius: 5,
-									paddingHorizontal: 2,
-								}}
-							>
-								#{post?.index}
-							</ThemedText>
-							<ThemedText>{post?.title}</ThemedText>
-						</View>
+						<ThemedText type="bodySmall">{trimText(post?.title || "", 30)}</ThemedText>
 					)}
 				</View>
 				<BatchVoteForm
@@ -261,19 +271,19 @@ function VoteType({ decision }: { decision: "aye" | "nay" | "abstain" }) {
 			{decision === "aye" && (
 				<>
 					<IconAye filled color="#2ED47A" />
-					<ThemedText>Aye</ThemedText>
+					<ThemedText type="bodySmall">Aye</ThemedText>
 				</>
 			)}
 			{decision === "nay" && (
 				<>
 					<IconNay filled color="#F53C3C" />
-					<ThemedText>Nay</ThemedText>
+					<ThemedText type="bodySmall">Nay</ThemedText>
 				</>
 			)}
 			{decision === "abstain" && (
 				<>
 					<IconAbstain filled color="#FFBF60" />
-					<ThemedText>Abstain</ThemedText>
+					<ThemedText type="bodySmall">Abstain</ThemedText>
 				</>
 			)}
 		</View>
@@ -284,14 +294,14 @@ function BottomView({ totalProposal }: { totalProposal: string }) {
 	return (
 		<ThemedView type="container" style={{ gap: 20, padding: 20 }}>
 			<View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-				<ThemedText>Total Proposals</ThemedText>
-				<ThemedText>{totalProposal}</ThemedText>
+				<ThemedText type="bodyMedium3">Total Proposals</ThemedText>
+				<ThemedText type="bodyLarge">{totalProposal}</ThemedText>
 			</View>
 			<Note content="NOTE: Login Via web view to confirm your vote" />
 			<ThemedButton text="Explore Feed" onPress={() => {
 				router.dismissAll()
 				router.push("/(tabs)")
-			}}/>
+			}} />
 		</ThemedView>
 	)
 }
