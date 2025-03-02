@@ -85,21 +85,20 @@ const StatusTag: React.FC<StatusTagProps> = ({ status, colorInverted, style }) =
 		backgroundColor: colorInverted ? '#FFFFFF' : groupStyles[group].backgroundColor,
 		borderColor: groupStyles[group].borderColor,
 		borderWidth: 2,
-		paddingHorizontal: 2,
+		paddingHorizontal: 4,
+		paddingVertical: 2,
 		borderRadius: 4,
-		alignSelf: 'flex-start',
+		alignItems: 'center',
+		justifyContent: 'center',
 	};
 
 	const textStyle: TextStyle = {
 		color: colorInverted ? '#4B5563' : groupStyles[group].textColor,
-		fontSize: 12,
-		fontWeight: '500',
-		letterSpacing: 0.5,
 	};
 
 	return (
 		<View style={[containerStyle, style]}>
-			<ThemedText type="bodySmall3" style={[textStyle]}>{statusText}</ThemedText>
+			<ThemedText type='bodySmall3' style={[textStyle]}>{statusText}</ThemedText>
 		</View>
 	);
 };

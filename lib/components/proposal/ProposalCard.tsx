@@ -60,7 +60,7 @@ function ProposalCard({
 			/>
 			{/* Render children between read-more and actions */}
 			{children}
-			<HorizontalSeparator />
+			{ (!withoutActions || !withoutViewMore) && <HorizontalSeparator /> }
 			{!withoutActions && (
 				<ProposalActions post={post} userInfo={userInfo} />
 			)}

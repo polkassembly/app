@@ -3,7 +3,6 @@ import { Ionicons } from "@expo/vector-icons";
 import React, { useState } from "react";
 import { View, TouchableOpacity, StyleSheet } from "react-native";
 import RenderHTML from "react-native-render-html";
-import { Colors } from "react-native/Libraries/NewAppScreen";
 
 import { EPostOrigin, UserProfile } from "@/lib/types";
 import { trimText } from "@/lib/util/stringUtil";
@@ -42,16 +41,17 @@ function ProposalBody({
 	};
 
 	const colorText = useThemeColor({}, "text")
+	const colorAccent = useThemeColor({}, "accent")
 
 	return (
 		<View style={styles.flexColumnGap8}>
-			<View style={{ flexDirection: "row", gap: 12, alignItems: "center" }}>
+			<View style={{ flexDirection: "row", gap: 6, alignItems: "center" }}>
 
 				<View style={styles.flexRowGap4}>
-					<View style={{ width: 15, height: 15, borderRadius: 16 }}>
-						<UserAvatar avatarUrl={proposerInfo?.profileDetails?.image || ""} width={15} height={15} />
+					<View style={{ width: 12, height: 12, borderRadius: 16 }}>
+						<UserAvatar avatarUrl={proposerInfo?.profileDetails?.image || ""} width={12} height={12} />
 					</View>
-					<ThemedText type="bodySmall3">
+					<ThemedText type="bodySmall3" style={{ fontWeight: 400}}>
 						{proposerInfo?.username || "User"}
 					</ThemedText>
 				</View>
@@ -63,7 +63,7 @@ function ProposalBody({
 				}
 			</View>
 
-			<ThemedText type="bodyMedium3" style={{ letterSpacing: 1 }}>
+			<ThemedText type="bodyMedium2" style={{ letterSpacing: 1 }}>
 				{trimText(title, 80)}
 			</ThemedText>
 			<RenderHTML
@@ -85,7 +85,7 @@ function ProposalBody({
 						<Ionicons
 							name={isReadMoreClicked ? "chevron-up" : "chevron-down"}
 							size={16}
-							color={Colors.dark.accent}
+							color={colorAccent}
 						/>
 					</View>
 				</TouchableOpacity>
