@@ -1,12 +1,12 @@
 import { NavigationDarkTheme } from "@/lib/constants/Colors";
-import { KEY_ACCESS_TOKEN, storage } from "@/lib/store";
+import { useAuthStore } from "@/lib/store/authStore";
 import { ThemeProvider } from "@react-navigation/native";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useFonts } from "expo-font";
 import { Stack, useRouter } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import "react-native-reanimated";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
@@ -24,34 +24,22 @@ export default function RootLayout() {
     PoppinsMedium: require("@/assets/fonts/Poppins-Medium.ttf"),
     PoppinsSemiBold: require("@/assets/fonts/Poppins-SemiBold.ttf"),
   });
+  const accessToken = useAuthStore((state) => state.accessToken);
 
-  // New state to track authentication status
-  const [needsLogin, setNeedsLogin] = useState<boolean | null>(null);
-
-  // Perform the login check early
+  // Once fonts are loaded, hide the splash screen.
   useEffect(() => {
-    try {
-      const token = storage.getString(KEY_ACCESS_TOKEN);
-      console.log("Access token:", token);
-      setNeedsLogin(token === null);
-    } catch (error) {
-      console.error("Failed to read access token:", error);
-      setNeedsLogin(true);
-    }
-  }, []);
-
-  // Once fonts and login check are done, hide the splash screen.
-  useEffect(() => {
-    if (loaded && needsLogin !== null) {
+    if (loaded) {
       SplashScreen.hideAsync();
     }
-  }, [loaded, needsLogin]);
+  }, [loaded]);
 
-  if (!loaded || needsLogin === null) {
+  if (!loaded) {
     return null;
   }
 
-  console.log("needsLogin", needsLogin);
+  // Determine if user needs to log in
+  const needsLogin = accessToken === null;
+
   return (
     <QueryClientProvider client={queryClient}>
       <SafeAreaProvider>
@@ -71,14 +59,20 @@ function Content({ needsLogin }: { needsLogin: boolean }) {
     }
   }, [needsLogin, router]);
 
-  // Only render main stack if the user is logged in.
   if (needsLogin) {
-    return null;
+    return (
+      <ThemeProvider value={NavigationDarkTheme}>
+        <Stack>
+          <Stack.Screen name="auth" options={{ headerShown: false }} />
+        </Stack>
+        <StatusBar style="auto" />
+      </ThemeProvider>
+    );
   }
 
   return (
     <ThemeProvider value={NavigationDarkTheme}>
-      <Stack>
+      <Stack initialRouteName="(tabs)">
         <Stack.Screen name="auth" options={{ headerShown: false }} />
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="settings" options={{ headerShown: false }} />
