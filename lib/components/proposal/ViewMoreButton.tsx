@@ -1,24 +1,30 @@
-import { Link } from "expo-router";
+import { Link, router } from "expo-router";
 import { IconViewMore } from "../icons/shared";
 import ThemedButton from "../ThemedButton";
 import { ThemedText } from "../ThemedText";
 import { StyleSheet } from "react-native";
+import { Post } from "@/lib/types";
+import { useProposalStore } from "@/lib/store/proposalStore";
 
 interface ViewMoreButtonProps {
-	index: number | string;
-	proposalType: string;
+	post: Post;
 }
 
-function ViewMoreButton({ index, proposalType }: ViewMoreButtonProps) {
+function ViewMoreButton({ post }: ViewMoreButtonProps) {
 	return (
-		<Link href={`/proposal/${index}?proposalType=${proposalType}`} asChild>
-			<ThemedButton bordered style={styles.viewMoreButton}>
-				<ThemedText type="bodySmall" colorName="accent">
-					View More
-				</ThemedText>
-				<IconViewMore />
-			</ThemedButton>
-		</Link>
+		<ThemedButton
+		bordered
+		style={styles.viewMoreButton} 
+		onPress={() => {
+			useProposalStore.getState().setProposal(post);
+			router.push(`/proposal/${post.index}?proposalType=${post.proposalType}`);
+		}}
+		>
+			<ThemedText type="bodySmall" colorName="accent">
+				View More
+			</ThemedText>
+			<IconViewMore />
+		</ThemedButton>
 	);
 }
 

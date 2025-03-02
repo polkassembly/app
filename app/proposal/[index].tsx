@@ -27,14 +27,12 @@ import { formatBnBalance } from "@/lib/util";
 import BN from "bn.js";
 import { calculatePercentage } from "@/lib/util/calculatePercentage";
 import { ProposalCard } from "@/lib/components/proposal/ProposalCard";
+import { useProposalStore } from "@/lib/store/proposalStore";
 
 export default function ProposalDetailScreenImpl() {
   const [open, setOpen] = useState(false);
   const { index, proposalType } = useLocalSearchParams<{ index: string, proposalType: EProposalType }>();
-  const { data: proposal, isLoading } = useProposalByIndex({
-    proposalType: proposalType,
-    indexOrHash: index,
-  });
+  const proposal = useProposalStore(state => state.proposal);
 
   // Fetch comments for the proposal using the new hook.
   const { data: comments, isLoading: commentsLoading } = useProposalComments({ proposalType: proposalType, proposalId: index });
@@ -43,7 +41,7 @@ export default function ProposalDetailScreenImpl() {
 
   const accentColor = useThemeColor({}, "accent");
 
-  if (isLoading || !proposal) {
+  if (!proposal) {
     return (
       <View
         style={{ flex: 1, justifyContent: "center", alignContent: "center" }}

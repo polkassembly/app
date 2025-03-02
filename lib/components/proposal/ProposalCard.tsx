@@ -66,7 +66,7 @@ function ProposalCard({
 			)}
 
 			{!withoutViewMore && (
-				<ViewMoreButton index={post.index} proposalType={post.proposalType} />
+				<ViewMoreButton post={post} />
 			)}
 		</ThemedView>
 	);
