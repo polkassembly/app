@@ -6,7 +6,7 @@ import { useFonts } from "expo-font";
 import { Stack, useRouter } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import "react-native-reanimated";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
@@ -21,45 +21,60 @@ export default function RootLayout() {
     Recharge: require("@/assets/fonts/Recharge.ttf"),
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
     PoppinsRegular: require("../assets/fonts/Poppins-Regular.ttf"),
-    PoppinsMedium: require("../assets/fonts/Poppins-Medium.ttf"),
-    PoppinsSemiBold: require("../assets/fonts/Poppins-SemiBold.ttf"),
+    PoppinsMedium: require("@/assets/fonts/Poppins-Medium.ttf"),
+    PoppinsSemiBold: require("@/assets/fonts/Poppins-SemiBold.ttf"),
   });
 
+  // New state to track authentication status
+  const [needsLogin, setNeedsLogin] = useState<boolean | null>(null);
+
+  // Perform the login check early
   useEffect(() => {
-    if (loaded) {
+    try {
+      const token = storage.getString(KEY_ACCESS_TOKEN);
+      console.log("Access token:", token);
+      setNeedsLogin(token === null);
+    } catch (error) {
+      console.error("Failed to read access token:", error);
+      setNeedsLogin(true);
+    }
+  }, []);
+
+  // Once fonts and login check are done, hide the splash screen.
+  useEffect(() => {
+    if (loaded && needsLogin !== null) {
       SplashScreen.hideAsync();
     }
-  }, [loaded]);
+  }, [loaded, needsLogin]);
 
-  if (!loaded) {
+  if (!loaded || needsLogin === null) {
     return null;
   }
 
+  console.log("needsLogin", needsLogin);
   return (
     <QueryClientProvider client={queryClient}>
       <SafeAreaProvider>
-        <Content />
+        <Content needsLogin={needsLogin} />
       </SafeAreaProvider>
     </QueryClientProvider>
   );
 }
 
-function Content() {
+function Content({ needsLogin }: { needsLogin: boolean }) {
   const router = useRouter();
-  
-  let needsLogin;
-  try {
-    needsLogin = storage.getString(KEY_ACCESS_TOKEN) === null;
-  }catch (error) {
-    console.error("Failed to read access token:", error);
-    needsLogin = true;
-  }
 
+  // Immediately redirect if login is required.
   useEffect(() => {
     if (needsLogin) {
       router.replace("/auth");
     }
-  }, []);
+  }, [needsLogin, router]);
+
+  // Only render main stack if the user is logged in.
+  if (needsLogin) {
+    return null;
+  }
 
   return (
     <ThemeProvider value={NavigationDarkTheme}>
@@ -69,7 +84,7 @@ function Content() {
         <Stack.Screen name="settings" options={{ headerShown: false }} />
         <Stack.Screen name="+not-found" />
         <Stack.Screen name="proposal" options={{ headerShown: false }} />
-        <Stack.Screen name="batch-vote" options={{ headerShown: false}} />
+        <Stack.Screen name="batch-vote" options={{ headerShown: false }} />
       </Stack>
       <StatusBar style="auto" />
     </ThemeProvider>
