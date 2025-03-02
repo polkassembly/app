@@ -16,7 +16,9 @@ interface UpdateCartItemParams {
 
 export default function useUpdateCartItem() {
   const queryClient = useQueryClient();
-  const id = useProfileStore((state) => state.profile?.id) ? String(useProfileStore((state) => state.profile?.id)) : "";
+  const profile = useProfileStore((state) => state.profile);
+  const id = profile?.id ? String(profile.id) : "";
+  
   return useMutation({
     mutationFn: async (params: UpdateCartItemParams) => {
       return client.patch(`/users/id/${id}/vote-cart`, params);

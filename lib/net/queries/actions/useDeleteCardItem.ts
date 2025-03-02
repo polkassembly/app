@@ -9,7 +9,9 @@ interface DeleteCartItemParams {
 
 export default function useDeleteCartItem() {
   const queryClient = useQueryClient();
-  const id = useProfileStore((state) => state.profile?.id) ? String(useProfileStore((state) => state.profile?.id)) : "";
+  const profile = useProfileStore((state) => state.profile);
+  const id = profile?.id ? String(profile.id) : "";
+
   return useMutation({
     mutationFn: async (params: DeleteCartItemParams) => {
       return client.delete(`/users/id/${id}/vote-cart`, { data: params });

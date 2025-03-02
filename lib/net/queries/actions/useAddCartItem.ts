@@ -6,7 +6,9 @@ import { useProfileStore } from "@/lib/store/profileStore";
 
 export default function useAddCartItem() {
   const queryClient = useQueryClient();
-  const id = useProfileStore((state) => state.profile?.id) ? String(useProfileStore((state) => state.profile?.id)) : "";
+  const profile = useProfileStore((state) => state.profile);
+  const id = profile?.id ? String(profile.id) : "";
+  
   return useMutation({
     mutationFn: async (params: CartItemParams) => {
       return client.post(`/users/id/${id}/vote-cart`, params);
