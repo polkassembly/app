@@ -31,14 +31,12 @@ import {
   TabView,
 } from "react-native-tab-view";
 import { EmptyViewWithTabBarHeight } from "@/lib/components/util";
-import { KEY_ID, storage } from "@/lib/store";
-import { useGetUserById } from "@/lib/net/queries/profile";
 import { usePathname, useRouter } from "expo-router";
-import { AxiosError } from "axios";
 import { Post } from "@/lib/types";
 import { ThemedText } from "@/lib/components/ThemedText";
 import { useThemeColor } from "@/lib/hooks/useThemeColor";
 import { ProposalCard, ProposalCardSkeleton } from "@/lib/components/proposal/ProposalCard";
+import { useProfileStore } from "@/lib/store/profileStore";
 
 const renderScene = SceneMap({
   profile: Profile,
@@ -63,45 +61,21 @@ const styles = StyleSheet.create({
 function Profile() {
   const router = useRouter();
   const pathName = usePathname()
-  let id = "";
 
-  try {
-    id = storage.getString(KEY_ID) || "";
-  } catch (error) {
-    console.error("Failed to read user ID:", error);
-  }
+  const userProfile = useProfileStore((state) => state.profile);
 
-
-  useEffect(() => {
-    if (!id && pathName === "/(tabs)") router.replace("/auth");
-  }, [id, router, pathName])
-
-  const { data, isLoading, isError, error } = useGetUserById(id);
-
-  // Handle error state
-  if (isError) {
-    if (error instanceof AxiosError && error.response?.status === 401) {
-      router.replace("/auth");
-    }
-    return (
-      <ThemedView type="background" style={styles.container}>
-        <Text>Error loading profile</Text>
-      </ThemedView>
-    );
-  }
-
-  if (isLoading || !data) {
+  if (!userProfile) {
     return <ProfileSkeleton />;
   }
 
   return (
     <ThemedView type="background" style={styles.container}>
       <ScrollView style={styles.scrollView} contentContainerStyle={{ gap: 20 }}>
-        <ProfileHeader username={data.username} avatarUrl={data.profileDetails?.image} />
-        <PointsView points={data.profileScore} />
+        <ProfileHeader username={userProfile.username} avatarUrl={userProfile.profileDetails?.image} />
+        <PointsView points={userProfile.profileScore} />
         <Badges />
         <Actions />
-        <Activity userId={id} />
+        <Activity userId={String(userProfile.id)} />
         <EmptyViewWithTabBarHeight />
       </ScrollView>
     </ThemedView>

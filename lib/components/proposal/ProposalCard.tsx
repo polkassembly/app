@@ -4,13 +4,13 @@ import { ContainerType, ThemedView } from "../ThemedView";
 import HorizontalSeparator from "../shared/HorizontalSeparator";
 
 import { useGetUserByAddress, useGetUserById } from "@/lib/net/queries/profile";
-import { KEY_ID, storage } from "@/lib/store";
 import { ENetwork, Post } from "@/lib/types/post";
 import { ProposalActions } from "./actions";
 import { ProposalHeader, ProposalHeaderSkeleton } from "./header/ProposalHeader";
 import { ProposalBody, ProposalBodySkeleton } from "./body";
 import ViewMoreButton from "./ViewMoreButton";
 import { useThemeColor } from "@/lib/hooks/useThemeColor";
+import { useProfileStore } from "@/lib/store/profileStore";
 
 type ProposalCardProps = {
 	post: Post;
@@ -30,10 +30,7 @@ function ProposalCard({
 	children,
 }: ProposalCardProps) {
 
-	const id = storage.getString(KEY_ID);
-	const {
-		data: userInfo,
-	} = useGetUserById(id || "");
+	const userProfile = useProfileStore((state) => state.profile);
 
 	const { data: proposerInfo } = useGetUserByAddress(
 		post.onChainInfo?.proposer || ""
@@ -62,7 +59,7 @@ function ProposalCard({
 			{children}
 			{ (!withoutActions || !withoutViewMore) && <HorizontalSeparator /> }
 			{!withoutActions && (
-				<ProposalActions post={post} userInfo={userInfo} />
+				<ProposalActions post={post} userInfo={userProfile || undefined} />
 			)}
 
 			{!withoutViewMore && (

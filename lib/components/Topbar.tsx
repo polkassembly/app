@@ -6,9 +6,8 @@ import { useThemeColor } from "../hooks/useThemeColor";
 import IconBack from "./icons/icon-back";
 import { IconPoints } from "./icons/icon-points";
 import { ThemedText } from "./ThemedText";
-import { KEY_ID, storage } from "../store";
-import { useGetUserById } from "../net/queries/profile";
 import { Skeleton } from "moti/skeleton";
+import { useProfileStore } from "../store/profileStore";
 
 interface TopBarProps {
   style?: StyleProp<ViewStyle>;
@@ -23,8 +22,7 @@ export function TopBar({
   const textColor = useThemeColor({}, "text");
   const backgroundColor = useThemeColor({}, "secondaryBackground");
 
-  const id = storage.getString(KEY_ID);
-  const { data: userInfo, isLoading: isUserInfoLoading } = useGetUserById(id || "");
+  const userProfile = useProfileStore((state) => state.profile);
 
   return (
     <View
@@ -51,11 +49,11 @@ export function TopBar({
       </View>
       <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
         <IconPoints iconWidth={24} iconHeight={24} />
-        {isUserInfoLoading ? (
+        {!userProfile ? (
           <Skeleton width={50} />
         ) : (
           <ThemedText type="titleMedium" style={{ fontWeight: 700 }}>
-            {userInfo?.profileScore}
+            {userProfile?.profileScore}
           </ThemedText>
         )}
       </View>

@@ -7,8 +7,7 @@ import ThemedButton from "@/lib/components/ThemedButton";
 import { ThemedText } from "@/lib/components/ThemedText";
 import { ThemedView } from "@/lib/components/ThemedView";
 import { Colors } from "@/lib/constants/Colors";
-import { useGetUserById } from "@/lib/net/queries/profile";
-import { KEY_ID, storage } from "@/lib/store";
+import { useProfileStore } from "@/lib/store/profileStore";
 import { ResizeMode, Video } from "expo-av";
 import { LinearGradient } from "expo-linear-gradient";
 import { openBrowserAsync } from "expo-web-browser";
@@ -133,9 +132,8 @@ export default function Browser() {
 }
 
 function TitleSection() {
-  const id = storage.getString(KEY_ID);
 
-  const { data } = useGetUserById(id || "");
+  const userProfile = useProfileStore((state) => state.profile);
 
   return (
     <ThemedView type="container" style={styles.titleContainer}>
@@ -154,7 +152,7 @@ function TitleSection() {
           style={{ width: 24, height: 24 }}
         />
         <ThemedText type="titleMedium" style={{ fontWeight: 700 }}>
-          {data?.profileScore}
+          {userProfile?.profileScore}
         </ThemedText>
       </View>
     </ThemedView>
