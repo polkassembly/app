@@ -14,7 +14,7 @@ interface AddCommentPathParams {
   postIndexOrHash: string;
 }
 
-interface AddCommentBody {
+export interface AddCommentBody {
   content: string;
   parentCommentId?: string;
   address?: string;

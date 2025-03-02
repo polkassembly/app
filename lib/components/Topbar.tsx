@@ -38,7 +38,7 @@ export function TopBar({
       <View style={{ flex: 1, flexDirection: "row", justifyContent: "flex-start", alignItems: "center" }}>
         <Link asChild href="..">
           <TouchableOpacity>
-            <View style={{ paddingVertical: 10 }}>
+            <View style={{ paddingTop: 10 }}>
               <IconBack color={textColor} iconWidth={30} iconHeight={30} />
             </View>
           </TouchableOpacity>

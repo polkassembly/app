@@ -31,7 +31,7 @@ function PostFullDetails({ post, onClose }: postFullDetailsProps) {
 			<ScrollView>
 				<View style={styles.headerContainer}>
 					<ThemedText type="titleSmall">Full Details</ThemedText>
-					<TouchableOpacity onPress={onClose} style={{ padding: 5 }}>
+					<TouchableOpacity onPress={onClose} style={{ padding: 5, paddingHorizontal: 10 }}>
 						<IconClose iconWidth={14} iconHeight={14} color="#79767D" />
 					</TouchableOpacity>
 				</View>
@@ -225,12 +225,12 @@ const styles = StyleSheet.create({
 		borderTopLeftRadius: 16,
 		borderTopRightRadius: 16,
 		paddingTop: 16,
+		paddingHorizontal: 16
 	},
 	headerContainer: {
 		flexDirection: "row",
 		justifyContent: "space-between",
 		alignItems: "center",
-		marginHorizontal: 16,
 	},
 	proposerInfo: {
 		padding: 12,

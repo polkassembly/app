@@ -9,15 +9,17 @@ import { TopBar } from "@/lib/components/Topbar";
 import useAddCartItem from "@/lib/net/queries/actions/useAddCartItem";
 import { Colors } from "@/lib/constants/Colors";
 import { Vote, BatchVoteForm, Note } from "@/lib/components/feed/BatchVoteForm";
+import { EProposalType } from "@/lib/types";
 
 const ERROR_DEFAULT = "Something went wrong";
 
 type Params = {
   index: string;
+  proposalType: EProposalType
 };
 
 export default function BatchVotingScreen() {
-  const { index } = useLocalSearchParams<Params>();
+  const { index, proposalType } = useLocalSearchParams<Params>();
   const { mutateAsync, error } = useAddCartItem();
 
   const [vote, setVote] = useState<Vote>("aye");
@@ -36,17 +38,17 @@ export default function BatchVotingScreen() {
       conviction,
       decision: vote,
       postIndexOrHash: index,
-      proposalType: "ReferendumV2",
+      proposalType: proposalType,
     });
 
-    router.push(`/proposal/vote/success/${conviction}/${amountMap[vote]}`);
+    router.push(`/proposal/vote/success/${index}?dot=${amountMap[vote]}&conviction=${conviction}&decision=${vote}&proposalType=${proposalType}`);
   }
 
   return (
     <SafeAreaView style={styles.root}>
       <TopBar />
-      <ScrollView style={styles.scrollView} contentContainerStyle={{ gap: 16 }}>
-        <ThemedText type="titleLarge">Proposal #{index}</ThemedText>
+      <ScrollView style={styles.scrollView} contentContainerStyle={{ marginTop: 20, gap: 20 }}>
+        <ThemedText type="bodyLarge">Proposal #{index}</ThemedText>
 
         <BatchVoteForm
           vote={vote}
@@ -60,7 +62,7 @@ export default function BatchVotingScreen() {
           conviction={conviction}
           setConviction={setConviction}
           singleVoteMode={true}
-          hideButtons={true}  
+          hideButtons={true}
         />
 
         <Note content="NOTE: Login Via web view to confirm your vote" />
@@ -69,8 +71,8 @@ export default function BatchVotingScreen() {
           <Note
             content={
               error instanceof AxiosError &&
-              error.response &&
-              error.response.data?.message
+                error.response &&
+                error.response.data?.message
                 ? error.response.data.message
                 : ERROR_DEFAULT
             }
@@ -78,7 +80,9 @@ export default function BatchVotingScreen() {
         )}
       </ScrollView>
 
-      <BottomButton onPress={onPressAddToCart}>Add to Cart</BottomButton>
+      <View style={{ position: "absolute", bottom: -10, left: 0, right: 0 }}>
+        <BottomButton onPress={onPressAddToCart}>Add to Cart</BottomButton>
+      </View>
     </SafeAreaView>
   );
 }
@@ -87,6 +91,7 @@ const styles = StyleSheet.create({
   root: {
     flex: 1,
     backgroundColor: Colors.dark.secondaryBackground,
+    paddingHorizontal: 16
   },
   scrollView: {
     flex: 1,

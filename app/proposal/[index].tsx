@@ -6,7 +6,6 @@ import { ThemedView } from "@/lib/components/ThemedView";
 import { TopBar } from "@/lib/components/Topbar";
 import { Colors } from "@/lib/constants/Colors";
 import { useThemeColor } from "@/lib/hooks/useThemeColor";
-import { useProposalByIndex } from "@/lib/net/queries/post/useProposalByIndex";
 import { Link, useLocalSearchParams } from "expo-router";
 import React, { useState } from "react";
 import {
@@ -28,6 +27,7 @@ import BN from "bn.js";
 import { calculatePercentage } from "@/lib/util/calculatePercentage";
 import { ProposalCard } from "@/lib/components/proposal/ProposalCard";
 import { useProposalStore } from "@/lib/store/proposalStore";
+import StatusTag from "@/lib/components/feed/StatusTag";
 
 const getTotalLength = (arr: any[]) =>
   arr.reduce((sum, item) => {
@@ -44,7 +44,7 @@ export default function ProposalDetailScreenImpl() {
   // Fetch comments for the proposal using the new hook.
   const { data: comments, isLoading: commentsLoading } = useProposalComments({ proposalType: proposalType, proposalId: index });
 
-  const backgroundColor = useThemeColor({}, "secondaryBackground");
+  const backgroundColor = useThemeColor({}, "container");
 
   const accentColor = useThemeColor({}, "accent");
 
@@ -66,17 +66,18 @@ export default function ProposalDetailScreenImpl() {
   const nayPercent = calculatePercentage(proposal.onChainInfo?.voteMetrics?.nay.value || '0', totalValue);
 
   return (
-    <>
-      <SafeAreaView style={{ flex: 1, backgroundColor }}>
+    <View style={{ flex: 1, backgroundColor }}>
+      <SafeAreaView style={{ flex: 1, paddingHorizontal: 16 }}>
         <TopBar />
         <ScrollView>
-          <View style={{ paddingInline: 16, paddingBottom: 16, gap: 8 }}>
-            <ThemedText type="titleLarge">Proposal #{index}</ThemedText>
+          <View style={{ paddingBottom: 16, gap: 8, marginTop: 20 }}>
+            <ThemedText type="titleMedium" style={{ fontWeight: 500, marginBottom: 20 }}>Proposal #{index}</ThemedText>
 
             <ProposalCard
               post={proposal}
               withoutViewMore
               containerType="background"
+              withoutIndex
             />
 
             <Summary
@@ -103,7 +104,7 @@ export default function ProposalDetailScreenImpl() {
                 <ThemedText type="bodyLarge">Replies </ThemedText>
                 {comments && (
                   <View style={{ backgroundColor: "#E5E5FD", paddingHorizontal: 4, borderRadius: 4 }}>
-                  <ThemedText type="bodySmall1" style={{ color: "#79767D", lineHeight: 18 }}>{getTotalLength(comments)}</ThemedText>
+                    <ThemedText type="bodySmall1" style={{ color: "#79767D", lineHeight: 18 }}>{getTotalLength(comments)}</ThemedText>
                   </View>
                 )
                 }
@@ -121,7 +122,7 @@ export default function ProposalDetailScreenImpl() {
 
       </SafeAreaView>
       <View style={{ position: "absolute", bottom: -10, left: 0, right: 0 }}>
-        <Link asChild href={`/proposal/vote/${index}`}>
+        <Link asChild href={`/proposal/vote/${index}?proposalType=${proposalType}`}>
           <BottomButton>Cast Your Vote</BottomButton>
         </Link>
       </View>
@@ -129,7 +130,7 @@ export default function ProposalDetailScreenImpl() {
       <BottomSheet open={open} onClose={() => setOpen(false)}>
         <PostFullDetails onClose={() => setOpen(false)} post={proposal} />
       </BottomSheet>
-    </>
+    </View>
   );
 }
 
@@ -166,19 +167,19 @@ function Summary({ ayePercent, status, voteMetrics, nayPercent }: SummaryProps) 
           alignItems: "center",
         }}
       >
-        <ThemedText type="titleMedium">Summary</ThemedText>
+        <ThemedText type="bodyLarge">Summary</ThemedText>
 
-        <StatusChip status={status} />
+        <StatusTag status={status} />
       </View>
 
       <View style={{ gap: 4 }}>
         <VoteRatioIndicator ayePercent={ayePercent} nayPercent={nayPercent} />
 
         <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-          <ThemedText type="bodySmall" colorName="mediumText">
+          <ThemedText type="bodySmall1" colorName="mediumText">
             Aye: {ayePercent}%
           </ThemedText>
-          <ThemedText type="bodySmall" colorName="mediumText">
+          <ThemedText type="bodySmall1" colorName="mediumText">
             To pass: 50%
           </ThemedText>
           <ThemedText type="bodySmall" colorName="mediumText">
@@ -235,33 +236,6 @@ function Summary({ ayePercent, status, voteMetrics, nayPercent }: SummaryProps) 
         </View>
       </View>
     </ThemedView>
-  );
-}
-
-interface StatusChipProps {
-  status: string | undefined;
-}
-
-function StatusChip({ status }: StatusChipProps) {
-  return (
-    <View
-      style={{
-        paddingVertical: 2,
-        paddingHorizontal: 4,
-        borderRadius: 4,
-        backgroundColor: "#5BC044",
-      }}
-    >
-      {status && (
-        <ThemedText
-          type="bodySmall"
-          colorName="background"
-          style={{ textTransform: "uppercase" }}
-        >
-          {status}
-        </ThemedText>
-      )}
-    </View>
   );
 }
 

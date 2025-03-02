@@ -16,6 +16,7 @@ type ProposalCardProps = {
 	post: Post;
 	withoutViewMore?: boolean;
 	withoutActions?: boolean;
+	withoutIndex?: boolean;
 	containerType?: ContainerType;
 	descriptionLength?: number;
 	children?: React.ReactNode;
@@ -25,6 +26,7 @@ function ProposalCard({
 	post,
 	withoutViewMore = false,
 	withoutActions = false,
+	withoutIndex = false,
 	containerType = "container",
 	descriptionLength = 300,
 	children,
@@ -45,6 +47,7 @@ function ProposalCard({
 				status={post.onChainInfo?.status}
 				beneficiaries={post.onChainInfo?.beneficiaries || []}
 				proposalNetwork={post.network as ENetwork}
+				withoutIndex={withoutIndex}
 			/>
 			<HorizontalSeparator />
 			<ProposalBody

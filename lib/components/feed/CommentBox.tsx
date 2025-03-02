@@ -7,6 +7,7 @@ import { UserAvatar } from "../shared";
 import ThemedButton from "../ThemedButton";
 import { ThemedText } from "../ThemedText";
 import { useProfileStore } from "@/lib/store/profileStore";
+import { AddCommentBody } from "@/lib/net/queries/actions/useAddComment";
 
 
 function CommentBox({
@@ -27,15 +28,15 @@ function CommentBox({
 
 	const handleSubmitComment = async () => {
 		if (!comment.trim()) return;
+
+		const bodyParam = { content: comment } as AddCommentBody
+		if (parentCommentId) bodyParam["parentCommentId"] = parentCommentId
 		addComment({
 			pathParams: {
 				proposalType: proposalType,
 				postIndexOrHash: proposalIndex,
 			},
-			bodyParams: { 
-				content: comment,
-				parentCommentId: parentCommentId,
-			},
+			bodyParams: bodyParam,
 		});
 		setComment("");
 		onCommentSubmitted({ comment })

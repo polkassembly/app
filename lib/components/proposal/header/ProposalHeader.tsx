@@ -13,24 +13,30 @@ function ProposalHeader({
   index,
   status,
   beneficiaries,
-  proposalNetwork
+  proposalNetwork,
+  withoutIndex = false
 }: {
   index: number | string;
   status?: string;
   beneficiaries: IBeneficiary[]
   proposalNetwork: ENetwork
+  withoutIndex?: boolean
 }) {
   return (
     <View style={styles.flexDirectionJustifyBetween}>
       <View style={styles.flexRowGap4}>
-        <View style={[styles.idTextContainer, { backgroundColor: '#EAEDF0' }]}>
-          <ThemedText
-            type='bodySmall3'
-            style={{ color: "#000000" }}
-          >
-            #{index}
-          </ThemedText>
-        </View>
+        {
+          !withoutIndex && (
+            <View style={[styles.idTextContainer, { backgroundColor: '#EAEDF0' }]}>
+              <ThemedText
+                type='bodySmall3'
+                style={{ color: "#000000" }}
+              >
+                #{index}
+              </ThemedText>
+            </View>
+          )
+        }
         {status && (
           <StatusTag status={status} />
         )}
