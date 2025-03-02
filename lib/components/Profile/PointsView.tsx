@@ -44,7 +44,7 @@ function PointsView( { points }: pointsViewProps ) {
               gap: 8,
             }}
           >
-            <IconPoints style={{ width: 24 }} />
+            <IconPoints iconWidth={24} iconHeight={24} />
             <ThemedText type="titleLarge" style={{ fontWeight: "700", lineHeight: 37.5 }}>
               {points}
             </ThemedText>
