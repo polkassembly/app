@@ -21,66 +21,62 @@ import { Ionicons } from "@expo/vector-icons";
 import { ThemedText } from "@/lib/components/ThemedText";
 import IconVotedProposal from "@/lib/components/icons/proposals/icon-voted-proposal";
 import { ProposalCard } from "@/lib/components/proposal/ProposalCard";
+import Svg, { Ellipse } from "react-native-svg";
+import { bgColors } from "@/lib/constants/Colors";
 import { ProposalContentSummary } from "@/lib/components/proposal";
 
-const ProposalVotingScreen: React.FC = () => {
-  // Get defaults from search params
-  const searchParams = useLocalSearchParams();
-  const defaultConviction =
-    searchParams?.defaultConviction !== undefined
-      ? Number(searchParams.defaultConviction)
-      : 0;
-  const defaultAyeAmount =
-    searchParams?.defaultAyeAmount !== undefined
-      ? String(searchParams.defaultAyeAmount)
-      : "0";
-  const defaultNayAmount =
-    searchParams?.defaultNayAmount !== undefined
-      ? String(searchParams.defaultNayAmount)
-      : "0";
-  const defaultAbstainAmount =
-    searchParams?.defaultAbstainAmount !== undefined
-      ? String(searchParams.defaultAbstainAmount)
-      : "0";
+const BATCH_SIZE = 10;
 
-  // Fetch proposals feed
+const ProposalVotingScreen: React.FC = () => {
+  const searchParams = useLocalSearchParams();
+  const defaultConviction = Number(searchParams?.defaultConviction) || 0;
+  const defaultAyeAmount = String(searchParams?.defaultAyeAmount) || "0";
+  const defaultNayAmount = String(searchParams?.defaultNayAmount) || "0";
+  const defaultAbstainAmount = String(searchParams?.defaultAbstainAmount) || "0";
+
   const feedParams = { limit: 10 };
   const { data, isLoading, isError, hasNextPage, fetchNextPage } =
     useActivityFeed(feedParams);
   const voteMutation = useAddCartItem();
 
-  // Proposals state and current index for the deck swiper
+  // This state holds all fetched proposals
   const [proposals, setProposals] = useState<any[]>([]);
-  const [currentIndex, setCurrentIndex] = useState(0);
+  // This pointer marks how many proposals we’ve already handed off to the swiper
+  const [batchStartIndex, setBatchStartIndex] = useState(0);
+  // This state holds the current batch of cards given to the swiper
+  const [cardsBatch, setCardsBatch] = useState<any[]>([]);
+  const swiperRef = useRef<any>(null);
 
+  const backgroundColor = useThemeColor({}, "container");
+  const colorStroke = useThemeColor({}, "stroke");
+  const accent = useThemeColor({}, "accent");
+  const { data: cartItems } = useGetCartItems();
+  const router = useRouter();
+
+  // When new data is available, append to the proposals state.
   useEffect(() => {
     if (data) {
       const allProposals = data.pages.flatMap((page: any) => page.items);
-      setProposals(allProposals);
-      setCurrentIndex(0);
+      setProposals((prev) => [...prev, ...allProposals]);
     }
   }, [data]);
 
-  // Reference for deck swiper to allow programmatic swipes
-  const swiperRef = useRef<any>(null);
-
-  const { data: cartItems } = useGetCartItems();
-
-  const router = useRouter();
+  // Update the current batch whenever proposals or batchStartIndex changes.
+  useEffect(() => {
+    const newBatch = proposals.slice(batchStartIndex, batchStartIndex + BATCH_SIZE);
+    if (newBatch.length) {
+      setCardsBatch(newBatch);
+    }
+  }, [proposals, batchStartIndex]);
 
   const onSwiped = (direction: "aye" | "nay" | "abstain", cardIndex: number) => {
-    const proposal = proposals[cardIndex];
+    const proposal = cardsBatch[cardIndex];
     if (!proposal) return;
 
-    // Build the amount parameter based on the swipe direction
     let amountValue = "0";
-    if (direction === "aye") {
-      amountValue = defaultAyeAmount;
-    } else if (direction === "nay") {
-      amountValue = defaultNayAmount;
-    } else if (direction === "abstain") {
-      amountValue = defaultAbstainAmount;
-    }
+    if (direction === "aye") amountValue = defaultAyeAmount;
+    else if (direction === "nay") amountValue = defaultNayAmount;
+    else if (direction === "abstain") amountValue = defaultAbstainAmount;
 
     const params = {
       postIndexOrHash: String(proposal.index),
@@ -102,19 +98,25 @@ const ProposalVotingScreen: React.FC = () => {
       },
     });
 
-    setCurrentIndex(cardIndex + 1);
-    if (proposals.length - (cardIndex + 1) <= 4 && hasNextPage) {
-      fetchNextPage();
+    // If this is the last card in the current batch, load the next batch.
+    if (cardIndex === cardsBatch.length - 1) {
+      const nextBatchStart = batchStartIndex + BATCH_SIZE;
+      setBatchStartIndex(nextBatchStart);
+      // pre-fetch more proposals if we are running low
+      if (proposals.length - nextBatchStart <= 3 && hasNextPage) {
+        fetchNextPage();
+      }
     }
   };
 
-  if (isLoading) {
+  if (isLoading && proposals.length === 0) {
     return (
       <View style={styles.centered}>
         <ActivityIndicator size="large" color="#000" />
       </View>
     );
   }
+
   if (isError) {
     return (
       <View style={styles.centered}>
@@ -123,22 +125,23 @@ const ProposalVotingScreen: React.FC = () => {
     );
   }
 
-  const backgroundColor = useThemeColor({}, "container");
-  const colorStroke = useThemeColor({}, "stroke");
-  const accent = useThemeColor({}, "accent");
-
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor }}>
-      <TopBar style={{ marginTop: 20 }} />
+      <TopBar style={{ paddingHorizontal: 16 }} />
 
-      <View style={styles.container}>
-        {currentIndex < proposals.length ? (
+      <View style={[styles.container]}>
+        {cardsBatch.length ? (
           <Swiper
+            cardVerticalMargin={16}
+            key={batchStartIndex} // force remount when batch changes
             ref={swiperRef}
-            cards={proposals}
-            cardIndex={currentIndex}
+            cards={cardsBatch}
+            cardIndex={0}
             renderCard={(card) => (
-              <View style={{ borderRadius: 12, padding: 10, backgroundColor: backgroundColor, borderWidth: 1, borderColor: colorStroke, flex: 1, maxHeight: "85%", overflow: "hidden" }}>
+              <View style={[
+                styles.cardContainer,
+                { backgroundColor, borderColor: colorStroke}
+              ]}>
                 <ProposalCard
                   post={card}
                   descriptionLength={500}
@@ -153,41 +156,55 @@ const ProposalVotingScreen: React.FC = () => {
             onSwipedRight={(cardIndex) => onSwiped("aye", cardIndex)}
             onSwipedTop={(cardIndex) => onSwiped("abstain", cardIndex)}
             backgroundColor="transparent"
-            stackSize={3}
+            stackSize={BATCH_SIZE}
             disableBottomSwipe
             verticalSwipe
             animateCardOpacity
             overlayLabels={{
               left: {
                 element: (
-                  <View style={[styles.overlayLabel, { backgroundColor: "rgba(249, 201, 201, 0.7)" }]}>
-                    <View style={{ borderRadius: 100, backgroundColor: "#F53C3C", padding: 20 }}>
+                  <View style={[
+                    styles.overlayLabel,
+                    { backgroundColor: "rgba(249, 201, 201, 0.7)" }
+                  ]}>
+                    <View style={[
+                      styles.iconBadge,
+                      { backgroundColor: "#F53C3C" }
+                    ]}>
                       <IconNay color="white" filled iconWidth={50} iconHeight={50} />
                     </View>
                   </View>
-
                 ),
-                title: "Nay",
               },
               right: {
                 element: (
-                  <View style={[styles.overlayLabel, { backgroundColor: "rgba(177, 234, 203, 0.7)" }]}>
-                    <View style={{ borderRadius: 100, backgroundColor: "#2ED47A", padding: 20 }}>
+                  <View style={[
+                    styles.overlayLabel,
+                    { backgroundColor: "rgba(177, 234, 203, 0.7)" }
+                  ]}>
+                    <View style={[
+                      styles.iconBadge,
+                      { backgroundColor: "#2ED47A" }
+                    ]}>
                       <IconAye color="white" filled iconWidth={50} iconHeight={50} />
                     </View>
                   </View>
                 ),
-                title: "Aye",
               },
               top: {
                 element: (
-                  <View style={[styles.overlayLabel, { backgroundColor: "rgba(247, 219, 175, 0.7)" }]}>
-                    <View style={{ borderRadius: 100, backgroundColor: "#FFBF60", padding: 20 }}>
+                  <View style={[
+                    styles.overlayLabel,
+                    { backgroundColor: "rgba(247, 219, 175, 0.7)" }
+                  ]}>
+                    <View style={[
+                      styles.iconBadge,
+                      { backgroundColor: "#FFBF60" }
+                    ]}>
                       <IconAbstain color="white" filled iconWidth={50} iconHeight={50} />
                     </View>
                   </View>
                 ),
-                title: "Abstain",
               },
             }}
           />
@@ -197,38 +214,72 @@ const ProposalVotingScreen: React.FC = () => {
           </View>
         )}
 
-        {/* Floating Preview (visible if cart is not empty) */}
         {cartItems && cartItems.length > 0 && (
-          <View style={[styles.floatingPreview, { flexDirection: "row", justifyContent: "center", backgroundColor: "#FFE5F3" }]}>
+          <View style={[
+            styles.floatingPreview,
+            { backgroundColor: "#FFE5F3" }
+          ]}>
             <IconVotedProposal />
-            <View style={{ flexDirection: "column", alignContent: "flex-start" }}>
+            <View style={styles.previewText}>
               <ThemedText style={{ color: "#000" }}>Preview</ThemedText>
-              <ThemedText style={{ color: colorStroke }}>{cartItems.length} Proposals</ThemedText>
+              <ThemedText style={{ color: colorStroke }}>
+                {cartItems.length} Proposals
+              </ThemedText>
             </View>
             <TouchableOpacity onPress={() => router.push("/batch-vote/voted-proposals")}>
-              <View style={[styles.iconView, { backgroundColor: accent }]}>
+              <View style={[
+                styles.iconView,
+                { backgroundColor: accent }
+              ]}>
                 <Ionicons name="chevron-forward" color="white" size={30} />
               </View>
             </TouchableOpacity>
           </View>
         )}
-
-        {/* Bottom voting buttons trigger the same swipe animations */}
-        <View style={[styles.bottomContainer, { borderColor: colorStroke, zIndex: 100 }]}>
+      </View>
+      <View style={[
+        styles.bottomContainer,
+        { borderColor: colorStroke }
+      ]}>
+        <View style={{ position: "absolute", width: "100%", height: "100%", bottom: 0, zIndex: 50 }}>
+          <TabBarBackground />
+        </View>
+        <View style={{ flexDirection: "row", justifyContent: "center", alignItems: "center", gap: 24, zIndex: 100, marginTop: 15 }}>
           <TouchableOpacity
-            style={[styles.voteButton, { backgroundColor: "#F53C3C" }]}
+            style={[
+              styles.voteButton,
+              {
+                backgroundColor: "#F53C3C",
+                width: 50,
+                height: 50
+              }
+            ]}
             onPress={() => swiperRef.current?.swipeLeft()}
           >
             <IconNay color="white" filled iconWidth={25} iconHeight={25} />
           </TouchableOpacity>
           <TouchableOpacity
-            style={[styles.voteButton, { backgroundColor: "#FFBF60", width: 40, height: 40 }]}
+            style={[
+              styles.voteButton,
+              {
+                backgroundColor: "#FFBF60",
+                width: 40,
+                height: 40
+              }
+            ]}
             onPress={() => swiperRef.current?.swipeTop()}
           >
             <IconAbstain color="white" iconWidth={20} iconHeight={20} />
           </TouchableOpacity>
           <TouchableOpacity
-            style={[styles.voteButton, { backgroundColor: "#2ED47A" }]}
+            style={[
+              styles.voteButton,
+              {
+                backgroundColor: "#2ED47A",
+                width: 50,
+                height: 50
+              }
+            ]}
             onPress={() => swiperRef.current?.swipeRight()}
           >
             <IconAye color="white" filled iconWidth={25} iconHeight={25} />
@@ -242,13 +293,14 @@ const ProposalVotingScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
-    paddingBottom: 100,
   },
   cardContainer: {
     borderRadius: 10,
     padding: 10,
-    flexWrap: "wrap",
+    borderWidth: 1,
+    flex: 1,
+    maxHeight: "85%",
+    overflow: "hidden",
   },
   centered: {
     flex: 1,
@@ -256,27 +308,16 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   bottomContainer: {
-    flexDirection: "row",
-    justifyContent: "center",
-    width: "120%",
-    left: "-5%",
-    right: "-5%",
-    paddingHorizontal: 30,
-    paddingVertical: 21,
+    width: "100%",
     position: "absolute",
-    bottom: -5,
-    borderTopStartRadius: 50,
-    borderTopEndRadius: 100,
-    borderWidth: 2,
-    backgroundColor: "#000000",
-    gap: 40,
+    bottom: 0,
+    left: 0,
+    right: 0,
+    justifyContent: 'flex-end',
+    alignItems: 'center',
   },
   voteButton: {
-    paddingVertical: 8,
-    paddingHorizontal: 8,
     borderRadius: 100,
-    width: 50,
-    height: 50,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -287,11 +328,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 8,
     borderRadius: 100,
-    alignItems: "center",
-    zIndex: 200,
     flexDirection: "row",
-    justifyContent: "center",
     gap: 10,
+    zIndex: 200,
+    alignItems: "center",
+  },
+  previewText: {
+    flexDirection: "column",
+    alignContent: "flex-start",
   },
   iconView: {
     width: 30,
@@ -305,11 +349,26 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 10,
   },
-  overlayLabelText: {
-    fontSize: 32,
-    color: "white",
-    fontWeight: "bold",
+  iconBadge: {
+    borderRadius: 100,
+    padding: 20,
   },
 });
+
+function TabBarBackground() {
+  return (
+    <Svg width={"100%"} height={"100%"} fill={"#00000000"}>
+      <Ellipse
+        fill={"#000000"}
+        cx={"50%"}
+        cy={250 / 2}
+        rx={660 / 2}
+        ry={250 / 2}
+        stroke={"#666666"} // sets the border color to white
+        strokeWidth={1}    // sets the border thickness; adjust this value for more or less prominence
+      />
+    </Svg>
+  );
+}
 
 export default ProposalVotingScreen;
