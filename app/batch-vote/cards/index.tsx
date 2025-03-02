@@ -22,7 +22,6 @@ import { ThemedText } from "@/lib/components/ThemedText";
 import IconVotedProposal from "@/lib/components/icons/proposals/icon-voted-proposal";
 import { ProposalCard } from "@/lib/components/proposal/ProposalCard";
 import Svg, { Ellipse } from "react-native-svg";
-import { bgColors } from "@/lib/constants/Colors";
 import { ProposalContentSummary } from "@/lib/components/proposal";
 
 const BATCH_SIZE = 10;
