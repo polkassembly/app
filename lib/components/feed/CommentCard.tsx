@@ -1,18 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import RenderHTML from "react-native-render-html";
-import { ICommentResponse } from "@/lib/types";
+import { ICommentResponse, UserProfile } from "@/lib/types";
 import { UserAvatar } from "../shared";
 import ThemedButton from "../ThemedButton";
 import { IconLike, IconDislike, IconComment } from "../icons/shared";
 import { ThemedText } from "../ThemedText";
-import CommentBox from "./CommentBox";
-import useAddComment from "@/lib/net/queries/actions/useAddComment";
 import { Colors } from "@/lib/constants/Colors";
 import VerticalSeprator from "../shared/VerticalSeprator";
 import StackedAvatars from "./StackedAvatars";
 import { extractUniqueChildrenAvatars } from "@/lib/util/commentUtil";
-
+import CommentBox from "./CommentBox";
 interface CommentCardProps {
 	comment: ICommentResponse;
 }
@@ -25,8 +23,6 @@ export default function CommentCard({ comment }: CommentCardProps) {
 	const [commentsCount, setCommentsCount] = useState<number>(comment.children?.length || 0);
 
 	const [showReplyBox, setShowReplyBox] = useState<boolean>(false);
-	const [replyText, setReplyText] = useState<string>("");
-	const { mutate: addReply, isSuccess: isReplySuccess } = useAddComment();
 
 	const [showReplies, setShowReplies] = useState<boolean>(false);
 	const [avatars, setAvatars] = useState<string []>([])
@@ -66,19 +62,6 @@ export default function CommentCard({ comment }: CommentCardProps) {
 
 	const onToggleComment = () => {
 		setShowReplyBox(!showReplyBox);
-	};
-
-	const onSubmitReply = () => {
-		if (replyText.trim() === "") return;
-
-		addReply({
-			pathParams: { proposalType: comment.proposalType, postIndexOrHash: comment.indexOrHash },
-			bodyParams: { content: replyText.trim(), parentCommentId: comment.address || "" }
-		})
-
-		setReplyText("");
-		setShowReplyBox(false);
-		setCommentsCount(commentsCount + 1);
 	};
 
 	return (
@@ -122,13 +105,14 @@ export default function CommentCard({ comment }: CommentCardProps) {
 				</View>
 				{showReplyBox && (
 					<CommentBox
-						commentText={replyText}
-						onChangeCommentText={setReplyText}
-						onSubmitComment={onSubmitReply}
-						userAvatarUrl={comment.user.profileDetails.image}
-						isUserInfoLoading={false}
-						isUserInfoError={false}
-					/>
+						proposalIndex={comment.indexOrHash}
+						proposalType={comment.proposalType}
+						parentCommentId={comment.id}
+						onCommentSubmitted={() => {
+							setCommentsCount((prev) => prev + 1)
+							setShowReplyBox(false)
+						}}
+						/>
 				)}
 				{showReplies && comment.children && comment.children.length > 0 && (
 					<View style={styles.repliesContainer}>

@@ -8,7 +8,7 @@ import BookmarkButton from "./BookmarkButton";
 import { useState } from "react";
 import useAddReaction from "@/lib/net/queries/actions/useAddReaction";
 import useDeleteReaction from "@/lib/net/queries/actions/useDeleteReaction";
-import CommentBox from "./CommentBox";
+import CommentBox from "../../feed/CommentBox";
 
 interface ProposalActionsProps {
 	post: Post
@@ -118,8 +118,8 @@ function ProposalActions({
 			{
 				showCommentBox && (
 					<CommentBox
-						userInfo={userInfo}
-						post={post}
+						proposalIndex={post.index}
+						proposalType={post.proposalType}
 						onCommentSubmitted={() => {
 							setShowCommentBox(false)
 							setComments((prev) => prev + 1)

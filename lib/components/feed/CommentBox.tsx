@@ -1,74 +1,93 @@
-import React from "react";
-import { StyleSheet, View, TextInput, Image } from "react-native";
-import { Colors } from "@/lib/constants/Colors";
+import { View, TextInput, StyleSheet } from "react-native";
+import { EProposalType, Post, UserProfile } from "@/lib/types";
+import { useThemeColor } from "@/lib/hooks/useThemeColor";
+import { useState } from "react";
+import { useAddComment } from "@/lib/net/queries/actions";
+import { UserAvatar } from "../shared";
 import ThemedButton from "../ThemedButton";
 import { ThemedText } from "../ThemedText";
-import { UserAvatar } from "../shared";
+import { useProfileStore } from "@/lib/store/profileStore";
 
-interface CommentBoxProps {
-  commentText: string;
-  onChangeCommentText: (text: string) => void;
-  onSubmitComment: () => void;
-	userAvatarUrl: string,
-  isUserInfoLoading: boolean;
-  isUserInfoError: boolean;
-}
 
-export default function CommentBox({
-  commentText,
-  onChangeCommentText,
-  onSubmitComment,
-  userAvatarUrl,
-}: CommentBoxProps) {
-  return (
-    <View style={styles.commentBox}>
-      {
-        <UserAvatar avatarUrl={userAvatarUrl} width={25} height={25} />
-    	}
-      <TextInput
-        style={styles.commentInput}
-        placeholder="Add a comment"
-        placeholderTextColor="#FFFFFF"
-        value={commentText}
-        onChangeText={onChangeCommentText}
-      />
-      <ThemedButton onPress={onSubmitComment} style={styles.submitButton}>
-        <ThemedText type="bodySmall" style={{ color: "white" }}>
-          Post
-        </ThemedText>
-      </ThemedButton>
-    </View>
-  );
+function CommentBox({
+  proposalType,
+  proposalIndex,
+	onCommentSubmitted,
+	parentCommentId
+}: {
+  proposalType: EProposalType;
+  proposalIndex: string;
+	onCommentSubmitted: ({ comment }: { comment?: string }) => void;
+	parentCommentId?: string;
+}) {
+
+	const [comment, setComment] = useState<string>("")
+	const userInfo = useProfileStore((state) => state.profile)
+	const { mutate: addComment } = useAddComment();
+
+	const handleSubmitComment = async () => {
+		if (!comment.trim()) return;
+		addComment({
+			pathParams: {
+				proposalType: proposalType,
+				postIndexOrHash: proposalIndex,
+			},
+			bodyParams: { 
+				content: comment,
+				parentCommentId: parentCommentId,
+			},
+		});
+		setComment("");
+		onCommentSubmitted({ comment })
+	};
+
+	const colorStroke = useThemeColor({}, "stroke")
+	const colorText = useThemeColor({}, "text")
+	const colorAccent = useThemeColor({}, "accent")
+
+	return (
+		<View style={[styles.commentBox, { borderColor: colorStroke, borderWidth: 1, borderRadius: 24 }]}>
+			{
+				userInfo &&
+				<View style={{ paddingVertical: 4, paddingLeft: 4 }}>
+					<UserAvatar avatarUrl={userInfo?.profileDetails.image} width={24} height={24} />
+				</View>
+			}
+			<TextInput
+				style={[styles.commentInput, { color: colorText }]}
+				placeholder="Add a comment"
+				placeholderTextColor="#FFFFFF"
+				value={comment}
+				onChangeText={setComment}
+			/>
+			<ThemedButton onPress={handleSubmitComment} style={[styles.submitButton, { backgroundColor: colorAccent }]}>
+				<ThemedText type="bodySmall" style={{ color: colorText }}>
+					Post
+				</ThemedText>
+			</ThemedButton>
+		</View>
+	);
 }
 
 const styles = StyleSheet.create({
-  commentBox: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginTop: 12,
-    overflow: "hidden",
-    borderWidth: 1,
-    borderColor: Colors.dark.stroke,
-    borderRadius: 24,
-  },
-  avatar: {
-    borderRadius: 16,
-    backgroundColor: Colors.dark.stroke,
-    margin: 4,
-    marginRight: 8,
-  },
-  commentInput: {
-    flex: 1,
-    paddingVertical: 4,
-    paddingHorizontal: 8,
-    fontSize: 14,
-    color: Colors.dark.text,
-  },
-  submitButton: {
-    paddingHorizontal: 15,
-    paddingVertical: 4,
-    borderRadius: 0,
-    height: "100%",
-    backgroundColor: Colors.dark.accent,
-  },
-});
+	commentBox: {
+		flexDirection: "row",
+		alignItems: "center",
+		marginTop: 12,
+		overflow: "hidden",
+	},
+	commentInput: {
+		flex: 1,
+		paddingVertical: 4,
+		paddingHorizontal: 8,
+		fontSize: 14,
+	},
+	submitButton: {
+		paddingHorizontal: 15,
+		paddingVertical: 4,
+		borderRadius: 0,
+		height: "100%",
+	},
+})
+
+export default CommentBox;

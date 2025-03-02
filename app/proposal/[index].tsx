@@ -29,6 +29,13 @@ import { calculatePercentage } from "@/lib/util/calculatePercentage";
 import { ProposalCard } from "@/lib/components/proposal/ProposalCard";
 import { useProposalStore } from "@/lib/store/proposalStore";
 
+const getTotalLength = (arr: any[]) =>
+  arr.reduce((sum, item) => {
+    const childrenLength = Array.isArray(item.children) ? getTotalLength(item.children) : 0;
+    return sum + 1 + childrenLength;
+  }, 0);
+
+
 export default function ProposalDetailScreenImpl() {
   const [open, setOpen] = useState(false);
   const { index, proposalType } = useLocalSearchParams<{ index: string, proposalType: EProposalType }>();
@@ -92,7 +99,15 @@ export default function ProposalDetailScreenImpl() {
                 marginBottom: 50
               },
             ]}>
-              <ThemedText type="titleMedium">Replies</ThemedText>
+              <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
+                <ThemedText type="bodyLarge">Replies </ThemedText>
+                {comments && (
+                  <View style={{ backgroundColor: "#E5E5FD", paddingHorizontal: 4, borderRadius: 4 }}>
+                  <ThemedText type="bodySmall1" style={{ color: "#79767D", lineHeight: 18 }}>{getTotalLength(comments)}</ThemedText>
+                  </View>
+                )
+                }
+              </View>
               {commentsLoading ? (
                 <ThemedText type="bodyMedium1">
                   Loading comments...
