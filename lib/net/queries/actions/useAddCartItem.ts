@@ -1,22 +1,22 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import client from "@/lib/net/client";
 import { buildCartItemsQueryKey, CartItem } from "./useGetCartItem";
-import { getUserIdFromStorage } from "../utils";
 import { CartItemParams } from "./type";
+import { useProfileStore } from "@/lib/store/profileStore";
 
 export default function useAddCartItem() {
   const queryClient = useQueryClient();
+  const id = useProfileStore((state) => state.profile?.id) ? String(useProfileStore((state) => state.profile?.id)) : "";
   return useMutation({
     mutationFn: async (params: CartItemParams) => {
-      const id = getUserIdFromStorage();
       return client.post(`/users/id/${id}/vote-cart`, params);
     },
     onMutate: async (newItem: CartItemParams) => {
       await queryClient.cancelQueries({
-        queryKey: buildCartItemsQueryKey(getUserIdFromStorage()),
+        queryKey: buildCartItemsQueryKey(id),
       });
       const previousItems = queryClient.getQueryData<CartItem[]>(
-        buildCartItemsQueryKey(getUserIdFromStorage())
+        buildCartItemsQueryKey(id)
       );
       // Create an optimistic cart item with a temporary ID and timestamps.
       const optimisticItem: CartItem = {
@@ -24,14 +24,14 @@ export default function useAddCartItem() {
         id: "temp-id-" + new Date().getTime(),
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
-        userId: Number(getUserIdFromStorage()),
+        userId: Number(id),
         proposalType: "",
         postIndexOrHash: "",
         network: "",
         title: "",
       };
       queryClient.setQueryData<CartItem[]>(
-        buildCartItemsQueryKey(getUserIdFromStorage()),
+        buildCartItemsQueryKey(id),
         (old) => (old ? [...old, optimisticItem] : [optimisticItem])
       );
       return { previousItems };
@@ -39,14 +39,14 @@ export default function useAddCartItem() {
     onError: (err, newItem, context: any) => {
       if (context?.previousItems) {
         queryClient.setQueryData(
-          buildCartItemsQueryKey(getUserIdFromStorage()),
+          buildCartItemsQueryKey(id),
           context.previousItems
         );
       }
     },
     onSettled: () => {
       queryClient.invalidateQueries({
-        queryKey: buildCartItemsQueryKey(getUserIdFromStorage()),
+        queryKey: buildCartItemsQueryKey(id),
       });
     },
   });

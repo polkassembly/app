@@ -59,9 +59,6 @@ const styles = StyleSheet.create({
 });
 
 function Profile() {
-  const router = useRouter();
-  const pathName = usePathname()
-
   const userProfile = useProfileStore((state) => state.profile);
 
   if (!userProfile) {

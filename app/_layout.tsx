@@ -1,6 +1,7 @@
 // RootLayout.tsx
 import { NavigationDarkTheme } from "@/lib/constants/Colors";
 import { useGetUserById } from "@/lib/net/queries/profile";
+import { KEY_ID, storage } from "@/lib/store";
 import { useAuthStore } from "@/lib/store/authStore";
 import { useProfileStore } from "@/lib/store/profileStore";
 import getIdFromToken from "@/lib/util/jwt";
@@ -58,6 +59,7 @@ function Content({ needsLogin, accessToken }: { needsLogin: boolean; accessToken
 
   // Extract user id from token if available.
   const userId = accessToken ? getIdFromToken(accessToken) : null;
+  storage.setString(KEY_ID, userId ?? "");
   const { data: userProfile } = useGetUserById(userId ?? "");
   const setProfile = useProfileStore((state) => state.setProfile);
 

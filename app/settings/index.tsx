@@ -10,7 +10,6 @@ import {
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { Skeleton } from "moti/skeleton";
-import { Asset } from "expo-asset";
 import Toast from "react-native-toast-message";
 import * as ImageManipulator from "expo-image-manipulator";
 import * as FileSystem from "expo-file-system";
@@ -20,8 +19,7 @@ import ThemedButton from "@/lib/components/ThemedButton";
 import { ThemedText } from "@/lib/components/ThemedText";
 import { TopBar } from "@/lib/components/Topbar";
 import { useThemeColor } from "@/lib/hooks/useThemeColor";
-import { useEditProfile, useGetUserById } from "@/lib/net/queries/profile";
-import { getUserIdFromStorage } from "@/lib/net/queries/utils";
+import { useEditProfile } from "@/lib/net/queries/profile";
 
 import defaultAvatar from "@/assets/images/profile/default-avatar.png";
 import avatar0 from "@/assets/images/profile/avatar/avatar_0.png";
@@ -35,6 +33,7 @@ import IconPencil from "@/lib/components/icons/shared/icon-pencil";
 import { Ionicons } from "@expo/vector-icons";
 import { uploadImageToStorage } from "@/lib/net/api/uploadImageToStorage";
 import { EditProfileParams } from "@/lib/net/queries/profile/useEditProfile";
+import { useProfileStore } from "@/lib/store/profileStore";
 
 // Function to process and compress the image.
 // It ensures that the resulting image is resized and compressed
@@ -96,36 +95,26 @@ async function processImageForUpload(image: string | number): Promise<string> {
 }
 
 export default function Settings() {
-  const userId = getUserIdFromStorage();
-
   // userProfilePicture can be a remote URI (string) or a local asset (number)
   const [userProfilePicture, setUserProfilePicture] = useState<string | number | null>(null);
   const [username, setUsername] = useState<string>("");
   const [isSaving, setIsSaving] = useState(false);
 
-  const { data: user, isLoading: isUserLoading, isError: isUserError } = useGetUserById(
-    userId || ""
-  );
+  const userProfile = useProfileStore((state) => state.profile);
+
   const { mutate: editProfile } = useEditProfile();
 
   useEffect(() => {
-    if (user) {
-      setUsername(user.username);
-      setUserProfilePicture(user.profileDetails.image || defaultAvatar);
+    if (userProfile) {
+      setUsername(userProfile.username);
+      setUserProfilePicture(userProfile.profileDetails.image || defaultAvatar);
     }
-  }, [user]);
+  }, [userProfile]);
 
-  if (!userId) {
+  if (!userProfile) {
     return (
       <SafeAreaView style={styles.centered}>
         <ThemedText>Failed to load user</ThemedText>
-      </SafeAreaView>
-    );
-  }
-  if (isUserError) {
-    return (
-      <SafeAreaView style={styles.centered}>
-        <ThemedText>Failed to load user profile</ThemedText>
       </SafeAreaView>
     );
   }
@@ -157,12 +146,12 @@ export default function Settings() {
     setIsSaving(true);
     try {
       let uploadedImageUrl: string | undefined;
-      if (user?.profileDetails?.image !== userProfilePicture && userProfilePicture) {
+      if (userProfile?.profileDetails?.image !== userProfilePicture && userProfilePicture) {
         const processedImageUri = await processImageForUpload(userProfilePicture);
         uploadedImageUrl = await uploadImageToStorage(processedImageUri);
       }
       const params = {} as EditProfileParams;
-      if (username !== user?.username) {
+      if (username !== userProfile?.username) {
         params["username"] = username;
       }
       if (uploadedImageUrl) {
@@ -211,7 +200,7 @@ export default function Settings() {
           </View>
           <View style={{ gap: 8, marginTop: 20 }}>
             <ThemedText type="bodySmall">USERNAME</ThemedText>
-            {isUserLoading || !user ? (
+            {!userProfile ? (
               <Skeleton width={150} height={12} />
             ) : (
               <View style={styles.userNameContainer}>

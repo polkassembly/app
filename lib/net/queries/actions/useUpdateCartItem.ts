@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import client from "@/lib/net/client";
 import { buildCartItemsQueryKey, CartItem } from "./useGetCartItem";
-import { getUserIdFromStorage } from "../utils";
+import { useProfileStore } from "@/lib/store/profileStore";
 
 interface UpdateCartItemParams {
   id: string;
@@ -16,21 +16,21 @@ interface UpdateCartItemParams {
 
 export default function useUpdateCartItem() {
   const queryClient = useQueryClient();
+  const id = useProfileStore((state) => state.profile?.id) ? String(useProfileStore((state) => state.profile?.id)) : "";
   return useMutation({
     mutationFn: async (params: UpdateCartItemParams) => {
-      const id = getUserIdFromStorage();
       return client.patch(`/users/id/${id}/vote-cart`, params);
     },
     onMutate: async (updatedItem: UpdateCartItemParams) => {
       await queryClient.cancelQueries({
-        queryKey: buildCartItemsQueryKey(getUserIdFromStorage()),
+        queryKey: buildCartItemsQueryKey(id),
       });
       const previousItems = queryClient.getQueryData<CartItem[]>(
-        buildCartItemsQueryKey(getUserIdFromStorage())
+        buildCartItemsQueryKey(id)
       );
       // Optimistically update the cart item in cache
       queryClient.setQueryData<CartItem[]>(
-        buildCartItemsQueryKey(getUserIdFromStorage()),
+        buildCartItemsQueryKey(id),
         (old) =>
           old
             ? old.map((item) =>
@@ -43,14 +43,14 @@ export default function useUpdateCartItem() {
     onError: (err, updatedItem, context: any) => {
       if (context?.previousItems) {
         queryClient.setQueryData(
-          buildCartItemsQueryKey(getUserIdFromStorage()),
+          buildCartItemsQueryKey(id),
           context.previousItems
         );
       }
     },
     onSettled: () => {
       queryClient.invalidateQueries({
-        queryKey: buildCartItemsQueryKey(getUserIdFromStorage()),
+        queryKey: buildCartItemsQueryKey(id),
       });
     },
   });

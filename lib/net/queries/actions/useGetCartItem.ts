@@ -1,8 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import client from "@/lib/net/client";
-import { storage } from "@/lib/store";
-import { getUserIdFromStorage } from "../utils";
-
+import { useProfileStore } from "@/lib/store/profileStore";
 export interface CartItem {
   id: string;
   createdAt: string;
@@ -24,7 +22,7 @@ export interface CartItem {
 const buildCartItemsQueryKey = (userId: string) => ["cart-items", userId];
 
 const useGetCartItems = () => {
-	const userId = getUserIdFromStorage();
+	const userId = useProfileStore((state) => state.profile?.id) ? String(useProfileStore((state) => state.profile?.id)) : "";
   return useQuery<CartItem[], Error>({
     queryKey: buildCartItemsQueryKey(userId),
     queryFn: async () => {

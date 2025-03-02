@@ -1,8 +1,8 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import client from "@/lib/net/client";
-import { getUserIdFromStorage } from "../utils";
 import { buildUserByIdQueryKey } from "./useGetUserById";
 import { UserProfile } from "@/lib/types";
+import { useProfileStore } from "@/lib/store/profileStore";
 
 export interface EditProfileParams {
   email?: string;
@@ -20,7 +20,7 @@ export interface EditProfileParams {
 
 function useEditProfile() {
   const queryClient = useQueryClient();
-  const id = getUserIdFromStorage();
+  const id = useProfileStore((state) => state.profile?.id) ? String(useProfileStore((state) => state.profile?.id)) : "";
 
   return useMutation({
     mutationFn: async (params: EditProfileParams) => {
