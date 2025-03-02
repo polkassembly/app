@@ -1,7 +1,11 @@
+// RootLayout.tsx
 import { NavigationDarkTheme } from "@/lib/constants/Colors";
+import { useGetUserById } from "@/lib/net/queries/profile";
 import { useAuthStore } from "@/lib/store/authStore";
+import { useProfileStore } from "@/lib/store/profileStore";
+import getIdFromToken from "@/lib/util/jwt";
 import { ThemeProvider } from "@react-navigation/native";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QueryClient, QueryClientProvider, useQuery } from "@tanstack/react-query";
 import { useFonts } from "expo-font";
 import { Stack, useRouter } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
@@ -37,27 +41,39 @@ export default function RootLayout() {
     return null;
   }
 
-  // Determine if user needs to log in
+  // Determine if user needs to log in.
   const needsLogin = accessToken === null;
 
   return (
     <QueryClientProvider client={queryClient}>
       <SafeAreaProvider>
-        <Content needsLogin={needsLogin} />
+        <Content needsLogin={needsLogin} accessToken={accessToken} />
       </SafeAreaProvider>
     </QueryClientProvider>
   );
 }
 
-function Content({ needsLogin }: { needsLogin: boolean }) {
+function Content({ needsLogin, accessToken }: { needsLogin: boolean; accessToken: string | null }) {
   const router = useRouter();
 
-  // Immediately redirect if login is required.
+  // Extract user id from token if available.
+  const userId = accessToken ? getIdFromToken(accessToken) : null;
+  const { data: userProfile } = useGetUserById(userId ?? "");
+  const setProfile = useProfileStore((state) => state.setProfile);
+
+  // Redirect to login if authentication is required.
   useEffect(() => {
     if (needsLogin) {
       router.replace("/auth");
     }
   }, [needsLogin, router]);
+
+  // When the user profile is fetched, update the profile store.
+  useEffect(() => {
+    if (userProfile) {
+      setProfile(userProfile);
+    }
+  }, [userProfile, setProfile]);
 
   if (needsLogin) {
     return (
