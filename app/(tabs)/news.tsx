@@ -6,6 +6,7 @@ import { Colors } from "@/lib/constants/Colors";
 import WebView from "react-native-webview";
 import { Asset } from "expo-asset";
 import * as FileSystem from "expo-file-system";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function NewsScreen() {
   const [htmlContent, setHtmlContent] = useState<string | null>(null);
@@ -30,7 +31,7 @@ export default function NewsScreen() {
   }
 
   return (
-    <View style={styles.root}>
+    <SafeAreaView style={styles.root}>
       <View style={styles.header}>
         <IconNews color={Colors.dark.text} />
         <ThemedText type="titleMedium">News</ThemedText>
@@ -38,7 +39,7 @@ export default function NewsScreen() {
       <View style={styles.twitterContainer}>
         <TwitterEmbed htmlContent={htmlContent} loading={loading} setLoading={setLoading} />
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -81,7 +82,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     padding: 16,
-    marginTop: 16,
     gap: 16,
   },
   twitterContainer: {

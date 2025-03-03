@@ -21,7 +21,6 @@ import {
   StyleSheet,
   useWindowDimensions,
   View,
-  Text,
 } from "react-native";
 import Svg, { Defs, Ellipse, RadialGradient, Stop } from "react-native-svg";
 import {
@@ -37,6 +36,7 @@ import { ThemedText } from "@/lib/components/ThemedText";
 import { useThemeColor } from "@/lib/hooks/useThemeColor";
 import { ProposalCard, ProposalCardSkeleton } from "@/lib/components/proposal/ProposalCard";
 import { useProfileStore } from "@/lib/store/profileStore";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const renderScene = SceneMap({
   profile: Profile,
@@ -144,32 +144,34 @@ export default function Home() {
   const [index, setIndex] = useState(0);
 
   return (
-    <TabView
-      renderTabBar={(props) => (
-        <TabViewWrapper>
-          <TabBar
-            {...props}
-            style={{
-              height: 52,
-              backgroundColor: "#00000000",
-            }}
-            renderIndicator={(props) => (
-              <TabBarIndicator
-                {...props}
-                width={100}
-                style={StyleSheet.compose(props.style, {
-                  backgroundColor: Colors.dark.ctaStroke,
-                })}
-              />
-            )}
-          />
-        </TabViewWrapper>
-      )}
-      navigationState={{ index, routes }}
-      renderScene={renderScene}
-      onIndexChange={setIndex}
-      initialLayout={{ width: layout.width }}
-    />
+    <SafeAreaView style={{ flex: 1 }}>
+      <TabView
+        renderTabBar={(props) => (
+          <TabViewWrapper>
+            <TabBar
+              {...props}
+              style={{
+                height: 52,
+                backgroundColor: "#00000000",
+              }}
+              renderIndicator={(props) => (
+                <TabBarIndicator
+                  {...props}
+                  width={100}
+                  style={StyleSheet.compose(props.style, {
+                    backgroundColor: Colors.dark.ctaStroke,
+                  })}
+                />
+              )}
+            />
+          </TabViewWrapper>
+        )}
+        navigationState={{ index, routes }}
+        renderScene={renderScene}
+        onIndexChange={setIndex}
+        initialLayout={{ width: layout.width }}
+      />
+    </SafeAreaView>
   );
 }
 

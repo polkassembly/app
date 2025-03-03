@@ -33,7 +33,7 @@ const quickActions: QuickActionCardProps[] = [
 
 export default function QuickActions() {
   const size = useWindowDimensions();
-  const [activeIndex, setActiveIndex] = useState(0);
+  const [activeIndex, setActiveIndex] = useState(1);
 
   return (
     <View style={{ paddingTop: 16, backgroundColor: "#121216" }}>

@@ -1,9 +1,8 @@
 import { Tabs } from "expo-router";
-import React, { Children } from "react";
-import { Pressable, StyleSheet, View, ViewStyle, Text } from "react-native";
+import React from "react";
+import { View, StyleSheet, Pressable } from "react-native";
 import Svg, { Ellipse } from "react-native-svg";
-import { SafeAreaView } from "react-native-safe-area-context";
-
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Colors } from "@/lib/constants/Colors";
 import { BottomTabBarButtonProps } from "@react-navigation/bottom-tabs";
 import { IconBrowser } from "@/lib/components/icons/icon-browser";
@@ -18,7 +17,6 @@ const styles = StyleSheet.create({
     height: smallIconSize,
     marginTop: 36,
   },
-
   largeIcon: {
     marginTop: 12,
     height: largeIconSize,
@@ -32,12 +30,17 @@ const styles = StyleSheet.create({
     backgroundColor: "transparent",
     position: "absolute",
     bottom: 0,
+    left: 0,
+    right: 0,
   },
 });
 
 export default function TabLayout() {
+  const insets = useSafeAreaInsets();
+
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    // Wrap the Tabs with a View that adds bottom padding based on the safe area
+    <View style={{ flex: 1, paddingBottom: insets.bottom }}>
       <Tabs
         screenOptions={{
           tabBarShowLabel: false,
@@ -45,7 +48,7 @@ export default function TabLayout() {
           headerShown: false,
           tabBarButton: TabBarButton,
           tabBarBackground: TabBarBackground,
-          tabBarStyle: styles.tabBarStyle
+          tabBarStyle: styles.tabBarStyle,
         }}
       >
         <Tabs.Screen
@@ -75,7 +78,7 @@ export default function TabLayout() {
           }}
         />
       </Tabs>
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -83,7 +86,6 @@ function TabBarButton(props: BottomTabBarButtonProps) {
   return (
     <Pressable
       {...props}
-      // disable ripple
       android_ripple={{
         radius: 0,
       }}
@@ -93,7 +95,7 @@ function TabBarButton(props: BottomTabBarButtonProps) {
 
 function TabBarBackground() {
   return (
-    <Svg width={"100%"} height={"100%"} fill={"#00000000"}>
+    <Svg width={"100%"} height={"100%"} fill={"transparent"}>
       <Ellipse
         fill={"#000000"}
         cx={"50%"}
