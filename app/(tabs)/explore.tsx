@@ -1,9 +1,8 @@
-import GlitterBackground from "@/lib/components/icons/browser/glitter-background";
+import { QuickActions } from "@/lib/components/browser";
 import IconPolkasafe from "@/lib/components/icons/browser/icon-polkasafe";
 import { IconBrowser } from "@/lib/components/icons/icon-browser";
 import { IconPoints } from "@/lib/components/icons/icon-points";
 import { IconSearch } from "@/lib/components/icons/shared";
-import ThemedButton from "@/lib/components/ThemedButton";
 import { ThemedText } from "@/lib/components/ThemedText";
 import { ThemedView } from "@/lib/components/ThemedView";
 import { Colors } from "@/lib/constants/Colors";
@@ -14,17 +13,12 @@ import { openBrowserAsync } from "expo-web-browser";
 import React from "react";
 import {
   Image,
-  ImageSourcePropType,
   ScrollView,
   StyleSheet,
-  Text,
   TextInput,
   TouchableOpacity,
-  useWindowDimensions,
   View,
 } from "react-native";
-import Carousel from "react-native-reanimated-carousel";
-import { CarouselRenderItemInfo } from "react-native-reanimated-carousel/lib/typescript/types";
 
 export default function Browser() {
   return (
@@ -43,6 +37,7 @@ export default function Browser() {
               top: 0,
               height: "100%",
               width: "100%",
+              opacity: 0.3
             }}
             shouldPlay
             isLooping
@@ -63,21 +58,24 @@ export default function Browser() {
               }}
             />
 
-            <Text style={styles.bannerTitle}>
-              Welcome to Polkassembly Browser!
-            </Text>
-            <Text style={styles.bannerSubtitle}>
-              Polkadot anything, everything!
-            </Text>
+            <View style= {{ padding: 20, alignItems: "center" }}>
+              <ThemedText type="titleMedium" style={{ textAlign: "center", marginBottom: 10}}>
+                Welcome to{"\n"} Polkassembly Browser!
+              </ThemedText>
+              <ThemedText type="bodyMedium3" style={{ textAlign: "center", color: "#737373", marginBottom: 20}}>
+                Polkadot anything, everything!
+              </ThemedText>
 
-            <Image
-              style={{ height: 36, width: 102 }}
-              source={require("@/assets/images/browser/polkaassembly.png")}
-            />
+              <Image
+                style={{ height: 36, width: 102 }}
+                source={require("@/assets/images/browser/polkaassembly.png")}
+              />
+            </View>
           </View>
+          <View style={{ position: "absolute", left: 0, right: 0, top: 0, bottom: 0, backgroundColor: "#000", opacity: 0.3 }} />
         </View>
 
-        <View style={{ paddingInline: 16, marginBlock: 16, gap: 16 }}>
+        <View style={{ paddingInline: 16, marginBlock: 24, gap: 24 }}>
           <View style={styles.searchInput}>
             <IconSearch />
 
@@ -88,7 +86,7 @@ export default function Browser() {
             />
           </View>
 
-          <View style={{ gap: 8 }}>
+          <View style={{ gap: 16 }}>
             <ThemedText type="bodyMedium2">FEATURED WEBSITES</ThemedText>
 
             <View style={styles.featuredCardsWrapper}>
@@ -100,7 +98,10 @@ export default function Browser() {
                   source={require("@/assets/images/browser/feature-polka.png")}
                   style={styles.featuredImage}
                 />
-                <ThemedText type="bodySmall">Polkassembly</ThemedText>
+                <View>
+                  <ThemedText type="bodySmall3">Polkassembly</ThemedText>
+                  <ThemedText type="bodySmall4" style={{ color: "#9B9B9B" }}>Governance</ThemedText>
+                </View>
               </TouchableOpacity>
 
               <TouchableOpacity
@@ -111,7 +112,10 @@ export default function Browser() {
                   source={require("@/assets/images/browser/feature-townhall.png")}
                   style={styles.featuredImage}
                 />
-                <ThemedText type="bodySmall">Townhall</ThemedText>
+                <View>
+                  <ThemedText type="bodySmall3">Townhall</ThemedText>
+                  <ThemedText type="bodySmall4" style={{ color: "#9B9B9B" }}>Governance</ThemedText>
+                </View>
               </TouchableOpacity>
 
               <TouchableOpacity
@@ -119,7 +123,10 @@ export default function Browser() {
                 onPress={() => openBrowserAsync("https://polkasafe.xyz/")}
               >
                 <IconPolkasafe />
-                <ThemedText type="bodySmall">Polkasafe</ThemedText>
+                <View>
+                  <ThemedText type="bodySmall3">Polkasafe</ThemedText>
+                  <ThemedText type="bodySmall4" style={{ color: "#9B9B9B" }}>Governance</ThemedText>
+                </View>
               </TouchableOpacity>
             </View>
           </View>
@@ -159,145 +166,6 @@ function TitleSection() {
   );
 }
 
-function QuickActions() {
-  const size = useWindowDimensions();
-
-  return (
-    <View style={{ padding: 16, gap: 16 }}>
-      <GlitterBackground
-        style={{
-          zIndex: -10,
-          top: 0,
-          left: 0,
-          position: "absolute",
-          width: "100%",
-        }}
-      />
-
-      <View>
-        <ThemedText
-          style={[
-            styles.quickActionHeading,
-            {
-              textShadowColor: Colors.dark.accent,
-              fontSize: 12,
-            },
-          ]}
-        >
-          POLKASSEMBLY
-        </ThemedText>
-
-        <ThemedText
-          style={[
-            styles.quickActionHeading,
-            {
-              textShadowColor: "#4766F9",
-              fontSize: 24,
-              color: "#F0B44F",
-            },
-          ]}
-        >
-          QUICK ACTIONS
-        </ThemedText>
-      </View>
-
-      <Carousel
-        defaultIndex={1}
-        width={size.width}
-        windowSize={size.width / 3}
-        height={400}
-        data={quickActions}
-        mode="parallax"
-        snapEnabled={true}
-        loop={false}
-        renderItem={renderQuickActionItem}
-      ></Carousel>
-    </View>
-  );
-}
-
-const quickActions: QuickActionCardProps[] = [
-  {
-    title: "Bounties",
-    subtitle: "See The Latest Hot Bounties",
-    button: "Go To Bounties",
-    url: "https://polkadot.polkassembly.io/bounty-dashboard",
-    imageSource: require("@/assets/images/browser/quick-action-bounties.png"),
-  },
-  {
-    title: "Delegation",
-    subtitle: "Delegate on Polkassmebly",
-    button: "Delegate Now",
-    url: "https://polkadot.polkassembly.io/delegation",
-    imageSource: require("@/assets/images/browser/quick-action-delegate.png"),
-  },
-  {
-    title: "Calendar",
-    subtitle: "Checkout Calendar On Polkassembly",
-    button: "See Calendar",
-    url: "https://polkadot.polkassembly.io/calendar",
-    imageSource: require("@/assets/images/browser/quick-action-calendar.png"),
-  },
-];
-
-function renderQuickActionItem(
-  info: CarouselRenderItemInfo<QuickActionCardProps>
-) {
-  return <QuickActionCard {...info.item} />;
-}
-
-interface QuickActionCardProps {
-  title: string;
-  subtitle: string;
-  url: string;
-  imageSource: ImageSourcePropType;
-  button: string;
-}
-
-function QuickActionCard({
-  title,
-  subtitle,
-  url,
-  imageSource,
-  button,
-}: QuickActionCardProps) {
-  return (
-    <ThemedView
-      type="secondaryBackground"
-      style={{
-        borderWidth: 1,
-        borderColor: "#383838",
-        paddingBlock: 16,
-        paddingInline: 24,
-        gap: 36,
-        shadowColor: "#F100861A",
-        shadowRadius: 10,
-        shadowOffset: {
-          width: 1,
-          height: 0,
-        },
-        borderRadius: 8,
-        alignItems: "center",
-      }}
-    >
-      <ThemedText
-        style={{ textTransform: "uppercase", color: Colors.dark.mediumText }}
-      >
-        {title}
-      </ThemedText>
-      <Image source={imageSource} />
-      <ThemedText type="titleMedium">{subtitle}</ThemedText>
-      <ThemedButton
-        style={{ backgroundColor: "white", alignSelf: "stretch" }}
-        textStyle={{ color: "black" }}
-        textType="buttonLarge"
-        text={button}
-        onPress={() => openBrowserAsync(url)}
-      />
-    </ThemedView>
-  );
-}
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -305,24 +173,9 @@ const styles = StyleSheet.create({
   bannerContainer: {
     alignItems: "center",
     backgroundColor: "#01017F",
-    marginInline: 64,
-    marginBlock: 32,
-    gap: 8,
+    marginInline: 50,
+    marginBlock: 35,
   },
-  bannerTitle: {
-    padding: 16,
-    fontSize: 20,
-    fontWeight: "bold",
-    color: "#FFFFFF",
-    marginBottom: 5,
-    textAlign: "center",
-  },
-  bannerSubtitle: {
-    fontSize: 14,
-    color: "#BBBBBB",
-    textAlign: "center",
-  },
-
   searchInput: {
     flexDirection: "row",
     alignItems: "center",
@@ -331,7 +184,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 32,
     paddingHorizontal: 15,
-    paddingVertical: 10,
+    paddingVertical: 4,
   },
 
   sectionTitle: {
@@ -372,15 +225,5 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingHorizontal: 16,
     paddingBlock: 16,
-  },
-
-  quickActionHeading: {
-    textAlign: "center",
-    textShadowRadius: 0.1,
-    textShadowOffset: {
-      height: 2,
-      width: -2,
-    },
-    borderWidth: 0.5,
   },
 });
