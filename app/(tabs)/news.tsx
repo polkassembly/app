@@ -1,5 +1,13 @@
-import React, { useState, useEffect } from "react";
-import { StyleSheet, View, ActivityIndicator } from "react-native";
+import React, { useState, useEffect, useRef, useMemo } from "react";
+import {
+  StyleSheet,
+  View,
+  ActivityIndicator,
+  Animated,
+  Dimensions,
+  TouchableOpacity,
+  ScrollView,
+} from "react-native";
 import { IconNews } from "@/lib/components/icons/Profile";
 import { ThemedText } from "@/lib/components/ThemedText";
 import { Colors } from "@/lib/constants/Colors";
@@ -7,20 +15,70 @@ import WebView from "react-native-webview";
 import { Asset } from "expo-asset";
 import * as FileSystem from "expo-file-system";
 import { SafeAreaView } from "react-native-safe-area-context";
+import Svg, { Path } from "react-native-svg";
+import { IconPoints } from "@/lib/components/icons/icon-points";
+import { NewsHeader, TopCoinsSection, TreasurySection, TwitterEmbed } from "@/lib/components/news";
+
+// Cache to store the HTML content
+let cachedHtmlContent: string | null = null;
 
 export default function NewsScreen() {
   const [htmlContent, setHtmlContent] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
+  // Load HTML asset and coin data on mount
   useEffect(() => {
     async function loadHtmlAsset() {
-      const asset = Asset.fromModule(require("@/assets/x-timeline-embed.html"));
-      await asset.downloadAsync();
-      const content = await FileSystem.readAsStringAsync(asset.localUri || asset.uri);
-      setHtmlContent(content);
+      try {
+        if (cachedHtmlContent) {
+          setHtmlContent(cachedHtmlContent);
+          return;
+        }
+        const asset = Asset.fromModule(require("@/assets/x-timeline-embed.html"));
+        await asset.downloadAsync();
+        const content = await FileSystem.readAsStringAsync(asset.localUri || asset.uri);
+        cachedHtmlContent = content;
+        setHtmlContent(content);
+      } catch (err) {
+        console.error("Failed to load HTML asset:", err);
+        setError("Failed to load news content. Please try again later.");
+      }
     }
+
     loadHtmlAsset();
   }, []);
+
+  if (error) {
+    return (
+      <View style={[styles.root, styles.center]}>
+        <ThemedText type="bodyMedium1">{error}</ThemedText>
+        <TouchableOpacity
+          style={styles.retryButton}
+          onPress={() => {
+            setError(null);
+            // Clear cache to force reload
+            cachedHtmlContent = null;
+            // Reload content
+            async function loadHtmlAsset() {
+              try {
+                const asset = Asset.fromModule(require("@/assets/x-timeline-embed.html"));
+                await asset.downloadAsync();
+                const content = await FileSystem.readAsStringAsync(asset.localUri || asset.uri);
+                cachedHtmlContent = content;
+                setHtmlContent(content);
+              } catch (err) {
+                console.error("Failed to load HTML asset:", err);
+                setError("Failed to load news content. Please try again later.");
+              }
+            }
+            loadHtmlAsset();
+          }}
+        >
+          <ThemedText type="bodyMedium1">Retry</ThemedText>
+        </TouchableOpacity>
+      </View>
+    );
+  }
 
   if (!htmlContent) {
     return (
@@ -31,41 +89,17 @@ export default function NewsScreen() {
   }
 
   return (
-    <SafeAreaView style={styles.root}>
-      <View style={styles.header}>
-        <IconNews color={Colors.dark.text} />
-        <ThemedText type="titleMedium">News</ThemedText>
-      </View>
-      <View style={styles.twitterContainer}>
-        <TwitterEmbed htmlContent={htmlContent} loading={loading} setLoading={setLoading} />
-      </View>
+    <SafeAreaView style={{ flex: 1, backgroundColor: Colors.dark.secondaryBackground, paddingTop: 10 }}>
+      <NewsHeader />
+      <ScrollView style={{ flex: 1, marginTop: 20, gap: 20 }}>
+
+        <TreasurySection/>
+        <TopCoinsSection />
+        <TwitterEmbed
+          htmlContent={htmlContent}
+        />
+      </ScrollView>
     </SafeAreaView>
-  );
-}
-
-interface TwitterEmbedProps {
-  htmlContent: string;
-  loading: boolean;
-  setLoading: (loading: boolean) => void;
-}
-
-function TwitterEmbed({ htmlContent, loading, setLoading }: TwitterEmbedProps) {
-  return (
-    <View style={{ flex: 1 }}>
-      <WebView
-        originWhitelist={["*"]}
-        source={{ html: htmlContent }}
-        style={styles.webview}
-        scrollEnabled={true}
-        onLoadStart={() => setLoading(true)}
-        onLoadEnd={() => setLoading(false)}
-      />
-      {loading && (
-        <View style={styles.loadingOverlay}>
-          <ActivityIndicator size="large" color={Colors.dark.tint} />
-        </View>
-      )}
-    </View>
   );
 }
 
@@ -78,26 +112,11 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    padding: 16,
-    gap: 16,
-  },
-  twitterContainer: {
-    flex: 1,
-  },
-  webview: {
-    flex: 1,
-  },
-  loadingOverlay: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  retryButton: {
+    marginTop: 16,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    backgroundColor: Colors.dark.tint,
+    borderRadius: 4,
   },
 });
