@@ -305,7 +305,7 @@ function AmountInput({ value, onChange }: AmountInputProps) {
         }}
         placeholder="0"
         placeholderTextColor={color}
-        style={{ flex: 1, textAlign: "right", color }}
+        style={{ flex: 1, textAlign: "right", color, paddingHorizontal: 8 }}
       />
     </View>
   );
