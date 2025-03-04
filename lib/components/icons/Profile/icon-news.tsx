@@ -19,7 +19,7 @@ export default function IconNews({ style, color, iconHeight, iconWidth, filled }
       />
       <Path
         d="M16.0007 16L15.9922 16.0085"
-        stroke={filled ? "balck" : "white"}
+        stroke={filled ? "black" : "white"}
         strokeWidth="2"
         strokeLinecap="round"
         strokeLinejoin="round"

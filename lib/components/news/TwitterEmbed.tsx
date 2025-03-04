@@ -39,8 +39,15 @@ function TwitterEmbed({
 
   return (
     <View>
-      <ThemedText type="titleSmall" style={{ marginInline: 16}}>Latest Updates</ThemedText>
-      {/* Use a container with a fixed height that's appropriate for the content */}
+      <ThemedText
+        type="titleSmall"
+        style={{ marginInline: 16 }}
+        accessible={true}
+        accessibilityRole="header"
+        accessibilityLabel="Latest Updates"
+      >Latest Updates
+      </ThemedText>
+      {/* FIXME: The height-500 is to trim extra empty space below the body, find the root cause and solve it */}
       <View style={{ width: screenWidth, height: height - 500 }}>
         <WebView
           ref={webViewRef}
@@ -61,12 +68,14 @@ function TwitterEmbed({
           onError={() => setLoading(false)}
           renderLoading={() => <ActivityIndicator />}
           scalesPageToFit={false}
+          accessible={true}
+          accessibilityLabel="Latest updates from the XRP Ledger Twitter account"
           style={styles.webView}
         />
         {loading && !webViewRef.current && (
-					<View style={styles.skeletonOverlay}>
-						<TwitterEmbedSkeleton />
-					</View>
+          <View style={styles.skeletonOverlay}>
+            <TwitterEmbedSkeleton />
+          </View>
         )}
       </View>
     </View>
