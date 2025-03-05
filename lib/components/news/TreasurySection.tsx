@@ -3,11 +3,11 @@ import { ThemedText } from "../ThemedText";
 
 function TreasurySection() {
 	return (
-		<View style={{ flex: 1, width: '100%', height: 220}}>
+		<View style={{ flex: 1, width: '100%', height: 220, justifyContent: "center", alignItems: "center"}}>
 			<Image
 				source={require('@/assets/gif/treasury_bg.gif')}
 				style={{
-					width: '100%',
+					width: '80%',
 					height: 220,
 					resizeMode: 'contain',
 				}}
