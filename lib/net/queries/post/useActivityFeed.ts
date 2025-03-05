@@ -29,4 +29,4 @@ const useActivityFeed = (params: FeedRequest) => {
   });
 };
 
-export { useActivityFeed, buildActivityFeedQueryKey };
+export { useActivityFeed, buildActivityFeedQueryKey, FeedRequest };

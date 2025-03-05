@@ -1,5 +1,4 @@
 import { BatchVoteForm, Note } from "@/lib/components/feed/BatchVoteForm";
-import IconEdit from "@/lib/components/icons/proposals/icon-edit";
 import IconAbstain from "@/lib/components/icons/shared/icon-abstain";
 import IconAye from "@/lib/components/icons/shared/icon-aye";
 import IconClose from "@/lib/components/icons/shared/icon-close";
@@ -120,11 +119,12 @@ function CartItemCard({ cartItem, onEdit }: CartItemCardProps) {
 						borderRadius: 4,
 						paddingHorizontal: 4,
 						fontSize: 10,
+						minWidth: 30
 					}}>
 					#{cartItem.postIndexOrHash}
 				</ThemedText>
 				{isPostLoading ? (
-					<Skeleton width={50} />
+					<Skeleton width={50} height={15}/>
 				) : (
 					<ThemedText type="bodySmall">{trimText(post?.title || "", 30)}</ThemedText>
 				)}

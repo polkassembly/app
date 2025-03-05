@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import {
   View,
   StyleSheet,
@@ -22,27 +22,46 @@ import { ThemedText } from "@/lib/components/ThemedText";
 import IconVotedProposal from "@/lib/components/icons/proposals/icon-voted-proposal";
 import { ProposalCard } from "@/lib/components/proposal/ProposalCard";
 import Svg, { Ellipse } from "react-native-svg";
+import { Post } from "@/lib/types";
 import { ProposalContentSummary } from "@/lib/components/proposal";
 
 const BATCH_SIZE = 10;
 
+// Memoized card component to avoid unnecessary re-renders
+type ProposalCardProps = {
+  card: Post;
+  backgroundColor: string;
+  colorStroke: string;
+};
+
+const MemoizedProposalCard = React.memo(({ card, backgroundColor, colorStroke }: ProposalCardProps) => {
+  return (
+    <View style={[styles.cardContainer, { backgroundColor, borderColor: colorStroke }]}>
+      <ProposalCard
+        post={card}
+        descriptionLength={500}
+        withoutActions
+        withoutViewMore
+      />
+      <ProposalContentSummary proposalType={card.proposalType} indexOrHash={card.index} />
+    </View>
+  );
+});
+
 const ProposalVotingScreen: React.FC = () => {
   const searchParams = useLocalSearchParams();
   const defaultConviction = Number(searchParams?.defaultConviction) || 0;
-  const defaultAyeAmount = String(searchParams?.defaultAyeAmount) || "0";
-  const defaultNayAmount = String(searchParams?.defaultNayAmount) || "0";
-  const defaultAbstainAmount = String(searchParams?.defaultAbstainAmount) || "0";
+  const defaultAyeAmount = String(searchParams?.defaultAyeAmount) || "1";
+  const defaultNayAmount = String(searchParams?.defaultNayAmount) || "1";
+  const defaultAbstainAmount = String(searchParams?.defaultAbstainAmount) || "1";
 
   const feedParams = { limit: 10 };
   const { data, isLoading, isError, hasNextPage, fetchNextPage } =
     useActivityFeed(feedParams);
   const voteMutation = useAddCartItem();
 
-  // This state holds all fetched proposals
   const [proposals, setProposals] = useState<any[]>([]);
-  // This pointer marks how many proposals we’ve already handed off to the swiper
   const [batchStartIndex, setBatchStartIndex] = useState(0);
-  // This state holds the current batch of cards given to the swiper
   const [cardsBatch, setCardsBatch] = useState<any[]>([]);
   const swiperRef = useRef<any>(null);
 
@@ -52,25 +71,44 @@ const ProposalVotingScreen: React.FC = () => {
   const { data: cartItems } = useGetCartItems();
   const router = useRouter();
 
-  // When new data is available, append to the proposals state.
+  // Append new proposals when data is available
   useEffect(() => {
     if (data) {
       const allProposals = data.pages.flatMap((page: any) => page.items);
-      setProposals((prev) => [...prev, ...allProposals]);
+      // Use functional update to append new proposals
+      setProposals((prev) => {
+        const updated = [...prev, ...allProposals];
+        return updated;
+      });
     }
   }, [data]);
 
-  // Update the current batch whenever proposals or batchStartIndex changes.
+  // Update current batch based on proposals and batchStartIndex
   useEffect(() => {
     const newBatch = proposals.slice(batchStartIndex, batchStartIndex + BATCH_SIZE);
-    if (newBatch.length) {
-      setCardsBatch(newBatch);
-    }
+    setCardsBatch(newBatch);
   }, [proposals, batchStartIndex]);
 
-  const onSwiped = (direction: "aye" | "nay" | "abstain", cardIndex: number) => {
+  // Reset the swiper index when cardsBatch updates
+  useEffect(() => {
+    if (cardsBatch.length > 0 && swiperRef.current) {
+      swiperRef.current.jumpToCardIndex(0);
+    }
+  }, [cardsBatch]);
+
+  // Swipe handler with console logging
+  const onSwiped = useCallback((direction: "aye" | "nay" | "abstain", cardIndex: number) => {
     const proposal = cardsBatch[cardIndex];
     if (!proposal) return;
+
+    // When the last card of the current batch is swiped, prepare the next batch.
+    if (cardIndex === cardsBatch.length - 1) {
+      const nextBatchStart = batchStartIndex + BATCH_SIZE;
+      setBatchStartIndex(nextBatchStart);
+      if (proposals.length - nextBatchStart <= 3 && hasNextPage) {
+        fetchNextPage();
+      }
+    }
 
     let amountValue = "0";
     if (direction === "aye") amountValue = defaultAyeAmount;
@@ -92,21 +130,20 @@ const ProposalVotingScreen: React.FC = () => {
 
     voteMutation.mutate(params, {
       onSuccess: () => {
+        // TODO: Add toast notification
       },
       onError: (error) => {
+        // TODO: Handle error and add toast notification
       },
     });
+  }, [cardsBatch, batchStartIndex, proposals, defaultAyeAmount, defaultNayAmount, defaultAbstainAmount, defaultConviction, hasNextPage, fetchNextPage, voteMutation]);
 
-    // If this is the last card in the current batch, load the next batch.
-    if (cardIndex === cardsBatch.length - 1) {
-      const nextBatchStart = batchStartIndex + BATCH_SIZE;
-      setBatchStartIndex(nextBatchStart);
-      // pre-fetch more proposals if we are running low
-      if (proposals.length - nextBatchStart <= 3 && hasNextPage) {
-        fetchNextPage();
-      }
-    }
-  };
+  // Memoized renderCard to avoid unnecessary recreation on each render
+  const renderCard = useCallback((card: Post) => {
+    return (
+      <MemoizedProposalCard card={card} backgroundColor={backgroundColor} colorStroke={colorStroke} />
+    );
+  }, [backgroundColor, colorStroke]);
 
   if (isLoading && proposals.length === 0) {
     return (
@@ -128,29 +165,13 @@ const ProposalVotingScreen: React.FC = () => {
     <SafeAreaView style={{ flex: 1, backgroundColor }}>
       <TopBar style={{ paddingHorizontal: 16 }} />
 
-      <View style={[styles.container]}>
+      <View style={styles.container}>
         {cardsBatch.length ? (
           <Swiper
-            cardVerticalMargin={16}
-            key={batchStartIndex} // force remount when batch changes
             ref={swiperRef}
             cards={cardsBatch}
             cardIndex={0}
-            renderCard={(card) => (
-              <View style={[
-                styles.cardContainer,
-                { backgroundColor, borderColor: colorStroke}
-              ]}>
-                <ProposalCard
-                  post={card}
-                  descriptionLength={500}
-                  withoutActions
-                  withoutViewMore
-                />
-
-                <ProposalContentSummary proposalType={card.proposalType} indexOrHash={card.index} />
-              </View>
-            )}
+            renderCard={renderCard}
             onSwipedLeft={(cardIndex) => onSwiped("nay", cardIndex)}
             onSwipedRight={(cardIndex) => onSwiped("aye", cardIndex)}
             onSwipedTop={(cardIndex) => onSwiped("abstain", cardIndex)}
@@ -208,8 +229,10 @@ const ProposalVotingScreen: React.FC = () => {
             }}
           />
         ) : (
+          // If cardsBatch is empty but we have proposals (waiting for next batch), show a loading spinner.
           <View style={styles.centered}>
-            <Text>No more proposals</Text>
+            <ActivityIndicator size="large" color="#000" />
+            <Text>Loading more proposals...</Text>
           </View>
         )}
 
@@ -247,11 +270,7 @@ const ProposalVotingScreen: React.FC = () => {
           <TouchableOpacity
             style={[
               styles.voteButton,
-              {
-                backgroundColor: "#F53C3C",
-                width: 50,
-                height: 50
-              }
+              { backgroundColor: "#F53C3C", width: 50, height: 50 }
             ]}
             onPress={() => swiperRef.current?.swipeLeft()}
           >
@@ -260,11 +279,7 @@ const ProposalVotingScreen: React.FC = () => {
           <TouchableOpacity
             style={[
               styles.voteButton,
-              {
-                backgroundColor: "#FFBF60",
-                width: 40,
-                height: 40
-              }
+              { backgroundColor: "#FFBF60", width: 40, height: 40 }
             ]}
             onPress={() => swiperRef.current?.swipeTop()}
           >
@@ -273,11 +288,7 @@ const ProposalVotingScreen: React.FC = () => {
           <TouchableOpacity
             style={[
               styles.voteButton,
-              {
-                backgroundColor: "#2ED47A",
-                width: 50,
-                height: 50
-              }
+              { backgroundColor: "#2ED47A", width: 50, height: 50 }
             ]}
             onPress={() => swiperRef.current?.swipeRight()}
           >
@@ -312,8 +323,8 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    justifyContent: 'flex-end',
-    alignItems: 'center',
+    justifyContent: "flex-end",
+    alignItems: "center",
   },
   voteButton: {
     borderRadius: 100,
@@ -360,11 +371,11 @@ function TabBarBackground() {
       <Ellipse
         fill={"#000000"}
         cx={"50%"}
-        cy={250 / 2}
-        rx={660 / 2}
-        ry={250 / 2}
-        stroke={"#666666"} // sets the border color to white
-        strokeWidth={1}    // sets the border thickness; adjust this value for more or less prominence
+        cy={125} // 250/2
+        rx={330} // 660/2
+        ry={125} // 250/2
+        stroke={"#666666"}
+        strokeWidth={1}
       />
     </Svg>
   );
