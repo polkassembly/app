@@ -23,7 +23,6 @@ import IconVotedProposal from "@/lib/components/icons/proposals/icon-voted-propo
 import { ProposalCard } from "@/lib/components/proposal/ProposalCard";
 import Svg, { Ellipse } from "react-native-svg";
 import { Post } from "@/lib/types";
-import { ProposalContentSummary } from "@/lib/components/proposal";
 
 const BATCH_SIZE = 10;
 
@@ -43,7 +42,6 @@ const MemoizedProposalCard = React.memo(({ card, backgroundColor, colorStroke }:
         withoutActions
         withoutViewMore
       />
-      <ProposalContentSummary proposalType={card.proposalType} indexOrHash={card.index} />
     </View>
   );
 });

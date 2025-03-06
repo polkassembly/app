@@ -214,10 +214,10 @@ export default function Settings() {
               </View>
             )}
           </View>
-          <View style={{ gap: 16 }}>
+          <View style={{}}>
             <ThemedText type="bodySmall">PROFILE PICTURE</ThemedText>
-            <View style={styles.profilePictureContainer}>
-              <View style={{ maxWidth: "50%" }}>
+            <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+              <View style={{ maxWidth: "48%", flex: 1, aspectRatio: 1 }}>
                 <Image
                   source={
                     userProfilePicture
@@ -226,10 +226,11 @@ export default function Settings() {
                         : Image.resolveAssetSource(userProfilePicture)
                       : Image.resolveAssetSource(defaultAvatar)
                   }
-                  style={{ borderRadius: 100, flex: 1, flexGrow: 1, aspectRatio: 1 }}
+                  style={{ maxWidth: "100%", flex: 1, borderRadius: 100 }}
+                 
                 />
               </View>
-              <View style={{ width: "50%" }}>
+              <View style={{ width: "48%" }}>
                 <ThemedText type="bodyMedium2" style={{ color: colorStroke }}>
                   Options:
                 </ThemedText>
