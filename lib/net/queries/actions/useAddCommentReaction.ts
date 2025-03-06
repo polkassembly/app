@@ -3,9 +3,11 @@ import client from "@/lib/net/client";
 import { EProposalType, EReaction, Feed, Post } from "@/lib/types";
 import { buildActivityFeedQueryKey } from "../post/useActivityFeed";
 import { buildProposalByIndexQueryKey } from "../post/useProposalByIndex";
-interface AddReactionPathParams {
+
+interface AddCommentReactionPathParams {
   proposalType: EProposalType;
   postIndexOrHash: string;
+	commentId: string;
 }
 
 interface AddReactionBody {
@@ -16,26 +18,26 @@ interface AddReactionResponse {
   message: string;
   reactionId: string;
 }
-const useAddReaction = () => {
+
+const useAddCommentReaction = () => {
   const queryClient = useQueryClient();
 
-  return useMutation<AddReactionResponse, Error, { pathParams: AddReactionPathParams; bodyParams: AddReactionBody }>({
+  return useMutation<AddReactionResponse, Error, { pathParams: AddCommentReactionPathParams
+		; bodyParams: AddReactionBody }>({
     mutationFn: async ({ pathParams, bodyParams }) => {
       const response = await client.post<AddReactionResponse>(
-        `${pathParams.proposalType}/${pathParams.postIndexOrHash}/reactions`,
+        `${pathParams.proposalType}/${pathParams.postIndexOrHash}/comments/${pathParams.commentId}/reactions`,
         bodyParams
       );
       return response.data;
     },
     onError: (error, { pathParams }) => {
-      queryClient.invalidateQueries({ queryKey: buildProposalByIndexQueryKey({ proposalType: pathParams.proposalType, indexOrHash: pathParams.postIndexOrHash }) });
       throw new Error("Failed to add reaction", error);
     },
 
     onSettled: (_, __, { pathParams }) => {
-      queryClient.invalidateQueries({ queryKey: buildProposalByIndexQueryKey({ proposalType: pathParams.proposalType, indexOrHash: pathParams.postIndexOrHash }) });
     },
   });
 };
 
-export default useAddReaction;
+export default useAddCommentReaction;

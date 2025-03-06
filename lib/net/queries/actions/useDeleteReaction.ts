@@ -25,12 +25,10 @@ const useDeleteReaction = () => {
       return response.data;
     },
     onError: (error, { pathParams }) => {
-      queryClient.invalidateQueries({ queryKey: buildActivityFeedQueryKey({ limit: 10 }) });
       queryClient.invalidateQueries({ queryKey: buildProposalByIndexQueryKey({ proposalType: pathParams.proposalType, indexOrHash: pathParams.postIndexOrHash }) });
       throw new Error("Failed to delete reaction", error);
     },
     onSettled: (_, __, { pathParams }) => {
-      queryClient.invalidateQueries({ queryKey: buildActivityFeedQueryKey({ limit: 10 }) });
       queryClient.invalidateQueries({ queryKey: buildProposalByIndexQueryKey({ proposalType: pathParams.proposalType, indexOrHash: pathParams.postIndexOrHash }) });
     },
   });
