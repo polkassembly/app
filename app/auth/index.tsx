@@ -76,7 +76,7 @@ function Slide1() {
   return (
     <View style={styles.slideContainer}>
       <Image
-        style={{ flexGrow: 1, flexBasis: 0 }}
+        style={{ flexGrow: 1, flexBasis: 0, maxWidth: "100%" }}
         resizeMode="contain"
         source={require("@/assets/images/auth/bg-intro-1.png")}
       />
