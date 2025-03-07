@@ -1,5 +1,4 @@
 import BottomSheet from "./BottomSheet";
-import GradientText from "./GradientText";
 import NavigateButton from "./NavigateButton";
 import OutlinedText from "./OutlinedText";
 import ProgressBar from "./ProgressBar";
@@ -9,7 +8,6 @@ import UserAvatar from "./UserAvatar";
 
 export {
 	BottomSheet,
-	GradientText,
 	NavigateButton,
 	OutlinedText,
 	ProgressBar,

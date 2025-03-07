@@ -15,7 +15,6 @@ import { formatBnBalance } from "@/lib/util";
 import { NETWORKS_DETAILS } from "@/lib/constants/networks";
 import ProposalPeriodStatus from "./ProposalPeriodStatus";
 import { pascalToNormal } from "@/lib/util/stringUtil";
-import { Dayjs } from "dayjs";
 
 interface postFullDetailsProps {
 	post: Post;

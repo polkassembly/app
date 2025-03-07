@@ -1,5 +1,4 @@
 import IntroPager from "@/lib/components/IntroPager";
-import { GradientText } from "@/lib/components/shared";
 import ThemedButton from "@/lib/components/ThemedButton";
 import { ThemedText } from "@/lib/components/ThemedText";
 import { useThemeColor } from "@/lib/hooks/useThemeColor";

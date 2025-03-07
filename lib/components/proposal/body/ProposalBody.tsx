@@ -20,6 +20,7 @@ interface ProposalBodyProps {
 	proposerInfo: UserProfile | undefined;
 	descriptionLength?: number;
 	origin?: EPostOrigin;
+	withoutReadMore?: Boolean
 }
 
 function ProposalBody({
@@ -29,6 +30,7 @@ function ProposalBody({
 	proposerInfo,
 	descriptionLength = 300,
 	origin,
+	withoutReadMore = false
 }: ProposalBodyProps) {
 	const [isReadMoreClicked, setIsReadMoreClicked] = useState(false);
 	const [postDescriptionHTML, setPostDescriptionHTML] = useState(
@@ -76,7 +78,7 @@ function ProposalBody({
 					span: { padding: 0, margin: 0 },
 				}}
 			/>
-			{htmlContent.length > descriptionLength && (
+			{!withoutReadMore && htmlContent.length > descriptionLength && (
 				<TouchableOpacity onPress={toggleReadMore}>
 					<View style={styles.flexRowGap4}>
 						<ThemedText type="bodySmall" colorName="accent">

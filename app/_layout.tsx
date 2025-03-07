@@ -1,4 +1,5 @@
-// RootLayout.tsx
+import React from "react";
+
 import { NavigationDarkTheme } from "@/lib/constants/Colors";
 import { useGetUserById } from "@/lib/net/queries/profile";
 import { KEY_ID, storage } from "@/lib/store";
@@ -6,7 +7,7 @@ import { useAuthStore } from "@/lib/store/authStore";
 import { useProfileStore } from "@/lib/store/profileStore";
 import getIdFromToken from "@/lib/util/jwt";
 import { ThemeProvider } from "@react-navigation/native";
-import { QueryClient, QueryClientProvider, useQuery } from "@tanstack/react-query";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useFonts } from "expo-font";
 import { Stack, useRouter } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";

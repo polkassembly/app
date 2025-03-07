@@ -20,6 +20,7 @@ type ProposalCardProps = {
 	containerType?: ContainerType;
 	descriptionLength?: number;
 	children?: React.ReactNode;
+	withoutReadMore?: boolean
 };
 
 function ProposalCard({
@@ -27,6 +28,7 @@ function ProposalCard({
 	withoutViewMore = false,
 	withoutActions = false,
 	withoutIndex = false,
+	withoutReadMore = false,
 	containerType = "container",
 	descriptionLength = 300,
 	children,
@@ -57,6 +59,7 @@ function ProposalCard({
 				proposerInfo={proposerInfo}
 				descriptionLength={descriptionLength}
 				origin={post.onChainInfo?.origin}
+				withoutReadMore={withoutReadMore}
 			/>
 			{/* Render children between read-more and actions */}
 			{children}
