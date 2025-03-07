@@ -20,7 +20,7 @@ interface ProposalBodyProps {
 	proposerInfo: UserProfile | undefined;
 	descriptionLength?: number;
 	origin?: EPostOrigin;
-	withoutReadMore?: Boolean
+	withoutReadMore?: boolean
 }
 
 function ProposalBody({

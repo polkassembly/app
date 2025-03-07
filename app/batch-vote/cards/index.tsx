@@ -63,8 +63,6 @@ const ProposalVotingScreen: React.FC = () => {
 
   // Single source of proposals
   const [proposals, setProposals] = useState<Post[]>([]);
-  const [batchProposal, setBatchProposal] = useState<Post[]>([]);
-
   const [proposalDetailsOpen, setProposalDetailsOpen] = useState(false);
   const swiperRef = useRef<any>(null);
   const backgroundColor = useThemeColor({}, "container");
@@ -77,12 +75,6 @@ const ProposalVotingScreen: React.FC = () => {
       setProposals(prev => [...prev, ...newProposals]);
     }
   }, [data]);
-
-  useEffect(() => {
-    if (proposals.length > 0) {
-      setBatchProposal(batchProposal);
-    }
-  }, [proposals]);
 
   // Handler for swipe events
   const onSwiped = useCallback(
@@ -171,8 +163,9 @@ const ProposalVotingScreen: React.FC = () => {
               top: { element: <OverlayLabel type="abstain" /> },
             }}
           />
-          {/* FIXME: Bottom card for stack effect */}
+          {/* FIXME: Bottom card for stack effect, workaround for vote card flashing */}
           {
+            index + 1 < proposals.length &&
             <View style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0, zIndex: -10, marginTop: 40, padding: 30 }}>
               <MemoizedProposalCard card={proposals[index + 1]} index={proposals[index + 1].index} showDetails={() => setProposalDetailsOpen(true)}/>
             </View>
@@ -181,11 +174,13 @@ const ProposalVotingScreen: React.FC = () => {
         </View>
         <BottomVotingButtons swiperRef={swiperRef} />
       </SafeAreaView>
+
+      {/* Post full details */}
       <BottomSheet
         open={proposalDetailsOpen}
         onClose={() => setProposalDetailsOpen(false)}
       >
-        {proposals && (
+        {proposals && proposals.length > index && (
           <PostFullDetails
             onClose={() => setProposalDetailsOpen(false)}
             post={proposals[index]}
