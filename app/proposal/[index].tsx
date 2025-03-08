@@ -284,7 +284,7 @@ function SeeDetails({ setOpen }: SeeDetailsProps) {
 }
 
 function Comments({ proposalIndex, proposalType }: { proposalIndex: string, proposalType: EProposalType }) {
-  const { data: comments, isLoading } = useProposalComments({ proposalType: proposalType, proposalId: proposalIndex });
+  const { data: comments, isLoading } = useProposalComments({ proposalType: proposalType.toString(), proposalId: proposalIndex.toString() });
   const insets = useSafeAreaInsets();
 
   return (

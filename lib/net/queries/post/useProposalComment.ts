@@ -1,4 +1,3 @@
-// useProposalComments.ts
 import { useQuery } from "@tanstack/react-query";
 import client from "../../client";
 import { ICommentResponse } from "@/lib/types";
@@ -10,7 +9,7 @@ export interface ProposalCommentsParams {
 
 // Key factory function for proposal comments query
 const buildProposalCommentsQueryKey = ({ proposalType, proposalId }: ProposalCommentsParams) => {
-  return ["proposalComments", proposalType, proposalId];
+  return ["proposalComments", proposalType.toString(), proposalId.toString()];
 };
 
 const useProposalComments = ({ proposalType, proposalId }: ProposalCommentsParams) => {

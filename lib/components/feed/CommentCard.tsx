@@ -12,7 +12,6 @@ import VerticalSeprator from "../shared/VerticalSeprator";
 import StackedAvatars from "./StackedAvatars";
 import { extractUniqueChildrenAvatars } from "@/lib/util/commentUtil";
 import CommentBox from "./CommentBox";
-import { useDeleteReaction } from "@/lib/net/queries/actions";
 import useAddCommentReaction from "@/lib/net/queries/actions/useAddCommentReaction";
 import useDeleteCommentReaction from "@/lib/net/queries/actions/useDeleteCommentReaction";
 
