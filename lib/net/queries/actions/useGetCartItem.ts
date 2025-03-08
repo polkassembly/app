@@ -31,7 +31,6 @@ const useGetCartItems = () => {
 };
 
 const getCartItemsFunction = async ({ userId } : { userId: string}) => {
-  console.log("getCartItemsFunction", { userId });
   const response = await client.get<{ voteCart: CartItem[] }>(`users/id/${userId}/vote-cart`);
   return response.data.voteCart;
 }

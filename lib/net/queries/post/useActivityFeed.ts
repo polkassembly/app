@@ -1,6 +1,6 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
 import client from "../../client";
-import { Feed, Post } from "@/lib/types";
+import { Feed } from "@/lib/types";
 
 interface FeedRequest {
   limit: number;
@@ -25,7 +25,6 @@ const useActivityFeed = (params: FeedRequest) => {
 };
 
 const activityFeedFunction = async ({ params, pageParam }: { params: FeedRequest, pageParam: number }) => {
-  console.log("activityFeedFunction", { params, pageParam });
   const response = await client.get<Feed>("activity-feed", {
     params: { ...params, page: pageParam },
   });
