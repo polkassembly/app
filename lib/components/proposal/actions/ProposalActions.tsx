@@ -14,12 +14,10 @@ import { useProfileStore } from "@/lib/store/profileStore";
 
 interface ProposalActionsProps {
 	post: Post
-	userInfo: UserProfile | undefined
 }
 
 function ProposalActions({
-	post,
-	userInfo,
+	post
 }: ProposalActionsProps) {
 
 	const [isLiked, setIsLiked] = useState<boolean>(
@@ -96,7 +94,13 @@ function ProposalActions({
 	};
 
 	const handleComment = () => {
-		if(post.allowedCommentor && post.allowedCommentor === "none") {
+
+		if (showCommentBox === true) {
+			setShowCommentBox(false)
+			return;
+		}
+
+		if (post.allowedCommentor && post.allowedCommentor === "none") {
 			Toast.show({
 				type: "error",
 				text1: "Commenting is disabled",
