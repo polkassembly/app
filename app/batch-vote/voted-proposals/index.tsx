@@ -19,7 +19,7 @@ import { router } from "expo-router";
 import { Skeleton } from "moti/skeleton";
 import { useState } from "react";
 import { ActivityIndicator, ScrollView, TouchableOpacity, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import IconPencil from "@/lib/components/icons/shared/icon-pencil";
 import Toast from "react-native-toast-message";
 
@@ -29,6 +29,7 @@ export default function VotedProposals() {
 	const [cartItem, setCartItem] = useState<CartItem | null>(null);
 	const colorStroke = useThemeColor({}, "stroke");
 	const background = useThemeColor({}, "container");
+	const insets = useSafeAreaInsets();
 
 	if (isCartLoading) {
 		return <ActivityIndicator />;
@@ -36,8 +37,8 @@ export default function VotedProposals() {
 
 	return (
 		<>
-			<SafeAreaView style={{ backgroundColor: background, flex: 1 }}>
-				<TopBar />
+			<View style={{ backgroundColor: background, flex: 1, paddingTop: insets.top, paddingLeft: insets.left, paddingRight: insets.right }}>
+				<TopBar style={{ marginHorizontal: 16}}/>
 				<ScrollView style={{ padding: 20}}>
 					<TouchableOpacity style={{ flexDirection: "row", alignItems: "center", marginBottom: 20, gap: 6 }} onPress={() => router.dismiss()}>
 						<Ionicons name="chevron-back" size={15} color="white" />
@@ -67,7 +68,7 @@ export default function VotedProposals() {
 					</ThemedView>
 				</ScrollView>
 				<BottomView totalProposal={String(cart?.length || 0)} />
-			</SafeAreaView>
+			</View>
 			{showEdit && cartItem && (
 				<EditCartItem cartItem={cartItem} onClose={() => setShowEdit(false)} />
 			)}

@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef, useCallback, useMemo } from "react"
 import { View, StyleSheet, Text, ActivityIndicator, Touchable, TouchableOpacity } from "react-native";
 import Swiper from "react-native-deck-swiper";
 import { useLocalSearchParams } from "expo-router";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import useAddCartItem from "@/lib/net/queries/actions/useAddCartItem";
 import { useActivityFeed } from "@/lib/net/queries/post/useActivityFeed";
 import { TopBar } from "@/lib/components/Topbar";
@@ -68,6 +68,7 @@ const ProposalVotingScreen: React.FC = () => {
   const swiperRef = useRef<any>(null);
   const backgroundColor = useThemeColor({}, "container");
   const [index, setIndex] = useState(0)
+  const insets = useSafeAreaInsets();
 
   // Append new proposals as they are fetched
   useEffect(() => {
@@ -147,7 +148,7 @@ const ProposalVotingScreen: React.FC = () => {
 
   return (
     <View style={{ flex: 1, backgroundColor }}>
-      <SafeAreaView style={{ flex: 1, backgroundColor }}>
+      <View style={{ flex: 1, backgroundColor, marginTop: insets.top, paddingLeft: insets.left, paddingRight: insets.right }}>
         <TopBar style={{ paddingHorizontal: 16 }} />
         <View style={styles.container}>
           <Swiper
@@ -179,7 +180,7 @@ const ProposalVotingScreen: React.FC = () => {
           <CartItemsPreview />
         </View>
         <BottomVotingButtons swiperRef={swiperRef} />
-      </SafeAreaView>
+      </View>
 
       {/* Post full details */}
       <BottomSheet
