@@ -313,13 +313,17 @@ function AmountInput({ value, onChange }: AmountInputProps) {
 
 interface NoteProps {
   content: string;
+  textColor?: string;
+  iconColor?: string;
+  iconSize?: number;
+  bgColor?: string
 }
 
-export function Note({ content }: NoteProps) {
+export function Note({ iconColor, iconSize, content, textColor, bgColor }: NoteProps) {
   return (
     <View
       style={{
-        backgroundColor: "#002C4F",
+        backgroundColor: bgColor || "#002C4F",
         padding: 8,
         borderRadius: 8,
         flexDirection: "row",
@@ -328,8 +332,8 @@ export function Note({ content }: NoteProps) {
         gap: 10,
       }}
     >
-      <IconInfo />
-      <ThemedText type="bodySmall3" style={{ flex: 1 }}>
+      <IconInfo color={iconColor} iconWidth={iconSize} iconHeight={iconSize}/>
+      <ThemedText type="bodySmall3" style={{ flex: 1, color: textColor || "#FFFFFF" }}>
         {content}
       </ThemedText>
     </View>
