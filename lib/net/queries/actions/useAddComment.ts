@@ -52,10 +52,6 @@ const useAddComment = () => {
         bodyParams
       );
       return response.data;
-      return {
-        message: "Comment added successfully",
-        commentId: "12345",
-      };
     },
     onMutate: async ({ pathParams, bodyParams }) => {
       if (!userInfo) {

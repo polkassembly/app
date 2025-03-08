@@ -191,9 +191,9 @@ function EditCartItem({ cartItem, onClose }: EditCartItemProps) {
 		if( vote == "aye" ) amount.aye = ayeAmount.toString();
 		if( vote == "nay" ) amount.nay = nayAmount.toString();
 		if( vote == "abstain" ) {
-			amount.aye == ayeAmount.toString()
-			amount.nay == ayeAmount.toString()
-			amount.abstain == abstainAmount.toString()
+			amount.aye = ayeAmount.toString()
+			amount.nay = nayAmount.toString()
+			amount.abstain = abstainAmount.toString()
 		}
 		editCartItem({
 			id: cartItem.id,

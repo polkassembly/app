@@ -40,7 +40,7 @@ export default function NewsScreen() {
     }
 
     loadHtmlAsset();
-  }, [htmlContent]);
+  }, []);
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: Colors.dark.secondaryBackground, paddingTop: 10 }}>

@@ -47,8 +47,8 @@ export function ProposalDetails({ post, openFullDetails, withoutFullDetails, wit
   const ayeValue = new BN(post.onChainInfo?.voteMetrics?.aye.value || "0");
   const nayValue = new BN(post.onChainInfo?.voteMetrics?.nay.value || "0");
   const totalValue = ayeValue.add(nayValue);
-  const ayePercent = calculatePercentage(post.onChainInfo?.voteMetrics?.aye.value || "0", totalValue);
-  const nayPercent = calculatePercentage(post.onChainInfo?.voteMetrics?.nay.value || "0", totalValue);
+  const ayePercent = totalValue.isZero() ? 0 : calculatePercentage(post.onChainInfo?.voteMetrics?.aye.value || "0", totalValue);
+  const nayPercent = totalValue.isZero() ? 0 : calculatePercentage(post.onChainInfo?.voteMetrics?.nay.value || "0", totalValue);
 
   return (
     <ScrollView style={{ flex: 1 }}>

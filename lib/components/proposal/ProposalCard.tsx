@@ -49,7 +49,7 @@ function ProposalCard({
 			queryKey: buildProposalCommentsQueryKey({ proposalType: post.proposalType, proposalId: post.index }),
 			queryFn: () => getProposalComments({ proposalType: post.proposalType, proposalId: post.index })
 		})
-	})
+	}, [post.proposalType, post.index, queryClient])
 
 	return (
 		<ThemedView style={[styles.container, { borderColor: colorStroke }]} type={containerType}>
