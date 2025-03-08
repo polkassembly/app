@@ -15,6 +15,8 @@ import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
 import "react-native-reanimated";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import { buildUserByIdQueryKey, getUserById } from "@/lib/net/queries/profile/useGetUserById";
+import { buildUserActivityQueryKey, getUserActivity } from "@/lib/net/queries/actions";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -38,6 +40,21 @@ export default function RootLayout() {
       SplashScreen.hideAsync();
     }
   }, [loaded]);
+
+  useEffect(() => {
+    const userId = getIdFromToken(accessToken || "")
+    if (userId) {
+      queryClient.prefetchQuery({
+        queryKey: buildUserByIdQueryKey(userId),
+        queryFn: () => getUserById(userId),
+      });
+      queryClient.prefetchQuery({
+        queryKey: buildUserActivityQueryKey({ userId: userId}),
+        queryFn: () => getUserActivity(userId),
+
+      });
+    }
+  }, [accessToken]);
 
   if (!loaded) {
     return null;

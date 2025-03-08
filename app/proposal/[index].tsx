@@ -44,7 +44,6 @@ export default function ProposalDetailScreenImpl() {
 
   const backgroundColor = useThemeColor({}, "container");
   const accentColor = useThemeColor({}, "accent");
-  console.log("proposal");
 
   if (!proposal) {
     return (

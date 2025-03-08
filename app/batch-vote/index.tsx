@@ -25,7 +25,6 @@ export default function BatchVotingScreen() {
   const userId = useProfileStore((state) => state.profile?.id) ? String(useProfileStore((state) => state.profile?.id)) : "";
 
   useEffect(() => {
-    console.log("BatchVotingScreen mounted");
     queryClient.prefetchInfiniteQuery({
       queryKey: buildActivityFeedQueryKey({
         limit: 20
