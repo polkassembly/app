@@ -27,10 +27,12 @@ import { useProposalComments } from "@/lib/net/queries/post";
 interface ProposalDetailsProps {
   post: any;
   withoutFullDetails?: boolean
+  withoutHeaderText?: boolean
+  withoutProposalCardIndex?: boolean
   openFullDetails?: () => void
 }
 
-export function ProposalDetails({ post, openFullDetails, withoutFullDetails }: ProposalDetailsProps) {
+export function ProposalDetails({ post, openFullDetails, withoutFullDetails, withoutHeaderText, withoutProposalCardIndex=true }: ProposalDetailsProps) {
   const accentColor = useThemeColor({}, "accent");
 
   if (!post) {
@@ -51,18 +53,22 @@ export function ProposalDetails({ post, openFullDetails, withoutFullDetails }: P
   return (
     <ScrollView style={{ flex: 1 }}>
       <View style={{ paddingBottom: 16, gap: 8, marginTop: 20 }}>
-        <ThemedText
-          type="titleMedium"
-          style={{ fontWeight: "500", marginBottom: 20 }}
-        >
-          Proposal #{post.index}
-        </ThemedText>
+        {
+          !withoutHeaderText && (
+            <ThemedText
+              type="titleMedium"
+              style={{ fontWeight: "500", marginBottom: 20 }}
+            >
+              Proposal #{post.index}
+            </ThemedText>
+          )
+        }
 
         <ProposalCard
           post={post}
           withoutViewMore
           containerType="background"
-          withoutIndex
+          withoutIndex={withoutProposalCardIndex}
         />
 
         <Summary
