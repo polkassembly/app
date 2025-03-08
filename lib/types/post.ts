@@ -85,6 +85,12 @@ export enum EProposalStatus {
   Created = "Created",
 }
 
+export enum EAllowedCommentor {
+	ALL = 'all',
+	ONCHAIN_VERIFIED = 'onchain_verified',
+	NONE = 'none'
+}
+
 export interface Reaction {
   id: string;
   network: ENetwork;
@@ -188,6 +194,7 @@ export interface Post {
     };
     comments: number;
   };
+  allowedCommentor?: EAllowedCommentor;
   onChainInfo?: OnChainPostInfo;
   userReaction?: Reaction;
   preimageArgs?: Record<string, unknown>;
