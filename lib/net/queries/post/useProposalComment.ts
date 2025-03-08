@@ -17,11 +17,13 @@ const useProposalComments = ({ proposalType, proposalId }: ProposalCommentsParam
 
   return useQuery<ICommentResponse[], Error>({
     queryKey,
-    queryFn: async () => {
-      const response = await client.get(`/${proposalType}/${proposalId}/comments`);
-      return response.data as ICommentResponse[];
-    },
+    queryFn: () => getProposalComments({proposalType, proposalId}),
   });
 };
 
-export { useProposalComments, buildProposalCommentsQueryKey };
+async function getProposalComments({ proposalType, proposalId }: ProposalCommentsParams) {
+  const response = await client.get(`/${proposalType}/${proposalId}/comments`);
+  return response.data as ICommentResponse[];
+}
+
+export { useProposalComments, buildProposalCommentsQueryKey, getProposalComments };
