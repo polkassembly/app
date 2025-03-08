@@ -14,6 +14,7 @@ import { PostFullDetails } from "@/lib/components/feed";
 import CartItemsPreview from "@/lib/components/voting/CartItemsPreview";
 import { BottomVotingButtons, OverlayLabel } from "@/lib/components/voting";
 import ThemedButton from "@/lib/components/ThemedButton";
+import Toast from "react-native-toast-message";
 
 interface MemoizedProposalCardProps {
   card: Post;
@@ -107,8 +108,13 @@ const ProposalVotingScreen: React.FC = () => {
       }
 
       voteMutation.mutate(params, {
-        onSuccess: () => { /* TODO: toast notification */ },
-        onError: (error) => { /* TODO: error handling */ },
+        onError: () => { 
+          Toast.show({
+            type: "error",
+            text1: "Vote Failed",
+            text2: "There was an error while submitting your vote. Please try again.",
+          });
+         },
       });
     },
     [

@@ -9,9 +9,6 @@ import { Image, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { EProposalType, EVoteDecision } from "@/lib/types/post";
 import { toTitleCase } from "@/lib/util/stringUtil";
-import { CommentBox } from "@/lib/components/feed";
-import Toast from "react-native-toast-message";
-import { IconTwinkle } from "@/lib/components/icons/games";
 
 type Params = {
   conviction: string;

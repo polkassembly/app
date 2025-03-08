@@ -21,6 +21,7 @@ import { useState } from "react";
 import { ActivityIndicator, ScrollView, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import IconPencil from "@/lib/components/icons/shared/icon-pencil";
+import Toast from "react-native-toast-message";
 
 export default function VotedProposals() {
 	const { data: cart, isLoading: isCartLoading } = useGetCartItems();
@@ -92,7 +93,11 @@ function CartItemCard({ cartItem, onEdit }: CartItemCardProps) {
 		deleteCartItem({ id: cartItem.id },
 			{
 				onError: () => {
-					// show toast
+					Toast.show({
+						type: "error",
+						text1: "Error",
+						text2: "Failed to delete item",
+					});
 				}
 			}
 		);
