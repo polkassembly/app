@@ -21,7 +21,8 @@ export default function useUpdateCartItem() {
   
   return useMutation({
     mutationFn: async (params: UpdateCartItemParams) => {
-      return client.patch(`/users/id/${id}/vote-cart`, params);
+      const res = await client.patch(`/users/id/${id}/vote-cart`, params);
+      return res;
     },
     onMutate: async (updatedItem: UpdateCartItemParams) => {
       await queryClient.cancelQueries({

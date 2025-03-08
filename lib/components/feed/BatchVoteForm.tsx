@@ -58,9 +58,9 @@ export function BatchVoteForm({
   const handleVoteChange = (nextVote: Vote) => {
     onVoteChange(nextVote);
     if (singleVoteMode) {
-      if (nextVote !== "aye") setAyeAmount(0);
-      if (nextVote !== "nay") setNayAmount(0);
-      if (nextVote !== "abstain") setAbstainAmount(0);
+      if (nextVote !== "aye") setAyeAmount(1);
+      if (nextVote !== "nay") setNayAmount(1);
+      if (nextVote !== "abstain") setAbstainAmount(1);
     }
   };
 

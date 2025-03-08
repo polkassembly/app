@@ -174,34 +174,45 @@ function EditCartItem({ cartItem, onClose }: EditCartItemProps) {
 
 	const [vote, setVote] = useState(cartItem.decision);
 	const [ayeAmount, setAyeAmount] = useState(
-		cartItem.decision === "aye" ? cartItem.amount.aye || 0 : 0
+		cartItem.decision === "aye" ? cartItem.amount.aye || 1 : 1
 	);
 	const [nayAmount, setNayAmount] = useState(
-		cartItem.decision === "nay" ? cartItem.amount.nay || 0 : 0
+		cartItem.decision === "nay" ? cartItem.amount.nay || 1 : 1
 	);
 	const [abstainAmount, setAbstainAmount] = useState(
-		cartItem.decision === "abstain" ? cartItem.amount.abstain || 0 : 0
+		cartItem.decision === "abstain" ? cartItem.amount.abstain || 1 : 1
 	);
 	const [conviction, setConviction] = useState(cartItem.conviction);
 
 	const { mutate: editCartItem } = useUpdateCartItem();
 	const handleConfirm = () => {
-		const amount =
-			vote === "aye" ? ayeAmount : vote === "nay" ? nayAmount : abstainAmount;
+		const amount: { aye?: string; nay?: string; abstain?: string } = {};
+
+		if( vote == "aye" ) amount.aye = ayeAmount.toString();
+		if( vote == "nay" ) amount.nay = nayAmount.toString();
+		if( vote == "abstain" ) {
+			amount.aye == ayeAmount.toString()
+			amount.nay == ayeAmount.toString()
+			amount.abstain == abstainAmount.toString()
+		}
 		editCartItem({
 			id: cartItem.id,
 			decision: vote,
-			amount: {
-				aye: vote === "aye" ? amount.toString() : "0",
-				nay: vote === "nay" ? amount.toString() : "0",
-				abstain: vote === "abstain" ? amount.toString() : "0",
-			},
+			amount,
 			conviction: conviction,
 		}, {
 			onSuccess: () => {
+				Toast.show({
+					type: "success",
+					text1: "Vote Edited"
+				})
 				onClose();
 			},
 			onError: () => {
+				Toast.show({
+					type: "error",
+					text1: "Vote edit failed"
+				})
 				onClose()
 			}
 		});
@@ -218,13 +229,12 @@ function EditCartItem({ cartItem, onClose }: EditCartItemProps) {
 				paddingTop: 16,
 			}}
 		>
-			<ScrollView>
+			<ScrollView style={{ paddingHorizontal: 16}}>
 				<View
 					style={{
 						flexDirection: "row",
 						justifyContent: "space-between",
 						alignItems: "center",
-						marginHorizontal: 16,
 					}}
 				>
 					<ThemedText type="titleMedium">Edit Vote Details</ThemedText>

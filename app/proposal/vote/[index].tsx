@@ -23,9 +23,9 @@ export default function BatchVotingScreen() {
   const { mutateAsync, error } = useAddCartItem();
 
   const [vote, setVote] = useState<Vote>("aye");
-  const [ayeAmount, setAyeAmount] = useState<number>(0);
-  const [nayAmount, setNayAmount] = useState<number>(0);
-  const [abstainAmount, setAbstainAmount] = useState<number>(0);
+  const [ayeAmount, setAyeAmount] = useState<number>(1);
+  const [nayAmount, setNayAmount] = useState<number>(1);
+  const [abstainAmount, setAbstainAmount] = useState<number>(1);
   const [conviction, setConviction] = useState<number>(0);
 
   async function onPressAddToCart() {
@@ -61,7 +61,6 @@ export default function BatchVotingScreen() {
           setAbstainAmount={setAbstainAmount}
           conviction={conviction}
           setConviction={setConviction}
-          singleVoteMode={true}
           hideButtons={true}
         />
 
