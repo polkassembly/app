@@ -11,12 +11,7 @@ const buildActivityFeedQueryKey = (params: FeedRequest) => ["activity-feed", par
 const useActivityFeed = (params: FeedRequest) => {
   return useInfiniteQuery<Feed, Error>({
     queryKey: buildActivityFeedQueryKey(params),
-    queryFn: async ({ pageParam = 1 }) => {
-      const response = await client.get<Feed>("activity-feed", {
-        params: { ...params, page: pageParam },
-      });
-      return response.data as Feed;
-    },
+    queryFn: ({ pageParam }) => activityFeedFunction({ params, pageParam: Number(pageParam) }),
     initialPageParam: 1,
     getNextPageParam: (lastPage, allPages) => {
       const totalCount = Number(lastPage.totalCount);
@@ -29,4 +24,12 @@ const useActivityFeed = (params: FeedRequest) => {
   });
 };
 
-export { useActivityFeed, buildActivityFeedQueryKey, FeedRequest };
+const activityFeedFunction = async ({ params, pageParam }: { params: FeedRequest, pageParam: number }) => {
+  console.log("activityFeedFunction", { params, pageParam });
+  const response = await client.get<Feed>("activity-feed", {
+    params: { ...params, page: pageParam },
+  });
+  return response.data as Feed;
+}
+
+export { activityFeedFunction, useActivityFeed, buildActivityFeedQueryKey, FeedRequest };
