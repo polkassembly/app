@@ -1,5 +1,11 @@
 import React, { useState } from "react";
-import { View, StyleSheet, Image, TouchableOpacity } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Image,
+  TouchableOpacity,
+  Dimensions,
+} from "react-native";
 import { ThemedText } from "@/lib/components/ThemedText";
 import { ThemedView } from "../ThemedView";
 import { badgeDetails as badgeData, BadgeDetails } from "../util/badgeInfo";
@@ -28,37 +34,40 @@ interface BadgesProps {
 }
 
 function Badges({ badges }: BadgesProps): JSX.Element {
-  // Build the full list based on badgeData with an isUnlocked property.
-  const badgesToShow: (BadgeDetails & { isUnlocked: boolean })[] = badgeData.map((badge) => {
-    const unlocked = badges?.find((b) => b.name === badge.name && b.check);
-    return {
-      ...badge,
-      isUnlocked: !!unlocked,
-    };
-  });
+  // Map badgeData and mark unlocked badges
+  const badgesToShow: (BadgeDetails & { isUnlocked: boolean })[] = badgeData.map(
+    (badge) => {
+      const unlocked = badges?.find((b) => b.name === badge.name && b.check);
+      return {
+        ...badge,
+        isUnlocked: !!unlocked,
+      };
+    }
+  );
 
-  // Here we use the entire badges list (preserving the order in badgeData).
   const fullBadgeList = badgesToShow;
-
-  // Use a state to keep track of the current starting index for our 3-badge carousel.
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  // Compute the 3 visible badges (wrapping around if needed)
+  // Compute 3 visible badges (wrap-around if needed)
   const visibleBadges = [];
   for (let i = 0; i < 3; i++) {
     const index = (currentIndex + i) % fullBadgeList.length;
     visibleBadges.push(fullBadgeList[index]);
   }
 
-  // Count of earned (unlocked) badges for display info
+  // Count of earned badges
   const earnedCount = fullBadgeList.filter((badge) => badge.isUnlocked).length;
 
-  // Handler to move the carousel one step forward
+  // Handler to slide to the next badge
   const handleSlide = () => {
     setCurrentIndex((prev) => (prev + 1) % fullBadgeList.length);
   };
 
-  const backgroundColor = useThemeColor({}, "background")
+  const backgroundColor = useThemeColor({}, "background");
+
+  // Calculate responsive size based on device width (15% of width)
+  const { width } = Dimensions.get("window");
+  const responsiveSize = Math.round(width * 0.12);
 
   return (
     <ThemedView type="container" style={styles.container}>
@@ -73,17 +82,36 @@ function Badges({ badges }: BadgesProps): JSX.Element {
         )}
       </View>
 
-      <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", flex: 1 }}>
-        <View style={[styles.carouselRow, { flex: 1, overflow: "hidden", gap: 25, width: 200 }]}>
+      <View
+        style={{
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "space-between",
+          flex: 1,
+        }}
+      >
+        <View
+          style={[
+            styles.carouselRow,
+            { flex: 1, overflow: "hidden", gap: width*0.05 , width: 200 },
+          ]}
+        >
           <AnimatePresence>
             {visibleBadges.map((badge) => (
               <MotiView
                 key={`${badge.name}-${currentIndex}`}
-                from={{ translateX: 30, opacity: 0 }}
-                animate={{ translateX: 0, opacity: 1 }}
-                exit={{ translateX: -30, opacity: 0 }}
+                from={{ translateX: 30, opacity: 0, scale: 0.8 }}
+                animate={{ translateX: 0, opacity: 1, scale: 1 }}
+                exit={{ translateX: -30, opacity: 0, scale: 0.8 }}
                 transition={{ type: "timing", duration: 300 }}
-                style={[styles.badgeIconContainer, { backgroundColor: backgroundColor}]}
+                style={[
+                  styles.badgeIconContainer,
+                  {
+                    width: responsiveSize,
+                    height: responsiveSize,
+                    backgroundColor,
+                  },
+                ]}
               >
                 <Image
                   source={
@@ -91,14 +119,15 @@ function Badges({ badges }: BadgesProps): JSX.Element {
                       ? badgeImages[badge.name]
                       : badgeImages[`${badge.name} Locked`]
                   }
-                  style={styles.badgeImage}
+                  style={[
+                    styles.badgeImage,
+                    { width: responsiveSize - 2, height: responsiveSize - 2 },
+                  ]}
                   resizeMode="contain"
                 />
               </MotiView>
             ))}
           </AnimatePresence>
-
-          {/* Chevron Icon to slide to next badge */}
         </View>
         {fullBadgeList.length > 3 && (
           <TouchableOpacity onPress={handleSlide} style={styles.chevronContainer}>
@@ -115,7 +144,6 @@ const BadgesSkeleton = () => (
     <View>
       <Skeleton height={12} width={80} />
     </View>
-
     <View style={styles.carouselRow}>
       {Array(3)
         .fill(null)
@@ -158,12 +186,9 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     justifyContent: "center",
     alignItems: "center",
-    width: 52,
-    height: 52,
   },
   badgeImage: {
-    width: 50,
-    height: 50,
+    // Dimensions are set inline to match responsiveSize
   },
   chevronContainer: {
     marginLeft: 10,
