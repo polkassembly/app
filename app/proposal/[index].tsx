@@ -15,7 +15,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Svg, { Rect } from "react-native-svg";
 import { BottomSheet } from "@/lib/components/shared";
 import { EProposalType } from "@/lib/types";
@@ -40,13 +40,11 @@ export default function ProposalDetailScreenImpl() {
   const [open, setOpen] = useState(false);
   const { index, proposalType } = useLocalSearchParams<{ index: string, proposalType: EProposalType }>();
   const proposal = useProposalStore(state => state.proposal);
-
-  // Fetch comments for the proposal using the new hook.
-  const { data: comments, isLoading: commentsLoading } = useProposalComments({ proposalType: proposalType, proposalId: index });
+  const insets = useSafeAreaInsets();
 
   const backgroundColor = useThemeColor({}, "container");
-
   const accentColor = useThemeColor({}, "accent");
+  console.log("proposal");
 
   if (!proposal) {
     return (
@@ -58,7 +56,6 @@ export default function ProposalDetailScreenImpl() {
     );
   }
 
-
   const ayeValue = new BN(proposal.onChainInfo?.voteMetrics?.aye.value || '0');
   const nayValue = new BN(proposal.onChainInfo?.voteMetrics?.nay.value || '0');
   const totalValue = ayeValue.add(nayValue);
@@ -67,9 +64,10 @@ export default function ProposalDetailScreenImpl() {
 
   return (
     <View style={{ flex: 1, backgroundColor }}>
-      <SafeAreaView style={{ flex: 1, paddingHorizontal: 16 }}>
+      {/* FIXME: SafeAreaView doesn't works when placed with absolute elements in a view, hence use insets */}
+      <View style={{ flex: 1, paddingHorizontal: 16, marginTop: insets.top }}>
         <TopBar />
-        <ScrollView>
+        <ScrollView style={{ flex: 1 }}>
           <View style={{ paddingBottom: 16, gap: 8, marginTop: 20 }}>
             <ThemedText type="titleMedium" style={{ fontWeight: 500, marginBottom: 20 }}>Proposal #{index}</ThemedText>
 
@@ -92,45 +90,29 @@ export default function ProposalDetailScreenImpl() {
             }} />
 
             {/* Comments Section */}
-            <ThemedView type="background" style={[
-              styles.box,
-              {
-                alignContent: "stretch",
-                gap: 16,
-                marginBottom: 50
-              },
-            ]}>
-              <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
-                <ThemedText type="bodyLarge">Replies </ThemedText>
-                {comments && (
-                  <View style={{ backgroundColor: "#E5E5FD", paddingHorizontal: 4, borderRadius: 4 }}>
-                    <ThemedText type="bodySmall1" style={{ color: "#79767D", lineHeight: 18 }}>{getTotalLength(comments)}</ThemedText>
-                  </View>
-                )
-                }
-              </View>
-              {commentsLoading ? (
-                <ThemedText type="bodyMedium1">
-                  Loading comments...
-                </ThemedText>
-              ) : (
-                <CommentList comments={comments || []} />
-              )}
-            </ThemedView>
-          </View>
-        </ScrollView>
-
-      </SafeAreaView>
-      <View style={{ position: "absolute", bottom: -10, left: 0, right: 0 }}>
-        <Link asChild href={`/proposal/vote/${index}?proposalType=${proposalType}`}>
-          <BottomButton>Cast Your Vote</BottomButton>
-        </Link>
+            <Comments proposalIndex={index} proposalType={proposalType} />
       </View>
+    </ScrollView>
+      </View >
 
-      <BottomSheet open={open} onClose={() => setOpen(false)}>
-        <PostFullDetails onClose={() => setOpen(false)} post={proposal} />
-      </BottomSheet>
-    </View>
+    {/* Bottom button outside of SafeAreaView */ }
+    < View style = {{
+    position: "absolute",
+      bottom: 0,
+        left: 0,
+          right: 0,
+            paddingBottom: insets.bottom // Use insets to respect safe area
+  }
+}>
+  <Link asChild href={`/proposal/vote/${index}?proposalType=${proposalType}`}>
+    <BottomButton>Cast Your Vote</BottomButton>
+  </Link>
+      </View >
+
+  <BottomSheet open={open} onClose={() => setOpen(false)}>
+    <PostFullDetails onClose={() => setOpen(false)} post={proposal} />
+  </BottomSheet>
+    </View >
   );
 }
 
@@ -142,7 +124,6 @@ interface SummaryProps {
 }
 
 function Summary({ ayePercent, status, voteMetrics, nayPercent }: SummaryProps) {
-  const backgroundColor = useThemeColor({}, "background");
 
   const formatter = new Intl.NumberFormat('en-US', { notation: 'compact' });
   const formatBalance = (balance: string) => {
@@ -300,6 +281,39 @@ function SeeDetails({ setOpen }: SeeDetailsProps) {
         <IconArrowRightEnclosed iconWidth={30} iconHeight={30} color="#FFF" />
       </View>
     </TouchableOpacity>
+  );
+}
+
+function Comments({ proposalIndex, proposalType }: { proposalIndex: string, proposalType: EProposalType }) {
+  const { data: comments, isLoading } = useProposalComments({ proposalType: proposalType, proposalId: proposalIndex });
+  const insets = useSafeAreaInsets();
+
+  return (
+    <ThemedView type="background" style={[
+      styles.box,
+      {
+        alignContent: "stretch",
+        gap: 16,
+        marginBottom: 50 + insets.bottom
+      },
+    ]}>
+      <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
+        <ThemedText type="bodyLarge">Replies </ThemedText>
+        {comments && (
+          <View style={{ backgroundColor: "#E5E5FD", paddingHorizontal: 4, borderRadius: 4 }}>
+            <ThemedText type="bodySmall1" style={{ color: "#79767D", lineHeight: 18 }}>{getTotalLength(comments)}</ThemedText>
+          </View>
+        )
+        }
+      </View>
+      <View style={{ gap: 16 }}>
+        {isLoading ? (
+          <ActivityIndicator />
+        ) : (
+          <CommentList comments={comments || []} />
+        )}
+      </View>
+    </ThemedView>
   );
 }
 
