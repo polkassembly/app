@@ -143,10 +143,9 @@ export default function TopCoinsSection() {
               const isUp = firstPrice < lastPrice;
 
               return (
-                <TouchableOpacity
+                <View
                   key={coin.id}
                   style={styles.coinBox}
-                  onPress={fetchCoinData}
                 >
                   <View style={{ flexDirection: "row", justifyContent: "center", alignItems: "center", gap: 8, marginBottom: 9 }}>
                     <Image
@@ -175,7 +174,7 @@ export default function TopCoinsSection() {
                     {percentageChange.toFixed(2)}%
                   </ThemedText>
                   {renderSparkline(oneDayData)}
-                </TouchableOpacity>
+                </View>
               );
             })}
             {coinData.length === 0 && (
