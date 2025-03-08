@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { ContainerType, ThemedView } from "../ThemedView";
 import HorizontalSeparator from "../shared/HorizontalSeparator";
@@ -11,6 +11,8 @@ import { ProposalBody, ProposalBodySkeleton } from "./body";
 import ViewMoreButton from "./ViewMoreButton";
 import { useThemeColor } from "@/lib/hooks/useThemeColor";
 import { useProfileStore } from "@/lib/store/profileStore";
+import { useQueryClient } from "@tanstack/react-query";
+import { buildProposalCommentsQueryKey, getProposalComments } from "@/lib/net/queries/post";
 
 type ProposalCardProps = {
 	post: Post;
@@ -35,12 +37,19 @@ function ProposalCard({
 }: ProposalCardProps) {
 
 	const userProfile = useProfileStore((state) => state.profile);
+	const colorStroke = useThemeColor({}, "stroke")
+	const queryClient = useQueryClient()
 
 	const { data: proposerInfo } = useGetUserByAddress(
 		post.onChainInfo?.proposer || ""
 	);
 
-	const colorStroke = useThemeColor({}, "stroke")
+	useEffect(() => {
+		queryClient.prefetchQuery({
+			queryKey: buildProposalCommentsQueryKey({ proposalType: post.proposalType, proposalId: post.index }),
+			queryFn: () => getProposalComments({ proposalType: post.proposalType, proposalId: post.index })
+		})
+	})
 
 	return (
 		<ThemedView style={[styles.container, { borderColor: colorStroke }]} type={containerType}>
@@ -63,9 +72,9 @@ function ProposalCard({
 			/>
 			{/* Render children between read-more and actions */}
 			{children}
-			{ (!withoutActions || !withoutViewMore) && <HorizontalSeparator /> }
+			{(!withoutActions || !withoutViewMore) && <HorizontalSeparator />}
 			{!withoutActions && (
-				<ProposalActions post={post} userInfo={userProfile || undefined} />
+				<ProposalActions post={post} />
 			)}
 
 			{!withoutViewMore && (
