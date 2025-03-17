@@ -36,6 +36,7 @@ const styles = StyleSheet.create({
 		justifyContent: "center",
 		borderRadius: 10,
 		padding: 10,
+		maxHeight: "85%",
 	},
 	iconBadge: {
 		borderRadius: 100,
