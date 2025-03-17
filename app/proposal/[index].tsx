@@ -21,13 +21,14 @@ import { BottomSheet } from "@/lib/components/shared";
 import { EProposalType } from "@/lib/types";
 import { useProposalComments } from "@/lib/net/queries/post/useProposalComment";
 import { CommentList, PostFullDetails } from "@/lib/components/feed";
-import { ENetwork, IVoteMetrics } from "@/lib/types/post";
+import { ENetwork, IVoteMetrics, Post } from "@/lib/types/post";
 import { formatBnBalance } from "@/lib/util";
 import BN from "bn.js";
 import { calculatePercentage } from "@/lib/util/calculatePercentage";
 import { ProposalCard } from "@/lib/components/proposal/ProposalCard";
 import { useProposalStore } from "@/lib/store/proposalStore";
 import StatusTag from "@/lib/components/feed/StatusTag";
+import { useProposalByIndex } from "@/lib/net/queries/post";
 
 const getTotalLength = (arr: any[]) =>
   arr.reduce((sum, item) => {
@@ -39,16 +40,25 @@ const getTotalLength = (arr: any[]) =>
 export default function ProposalDetailScreenImpl() {
   const [open, setOpen] = useState(false);
   const { index, proposalType } = useLocalSearchParams<{ index: string, proposalType: EProposalType }>();
-  const proposal = useProposalStore(state => state.proposal);
 
-  // Fetch comments for the proposal using the new hook.
-  const { data: comments, isLoading: commentsLoading } = useProposalComments({ proposalType: proposalType, proposalId: index });
-
+  const { data, isLoading} = useProposalByIndex({ proposalType, indexOrHash: index });
+  const storeProposal = useProposalStore(state => state.proposal);
+  let proposal: Post | undefined;
+  
   const backgroundColor = useThemeColor({}, "container");
-
   const accentColor = useThemeColor({}, "accent");
 
-  if (!proposal) {
+  // If the proposal is already in the store, use that instead of the fetched data
+  if (storeProposal?.index !== undefined && storeProposal?.index === index) {
+    proposal = storeProposal;
+  }else {
+    proposal = data;
+  }
+
+  // Fetch comments for the proposal
+  const { data: comments, isLoading: commentsLoading } = useProposalComments({ proposalType: proposalType, proposalId: index });
+
+  if (isLoading && proposal === undefined) {
     return (
       <View
         style={{ flex: 1, justifyContent: "center", alignContent: "center" }}
@@ -58,6 +68,13 @@ export default function ProposalDetailScreenImpl() {
     );
   }
 
+  if (!proposal) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignContent: "center" }}>
+        <ThemedText type="titleLarge" style={{ textAlign: "center"}}>Proposal not found</ThemedText>
+      </View>
+    );
+  }
 
   const ayeValue = new BN(proposal.onChainInfo?.voteMetrics?.aye.value || '0');
   const nayValue = new BN(proposal.onChainInfo?.voteMetrics?.nay.value || '0');
@@ -207,7 +224,7 @@ function Summary({ ayePercent, status, voteMetrics, nayPercent }: SummaryProps) 
             <ThemedText>Aye</ThemedText>
             <ThemedText colorName="mediumText">{
               formatBnBalance(
-                voteMetrics?.aye.value,
+                voteMetrics?.aye.value || '0',
                 {
                   withUnit: true,
                   numberAfterComma: 2,
@@ -222,7 +239,7 @@ function Summary({ ayePercent, status, voteMetrics, nayPercent }: SummaryProps) 
             <ThemedText>Nay</ThemedText>
             <ThemedText colorName="mediumText">{
               formatBnBalance(
-                voteMetrics?.nay.value,
+                voteMetrics?.nay.value || '0',
                 {
                   withUnit: true,
                   numberAfterComma: 2,
