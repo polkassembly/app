@@ -14,6 +14,7 @@ import { PostFullDetails } from "@/lib/components/feed";
 import CartItemsPreview from "@/lib/components/voting/CartItemsPreview";
 import { BottomVotingButtons, OverlayLabel } from "@/lib/components/voting";
 import ThemedButton from "@/lib/components/ThemedButton";
+import { ProposalContentSummary } from "@/lib/components/proposal";
 
 interface MemoizedProposalCardProps {
   card: Post;
@@ -27,7 +28,7 @@ const MemoizedProposalCard = React.memo(({ card, index, showDetails }: MemoizedP
   const colorStroke = useThemeColor({}, "stroke");
 
   return (
-    <View style={[styles.cardContainer, { backgroundColor, borderColor: colorStroke }]} key={index}>
+    <View style={[styles.cardContainer, { backgroundColor}]} key={index}>
       <ProposalCard
         post={card}
         descriptionLength={500}
@@ -45,6 +46,7 @@ const MemoizedProposalCard = React.memo(({ card, index, showDetails }: MemoizedP
             }}
           />
         </View>
+        <ProposalContentSummary proposalType={card.proposalType} indexOrHash={card.index} />
       </ProposalCard>
     </View>
   );
