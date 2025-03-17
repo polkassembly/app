@@ -17,6 +17,7 @@ import { useProposalStore } from "@/lib/store/proposalStore";
 import { useProposalByIndex } from "@/lib/net/queries/post";
 import { ThemedText } from "@/lib/components/ThemedText";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { ThemedView } from "@/lib/components/ThemedView";
 
 const getTotalLength = (arr: any[]) =>
   arr.reduce((sum, item) => {
@@ -37,7 +38,7 @@ export default function ProposalDetailScreenImpl() {
   const accentColor = useThemeColor({}, "accent");
 
   // If the requested proposal is already in the store, use that instead of the fetched data
-  if (storeProposal?.index !== undefined && storeProposal?.index === index) {
+  if (storeProposal?.index !== undefined && String(storeProposal?.index) === index) {
     proposal = storeProposal;
   }else {
     proposal = data;
@@ -60,13 +61,13 @@ export default function ProposalDetailScreenImpl() {
   }
 
   return (
-    <View style={{ flex: 1 }}>
+    <ThemedView type="container" style={{ flex: 1, paddingBottom: insets.bottom, paddingTop: insets.top }}>
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         keyboardVerticalOffset={insets.top}
       >
-        <View style={{ flex: 1, paddingHorizontal: 16 }}>
+        <View style={{ flex: 1, paddingHorizontal: 16, gap: 16}}>
           <TopBar />
           <ProposalDetails post={proposal} openFullDetails={() => setOpen(true)} />
         </View>
@@ -76,10 +77,9 @@ export default function ProposalDetailScreenImpl() {
       <View
         style={{
           position: "absolute",
-          bottom: 0,
+          bottom: insets.bottom - 16,
           left: 0,
           right: 0,
-          paddingBottom: insets.bottom, // Respect safe area
         }}
       >
         <Link asChild href={`/proposal/vote/${index}?proposalType=${proposalType}`}>
@@ -90,6 +90,6 @@ export default function ProposalDetailScreenImpl() {
       <BottomSheet open={open} onClose={() => setOpen(false)}>
         <PostFullDetails onClose={() => setOpen(false)} post={proposal} />
       </BottomSheet>
-    </View>
+    </ThemedView>
   );
 }

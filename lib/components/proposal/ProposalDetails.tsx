@@ -52,12 +52,12 @@ export function ProposalDetails({ post, openFullDetails, withoutFullDetails, wit
 
   return (
     <ScrollView style={{ flex: 1 }}>
-      <View style={{ paddingBottom: 16, gap: 8, marginTop: 20 }}>
+      <View style={{ paddingBottom: 16, gap: 8 }}>
         {
           !withoutHeaderText && (
             <ThemedText
               type="titleMedium"
-              style={{ fontWeight: "500", marginBottom: 20 }}
+              style={{ fontWeight: "500", marginBottom: 8 }}
             >
               Proposal #{post.index}
             </ThemedText>

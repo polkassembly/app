@@ -35,7 +35,7 @@ export function TopBar({
         style,
       ]}
     >
-      <View style={{ flex: 1, flexDirection: "row", alignItems: "center", paddingVertical: 4 }}>
+      <View style={{ flex: 1, flexDirection: "row", alignItems: "center" }}>
         <Link asChild href="..">
           <TouchableOpacity>
             <View>
