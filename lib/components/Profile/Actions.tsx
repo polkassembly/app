@@ -151,7 +151,7 @@ function IconView({
   text: string;
 }) {
   return (
-    <View style={{ alignItems: "center" }}>
+    <View style={{ alignItems: "center", gap: 6 }}>
       <ThemedView type="container" style={styles.iconContainer}>
         <Icon color="#FFF" size={30} />
       </ThemedView>

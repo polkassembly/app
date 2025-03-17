@@ -7,18 +7,18 @@ import IconVotedProposal from "../icons/proposals/icon-voted-proposal";
 import { ThemedText } from "../ThemedText";
 
 const CartItemsPreview = () => {
-	const { data: cartItems } = useGetCartItems();
+	const { data: cartItems, isLoading } = useGetCartItems();
 	const colorStroke = useThemeColor({}, "stroke");
 	const accent = useThemeColor({}, "accent");
 	const router = useRouter();
 
-	if (!cartItems || cartItems.length === 0) {
+	if (!cartItems || cartItems.length === 0 || isLoading) {
 		return (
 			<View style={[styles.floatingPreview, { backgroundColor: "#FFE5F3" }]}>
 				<IconVotedProposal />
 				<View style={styles.previewText}>
 					<ThemedText style={{ color: "#000" }}>Preview</ThemedText>
-					<ThemedText style={{ color: colorStroke }}>0 Proposals</ThemedText>
+					<ThemedText style={{ color: colorStroke }}>{ isLoading ? "loading.." : 0}</ThemedText>
 				</View>
 			</View>
 		)

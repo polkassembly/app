@@ -34,6 +34,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { uploadImageToStorage } from "@/lib/net/api/uploadImageToStorage";
 import { EditProfileParams } from "@/lib/net/queries/profile/useEditProfile";
 import { useProfileStore } from "@/lib/store/profileStore";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 // Function to process and compress the image.
 // It ensures that the resulting image is resized and compressed
@@ -103,6 +104,7 @@ export default function Settings() {
   const userProfile = useProfileStore((state) => state.profile);
 
   const { mutate: editProfile } = useEditProfile();
+  const insets = useSafeAreaInsets();
 
   useEffect(() => {
     if (userProfile) {
@@ -191,9 +193,9 @@ export default function Settings() {
 
   return (
     <>
-      <SafeAreaView style={[styles.container, { backgroundColor }]}>
+      <View style={[styles.container, { backgroundColor, paddingTop: insets.top}]}>
         <TopBar />
-        <View style={{ gap: 32 }}>
+        <View style={{ gap: 32, paddingLeft: insets.left, paddingRight: insets.right }}>
           <View style={styles.header}>
             <IconSettings color="white" iconWidth={24} iconHeight={24} />
             <ThemedText type="titleMedium">Settings</ThemedText>
@@ -227,7 +229,7 @@ export default function Settings() {
                       : Image.resolveAssetSource(defaultAvatar)
                   }
                   style={{ maxWidth: "100%", flex: 1, borderRadius: 100 }}
-                 
+
                 />
               </View>
               <View style={{ width: "48%" }}>
@@ -271,7 +273,7 @@ export default function Settings() {
           </View>
           <ThemedButton text={isSaving ? "Saving..." : "Save"} onPress={handleSave} />
         </View>
-      </SafeAreaView>
+      </View>
       {isSaving && (
         <View style={styles.savingOverlay}>
           <ActivityIndicator size="large" color="white" />
@@ -305,7 +307,7 @@ function AvatarButton({ avatarSource, setAvatar }: AvatarButtonProps) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
+    paddingHorizontal: 16,
     gap: 20,
   },
   centered: {

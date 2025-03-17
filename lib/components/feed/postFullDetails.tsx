@@ -105,7 +105,7 @@ function BenificiariesInfo({ benificiaries }: { benificiaries: IBeneficiary[] })
 			<ThemedText type="bodyLarge">Benificiaries</ThemedText>
 			<View style={{ flexDirection: "column", gap: 8 }}>
 				{benificiaries.map((benificary) => (
-					<View style={{ flexDirection: "row", gap: 8, alignItems: "center" }}>
+					<View style={{ flexDirection: "row", gap: 8, alignItems: "center" }} key={benificary.address}>
 						<UserInfo key={benificary.address} address={benificary.address} amount={benificary.amount} assetId={benificary.assetId} />
 					</View>
 				))}

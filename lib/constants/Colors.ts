@@ -1,4 +1,3 @@
-// Colors.ts
 import { DarkTheme, DefaultTheme } from "@react-navigation/native";
 
 const tintColorDark = "#fff";

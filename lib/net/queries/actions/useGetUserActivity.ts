@@ -11,12 +11,14 @@ const buildUserActivityQueryKey = (params: GetUserActivityPathParams) => ["user-
 const useGetUserActivity = (params: GetUserActivityPathParams) => {
   return useQuery<UserActivity[], Error>({
     queryKey: buildUserActivityQueryKey(params),
-    queryFn: async () => {
-      const response = await client.get<UserActivity[]>(`users/id/${params.userId}/activities`);
-      return response.data;
-    },
+    queryFn: () => getUserActivity(params.userId),
 		refetchOnWindowFocus: true,
   });
 };
 
-export { useGetUserActivity, buildUserActivityQueryKey };
+async function getUserActivity(userId: string) {
+  const response = await client.get<UserActivity[]>(`users/id/${userId}/activities`);
+  return response.data;
+}
+
+export { getUserActivity, useGetUserActivity, buildUserActivityQueryKey };

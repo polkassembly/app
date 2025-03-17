@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef, useCallback, useMemo } from "react"
 import { View, StyleSheet, Text, ActivityIndicator, Touchable, TouchableOpacity } from "react-native";
 import Swiper from "react-native-deck-swiper";
 import { useLocalSearchParams } from "expo-router";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import useAddCartItem from "@/lib/net/queries/actions/useAddCartItem";
 import { useActivityFeed } from "@/lib/net/queries/post/useActivityFeed";
 import { TopBar } from "@/lib/components/Topbar";
@@ -14,6 +14,11 @@ import { PostFullDetails } from "@/lib/components/feed";
 import CartItemsPreview from "@/lib/components/voting/CartItemsPreview";
 import { BottomVotingButtons, OverlayLabel } from "@/lib/components/voting";
 import ThemedButton from "@/lib/components/ThemedButton";
+import Toast from "react-native-toast-message";
+import IconClose from "@/lib/components/icons/shared/icon-close";
+import { ThemedText } from "@/lib/components/ThemedText";
+import { ProposalDetails } from "@/lib/components/proposal";
+import { ThemedView } from "@/lib/components/ThemedView";
 import { ProposalContentSummary } from "@/lib/components/proposal";
 
 interface MemoizedProposalCardProps {
@@ -69,6 +74,7 @@ const ProposalVotingScreen: React.FC = () => {
   const swiperRef = useRef<any>(null);
   const backgroundColor = useThemeColor({}, "container");
   const [index, setIndex] = useState(0)
+  const insets = useSafeAreaInsets();
 
   // Append new proposals as they are fetched
   useEffect(() => {
@@ -109,8 +115,13 @@ const ProposalVotingScreen: React.FC = () => {
       }
 
       voteMutation.mutate(params, {
-        onSuccess: () => { /* TODO: toast notification */ },
-        onError: (error) => { /* TODO: error handling */ },
+        onError: () => {
+          Toast.show({
+            type: "error",
+            text1: "Vote Failed",
+            text2: "There was an error while submitting your vote. Please try again.",
+          });
+        },
       });
     },
     [
@@ -143,14 +154,14 @@ const ProposalVotingScreen: React.FC = () => {
 
   return (
     <View style={{ flex: 1, backgroundColor }}>
-      <SafeAreaView style={{ flex: 1, backgroundColor }}>
+      <View style={{ flex: 1, backgroundColor, marginTop: insets.top, paddingLeft: insets.left, paddingRight: insets.right }}>
         <TopBar style={{ paddingHorizontal: 16 }} />
         <View style={styles.container}>
           <Swiper
             infinite
             ref={swiperRef}
             cards={proposals}
-            renderCard={(cardData, index) => <MemoizedProposalCard card={cardData} key={cardData.index} index={cardData.index} showDetails={() => setProposalDetailsOpen(true)}/>}
+            renderCard={(cardData, index) => <MemoizedProposalCard card={cardData} key={cardData.index} index={cardData.index} showDetails={() => setProposalDetailsOpen(true)} />}
             onSwipedLeft={(cardIndex) => onSwiped("nay", cardIndex)}
             onSwipedRight={(cardIndex) => onSwiped("aye", cardIndex)}
             onSwipedTop={(cardIndex) => onSwiped("abstain", cardIndex)}
@@ -168,26 +179,37 @@ const ProposalVotingScreen: React.FC = () => {
           {/* FIXME: Bottom card for stack effect, workaround for vote card flashing */}
           {
             index + 1 < proposals.length &&
-            <View style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0, zIndex: -10, marginTop: 40, padding: 30 }}>
+            <View style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0, zIndex: 0, marginTop: 40, padding: 30 }}>
               <MemoizedProposalCard card={proposals[index + 1]} index={proposals[index + 1].index} showDetails={() => setProposalDetailsOpen(true)}/>
             </View>
           }
           <CartItemsPreview />
         </View>
         <BottomVotingButtons swiperRef={swiperRef} />
-      </SafeAreaView>
+      </View>
 
       {/* Post full details */}
       <BottomSheet
         open={proposalDetailsOpen}
         onClose={() => setProposalDetailsOpen(false)}
+        style={{ zIndex: 200}}
       >
-        {proposals && proposals.length > index && (
-          <PostFullDetails
-            onClose={() => setProposalDetailsOpen(false)}
-            post={proposals[index]}
-          />
-        )}
+        <ThemedView type="container" style={styles.sheet}>
+          <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+            <ThemedText type="titleSmall">Proposal Details</ThemedText>
+            <TouchableOpacity onPress={() => setProposalDetailsOpen(false)} style={{ padding: 5, paddingHorizontal: 10 }}>
+              <IconClose iconWidth={14} iconHeight={14} color="#79767D" />
+            </TouchableOpacity>
+          </View>
+          {proposals && proposals.length > index && (
+            <ProposalDetails
+              post={proposals[index]}
+              withoutFullDetails
+              withoutHeaderText
+              withoutProposalCardIndex={false}
+            />
+          )}
+        </ThemedView>
       </BottomSheet>
     </View>
   );
@@ -210,6 +232,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+  sheet: {
+		width: "100%",
+		height: "90%",
+		borderTopLeftRadius: 16,
+		borderTopRightRadius: 16,
+		paddingTop: 16,
+		paddingHorizontal: 16
+	},
 });
 
 export default ProposalVotingScreen;

@@ -19,8 +19,9 @@ import { router } from "expo-router";
 import { Skeleton } from "moti/skeleton";
 import { useState } from "react";
 import { ActivityIndicator, ScrollView, TouchableOpacity, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import IconPencil from "@/lib/components/icons/shared/icon-pencil";
+import Toast from "react-native-toast-message";
 
 export default function VotedProposals() {
 	const { data: cart, isLoading: isCartLoading } = useGetCartItems();
@@ -28,6 +29,7 @@ export default function VotedProposals() {
 	const [cartItem, setCartItem] = useState<CartItem | null>(null);
 	const colorStroke = useThemeColor({}, "stroke");
 	const background = useThemeColor({}, "container");
+	const insets = useSafeAreaInsets();
 
 	if (isCartLoading) {
 		return <ActivityIndicator />;
@@ -35,8 +37,8 @@ export default function VotedProposals() {
 
 	return (
 		<>
-			<SafeAreaView style={{ backgroundColor: background, flex: 1 }}>
-				<TopBar />
+			<View style={{ backgroundColor: background, flex: 1, paddingTop: insets.top, paddingLeft: insets.left, paddingRight: insets.right }}>
+				<TopBar style={{ marginHorizontal: 16}}/>
 				<ScrollView style={{ padding: 20}}>
 					<TouchableOpacity style={{ flexDirection: "row", alignItems: "center", marginBottom: 20, gap: 6 }} onPress={() => router.dismiss()}>
 						<Ionicons name="chevron-back" size={15} color="white" />
@@ -66,7 +68,7 @@ export default function VotedProposals() {
 					</ThemedView>
 				</ScrollView>
 				<BottomView totalProposal={String(cart?.length || 0)} />
-			</SafeAreaView>
+			</View>
 			{showEdit && cartItem && (
 				<EditCartItem cartItem={cartItem} onClose={() => setShowEdit(false)} />
 			)}
@@ -92,7 +94,11 @@ function CartItemCard({ cartItem, onEdit }: CartItemCardProps) {
 		deleteCartItem({ id: cartItem.id },
 			{
 				onError: () => {
-					// show toast
+					Toast.show({
+						type: "error",
+						text1: "Error",
+						text2: "Failed to delete item",
+					});
 				}
 			}
 		);
@@ -168,34 +174,45 @@ function EditCartItem({ cartItem, onClose }: EditCartItemProps) {
 
 	const [vote, setVote] = useState(cartItem.decision);
 	const [ayeAmount, setAyeAmount] = useState(
-		cartItem.decision === "aye" ? cartItem.amount.aye || 0 : 0
+		cartItem.decision === "aye" ? cartItem.amount.aye || 1 : 1
 	);
 	const [nayAmount, setNayAmount] = useState(
-		cartItem.decision === "nay" ? cartItem.amount.nay || 0 : 0
+		cartItem.decision === "nay" ? cartItem.amount.nay || 1 : 1
 	);
 	const [abstainAmount, setAbstainAmount] = useState(
-		cartItem.decision === "abstain" ? cartItem.amount.abstain || 0 : 0
+		cartItem.decision === "abstain" ? cartItem.amount.abstain || 1 : 1
 	);
 	const [conviction, setConviction] = useState(cartItem.conviction);
 
 	const { mutate: editCartItem } = useUpdateCartItem();
 	const handleConfirm = () => {
-		const amount =
-			vote === "aye" ? ayeAmount : vote === "nay" ? nayAmount : abstainAmount;
+		const amount: { aye?: string; nay?: string; abstain?: string } = {};
+
+		if( vote == "aye" ) amount.aye = ayeAmount.toString();
+		if( vote == "nay" ) amount.nay = nayAmount.toString();
+		if( vote == "abstain" ) {
+			amount.aye = ayeAmount.toString()
+			amount.nay = nayAmount.toString()
+			amount.abstain = abstainAmount.toString()
+		}
 		editCartItem({
 			id: cartItem.id,
 			decision: vote,
-			amount: {
-				aye: vote === "aye" ? amount.toString() : "0",
-				nay: vote === "nay" ? amount.toString() : "0",
-				abstain: vote === "abstain" ? amount.toString() : "0",
-			},
+			amount,
 			conviction: conviction,
 		}, {
 			onSuccess: () => {
+				Toast.show({
+					type: "success",
+					text1: "Vote Edited"
+				})
 				onClose();
 			},
 			onError: () => {
+				Toast.show({
+					type: "error",
+					text1: "Vote edit failed"
+				})
 				onClose()
 			}
 		});
@@ -212,13 +229,12 @@ function EditCartItem({ cartItem, onClose }: EditCartItemProps) {
 				paddingTop: 16,
 			}}
 		>
-			<ScrollView>
+			<ScrollView style={{ paddingHorizontal: 16}}>
 				<View
 					style={{
 						flexDirection: "row",
 						justifyContent: "space-between",
 						alignItems: "center",
-						marginHorizontal: 16,
 					}}
 				>
 					<ThemedText type="titleMedium">Edit Vote Details</ThemedText>

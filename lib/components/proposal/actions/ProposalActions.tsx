@@ -9,15 +9,15 @@ import { useState } from "react";
 import useAddReaction from "@/lib/net/queries/actions/useAddReaction";
 import useDeleteReaction from "@/lib/net/queries/actions/useDeleteReaction";
 import CommentBox from "../../feed/CommentBox";
+import Toast from "react-native-toast-message";
+import { useProfileStore } from "@/lib/store/profileStore";
 
 interface ProposalActionsProps {
 	post: Post
-	userInfo: UserProfile | undefined
 }
 
 function ProposalActions({
-	post,
-	userInfo,
+	post
 }: ProposalActionsProps) {
 
 	const [isLiked, setIsLiked] = useState<boolean>(
@@ -35,6 +35,7 @@ function ProposalActions({
 
 	const { mutate: addReaction } = useAddReaction();
 	const { mutate: deleteReaction } = useDeleteReaction();
+	const userProfile = useProfileStore((state) => state.profile);
 
 	const handleLike = () => {
 		if (isLiked) {
@@ -92,6 +93,33 @@ function ProposalActions({
 		}
 	};
 
+	const handleComment = () => {
+
+		if (showCommentBox === true) {
+			setShowCommentBox(false)
+			return;
+		}
+
+		if (post.allowedCommentor && post.allowedCommentor === "none") {
+			Toast.show({
+				type: "error",
+				text1: "Commenting is disabled",
+				text2: "This post does not allow comments",
+			})
+			return;
+		}
+		if (post.allowedCommentor && post.allowedCommentor === "onchain_verified" && userProfile?.addresses.length === 0) {
+			Toast.show({
+				type: "error",
+				text1: "Commenting is disabled",
+				text2: "Only verified users can comment on this post",
+			})
+			return;
+		}
+
+		setShowCommentBox(true)
+	}
+
 	return (
 		<>
 			<View style={styles.flexRowJustifySpaceBetween}>
@@ -104,7 +132,7 @@ function ProposalActions({
 						<IconDislike color="white" filled={isDisliked} />
 						<ThemedText type="bodySmall">{dislikes}</ThemedText>
 					</ThemedButton>
-					<ThemedButton onPress={() => setShowCommentBox((prev) => !prev)} buttonBgColor="selectedIcon" style={styles.iconButton}>
+					<ThemedButton onPress={handleComment} buttonBgColor="selectedIcon" style={styles.iconButton}>
 						<IconComment color="white" filled={false} />
 						<ThemedText type="bodySmall">{comments}</ThemedText>
 					</ThemedButton>

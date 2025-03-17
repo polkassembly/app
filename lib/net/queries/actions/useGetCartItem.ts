@@ -25,12 +25,14 @@ const useGetCartItems = () => {
 	const userId = useProfileStore((state) => state.profile?.id) ? String(useProfileStore((state) => state.profile?.id)) : "";
   return useQuery<CartItem[], Error>({
     queryKey: buildCartItemsQueryKey(userId),
-    queryFn: async () => {
-      const response = await client.get<{ voteCart: CartItem[] }>(`users/id/${userId}/vote-cart`);
-      return response.data.voteCart;
-    },
+    queryFn: () => getCartItemsFunction({ userId }),
     refetchOnWindowFocus: true,
   });
 };
 
-export { useGetCartItems, buildCartItemsQueryKey };
+const getCartItemsFunction = async ({ userId } : { userId: string}) => {
+  const response = await client.get<{ voteCart: CartItem[] }>(`users/id/${userId}/vote-cart`);
+  return response.data.voteCart;
+}
+
+export { useGetCartItems, buildCartItemsQueryKey, getCartItemsFunction };

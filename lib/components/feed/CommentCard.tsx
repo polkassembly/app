@@ -12,15 +12,15 @@ import VerticalSeprator from "../shared/VerticalSeprator";
 import StackedAvatars from "./StackedAvatars";
 import { extractUniqueChildrenAvatars } from "@/lib/util/commentUtil";
 import CommentBox from "./CommentBox";
-import { useDeleteReaction } from "@/lib/net/queries/actions";
 import useAddCommentReaction from "@/lib/net/queries/actions/useAddCommentReaction";
 import useDeleteCommentReaction from "@/lib/net/queries/actions/useDeleteCommentReaction";
 
 interface CommentCardProps {
 	comment: ICommentResponse;
+	commentDisabled?: boolean;
 }
 
-export default function CommentCard({ comment }: CommentCardProps) {
+export default function CommentCard({ comment, commentDisabled }: CommentCardProps) {
 	const [isLiked, setIsLiked] = useState<boolean>(false);
 	const [isDisliked, setIsDisliked] = useState<boolean>(false);
 	const [likes, setLikes] = useState<number>(0);
@@ -257,14 +257,17 @@ export default function CommentCard({ comment }: CommentCardProps) {
 						<IconDislike color="white" filled={isDisliked} />
 						<ThemedText type="bodySmall">{dislikes}</ThemedText>
 					</ThemedButton>
-					<ThemedButton
-						onPress={onToggleComment}
-						buttonBgColor="selectedIcon"
-						style={styles.iconButton}
-					>
-						<IconComment color="white" filled={false} />
-						<ThemedText type="bodySmall">{commentsCount}</ThemedText>
-					</ThemedButton>
+					{
+						!commentDisabled &&
+						<ThemedButton
+							onPress={onToggleComment}
+							buttonBgColor="selectedIcon"
+							style={styles.iconButton}
+						>
+							<IconComment color="white" filled={false} />
+							<ThemedText type="bodySmall">{commentsCount}</ThemedText>
+						</ThemedButton>
+					}
 				</View>
 				{showReplyBox && (
 					<CommentBox
@@ -280,7 +283,7 @@ export default function CommentCard({ comment }: CommentCardProps) {
 				{showReplies && comment.children && comment.children.length > 0 && (
 					<View style={styles.repliesContainer}>
 						{comment.children.map((reply) => (
-							<CommentCard comment={reply} key={reply.id} />
+							<CommentCard comment={reply} key={reply.id} commentDisabled />
 						))}
 					</View>
 				)}

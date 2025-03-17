@@ -1,13 +1,12 @@
-// useAddComment.ts
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import client from "@/lib/net/client";
-import { EProposalType, ICommentResponse, UserProfile } from "@/lib/types";
+import { EProposalType, ICommentResponse } from "@/lib/types";
 import { buildActivityFeedQueryKey } from "../post/useActivityFeed";
 import { buildProposalByIndexQueryKey } from "../post/useProposalByIndex";
 import { buildProposalCommentsQueryKey } from "../post";
 import { ENetwork } from "@/lib/types/post";
 import { EDataSource } from "@/lib/types/comment";
 import { useProfileStore } from "@/lib/store/profileStore";
+import client from "../../client";
 
 interface AddCommentPathParams {
   proposalType: EProposalType;
@@ -61,8 +60,8 @@ const useAddComment = () => {
 
       // Create the query key for the proposal comments.
       const commentsQueryKey = buildProposalCommentsQueryKey({
-        proposalType: pathParams.proposalType,
-        proposalId: pathParams.postIndexOrHash,
+        proposalType: pathParams.proposalType.toString(),
+        proposalId: pathParams.postIndexOrHash.toString(),
       });
 
       // Cancel outgoing refetches to avoid race conditions.
@@ -94,7 +93,8 @@ const useAddComment = () => {
       queryClient.setQueryData<ICommentResponse[]>(commentsQueryKey, (oldComments) => {
         // Default to an empty array if oldComments is undefined.
         if (!bodyParams.parentCommentId || !oldComments) {
-          return oldComments ? [...oldComments, optimisticComment] : [optimisticComment];
+          oldComments = oldComments ? [...oldComments, optimisticComment] : [optimisticComment];
+          return oldComments
         }
 
         // If the comment is a reply, find the parent comment and add the reply.
