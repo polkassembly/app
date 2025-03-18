@@ -11,7 +11,6 @@ function BookmarkButton({ proposalId, proposalType, isSubscribed }: { proposalId
 	const { mutate: unsubscribeProposal, isPending: isUnsubscribing } = useUnsubscribeProposal();
 
 	const handleBookmark = () => {
-		console.log("BookmarkButton: handleBookmark", isSubscribed);
 		if (isSubscribed) {
 			unsubscribeProposal(
 				{ pathParams: { postIndexOrHash: proposalId, proposalType: proposalType } }

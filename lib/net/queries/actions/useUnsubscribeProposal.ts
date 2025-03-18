@@ -53,8 +53,6 @@ const useUnsubscribeProposal = () => {
 						)
 					}))
 				}
-
-				console.log("newData", newData.pages.map((page: any) => page.items.map((post: Post) => post.userSubscriptionId)));
 				return newData;
 			});
 		

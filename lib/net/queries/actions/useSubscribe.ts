@@ -105,8 +105,8 @@ const useSubscribeProposal = () => {
           ...oldData,
           pages: oldData.pages.map((page: any) => ({
             ...page,
-            items: page.items.map((post: any) =>
-              post.id === variables.pathParams.postIndexOrHash
+            items: page.items.map((post: Post) =>
+              post.index === variables.pathParams.postIndexOrHash
                 ? { ...post, userSubscriptionId: data.subscriptionId }
                 : post
             ),

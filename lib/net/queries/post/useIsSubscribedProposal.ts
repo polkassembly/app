@@ -23,10 +23,14 @@ const useIsSubscribedProposal = ({ proposalType, postIndexOrHash }: IsSubscribed
 	return useQuery<IsSubscribedProposalResponse, Error>({
 		queryKey,
 		queryFn: async () => {
-			const response = await client.get(
-				`${proposalType}/${postIndexOrHash}/subscription`
-			)
-			return response.data
+			try {
+				const response = await client.get(
+					`${proposalType}/${postIndexOrHash}/subscription`
+				)
+				return response.data;
+			} catch (error) {
+				console.error(error);
+			}
 		}
 	})
 };
