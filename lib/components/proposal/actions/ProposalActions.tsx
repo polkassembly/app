@@ -11,6 +11,8 @@ import useDeleteReaction from "@/lib/net/queries/actions/useDeleteReaction";
 import CommentBox from "../../feed/CommentBox";
 import Toast from "react-native-toast-message";
 import { useProfileStore } from "@/lib/store/profileStore";
+import UseSubscribeProposal from "@/lib/net/queries/actions/useSubscribe";
+import UseUnsubscribeProposal from "@/lib/net/queries/actions/useUnsubscribeProposal";
 
 interface ProposalActionsProps {
 	post: Post
@@ -35,6 +37,9 @@ function ProposalActions({
 
 	const { mutate: addReaction } = useAddReaction();
 	const { mutate: deleteReaction } = useDeleteReaction();
+	const { mutate: subscribeProposal } = UseSubscribeProposal();
+	const { mutate: unsubscribeProposal } = UseUnsubscribeProposal();
+
 	const userProfile = useProfileStore((state) => state.profile);
 
 	const handleLike = () => {
@@ -120,6 +125,8 @@ function ProposalActions({
 		setShowCommentBox(true)
 	}
 
+	console.log(post.userSubscriptionId)
+
 	return (
 		<>
 			<View style={styles.flexRowJustifySpaceBetween}>
@@ -138,7 +145,7 @@ function ProposalActions({
 					</ThemedButton>
 				</View>
 				<View style={styles.flexRowGap8}>
-					<BookmarkButton />
+					<BookmarkButton proposalId={post.index} proposalType={post.proposalType} isSubscribed={post.userSubscriptionId !== undefined}/>
 					<ShareButton proposalId={post.index} proposalTitle={post.title} />
 				</View>
 			</View>
