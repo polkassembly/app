@@ -197,6 +197,7 @@ export interface Post {
   allowedCommentor?: EAllowedCommentor;
   onChainInfo?: OnChainPostInfo;
   userReaction?: Reaction;
+  userSubscriptionId?: string;
   preimageArgs?: Record<string, unknown>;
 }
 

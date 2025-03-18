@@ -1,14 +1,17 @@
 import { useActivityFeed, buildActivityFeedQueryKey, activityFeedFunction } from "./useActivityFeed";
 import { useContentSummary, buildContentSummaryKey } from "./useContentSummary";
 import { useProposalByIndex, buildProposalByIndexQueryKey } from "./useProposalByIndex";
+import { useIsSubscribedProposal, buildIsSubscribedProposalKey } from "./useIsSubscribedProposal";
 import { useProposalComments, buildProposalCommentsQueryKey, getProposalComments } from "./useProposalComment";
 
 export {
-	activityFeedFunction,
 	useActivityFeed,
+	activityFeedFunction,
 	buildActivityFeedQueryKey,
 	useContentSummary,
 	buildContentSummaryKey,
+	useIsSubscribedProposal,
+	buildIsSubscribedProposalKey,
 	useProposalByIndex,
 	buildProposalByIndexQueryKey,
 	useProposalComments,

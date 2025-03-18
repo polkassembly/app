@@ -6,6 +6,8 @@ import useDeleteReaction from "./useDeleteReaction";
 import { useGetCartItems, buildCartItemsQueryKey, getCartItemsFunction } from "./useGetCartItem";
 import { useGetUserActivity, buildUserActivityQueryKey, getUserActivity } from "./useGetUserActivity";
 import useUpdateCartItem from "./useUpdateCartItem";
+import useSubscribeProposal from "./useSubscribe";
+import useUnsubscribeProposal from "./useUnsubscribeProposal";
 
 export {
 	buildCartItemsQueryKey,
@@ -19,5 +21,7 @@ export {
 	useDeleteReaction,
 	useGetCartItems,
 	useGetUserActivity,
-	useUpdateCartItem
+	useUpdateCartItem,
+	useSubscribeProposal,
+	useUnsubscribeProposal
 }
