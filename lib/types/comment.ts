@@ -1,6 +1,6 @@
 import { EProposalType } from ".";
 import { UserProfile } from ".";
-import { ENetwork } from "./post";
+import { ENetwork, Reaction } from "./post";
 
 export enum EDataSource {
 	POLKASSEMBLY = 'polkassembly',
@@ -22,6 +22,7 @@ export interface IComment {
 	isDeleted: boolean;
 	address: string | null;
 	dataSource: EDataSource;
+	reactions: Reaction[];
 }
 
 export interface ICommentResponse extends IComment {

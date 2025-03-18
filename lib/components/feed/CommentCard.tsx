@@ -14,6 +14,7 @@ import { extractUniqueChildrenAvatars } from "@/lib/util/commentUtil";
 import CommentBox from "./CommentBox";
 import useAddCommentReaction from "@/lib/net/queries/actions/useAddCommentReaction";
 import useDeleteCommentReaction from "@/lib/net/queries/actions/useDeleteCommentReaction";
+import { useProfileStore } from "@/lib/store/profileStore";
 
 interface CommentCardProps {
 	comment: ICommentResponse;
@@ -21,10 +22,14 @@ interface CommentCardProps {
 }
 
 export default function CommentCard({ comment, commentDisabled }: CommentCardProps) {
-	const [isLiked, setIsLiked] = useState<boolean>(false);
-	const [isDisliked, setIsDisliked] = useState<boolean>(false);
-	const [likes, setLikes] = useState<number>(0);
-	const [dislikes, setDislikes] = useState<number>(0);
+
+	const userProfile = useProfileStore((state) => state.profile);
+
+	// Local state to manage like/dislike actions
+	const [isLiked, setIsLiked] = useState<boolean>(comment.reactions.filter((r) => r.reaction === EReaction.like && r.userId === userProfile?.id).length > 0);
+	const [isDisliked, setIsDisliked] = useState<boolean>(comment.reactions.filter((r) => r.reaction === EReaction.dislike && r.userId === userProfile?.id).length > 0);
+	const [likes, setLikes] = useState<number>(comment.reactions.filter((r) => r.reaction === EReaction.like).length);
+	const [dislikes, setDislikes] = useState<number>(comment.reactions.filter((r) => r.reaction === EReaction.dislike).length);
 	const [commentsCount, setCommentsCount] = useState<number>(
 		comment.children?.length || 0
 	);

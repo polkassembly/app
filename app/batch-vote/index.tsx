@@ -68,7 +68,7 @@ export default function BatchVotingScreen() {
 
   return (
     <SafeAreaView style={styles.root}>
-      <TopBar style={{ paddingHorizontal: 8 }} />
+      <TopBar style={{ paddingHorizontal: 8, marginTop: 12 }} />
       <ScrollView style={styles.scrollView} contentContainerStyle={{ gap: 16, marginTop: 12 }}>
         <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
           <IconVote iconWidth={21} iconHeight={21} color="white" />
