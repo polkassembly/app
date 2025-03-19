@@ -1,6 +1,6 @@
 import useAddCartItem from "./useAddCartItem";
 import useAddComment from "./useAddComment";
-import useAddReaction from "./useAddReaction";
+import { useAddReaction, AddReactionResponse} from "./useAddReaction";
 import useDeleteCartItem from "./useDeleteCardItem";
 import useDeleteReaction from "./useDeleteReaction";
 import { useGetCartItems, buildCartItemsQueryKey, getCartItemsFunction } from "./useGetCartItem";
@@ -17,6 +17,7 @@ export {
 	useAddCartItem,
 	useAddComment,
 	useAddReaction,
+	AddReactionResponse,
 	useDeleteCartItem,
 	useDeleteReaction,
 	useGetCartItems,

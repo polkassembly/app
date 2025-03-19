@@ -2,6 +2,10 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 import client from "../../client";
 import { Feed } from "@/lib/types";
 
+// A constant activity feed limit for optimistic updates consistency
+// FIXME: Derive a method to allow dynamic selection of all activity feed cache to be updated
+export const ACTIVITY_FEED_LIMIT = 10
+
 interface FeedRequest {
   limit: number;
 }

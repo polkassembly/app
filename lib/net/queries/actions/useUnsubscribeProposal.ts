@@ -76,5 +76,4 @@ const useUnsubscribeProposal = () => {
 	});
 };
 
-
 export default useUnsubscribeProposal;
