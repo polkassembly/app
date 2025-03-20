@@ -151,8 +151,7 @@ const useDeleteReaction = () => {
           context.activityOldData
         );
       }
-      // Rethrow the error to let calling components handle it.
-      throw error;
+      console.error("Failed to delete reaction", error);
     },
     onSettled: (_, __, { pathParams }) => {
       // Invalidate the proposal query to refetch the fresh data.

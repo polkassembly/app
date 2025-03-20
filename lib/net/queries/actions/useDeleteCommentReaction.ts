@@ -6,7 +6,7 @@ interface DeleteCommentReactionPathParams {
   proposalType: EProposalType;
   postIndexOrHash: string;
   reactionId: string;
-	commentId: string;
+  commentId: string;
 }
 
 interface DeleteReactionResponse {
@@ -24,7 +24,7 @@ const useDeleteCommentReaction = () => {
       return response.data;
     },
     onError: (error, { pathParams }) => {
-      throw new Error("Failed to delete reaction", error);
+      console.error(`Failed to delete reaction for comment ${pathParams.commentId}`, error);
     },
     onSettled: (_, __, { pathParams }) => {
     },

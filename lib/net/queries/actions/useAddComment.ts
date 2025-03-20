@@ -54,9 +54,7 @@ const useAddComment = () => {
       return response.data;
     },
     onMutate: async ({ pathParams, bodyParams }) => {
-      if (!userInfo) {
-        throw new Error("User information is missing");
-      }
+      if (!userInfo) return;
 
       // Create the query key for the proposal comments.
       const commentsQueryKey = buildProposalCommentsQueryKey({
@@ -87,6 +85,7 @@ const useAddComment = () => {
         address: bodyParams.address || null,
         dataSource: EDataSource.POLKASSEMBLY,
         user: { ...userInfo },
+        reactions: []
       };
 
       // Optimistically update the comments in the cache.
@@ -109,7 +108,7 @@ const useAddComment = () => {
         });
       });
 
-      // Return context so we can roll back on error.
+      // Return context for roll back on error.
       return { previousCommentsData: previousComments, commentsQueryKey };
     },
     onError: (error, variables, context) => {
@@ -118,7 +117,6 @@ const useAddComment = () => {
         queryClient.setQueryData(context.commentsQueryKey, context.previousCommentsData);
       }
       console.error("Failed to add comment", error);
-      throw new Error("Failed to add comment");
     },
     onSettled: (_, __, { pathParams }) => {
       // Invalidate queries to fetch fresh data from the backend.

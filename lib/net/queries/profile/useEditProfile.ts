@@ -62,7 +62,6 @@ function useEditProfile() {
       }
 
       console.error("An error occurred while editing the profile:", error);
-      throw error;
     },
     onSuccess: () => {
       // Since the user profile updation doesn't return any ids, we don't need to invalidate any queries
