@@ -20,6 +20,11 @@ const CartItemsPreview = () => {
 					<ThemedText style={{ color: "#000" }}>Preview</ThemedText>
 					<ThemedText style={{ color: colorStroke }}>{ isLoading ? "loading.." : 0}</ThemedText>
 				</View>
+				<TouchableOpacity>
+					<View style={[styles.iconView, { backgroundColor: accent }]}>
+						<Ionicons name="chevron-forward" color="white" size={30} />
+					</View>
+				</TouchableOpacity>
 			</View>
 		)
 	}
