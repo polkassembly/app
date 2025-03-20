@@ -1,16 +1,16 @@
 import { EReaction, Post } from "@/lib/types";
 import { StyleSheet, View, Image } from "react-native";
 import ShareButton from "./ShareButton";
-import { IconLike, IconDislike, IconComment } from "../../icons/shared";
+import { IconLike, IconDislike, IconComment, IconBookmark } from "../../icons/shared";
 import ThemedButton from "../../ThemedButton";
 import { ThemedText } from "../../ThemedText";
-import BookmarkButton from "./BookmarkButton";
 import { useEffect, useState } from "react";
 import CommentBox from "../../feed/CommentBox";
 import Toast from "react-native-toast-message";
 import { useProfileStore } from "@/lib/store/profileStore";
-import { AddReactionResponse, useAddReaction, useDeleteReaction } from "@/lib/net/queries/actions";
+import { AddReactionResponse, useAddReaction, useDeleteReaction, useSubscribeProposal, useUnsubscribeProposal } from "@/lib/net/queries/actions";
 import { useThemeColor } from "@/lib/hooks";
+import { useIsFocused } from "@react-navigation/native";
 
 interface ProposalActionsProps {
   post: Post;
@@ -27,6 +27,7 @@ function ProposalActions({ post }: ProposalActionsProps) {
   const [localLikeCount, setLocalLikeCount] = useState(post.metrics.reactions.like);
   const [localDislikeCount, setLocalDislikeCount] = useState(post.metrics.reactions.dislike);
   const [localCommentCount, setLocalCommentCount] = useState(post.metrics.comments);
+
   // Reaction state holds the current reaction type and its id.
   const [reactionState, setReactionState] = useState<{ reaction: EReaction | null; id?: string }>(() =>
     currentUserReaction
@@ -40,12 +41,39 @@ function ProposalActions({ post }: ProposalActionsProps) {
   const [showLikeGif, setShowLikeGif] = useState(false);
   const [showDislikeGif, setShowDislikeGif] = useState(false);
 
+  const [subscribed, setSubscribed] = useState(post.userSubscriptionId ? true : false);
+  const [isUpdatingSubscription, setIsUpdatingSubscription] = useState(false);
+
   const { mutate: addReaction } = useAddReaction();
   const { mutate: deleteReaction } = useDeleteReaction();
+  const { mutate: subscribeProposal } = useSubscribeProposal();
+  const { mutate: unsubscribeProposal } = useUnsubscribeProposal();
 
   // Ensure the gif file is correctly imported.
   const LikedGif = require("@/assets/gif/liked-colored.gif");
   const accentColor = useThemeColor({}, "accent");
+
+  // Reset the local state when the screen is focused.
+  const isfocused = useIsFocused();
+  useEffect(() => {
+    if (isfocused) {
+      setLocalLikeCount(post.metrics.reactions.like);
+      setLocalDislikeCount(post.metrics.reactions.dislike);
+      setLocalCommentCount(post.metrics.comments);
+
+      const currentUserReaction = post.reactions?.find(
+        (reaction) => reaction.userId === userProfile?.id
+      );
+
+      setReactionState(() =>
+        currentUserReaction
+          ? { reaction: currentUserReaction.reaction, id: currentUserReaction.id }
+          : { reaction: null, id: undefined }
+      );
+
+      setSubscribed(post.userSubscriptionId ? true : false);
+    }
+  }, [isfocused]);
 
   const handleLike = () => {
     if (isUpdatingReaction) return;
@@ -176,6 +204,28 @@ function ProposalActions({ post }: ProposalActionsProps) {
     setShowCommentBox(true);
   };
 
+  const handleBookmark = () => {
+    if (isUpdatingSubscription) return;
+    setIsUpdatingSubscription(true);
+    if (subscribed) {
+      unsubscribeProposal(
+        { pathParams: { postIndexOrHash: post.index, proposalType: post.proposalType } },
+        {
+          onSuccess: () => setSubscribed(false),
+          onSettled: () => setIsUpdatingSubscription(false),
+        }
+      );
+    } else {
+      subscribeProposal(
+        { pathParams: { postIndexOrHash: post.index, proposalType: post.proposalType } },
+        {
+          onSuccess: (data: any) => setSubscribed(true),
+          onSettled: () => setIsUpdatingSubscription(false),
+        }
+      );
+    }
+  };
+
   return (
     <>
       <View style={styles.flexRowJustifySpaceBetween}>
@@ -200,7 +250,7 @@ function ProposalActions({ post }: ProposalActionsProps) {
             disabled={isUpdatingReaction || (reactionState.reaction === EReaction.dislike && !reactionState.id)}
           >
             {showDislikeGif ? (
-              <Image source={LikedGif} style={{ width: 20, height: 20, transform: [{  rotateX: "180deg" }] }} />
+              <Image source={LikedGif} style={{ width: 20, height: 20, transform: [{ rotateX: "180deg" }] }} />
             ) : (
               <IconDislike color={reactionState.reaction === EReaction.dislike ? accentColor : "white"} filled={reactionState.reaction === EReaction.dislike} />
             )}
@@ -212,11 +262,14 @@ function ProposalActions({ post }: ProposalActionsProps) {
           </ThemedButton>
         </View>
         <View style={styles.flexRowGap8}>
-          <BookmarkButton
-            proposalId={post.index}
-            proposalType={post.proposalType}
-            initialSubscribed={post.userSubscriptionId !== undefined}
-          />
+          <ThemedButton
+            onPress={handleBookmark}
+            buttonBgColor="selectedIcon"
+            style={styles.iconButton}
+            disabled={isUpdatingSubscription}
+          >
+            <IconBookmark color="white" filled={subscribed} />
+          </ThemedButton>
           <ShareButton proposalId={post.index} proposalTitle={post.title} />
         </View>
       </View>

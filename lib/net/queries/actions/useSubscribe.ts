@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import client from "../../client";
 import { EProposalType, Feed, Post } from "@/lib/types";
 import { buildActivityFeedQueryKey, buildIsSubscribedProposalKey } from "../post";
+import { ACTIVITY_FEED_LIMIT } from "../post/useActivityFeed";
 
 interface SubscribeProposalParams {
   proposalType: EProposalType;
@@ -9,7 +10,7 @@ interface SubscribeProposalParams {
 }
 
 interface SubscribeProposalResponse {
-  subscriptionId: string;
+  id: string;
 }
 
 interface MutationContext {
@@ -37,9 +38,9 @@ const useSubscribeProposal = () => {
       await queryClient.cancelQueries({
         queryKey: buildIsSubscribedProposalKey(pathParams),
       });
-			await queryClient.cancelQueries({
-				queryKey: buildActivityFeedQueryKey({ limit: 10 }),
-			});
+      await queryClient.cancelQueries({
+        queryKey: buildActivityFeedQueryKey({ limit: 10 }),
+      });
 
       // Store previous query data for rollback if needed
       const isSubscribedOldData = queryClient.getQueryData(
@@ -72,7 +73,7 @@ const useSubscribeProposal = () => {
             ),
           })),
         };
-				return newData;
+        return newData;
       });
 
       return { isSubscribedOldData, activityFeedOldData };
@@ -93,13 +94,13 @@ const useSubscribeProposal = () => {
         );
       }
     },
-    onSuccess: (data, variables) => {
+    onSuccess: (res, variables) => {
       // Replace the temporary id with the actual subscription id returned from the server
       queryClient.setQueryData(
         buildIsSubscribedProposalKey(variables.pathParams),
-        data
+        res
       );
-      queryClient.setQueryData(buildActivityFeedQueryKey({ limit: 10 }), (oldData: any) => {
+      queryClient.setQueryData(buildActivityFeedQueryKey({ limit: ACTIVITY_FEED_LIMIT }), (oldData: any) => {
         if (!oldData) return oldData;
         return {
           ...oldData,
@@ -107,15 +108,12 @@ const useSubscribeProposal = () => {
             ...page,
             items: page.items.map((post: Post) =>
               post.index === variables.pathParams.postIndexOrHash
-                ? { ...post, userSubscriptionId: data.subscriptionId }
+                ? { ...post, userSubscriptionId: res.id }
                 : post
             ),
           })),
         };
       });
-    },
-    onSettled: () => {
-      // Optionally, you could invalidate the queries to refetch fresh data
     },
   });
 };
