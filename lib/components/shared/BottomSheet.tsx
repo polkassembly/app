@@ -33,15 +33,16 @@ const styles = StyleSheet.create({
   root: {
     // take up entire screen
     position: "absolute",
-    height: "100%",
-    width: "100%",
     top: 0,
     left: 0,
+    bottom: 0,
+    right: 0,
     zIndex: 100,
 
     // put the sheet on bottom
     flexDirection: "column",
     justifyContent: "flex-end",
+    // backdrop
     opacity: 65,
   },
 });

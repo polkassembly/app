@@ -1,7 +1,7 @@
 import BottomButton from "@/lib/components/shared/BottomButton";
 import { TopBar } from "@/lib/components/Topbar";
 import { useThemeColor } from "@/lib/hooks/useThemeColor";
-import { Link, useLocalSearchParams } from "expo-router";
+import { Link, router, useLocalSearchParams } from "expo-router";
 import React, { useState } from "react";
 import {
   ActivityIndicator,
@@ -29,18 +29,18 @@ export default function ProposalDetailScreenImpl() {
   const [open, setOpen] = useState(false);
   const { index, proposalType } = useLocalSearchParams<{ index: string, proposalType: EProposalType }>();
 
-  const { data, isLoading} = useProposalByIndex({ proposalType, indexOrHash: index });
+  const { data, isLoading } = useProposalByIndex({ proposalType, indexOrHash: index });
   const storeProposal = useProposalStore(state => state.proposal);
   const insets = useSafeAreaInsets();
 
   let proposal: Post | undefined;
-  
+
   const accentColor = useThemeColor({}, "accent");
 
   // If the requested proposal is already in the store, use that instead of the fetched data
   if (storeProposal?.index !== undefined && String(storeProposal?.index) === index) {
     proposal = storeProposal;
-  }else {
+  } else {
     proposal = data;
   }
 
@@ -55,7 +55,7 @@ export default function ProposalDetailScreenImpl() {
   if (!proposal) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignContent: "center" }}>
-        <ThemedText type="titleLarge" style={{ textAlign: "center"}}>Proposal not found</ThemedText>
+        <ThemedText type="titleLarge" style={{ textAlign: "center" }}>Proposal not found</ThemedText>
       </View>
     );
   }
@@ -67,25 +67,15 @@ export default function ProposalDetailScreenImpl() {
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         keyboardVerticalOffset={insets.top}
       >
-        <View style={{ flex: 1, paddingHorizontal: 16, gap: 16}}>
+        <View style={{ flex: 1, paddingHorizontal: 16, gap: 16 }}>
           <TopBar />
           <ProposalDetails post={proposal} openFullDetails={() => setOpen(true)} />
         </View>
       </KeyboardAvoidingView>
 
       {/* Bottom button outside of KeyboardAvoidingView */}
-      <View
-        style={{
-          position: "absolute",
-          bottom: insets.bottom - 16,
-          left: 0,
-          right: 0,
-        }}
-      >
-        <Link asChild href={`/proposal/vote/${index}?proposalType=${proposalType}`}>
-          <BottomButton>Cast Your Vote</BottomButton>
-        </Link>
-      </View>
+
+      <BottomButton onPress={() => router.push(`/proposal/vote/${index}?proposalType=${proposalType}`)}>Cast Your Vote</BottomButton>
 
       <BottomSheet open={open} onClose={() => setOpen(false)}>
         <PostFullDetails onClose={() => setOpen(false)} post={proposal} />
