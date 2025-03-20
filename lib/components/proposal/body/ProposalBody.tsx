@@ -1,6 +1,5 @@
-
 import { Ionicons } from "@expo/vector-icons";
-import React, { useState } from "react";
+import React, { useState, useMemo, useCallback } from "react";
 import { View, TouchableOpacity, StyleSheet } from "react-native";
 import RenderHTML from "react-native-render-html";
 
@@ -20,8 +19,13 @@ interface ProposalBodyProps {
 	proposerInfo: UserProfile | undefined;
 	descriptionLength?: number;
 	origin?: EPostOrigin;
-	withoutReadMore?: boolean
+	withoutReadMore?: boolean;
 }
+
+// Memoize the RenderHTML component to prevent unnecessary re-renders
+const MemoizedRenderHTML = React.memo((props: any) => {
+	return <RenderHTML {...props} />;
+});
 
 function ProposalBody({
 	title,
@@ -37,47 +41,53 @@ function ProposalBody({
 		trimText(htmlContent, descriptionLength)
 	);
 
-	const toggleReadMore = () => {
-		setPostDescriptionHTML(isReadMoreClicked ? trimText(htmlContent, descriptionLength) : htmlContent);
-		setIsReadMoreClicked(!isReadMoreClicked);
-	};
+	const colorText = useThemeColor({}, "text");
+	const colorAccent = useThemeColor({}, "accent");
 
-	const colorText = useThemeColor({}, "text")
-	const colorAccent = useThemeColor({}, "accent")
+	// Memoize the toggle function
+	const toggleReadMore = useCallback(() => {
+		setPostDescriptionHTML(isReadMoreClicked ? trimText(htmlContent, descriptionLength) : htmlContent);
+		setIsReadMoreClicked(prev => !prev);
+	}, [isReadMoreClicked, htmlContent, descriptionLength]);
+
+	// Memoize the props passed to the RenderHTML component
+	const renderHTMLProps = useMemo(() => ({
+		source: { html: postDescriptionHTML },
+		baseStyle: {
+			color: colorText,
+			fontFamily: "PoppinsRegular",
+			fontSize: 12,
+			fontWeight: "400"
+		},
+		contentWidth: 300,
+		tagsStyles: {
+			body: { padding: 0, margin: 0 },
+			p: { padding: 0, margin: 0 },
+			span: { padding: 0, margin: 0 },
+		}
+	}), [postDescriptionHTML, colorText]);
 
 	return (
 		<View style={styles.flexColumnGap8}>
 			<View style={{ flexDirection: "row", gap: 6, alignItems: "center" }}>
-
 				<View style={styles.flexRowGap4}>
 					<View style={{ width: 12, height: 12, borderRadius: 16 }}>
 						<UserAvatar avatarUrl={proposerInfo?.profileDetails?.image || ""} width={12} height={12} />
 					</View>
-					<ThemedText type="bodySmall3" style={{ fontWeight: 400}}>
+					<ThemedText type="bodySmall3" style={{ fontWeight: "400" }}>
 						{proposerInfo?.username || "User"}
 					</ThemedText>
 				</View>
 
 				{origin && <OriginBadge origin={origin} />}
 				<View style={{ width: 1, height: "100%", backgroundColor: "#383838" }} />
-				{
-					createdAt && <TimeDisplay createdAt={createdAt} />
-				}
+				{createdAt && <TimeDisplay createdAt={createdAt} />}
 			</View>
 
 			<ThemedText type="bodyMedium2" style={{ letterSpacing: 1 }}>
 				{trimText(title, 80)}
 			</ThemedText>
-			<RenderHTML
-				source={{ html: postDescriptionHTML }}
-				baseStyle={{ color: colorText, fontFamily: "PoppinsRegular", fontSize: 12, lineHeight: 18, fontWeight: 400 }}
-				contentWidth={300}
-				tagsStyles={{
-					body: { padding: 0, margin: 0 },
-					p: { padding: 0, margin: 0 },
-					span: { padding: 0, margin: 0 },
-				}}
-			/>
+			<MemoizedRenderHTML {...renderHTMLProps} />
 			{!withoutReadMore && htmlContent.length > descriptionLength && (
 				<TouchableOpacity onPress={toggleReadMore}>
 					<View style={styles.flexRowGap4}>
@@ -100,7 +110,6 @@ function ProposalBodySkeleton() {
 	return (
 		<View style={styles.flexColumnGap8}>
 			<View style={{ flexDirection: "row", gap: 12, alignItems: "center" }}>
-
 				<View style={styles.flexRowGap4}>
 					<View style={{ width: 15, height: 15, borderRadius: 16 }}>
 						<Skeleton />
@@ -111,7 +120,7 @@ function ProposalBodySkeleton() {
 			<Skeleton width={70} />
 			<Skeleton width="100%" height={100} />
 		</View>
-	)
+	);
 }
 
 const styles = StyleSheet.create({
@@ -123,6 +132,6 @@ const styles = StyleSheet.create({
 		flexDirection: "row",
 		gap: 4
 	},
-})
+});
 
 export { ProposalBody, ProposalBodySkeleton };
