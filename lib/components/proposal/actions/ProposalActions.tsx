@@ -208,18 +208,18 @@ function ProposalActions({ post }: ProposalActionsProps) {
     if (isUpdatingSubscription) return;
     setIsUpdatingSubscription(true);
     if (subscribed) {
+      setSubscribed(false)
       unsubscribeProposal(
         { pathParams: { postIndexOrHash: post.index, proposalType: post.proposalType } },
         {
-          onSuccess: () => setSubscribed(false),
           onSettled: () => setIsUpdatingSubscription(false),
         }
       );
     } else {
+      setSubscribed(true)
       subscribeProposal(
         { pathParams: { postIndexOrHash: post.index, proposalType: post.proposalType } },
         {
-          onSuccess: (data: any) => setSubscribed(true),
           onSettled: () => setIsUpdatingSubscription(false),
         }
       );
@@ -268,7 +268,7 @@ function ProposalActions({ post }: ProposalActionsProps) {
             style={styles.iconButton}
             disabled={isUpdatingSubscription}
           >
-            <IconBookmark color="white" filled={subscribed} />
+            <IconBookmark color={subscribed ? accentColor : "white"} filled={subscribed} />
           </ThemedButton>
           <ShareButton proposalId={post.index} proposalTitle={post.title} />
         </View>
