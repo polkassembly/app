@@ -27,7 +27,7 @@ const BottomButton = forwardRef<View, ButtonButtonProps>(
             paddingBlock: 21,
             left: "-5%",
             position: "sticky",
-            bottom: insets.bottom,
+            bottom: 0,
             borderTopStartRadius: "100%",
             borderTopEndRadius: "100%",
             borderWidth: 1,

@@ -75,8 +75,9 @@ export default function ProposalDetailScreenImpl() {
 
       {/* Bottom button outside of KeyboardAvoidingView */}
 
-      <BottomButton onPress={() => router.push(`/proposal/vote/${index}?proposalType=${proposalType}`)}>Cast Your Vote</BottomButton>
-
+      <View style={{ position: "absolute", bottom: 0, width: "100%" }}>
+        <BottomButton onPress={() => router.push(`/proposal/vote/${index}?proposalType=${proposalType}`)} >Cast Your Vote</BottomButton>
+      </View>
       <BottomSheet open={open} onClose={() => setOpen(false)}>
         <PostFullDetails onClose={() => setOpen(false)} post={proposal} />
       </BottomSheet>
