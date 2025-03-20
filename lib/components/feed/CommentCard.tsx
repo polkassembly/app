@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import debounce from "lodash/debounce";
 import RenderHTML from "react-native-render-html";
@@ -21,15 +21,27 @@ interface CommentCardProps {
 	commentDisabled?: boolean;
 }
 
-export default function CommentCard({ comment, commentDisabled }: CommentCardProps) {
+// Memoized RenderHTML component
+const MemoizedRenderHTML = React.memo((props: any) => {
+  return <RenderHTML {...props} />;
+});
 
+function CommentCard({ comment, commentDisabled }: CommentCardProps) {
 	const userProfile = useProfileStore((state) => state.profile);
 
 	// Local state to manage like/dislike actions
-	const [isLiked, setIsLiked] = useState<boolean>(comment.reactions.filter((r) => r.reaction === EReaction.like && r.userId === userProfile?.id).length > 0);
-	const [isDisliked, setIsDisliked] = useState<boolean>(comment.reactions.filter((r) => r.reaction === EReaction.dislike && r.userId === userProfile?.id).length > 0);
-	const [likes, setLikes] = useState<number>(comment.reactions.filter((r) => r.reaction === EReaction.like).length);
-	const [dislikes, setDislikes] = useState<number>(comment.reactions.filter((r) => r.reaction === EReaction.dislike).length);
+	const [isLiked, setIsLiked] = useState<boolean>(
+		comment.reactions.filter((r) => r.reaction === EReaction.like && r.userId === userProfile?.id).length > 0
+	);
+	const [isDisliked, setIsDisliked] = useState<boolean>(
+		comment.reactions.filter((r) => r.reaction === EReaction.dislike && r.userId === userProfile?.id).length > 0
+	);
+	const [likes, setLikes] = useState<number>(
+		comment.reactions.filter((r) => r.reaction === EReaction.like).length
+	);
+	const [dislikes, setDislikes] = useState<number>(
+		comment.reactions.filter((r) => r.reaction === EReaction.dislike).length
+	);
 	const [commentsCount, setCommentsCount] = useState<number>(
 		comment.children?.length || 0
 	);
@@ -60,7 +72,7 @@ export default function CommentCard({ comment, commentDisabled }: CommentCardPro
 					setProcessing(false);
 					return;
 				}
-				setLikes((prev) => prev - 1 > 0 ? prev - 1 : 0);
+				setLikes((prev) => (prev - 1 > 0 ? prev - 1 : 0));
 				setIsLiked(false);
 
 				deleteReactionMutation.mutate(
@@ -141,7 +153,7 @@ export default function CommentCard({ comment, commentDisabled }: CommentCardPro
 					return;
 				}
 
-				setDislikes((prev) => prev - 1 > 0 ? prev - 1 : 0);
+				setDislikes((prev) => (prev - 1 > 0 ? prev - 1 : 0));
 				setIsDisliked(false);
 
 				deleteReactionMutation.mutate(
@@ -158,7 +170,7 @@ export default function CommentCard({ comment, commentDisabled }: CommentCardPro
 							setMyReactionId(null);
 						},
 						onError: () => {
-							setDislikes((prev) => prev + 1 > 0 ? prev + 1 : 0);
+							setDislikes((prev) => (prev + 1 > 0 ? prev + 1 : 0));
 							setIsDisliked(true);
 						},
 						onSettled: () => setProcessing(false),
@@ -170,7 +182,7 @@ export default function CommentCard({ comment, commentDisabled }: CommentCardPro
 
 				// If like was active, remove it
 				if (isLiked) {
-					setLikes((prev) => prev - 1 > 0 ? prev - 1 : 0);
+					setLikes((prev) => (prev - 1 > 0 ? prev - 1 : 0));
 					setIsLiked(false);
 				}
 
@@ -189,14 +201,13 @@ export default function CommentCard({ comment, commentDisabled }: CommentCardPro
 							setMyReactionId(data.reactionId);
 						},
 						onError: () => {
-							setDislikes((prev) => prev - 1 > 0 ? prev - 1 : 0);
+							setDislikes((prev) => (prev - 1 > 0 ? prev - 1 : 0));
 							if (isLiked) {
 								setLikes((prev) => prev + 1);
 								setIsLiked(true);
 							}
 							setIsDisliked(false);
-						}
-						,
+						},
 						onSettled: () => setProcessing(false),
 					}
 				);
@@ -216,8 +227,18 @@ export default function CommentCard({ comment, commentDisabled }: CommentCardPro
 	);
 
 	const onToggleComment = () => {
-		setShowReplyBox(!showReplyBox);
+		setShowReplyBox((prev) => !prev);
 	};
+
+	// Memoize the RenderHTML props to avoid unnecessary re-renders
+	const renderHTMLProps = useMemo(
+		() => ({
+			source: { html: comment.htmlContent },
+			contentWidth: 300,
+			baseStyle: { color: Colors.dark.mediumText },
+		}),
+		[comment.htmlContent]
+	);
 
 	return (
 		<View style={styles.mainContainer}>
@@ -228,9 +249,9 @@ export default function CommentCard({ comment, commentDisabled }: CommentCardPro
 					height={35}
 				/>
 				{!showReplies && <VerticalSeprator />}
-				{!showReplies &&
-					(comment.children?.length || 0) > 0 &&
-					<StackedAvatars avatars={avatars} />}
+				{!showReplies && (comment.children?.length || 0) > 0 && (
+					<StackedAvatars avatars={avatars} />
+				)}
 			</View>
 			<View style={styles.commentContainer}>
 				<View style={styles.headerContainer}>
@@ -238,11 +259,7 @@ export default function CommentCard({ comment, commentDisabled }: CommentCardPro
 						{comment.user.username.toUpperCase()}
 					</ThemedText>
 				</View>
-				<RenderHTML
-					source={{ html: comment.htmlContent }}
-					contentWidth={300}
-					baseStyle={{ color: Colors.dark.mediumText }}
-				/>
+				<MemoizedRenderHTML {...renderHTMLProps} />
 				<View style={styles.commentActionsContainer}>
 					<ThemedButton
 						onPress={handleLike}
@@ -262,8 +279,7 @@ export default function CommentCard({ comment, commentDisabled }: CommentCardPro
 						<IconDislike color="white" filled={isDisliked} />
 						<ThemedText type="bodySmall">{dislikes}</ThemedText>
 					</ThemedButton>
-					{
-						!commentDisabled &&
+					{!commentDisabled && (
 						<ThemedButton
 							onPress={onToggleComment}
 							buttonBgColor="selectedIcon"
@@ -272,7 +288,7 @@ export default function CommentCard({ comment, commentDisabled }: CommentCardPro
 							<IconComment color="white" filled={false} />
 							<ThemedText type="bodySmall">{commentsCount}</ThemedText>
 						</ThemedButton>
-					}
+					)}
 				</View>
 				{showReplyBox && (
 					<CommentBox
@@ -294,7 +310,7 @@ export default function CommentCard({ comment, commentDisabled }: CommentCardPro
 				)}
 				{comment.children && comment.children.length > 0 && (
 					<ThemedButton
-						onPress={() => setShowReplies(!showReplies)}
+						onPress={() => setShowReplies((prev) => !prev)}
 						text={showReplies ? "Hide Replies" : "Show Replies"}
 						borderless
 						style={{ alignSelf: "flex-start", marginTop: 5, padding: 0 }}
@@ -337,3 +353,5 @@ const styles = StyleSheet.create({
 		gap: 10,
 	},
 });
+
+export default CommentCard;
