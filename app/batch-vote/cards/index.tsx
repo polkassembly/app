@@ -156,31 +156,33 @@ const ProposalVotingScreen: React.FC = () => {
         <TopBar style={{ paddingHorizontal: 16 }} />
         <View style={{ flex: 1 }}>
           <View style={{ flex: 1, paddingVertical: 20 }}>
-            <Swiper
-              containerStyle={{ backgroundColor: "" }}
-              infinite
-              ref={swiperRef}
-              cards={proposals}
-              renderCard={(cardData) => <MemoizedProposalCard card={cardData} key={cardData.index} index={cardData.index} showDetails={() => setProposalDetailsOpen(true)} />}
-              onSwipedLeft={(cardIndex) => onSwiped("nay", cardIndex)}
-              onSwipedRight={(cardIndex) => onSwiped("aye", cardIndex)}
-              onSwipedTop={(cardIndex) => onSwiped("abstain", cardIndex)}
-              stackSize={1}
-              disableBottomSwipe
-              verticalSwipe
-              animateCardOpacity={false}
-              overlayLabels={{
-                left: { element: <OverlayLabel type="nay" /> },
-                right: { element: <OverlayLabel type="aye" /> },
-                top: { element: <OverlayLabel type="abstain" /> },
-              }}
-              cardVerticalMargin={20}
-              cardHorizontalMargin={20}
-            />
+            <View style={{ flex: 1, zIndex: 5 }}>
+              <Swiper
+                containerStyle={{ backgroundColor: "" }}
+                infinite
+                ref={swiperRef}
+                cards={proposals}
+                renderCard={(cardData) => <MemoizedProposalCard card={cardData} key={cardData.index} index={cardData.index} showDetails={() => setProposalDetailsOpen(true)} />}
+                onSwipedLeft={(cardIndex) => onSwiped("nay", cardIndex)}
+                onSwipedRight={(cardIndex) => onSwiped("aye", cardIndex)}
+                onSwipedTop={(cardIndex) => onSwiped("abstain", cardIndex)}
+                stackSize={1}
+                disableBottomSwipe
+                verticalSwipe
+                animateCardOpacity={false}
+                overlayLabels={{
+                  left: { element: <OverlayLabel type="nay" /> },
+                  right: { element: <OverlayLabel type="aye" /> },
+                  top: { element: <OverlayLabel type="abstain" /> },
+                }}
+                cardVerticalMargin={20}
+                cardHorizontalMargin={20}
+              />
+            </View>
             {/* FIXME: Bottom card for stack effect, workaround for vote card flashing */}
             {
               index + 1 < proposals.length &&
-              <View style={{ position: "absolute", left: 0, right: 0, bottom: 0, zIndex: 0, top: 20, padding: 20 }}>
+              <View style={{ position: "absolute", left: 0, right: 0, bottom: 0, zIndex: 0, top: 20, padding: 30 }}>
                 <MemoizedProposalCard card={proposals[index + 1]} index={proposals[index + 1].index} showDetails={() => setProposalDetailsOpen(true)} />
               </View>
             }
