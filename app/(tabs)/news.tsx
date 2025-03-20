@@ -12,6 +12,9 @@ import { Asset } from "expo-asset";
 import * as FileSystem from "expo-file-system";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { NewsHeader, TopCoinsSection, TreasurySection, TwitterEmbed } from "@/lib/components/news";
+import { ThemedView } from "@/lib/components/ThemedView";
+import { useThemeColor } from "@/lib/hooks";
+import { Ionicons } from "@expo/vector-icons";
 
 // Cache to store the HTML content
 let cachedHtmlContent: string | null = null;
@@ -19,6 +22,8 @@ let cachedHtmlContent: string | null = null;
 export default function NewsScreen() {
   const [htmlContent, setHtmlContent] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+
+  const backgroundColor = useThemeColor({}, "background")
 
   // Load HTML asset and coin data on mount
   useEffect(() => {
@@ -52,18 +57,19 @@ export default function NewsScreen() {
         {
           htmlContent ? (
             <TwitterEmbed htmlContent={htmlContent} />
-          ) : error ? (
+          ) : !error ? (
             <View style={styles.center}>
               <ThemedText>
                 Failed to load news content.
               </ThemedText>
               <TouchableOpacity
-                style={styles.retryButton}
+                style={[styles.retryButton, { backgroundColor: backgroundColor }]}
                 onPress={() => {
                   setHtmlContent(null);
                   setError(null);
                 }}
               >
+                <Ionicons name="refresh" size={16} color={Colors.dark.tint} />
                 <ThemedText>
                   Retry
                 </ThemedText>
@@ -94,7 +100,10 @@ const styles = StyleSheet.create({
     marginTop: 16,
     paddingHorizontal: 20,
     paddingVertical: 10,
-    backgroundColor: Colors.dark.tint,
+    gap: 4,
     borderRadius: 4,
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
   },
 });

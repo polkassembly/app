@@ -9,6 +9,8 @@ import {
 import Svg, { Path } from "react-native-svg";
 import { ThemedText } from "@/lib/components/ThemedText";
 import { Colors } from "@/lib/constants/Colors";
+import { useThemeColor } from "@/lib/hooks";
+import { Ionicons } from "@expo/vector-icons";
 
 // Interface for coin data
 interface CoinData {
@@ -29,6 +31,8 @@ export default function TopCoinsSection() {
   const [coinData, setCoinData] = useState<CoinData[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const backgroundColor = useThemeColor({}, "background");
 
   const fetchCoinData = async () => {
     setLoading(true);
@@ -104,9 +108,10 @@ export default function TopCoinsSection() {
         <View style={styles.errorContainer}>
           <ThemedText type="bodyMedium1">{error}</ThemedText>
           <TouchableOpacity
-            style={styles.retryButton}
+            style={[styles.retryButton, { backgroundColor: backgroundColor }]}
             onPress={fetchCoinData}
           >
+            <Ionicons name="refresh" size={16} color="#fff" />
             <ThemedText type="bodyMedium1" style={styles.retryText}>
               Retry
             </ThemedText>
@@ -254,8 +259,11 @@ const styles = StyleSheet.create({
     marginTop: 16,
     paddingHorizontal: 20,
     paddingVertical: 10,
-    backgroundColor: Colors.dark.tint,
     borderRadius: 4,
+    gap: 4,
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
   },
   retryText: {
     color: "#fff",
