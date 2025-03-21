@@ -106,7 +106,6 @@ function Summary({ ayePercent, status, voteMetrics, nayPercent }: SummaryProps) 
     formatter.format(
       Number(formatBnBalance(balance, { withThousandDelimitor: false }, ENetwork.POLKADOT))
     );
-
   return (
     <ThemedView
       type="background"
@@ -138,8 +137,8 @@ function Summary({ ayePercent, status, voteMetrics, nayPercent }: SummaryProps) 
       <View style={{ padding: 16, gap: 16 }}>
         <View style={{ marginHorizontal: 8, flexDirection: "row", justifyContent: "space-between" }}>
           <View style={{ flexDirection: "row", gap: 16 }}>
-            <ThemedText>Aye</ThemedText>
-            <ThemedText colorName="mediumText">
+            <ThemedText type="bodySmall1">Aye</ThemedText>
+            <ThemedText colorName="mediumText" type="bodySmall1" style={{ lineHeight: 22}}>
               {formatBnBalance(
                 voteMetrics?.aye.value || "0",
                 { withUnit: true, numberAfterComma: 2, compactNotation: true },
@@ -148,8 +147,8 @@ function Summary({ ayePercent, status, voteMetrics, nayPercent }: SummaryProps) 
             </ThemedText>
           </View>
           <View style={{ flexDirection: "row", gap: 16 }}>
-            <ThemedText>Nay</ThemedText>
-            <ThemedText colorName="mediumText">
+            <ThemedText type="bodySmall1">Nay</ThemedText>
+            <ThemedText colorName="mediumText" type="bodySmall1" style={{ lineHeight: 22}}>
               {formatBnBalance(
                 voteMetrics?.nay.value || "0",
                 { withUnit: true, numberAfterComma: 2, compactNotation: true },
