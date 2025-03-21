@@ -1,7 +1,7 @@
 import { AxiosError } from "axios";
 import { router, useLocalSearchParams } from "expo-router";
-import React, { FunctionComponent, useState } from "react";
-import { Image, ScrollView, StyleSheet, TextInput, TouchableOpacity, View } from "react-native";
+import React, { useState } from "react";
+import { ScrollView, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import BottomButton from "@/lib/components/shared/BottomButton";
 import { ThemedText } from "@/lib/components/ThemedText";
@@ -79,7 +79,7 @@ export default function BatchVotingScreen() {
         )}
       </ScrollView>
 
-      <View style={{ position: "absolute", bottom: -10, left: 0, right: 0 }}>
+      <View style={{ position: "absolute", bottom: 0, left: 0, right: 0 }}>
         <BottomButton onPress={onPressAddToCart}>Add to Cart</BottomButton>
       </View>
     </SafeAreaView>

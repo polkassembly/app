@@ -57,7 +57,7 @@ export default function NewsScreen() {
         {
           htmlContent ? (
             <TwitterEmbed htmlContent={htmlContent} />
-          ) : !error ? (
+          ) : error ? (
             <View style={styles.center}>
               <ThemedText>
                 Failed to load news content.
