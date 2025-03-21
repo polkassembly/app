@@ -9,13 +9,10 @@ import {
   Animated,
   Image,
   ScrollView,
-  BackHandler
 } from "react-native";
-import debounce from "lodash/debounce";
-import { algoliasearch } from "algoliasearch";
 import { ResizeMode, Video } from "expo-av";
 import { LinearGradient } from "expo-linear-gradient";
-import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { openBrowserAsync } from "expo-web-browser";
 
 import { ThemedText } from "@/lib/components/ThemedText";
@@ -26,34 +23,17 @@ import { IconPoints } from "@/lib/components/icons/icon-points";
 import { IconSearch } from "@/lib/components/icons/shared";
 import { Colors } from "@/lib/constants/Colors";
 import { useProfileStore } from "@/lib/store/profileStore";
-import { QuickActions } from "@/lib/components/browser";
+import { QuickActions, SearchOverlay } from "@/lib/components/browser";
 import { useThemeColor } from "@/lib/hooks/useThemeColor";
-import { router } from "expo-router";
-import { getSinglePostLinkFromProposalType } from "@/lib/util/algolia";
-import { EProposalType } from "@/lib/types";
-
-const ALGOLIA_APP_ID = process.env.EXPO_PUBLIC_ALGOLIA_APP_ID || "";
-const ALGOLIA_SEARCH_API_KEY = process.env.EXPO_PUBLIC_ALGOLIA_SEARCH_API_KEY || "";
-const algoliaClient = algoliasearch(ALGOLIA_APP_ID, ALGOLIA_SEARCH_API_KEY);
 
 export default function ChromeStyleBrowser() {
   const [isSearching, setIsSearching] = useState(false);
-  const [query, setQuery] = useState("");
-  const [results, setResults] = useState([]);
-  const [loading, setLoading] = useState(false);
   const [keyboardVisible, setKeyboardVisible] = useState(false);
-
-  // Animation values
-  const searchBarAnim = useRef(new Animated.Value(100)).current;
   const contentOpacity = useRef(new Animated.Value(1)).current;
-
-  // Ref for the search input (to autofocus when search mode is activated)
-  const searchInputRef = useRef<TextInput>(null);
-  const backgroundColor = useThemeColor({}, "secondaryBackground");
-  const background = useThemeColor({}, "background");
   const insets = useSafeAreaInsets();
+  const backgroundColor = useThemeColor({}, "secondaryBackground");
 
-  // Listen for keyboard events to track visibility
+  // Listen for keyboard events (for browser UI)
   useEffect(() => {
     const showSub = Keyboard.addListener("keyboardDidShow", () => {
       setKeyboardVisible(true);
@@ -67,185 +47,41 @@ export default function ChromeStyleBrowser() {
     };
   }, []);
 
-  // Handle hardware back button when in search mode
-  useEffect(() => {
-    const backHandler = BackHandler.addEventListener("hardwareBackPress", () => {
-      if (isSearching) {
-        handleBackPress();
-        return true;
-      }
-      return false;
-    });
-    return () => backHandler.remove();
-  }, [isSearching, keyboardVisible]);
-
-  // searchPosts function to fetch posts from Algolia
-  const searchPosts = async (searchQuery: string) => {
-    if (!searchQuery || searchQuery.length < 2) {
-      setResults([]);
-      return;
-    }
-    setLoading(true);
-    try {
-      const { hits } = await algoliaClient.searchSingleIndex({
-        indexName: "polkassembly_posts",
-        searchParams: { query: searchQuery, hitsPerPage: 10 }
-      });
-      setResults(hits);
-    } catch (error) {
-      console.error("Error searching posts:", error);
-    }
-    setLoading(false);
-  };
-
-  // Debounce search to avoid too many API calls
-  const debouncedSearch = useCallback(debounce(searchPosts, 500), []);
-
-  const handleChangeText = (text: string) => {
-    setQuery(text);
-    debouncedSearch(text);
-  };
-
-  const handleSubmitEditing = () => {
-    Keyboard.dismiss();
-    searchPosts(query);
-  };
-
-  // Activate search mode: animate search bar in, focus input
   const activateSearch = () => {
     setIsSearching(true);
-    Animated.parallel([
-      Animated.timing(searchBarAnim, {
-        toValue: 0,
-        duration: 300,
-        useNativeDriver: true,
-      }),
-      Animated.timing(contentOpacity, {
-        toValue: 0,
-        duration: 200,
-        useNativeDriver: true,
-      })
-    ]).start(() => {
-      if (searchInputRef.current) {
-        searchInputRef.current.focus();
-      }
-    });
-  };
-
-  // Combined back press handler: if keyboard is visible, dismiss it first,
-  // then after a short delay, animate back to browser mode.
-  const handleBackPress = () => {
-    if (keyboardVisible) {
-      Keyboard.dismiss();
-    } else {
-      deactivateSearch();
-    }
+    Animated.timing(contentOpacity, {
+      toValue: 0,
+      duration: 200,
+      useNativeDriver: true,
+    }).start();
   };
 
   const deactivateSearch = () => {
-    Animated.parallel([
-      Animated.timing(searchBarAnim, {
-        toValue: 100,
-        duration: 300,
-        useNativeDriver: true,
-      }),
-      Animated.timing(contentOpacity, {
-        toValue: 1,
-        duration: 300,
-        useNativeDriver: true,
-      })
-    ]).start(() => {
+    Animated.timing(contentOpacity, {
+      toValue: 1,
+      duration: 300,
+      useNativeDriver: true,
+    }).start(() => {
       setIsSearching(false);
-      setQuery("");
-      setResults([]);
     });
   };
-
-  const renderSearchItem = ({ item }) => (
-    <TouchableOpacity
-      style={[styles.searchResultItem, { backgroundColor: background }]}
-      onPress={() => {
-        const proposal_type = getSinglePostLinkFromProposalType(item.post_type);
-        router.push(`/proposal/${item.id}?proposalType=${proposal_type as EProposalType}`);
-      }}
-    >
-      <ThemedText type="bodySmall3">
-        {item.title}
-      </ThemedText>
-    </TouchableOpacity>
-  );
 
   return (
     <View style={styles.mainContainer}>
       <View style={{ flex: 1, marginTop: insets.top, marginBottom: insets.bottom, marginLeft: insets.left, marginRight: insets.right }}>
-
-        {/* SEARCH OVERLAY (appears when active) */}
+        
+        {/* Render Search Overlay only if search mode is active */}
         {isSearching && (
-          <View style={[styles.searchOverlay, { backgroundColor }]}>
-            <ThemedView style={{
-              width: "100%",
-              borderRadius: 10,
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "center"
-            }}
-              type="secondaryBackground"
-            >
-              <Animated.View style={{
-                transform: [{ translateY: searchBarAnim }],
-                width: "100%",
-                borderRadius: 10,
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "center"
-              }}>
-                <TouchableOpacity onPress={handleBackPress} style={styles.backButton}>
-                  <IconBrowser color={Colors.dark.text} style={styles.backIcon} />
-                </TouchableOpacity>
-                <IconSearch />
-                <TextInput
-                  ref={searchInputRef}
-                  placeholder="Search posts..."
-                  placeholderTextColor={Colors.dark.mediumText}
-                  style={styles.overlaySearchInput}
-                  value={query}
-                  onChangeText={handleChangeText}
-                  returnKeyType="search"
-                  onSubmitEditing={handleSubmitEditing}
-                  autoCapitalize="none"
-                  autoCorrect={false}
-                />
-              </Animated.View>
-            </ThemedView>
-
-            {/* Search results rendered below the search bar */}
-            <View style={{ flex: 1, marginTop: 4, borderRadius: 10, overflow: "hidden" }}>
-              {loading ? (
-                <ThemedText style={styles.loadingText}>Loading...</ThemedText>
-              ) : (
-                <FlatList
-                  data={results}
-                  keyExtractor={(item) => item.objectID}
-                  renderItem={renderSearchItem}
-                  ListEmptyComponent={
-                    query.length >= 2 ? (
-                      <ThemedText style={styles.emptyText}>No results found</ThemedText>
-                    ) : null
-                  }
-                  keyboardShouldPersistTaps="handled"
-                />
-              )}
-            </View>
-          </View>
+          <SearchOverlay 
+            onDeactivate={deactivateSearch} 
+            backgroundColor={backgroundColor} 
+          />
         )}
 
-        {/* Browser UI  */}
+        {/* Browser UI */}
         <Animated.View style={[styles.browserContent, { opacity: contentOpacity, display: isSearching ? 'none' : 'flex' }]}>
           <TitleSection />
-          <ScrollView
-            style={styles.container}
-            contentContainerStyle={{ paddingBottom: 64 }}
-          >
+          <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 64 }}>
             <View style={styles.videoContainer}>
               <Video
                 source={require("@/assets/videos/browser/bg.mp4")}
@@ -279,14 +115,14 @@ export default function ChromeStyleBrowser() {
             </View>
 
             <View style={styles.browserInnerContent}>
-              {/* Browser search input, activates search mode on click*/}
+              {/* Browser search input, activates search mode on focus */}
               <View style={styles.searchInputBrowser}>
                 <IconSearch />
                 <TextInput
                   placeholder="Search by name or enter URL"
                   placeholderTextColor={Colors.dark.mediumText}
                   style={{ color: Colors.dark.text, flex: 1 }}
-                  onPress={activateSearch}
+                  onFocus={activateSearch}
                 />
               </View>
 
@@ -342,7 +178,7 @@ export default function ChromeStyleBrowser() {
   );
 }
 
-// Title section visible in both modes
+// Title section (unchanged)
 function TitleSection() {
   const userProfile = useProfileStore((state) => state.profile);
   return (
@@ -394,17 +230,6 @@ const styles = StyleSheet.create({
     zIndex: 200,
     paddingHorizontal: 12
   },
-  searchBarOverlay: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    flexDirection: "row",
-    alignItems: "center",
-    zIndex: 30,
-  },
   backButton: {
     padding: 8,
     marginRight: 8,
@@ -424,9 +249,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     borderBottomWidth: 1,
     borderBottomColor: Colors.dark.stroke,
-  },
-  itemText: {
-    fontSize: 16,
   },
   emptyText: {
     fontSize: 16,
@@ -506,10 +328,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     paddingVertical: 4,
   },
-  searchPlaceholder: {
-    color: Colors.dark.mediumText,
-    flex: 1,
-  },
   quickActionsContainer: {
     gap: 16,
   },
@@ -537,4 +355,3 @@ const styles = StyleSheet.create({
     color: "#9B9B9B",
   },
 });
-

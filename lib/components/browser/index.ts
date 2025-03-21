@@ -1,3 +1,4 @@
 import QuickActions from "./QuickActions";
+import SearchOverlay from "./SearchOverlay";
 
-export { QuickActions };
+export { SearchOverlay, QuickActions };
