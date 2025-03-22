@@ -1,4 +1,4 @@
-import { BatchVoteForm, Note } from "@/lib/components/feed/BatchVoteForm";
+import { BatchVoteForm } from "@/lib/components/voting";
 import IconAbstain from "@/lib/components/icons/shared/icon-abstain";
 import IconAye from "@/lib/components/icons/shared/icon-aye";
 import IconClose from "@/lib/components/icons/shared/icon-close";
@@ -22,6 +22,7 @@ import { ActivityIndicator, ScrollView, TouchableOpacity, View } from "react-nat
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import IconPencil from "@/lib/components/icons/shared/icon-pencil";
 import Toast from "react-native-toast-message";
+import { Note } from "@/lib/components/shared";
 
 export default function VotedProposals() {
 	const { data: cart, isLoading: isCartLoading } = useGetCartItems();

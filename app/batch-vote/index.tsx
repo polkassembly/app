@@ -6,13 +6,14 @@ import { ThemedText } from "@/lib/components/ThemedText";
 import { ThemedView } from "@/lib/components/ThemedView";
 import { TopBar } from "@/lib/components/Topbar";
 import { Colors } from "@/lib/constants/Colors";
-import { Vote, Note, BatchVoteForm } from "@/lib/components/feed/BatchVoteForm";
+import { Vote, BatchVoteForm } from "@/lib/components/voting/batch-voting/BatchVoteForm";
 import { IconVote } from "@/lib/components/icons/Profile";
 import { useQueryClient } from "@tanstack/react-query";
 import { activityFeedFunction, buildActivityFeedQueryKey } from "@/lib/net/queries/post";
 import { buildCartItemsQueryKey, getCartItemsFunction } from "@/lib/net/queries/actions";
 import { useProfileStore } from "@/lib/store/profileStore";
 import { useThemeColor } from "@/lib/hooks/useThemeColor";
+import { Note } from "@/lib/components/shared";
 
 export default function BatchVotingScreen() {
   const [vote, setVote] = useState<Vote>("aye");

@@ -8,8 +8,9 @@ import { ThemedText } from "@/lib/components/ThemedText";
 import { TopBar } from "@/lib/components/Topbar";
 import useAddCartItem from "@/lib/net/queries/actions/useAddCartItem";
 import { Colors } from "@/lib/constants/Colors";
-import { Vote, BatchVoteForm, Note } from "@/lib/components/feed/BatchVoteForm";
+import { Vote, BatchVoteForm } from "@/lib/components/voting/batch-voting/BatchVoteForm";
 import { EProposalType } from "@/lib/types";
+import { Note } from "@/lib/components/shared";
 
 const ERROR_DEFAULT = "Something went wrong";
 

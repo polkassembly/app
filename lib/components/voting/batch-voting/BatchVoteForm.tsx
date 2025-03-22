@@ -10,10 +10,18 @@ import { ThemedView } from "@/lib/components/ThemedView";
 import { Colors } from "@/lib/constants/Colors";
 import { useThemeColor } from "@/lib/hooks/useThemeColor";
 import Slider from "@react-native-community/slider";
-import { FunctionComponent } from "react";
+import React, { useState, useEffect } from "react";
 import { Image, StyleSheet, TextInput, TouchableOpacity, View } from "react-native";
+import TriStateButtons from "./TriStateButton";
+import ConvictionSlider from "./ConvictionSlider";
 
 export type Vote = "aye" | "nay" | "abstain";
+
+export interface Abstain {
+  abstain: number;
+  aye: number;
+  nay: number;
+}
 
 function getLockPeriodText(conviction: number): string {
   if (conviction === 0) return "No Lockup Period";
@@ -29,6 +37,8 @@ export interface BatchVoteFormProps {
   setNayAmount: (value: number) => void;
   abstainAmount: number;
   setAbstainAmount: (value: number) => void;
+  abstain?: Abstain;
+  onAbstainChange?: (value: Abstain) => void;
   conviction: number;
   setConviction: (value: number) => void;
   onSaveAndNext?: () => void;
@@ -47,6 +57,8 @@ export function BatchVoteForm({
   setNayAmount,
   abstainAmount,
   setAbstainAmount,
+  abstain,
+  onAbstainChange,
   conviction,
   setConviction,
   onSaveAndNext,
@@ -64,10 +76,33 @@ export function BatchVoteForm({
     }
   };
 
+  // Update abstain values if the props are provided
+  useEffect(() => {
+    if (abstain && onAbstainChange) {
+      if (vote === "aye") {
+        onAbstainChange({
+          ...abstain,
+          aye: ayeAmount
+        });
+      } else if (vote === "nay") {
+        onAbstainChange({
+          ...abstain,
+          nay: nayAmount
+        });
+      } else if (vote === "abstain") {
+        onAbstainChange({
+          ...abstain,
+          abstain: abstainAmount
+        });
+      }
+    }
+  }, [vote, ayeAmount, nayAmount, abstainAmount]);
+
   return (
     <ThemedView style={[styles.card, { gap: 24 }]}>
       <TriStateButtons selected={vote} onSelectionChanged={handleVoteChange} />
 
+      {/* For non-abstain mode, show only the specific selected vote input */}
       {vote === "aye" && (
         <View style={{ gap: 8 }}>
           <SectionHeader title="Aye Amount" Icon={IconAye} color="#2ED47A" />
@@ -85,6 +120,20 @@ export function BatchVoteForm({
           <SectionHeader title="Abstain Amount" Icon={IconAbstain} color="#FFA013" />
           <AmountInput value={abstainAmount} onChange={setAbstainAmount} />
         </View>
+      )}
+
+      {/* For abstain mode, show all three inputs */}
+      {vote === "abstain" && abstain && (
+        <>
+          <View style={{ gap: 8 }}>
+            <SectionHeader title="Aye Amount" Icon={IconAye} color="#2ED47A" />
+            <AmountInput value={abstain.aye} onChange={(value) => onAbstainChange && onAbstainChange({...abstain, aye: value})} />
+          </View>
+          <View style={{ gap: 8 }}>
+            <SectionHeader title="Nay Amount" Icon={IconNay} color="#F53C3C" />
+            <AmountInput value={abstain.nay} onChange={(value) => onAbstainChange && onAbstainChange({...abstain, nay: value})} />
+          </View>
+        </>
       )}
 
       <View style={{ gap: 8 }}>
@@ -108,7 +157,7 @@ export function BatchVoteForm({
         <ThemedText type="bodyMedium2">{getLockPeriodText(conviction)}</ThemedText>
       </ThemedView>
 
-      {/* Render the buttons only if hideButtons is false */}
+      {/* Render buttons only if hideButtons is false */}
       {!hideButtons &&
         (singleVoteMode ? (
           <View style={{ flexDirection: "row", gap: 8 }}>
@@ -139,7 +188,7 @@ export function BatchVoteForm({
 
 interface SectionHeaderProps {
   title: string;
-  Icon: FunctionComponent<IconProps>;
+  Icon: React.FunctionComponent<IconProps>;
   color: string;
 }
 
@@ -152,120 +201,31 @@ function SectionHeader({ title, Icon, color }: SectionHeaderProps) {
   );
 }
 
-interface ConvictionSliderProps {
-  conviction: number;
-  onConvictionChange: (value: number) => void;
-}
-
-function ConvictionSlider({ conviction, onConvictionChange }: ConvictionSliderProps) {
-  const STEPS = 6;
-  const transformOut = (value: number) => Math.round(value * STEPS);
-  const transformIn = (value: number) => value / STEPS;
-  const color = useThemeColor({}, "accent");
-
-  return (
-    <View>
-      <Slider
-        style={{ width: "100%", height: 20 }}
-        value={transformIn(conviction)}
-        thumbImage={require("@/assets/images/slider-thumb.png")}
-        tapToSeek={true}
-        minimumTrackTintColor={color}
-        maximumTrackTintColor="#39383A"
-        step={1 / STEPS}
-        onValueChange={(value: number) => onConvictionChange(transformOut(value))}
-      />
-      <View style={{ flex: 1, flexDirection: "row", justifyContent: "space-between" }}>
-        <ThemedText type="bodyMedium3">0.1x</ThemedText>
-        <ThemedText type="bodyMedium3">1x</ThemedText>
-        <ThemedText type="bodyMedium3">2x</ThemedText>
-        <ThemedText type="bodyMedium3">3x</ThemedText>
-        <ThemedText type="bodyMedium3">4x</ThemedText>
-        <ThemedText type="bodyMedium3">5x</ThemedText>
-        <ThemedText type="bodyMedium3">6x</ThemedText>
-      </View>
-    </View>
-  );
-}
-
-interface TriStateButtonsProps {
-  selected: Vote;
-  onSelectionChanged: (next: Vote) => void;
-}
-
-function TriStateButtons({ selected, onSelectionChanged }: TriStateButtonsProps) {
-  const colorAye = "#2ED47A";
-  const colorNay = "#F53C3C";
-  const colorAbstain = "#FFA013";
-  return (
-    <View style={{ flexDirection: "row", gap: 8, alignItems: "center" }}>
-      <TriStateButton
-        Icon={IconAye}
-        color={colorAye}
-        selected={selected === "aye"}
-        onPress={() => onSelectionChanged("aye")}
-      >
-        AYE
-      </TriStateButton>
-      <TriStateButton
-        Icon={IconNay}
-        color={colorNay}
-        selected={selected === "nay"}
-        onPress={() => onSelectionChanged("nay")}
-      >
-        NAY
-      </TriStateButton>
-      <TriStateButton
-        Icon={IconAbstain}
-        color={colorAbstain}
-        selected={selected === "abstain"}
-        onPress={() => onSelectionChanged("abstain")}
-      >
-        ABSTAIN
-      </TriStateButton>
-    </View>
-  );
-}
-
-interface TriStateButtonProps {
-  selected: boolean;
-  Icon: FunctionComponent<IconProps>;
-  color: string;
-  onPress: () => void;
-  children: string;
-}
-
-function TriStateButton({ color, Icon, selected, onPress, children }: TriStateButtonProps) {
-  return (
-    <TouchableOpacity onPress={onPress} style={{ flex: 1 }}>
-      <View
-        style={[
-          styles.triStateButton,
-          { backgroundColor: selected ? color : Colors.dark.secondaryBackground },
-        ]}
-      >
-        <Icon color={selected ? Colors.dark.secondaryBackground : color} />
-        <ThemedText
-          darkColor={selected ? Colors.dark.secondaryBackground : color}
-          lightColor={selected ? Colors.dark.secondaryBackground : color}
-          type="bodySmall"
-        >
-          {children}
-        </ThemedText>
-      </View>
-    </TouchableOpacity>
-  );
-}
-
 interface AmountInputProps {
   value: number;
   onChange: (value: number) => void;
 }
 
+const MAX_VOTING_VALUE = 1000000;
+const MIN_VOTING_VALUE = 0.00001;
+
 function AmountInput({ value, onChange }: AmountInputProps) {
   const borderColor = useThemeColor({}, "stroke");
   const backgroundColor = useThemeColor({}, "secondaryBackground");
   const color = useThemeColor({}, "mediumText");
+
+  // Initialize with the value or "1" if not provided
+  const [inputValue, setInputValue] = useState(
+    value ? value.toString() : "1"
+  );
+
+  useEffect(() => {
+    // Only update if the value changes and is different from current inputValue
+    const stringValue = value.toString();
+    if (stringValue !== inputValue) {
+      setInputValue(stringValue);
+    }
+  }, [value]);
 
   return (
     <View
@@ -298,44 +258,46 @@ function AmountInput({ value, onChange }: AmountInputProps) {
       </View>
       <TextInput
         keyboardType="numeric"
-        value={value === 0 ? "" : value.toString()}
-        onChangeText={(text) => {
-          const parsed = parseInt(text);
-          onChange(isNaN(parsed) ? 0 : parsed);
-        }}
-        placeholder="0"
+        value={inputValue}
+        placeholder="1"
         placeholderTextColor={color}
         style={{ flex: 1, textAlign: "right", color, paddingHorizontal: 8 }}
+        onFocus={() => {
+          if (inputValue === "1") {
+            setInputValue("");
+          }
+        }}
+        onBlur={() => {
+          if (inputValue.trim() === "") {
+            setInputValue("1");
+            onChange(1);
+          }
+        }}
+        onChangeText={(text) => {
+          // Allow decimal values
+          const sanitized = text.replace(/[^0-9.]/g, "");
+          // Ensure only one decimal point
+          const parts = sanitized.split('.');
+          const formattedText = parts[0] + (parts.length > 1 ? '.' + parts.slice(1).join('') : '');
+          
+          setInputValue(formattedText);
+          
+          // Parse as floating point for decimal support
+          let parsed = parseFloat(formattedText);
+          
+          // Handle validation
+          if (isNaN(parsed)) {
+            parsed = 1;
+          } else if (parsed < MIN_VOTING_VALUE && parsed !== 0) {
+            parsed = MIN_VOTING_VALUE;
+          } else if (parsed > MAX_VOTING_VALUE) {
+            parsed = MAX_VOTING_VALUE;
+          }
+          
+          // Only update if value has changed
+          onChange(parsed);
+        }}
       />
-    </View>
-  );
-}
-
-interface NoteProps {
-  content: string;
-  textColor?: string;
-  iconColor?: string;
-  iconSize?: number;
-  bgColor?: string
-}
-
-export function Note({ iconColor, iconSize, content, textColor, bgColor }: NoteProps) {
-  return (
-    <View
-      style={{
-        backgroundColor: bgColor || "#002C4F",
-        padding: 8,
-        borderRadius: 8,
-        flexDirection: "row",
-        flexWrap: "wrap",
-        alignItems: "center",
-        gap: 10,
-      }}
-    >
-      <IconInfo color={iconColor} iconWidth={iconSize} iconHeight={iconSize}/>
-      <ThemedText type="bodySmall3" style={{ flex: 1, color: textColor || "#FFFFFF" }}>
-        {content}
-      </ThemedText>
     </View>
   );
 }
@@ -352,13 +314,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 8,
   },
-  triStateButton: {
-    flexDirection: "row",
-    gap: 8,
-    paddingHorizontal: 16,
-    paddingVertical: 2,
-    borderRadius: 16,
-    alignItems: "center",
-    justifyContent: "center",
-  },
 });
+
+export default BatchVoteForm;
