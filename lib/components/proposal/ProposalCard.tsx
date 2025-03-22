@@ -4,7 +4,7 @@ import { ContainerType, ThemedView } from "../ThemedView";
 import HorizontalSeparator from "../shared/HorizontalSeparator";
 
 import { useGetUserByAddress, useGetUserById } from "@/lib/net/queries/profile";
-import { ENetwork, Post } from "@/lib/types/post";
+import { EAllowedCommentor, ENetwork, Post } from "@/lib/types/post";
 import { ProposalActions } from "./actions";
 import { ProposalHeader, ProposalHeaderSkeleton } from "./header/ProposalHeader";
 import { ProposalBody, ProposalBodySkeleton } from "./body";
@@ -74,7 +74,15 @@ function ProposalCard({
 			{children}
 			{(!withoutActions || !withoutViewMore) && <HorizontalSeparator />}
 			{!withoutActions && (
-				<ProposalActions post={post} />
+				<ProposalActions
+					index={post.index}
+					title={post.title}
+					proposalType={post.proposalType}
+					metrics={post.metrics}
+					reactions={post.reactions || []}
+					allowedCommentor={post.allowedCommentor || EAllowedCommentor.ALL}
+					userSubscriptionId={post.userSubscriptionId}
+				/>
 			)}
 
 			{!withoutViewMore && (

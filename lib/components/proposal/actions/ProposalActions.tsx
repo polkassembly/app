@@ -1,32 +1,51 @@
-import { EReaction, Post } from "@/lib/types";
-import { StyleSheet, View, Image } from "react-native";
+import { EReaction } from "@/lib/types";
+import { StyleSheet, View } from "react-native";
 import ShareButton from "./ShareButton";
 import { IconLike, IconDislike, IconComment, IconBookmark } from "../../icons/shared";
 import ThemedButton from "../../ThemedButton";
 import { ThemedText } from "../../ThemedText";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import CommentBox from "../../feed/CommentBox";
 import Toast from "react-native-toast-message";
 import { useProfileStore } from "@/lib/store/profileStore";
 import { AddReactionResponse, useAddReaction, useDeleteReaction, useSubscribeProposal, useUnsubscribeProposal } from "@/lib/net/queries/actions";
-import { useThemeColor } from "@/lib/hooks";
 import { useIsFocused } from "@react-navigation/native";
+import { EAllowedCommentor, EProposalType, Reaction } from "@/lib/types/post";
 
 interface ProposalActionsProps {
-  post: Post;
+  index: string;
+  title: string;
+  proposalType: EProposalType;
+  metrics: {
+    reactions: {
+      like: number;
+      dislike: number;
+    };
+    comments: number;
+  };
+  reactions: Reaction[];
+  allowedCommentor: EAllowedCommentor;
+  userSubscriptionId?: string;
 }
 
-// FIXME: This component uses local state for reactions and comments count can be replaced with single source
-function ProposalActions({ post }: ProposalActionsProps) {
+function ProposalActions({ index, title, proposalType, metrics, reactions, allowedCommentor, userSubscriptionId }: ProposalActionsProps) {
+  const isfocused = useIsFocused();
+
+  // Memoize only the metrics and reactions based on screen focus
+  const memoizedMetrics = useMemo(() => metrics, [isfocused]);
+  const memoizedReactions = useMemo(() => reactions, [isfocused]);
+
+  // Get the user profile from the store.
   const userProfile = useProfileStore((state) => state.profile);
-  const currentUserReaction = post.reactions?.find(
+
+  const currentUserReaction = memoizedReactions?.find(
     (reaction) => reaction.userId === userProfile?.id
   );
 
-  // Local state seeded with post metrics.
-  const [localLikeCount, setLocalLikeCount] = useState(post.metrics.reactions.like);
-  const [localDislikeCount, setLocalDislikeCount] = useState(post.metrics.reactions.dislike);
-  const [localCommentCount, setLocalCommentCount] = useState(post.metrics.comments);
+  // Local state seeded with metrics.
+  const [localLikeCount, setLocalLikeCount] = useState(() => memoizedMetrics.reactions.like);
+  const [localDislikeCount, setLocalDislikeCount] = useState(() => memoizedMetrics.reactions.dislike);
+  const [localCommentCount, setLocalCommentCount] = useState(() => memoizedMetrics.comments);
 
   // Reaction state holds the current reaction type and its id.
   const [reactionState, setReactionState] = useState<{ reaction: EReaction | null; id?: string }>(() =>
@@ -34,14 +53,11 @@ function ProposalActions({ post }: ProposalActionsProps) {
       ? { reaction: currentUserReaction.reaction, id: currentUserReaction.id }
       : { reaction: null, id: undefined }
   );
-  const [isUpdatingReaction, setIsUpdatingReaction] = useState(false);
+  const [isUpdatingLike, setIsUpdatingLike] = useState(false);
+  const [isUpdatingDislike, setIsUpdatingDislike] = useState(false);
   const [showCommentBox, setShowCommentBox] = useState(false);
 
-  // State to show GIF animation once.
-  const [showLikeGif, setShowLikeGif] = useState(false);
-  const [showDislikeGif, setShowDislikeGif] = useState(false);
-
-  const [subscribed, setSubscribed] = useState(post.userSubscriptionId ? true : false);
+  const [subscribed, setSubscribed] = useState(userSubscriptionId ? true : false);
   const [isUpdatingSubscription, setIsUpdatingSubscription] = useState(false);
 
   const { mutate: addReaction } = useAddReaction();
@@ -49,132 +65,141 @@ function ProposalActions({ post }: ProposalActionsProps) {
   const { mutate: subscribeProposal } = useSubscribeProposal();
   const { mutate: unsubscribeProposal } = useUnsubscribeProposal();
 
-  // Ensure the gif file is correctly imported.
-  const LikedGif = require("@/assets/gif/liked-colored.gif");
-  const accentColor = useThemeColor({}, "accent");
-
   // Reset the local state when the screen is focused.
-  const isfocused = useIsFocused();
   useEffect(() => {
     if (isfocused) {
-      setLocalLikeCount(post.metrics.reactions.like);
-      setLocalDislikeCount(post.metrics.reactions.dislike);
-      setLocalCommentCount(post.metrics.comments);
+      setLocalLikeCount(() => memoizedMetrics.reactions.like);
+      setLocalDislikeCount(() => memoizedMetrics.reactions.dislike);
+      setLocalCommentCount(() => memoizedMetrics.comments);
 
-      const currentUserReaction = post.reactions?.find(
+      const updatedUserReaction = memoizedReactions?.find(
         (reaction) => reaction.userId === userProfile?.id
       );
-
       setReactionState(() =>
-        currentUserReaction
-          ? { reaction: currentUserReaction.reaction, id: currentUserReaction.id }
+        updatedUserReaction
+          ? { reaction: updatedUserReaction.reaction, id: updatedUserReaction.id }
           : { reaction: null, id: undefined }
       );
 
-      setSubscribed(post.userSubscriptionId ? true : false);
+      setSubscribed(userSubscriptionId ? true : false);
     }
-  }, [isfocused]);
+  }, [isfocused, memoizedMetrics, memoizedReactions, userProfile, userSubscriptionId]);
 
   const handleLike = () => {
-    if (isUpdatingReaction) return;
-    setIsUpdatingReaction(true);
-    // Trigger the like gif for 1500ms.
-    setShowLikeGif(true);
-    setTimeout(() => setShowLikeGif(false), 1500);
+    if (isUpdatingLike) return;
+    setIsUpdatingLike(true);
 
     if (reactionState.reaction === EReaction.like) {
-      // Remove the like if already set.
+      // Optimistic updates for removing the like.
       if (!reactionState.id) {
-        setIsUpdatingReaction(false);
+        setIsUpdatingLike(false);
         return;
       }
+      setLocalLikeCount((prev) => prev - 1);
+      setReactionState({ reaction: null, id: undefined });
+
       deleteReaction(
         {
           pathParams: {
-            proposalType: post.proposalType,
-            postIndexOrHash: post.index,
+            proposalType: proposalType,
+            postIndexOrHash: index,
             reactionId: reactionState.id,
           },
         },
         {
           onSuccess: () => {
             setReactionState({ reaction: null, id: undefined });
-            setLocalLikeCount((prev) => prev - 1);
           },
-          onSettled: () => setIsUpdatingReaction(false),
+          onSettled: () => {
+            setIsUpdatingDislike(false);
+            setIsUpdatingLike(false);
+          },
         }
       );
     } else {
-      // Add a like reaction.
+      // Optimistic update for adding a like.
+      if (reactionState.reaction === EReaction.dislike) {
+        setLocalDislikeCount((prev) => prev - 1);
+      }
+      setLocalLikeCount((prev) => prev + 1);
+      setReactionState({ reaction: EReaction.like, id: "temp-id" });
+
       addReaction(
         {
           pathParams: {
-            proposalType: post.proposalType,
-            postIndexOrHash: post.index,
+            proposalType: proposalType,
+            postIndexOrHash: index,
           },
           bodyParams: { reaction: EReaction.like },
         },
         {
           onSuccess: (data: AddReactionResponse) => {
-            if (reactionState.reaction === EReaction.dislike) {
-              setLocalDislikeCount((prev) => prev - 1);
-            }
-            setLocalLikeCount((prev) => prev + 1);
-            // Store the reaction id for later removal.
             setReactionState({ reaction: EReaction.like, id: data.reactionId });
           },
-          onSettled: () => setIsUpdatingReaction(false),
+          onSettled: () => {
+            setIsUpdatingDislike(false);
+            setIsUpdatingLike(false);
+          },
         }
       );
     }
   };
 
   const handleDislike = () => {
-    if (isUpdatingReaction) return;
-    setIsUpdatingReaction(true);
-    // Trigger the dislike gif (inverted) for 1500ms.
-    setShowDislikeGif(true);
-    setTimeout(() => setShowDislikeGif(false), 1500);
+    if (isUpdatingDislike) return;
+    setIsUpdatingDislike(true);
 
     if (reactionState.reaction === EReaction.dislike) {
+      // Optimistic updates for removing the dislike.
       if (!reactionState.id) {
-        setIsUpdatingReaction(false);
+        setIsUpdatingDislike(false);
         return;
       }
+      setLocalDislikeCount((prev) => prev - 1);
+      setReactionState({ reaction: null, id: undefined });
+
       deleteReaction(
         {
           pathParams: {
-            proposalType: post.proposalType,
-            postIndexOrHash: post.index,
+            proposalType: proposalType,
+            postIndexOrHash: index,
             reactionId: reactionState.id,
           },
         },
         {
           onSuccess: () => {
             setReactionState({ reaction: null, id: undefined });
-            setLocalDislikeCount((prev) => prev - 1);
           },
-          onSettled: () => setIsUpdatingReaction(false),
+          onSettled: () => {
+            setIsUpdatingDislike(false);
+            setIsUpdatingLike(false);
+          }
         }
       );
     } else {
+      // Optimistic update for adding a dislike.
+      if (reactionState.reaction === EReaction.like) {
+        setLocalLikeCount((prev) => prev - 1);
+      }
+      setLocalDislikeCount((prev) => prev + 1);
+      setReactionState({ reaction: EReaction.dislike, id: "temp-id" });
+
       addReaction(
         {
           pathParams: {
-            proposalType: post.proposalType,
-            postIndexOrHash: post.index,
+            proposalType: proposalType,
+            postIndexOrHash: index,
           },
           bodyParams: { reaction: EReaction.dislike },
         },
         {
           onSuccess: (data: AddReactionResponse) => {
-            if (reactionState.reaction === EReaction.like) {
-              setLocalLikeCount((prev) => prev - 1);
-            }
-            setLocalDislikeCount((prev) => prev + 1);
             setReactionState({ reaction: EReaction.dislike, id: data.reactionId });
           },
-          onSettled: () => setIsUpdatingReaction(false),
+          onSettled: () => {
+            setIsUpdatingDislike(false);
+            setIsUpdatingLike(false);
+          },
         }
       );
     }
@@ -185,7 +210,7 @@ function ProposalActions({ post }: ProposalActionsProps) {
       setShowCommentBox(false);
       return;
     }
-    if (post.allowedCommentor === "none") {
+    if (allowedCommentor === "none") {
       Toast.show({
         type: "error",
         text1: "Commenting is disabled",
@@ -193,7 +218,7 @@ function ProposalActions({ post }: ProposalActionsProps) {
       });
       return;
     }
-    if (post.allowedCommentor === "onchain_verified" && userProfile?.addresses.length === 0) {
+    if (allowedCommentor === "onchain_verified" && userProfile?.addresses.length === 0) {
       Toast.show({
         type: "error",
         text1: "Commenting is disabled",
@@ -208,17 +233,17 @@ function ProposalActions({ post }: ProposalActionsProps) {
     if (isUpdatingSubscription) return;
     setIsUpdatingSubscription(true);
     if (subscribed) {
-      setSubscribed(false)
+      setSubscribed(false);
       unsubscribeProposal(
-        { pathParams: { postIndexOrHash: post.index, proposalType: post.proposalType } },
+        { pathParams: { postIndexOrHash: index, proposalType: proposalType } },
         {
           onSettled: () => setIsUpdatingSubscription(false),
         }
       );
     } else {
-      setSubscribed(true)
+      setSubscribed(true);
       subscribeProposal(
-        { pathParams: { postIndexOrHash: post.index, proposalType: post.proposalType } },
+        { pathParams: { postIndexOrHash: index, proposalType: proposalType } },
         {
           onSettled: () => setIsUpdatingSubscription(false),
         }
@@ -234,26 +259,18 @@ function ProposalActions({ post }: ProposalActionsProps) {
             onPress={handleLike}
             buttonBgColor="selectedIcon"
             style={styles.iconButton}
-            disabled={isUpdatingReaction || (reactionState.reaction === EReaction.like && !reactionState.id)}
+            disabled={isUpdatingLike || (reactionState.reaction === EReaction.like && !reactionState.id)}
           >
-            {showLikeGif ? (
-              <Image source={LikedGif} style={{ width: 20, height: 20 }} />
-            ) : (
-              <IconLike color={reactionState.reaction === EReaction.like ? accentColor : "white"} filled={reactionState.reaction === EReaction.like} />
-            )}
+            <IconLike color={"white"} filled={reactionState.reaction === EReaction.like} />
             <ThemedText type="bodySmall">{localLikeCount}</ThemedText>
           </ThemedButton>
           <ThemedButton
             onPress={handleDislike}
             buttonBgColor="selectedIcon"
             style={styles.iconButton}
-            disabled={isUpdatingReaction || (reactionState.reaction === EReaction.dislike && !reactionState.id)}
+            disabled={isUpdatingDislike || (reactionState.reaction === EReaction.dislike && !reactionState.id)}
           >
-            {showDislikeGif ? (
-              <Image source={LikedGif} style={{ width: 20, height: 20, transform: [{ rotateX: "180deg" }] }} />
-            ) : (
-              <IconDislike color={reactionState.reaction === EReaction.dislike ? accentColor : "white"} filled={reactionState.reaction === EReaction.dislike} />
-            )}
+            <IconDislike color={"white"} filled={reactionState.reaction === EReaction.dislike} />
             <ThemedText type="bodySmall">{localDislikeCount}</ThemedText>
           </ThemedButton>
           <ThemedButton onPress={handleComment} buttonBgColor="selectedIcon" style={styles.iconButton}>
@@ -268,16 +285,16 @@ function ProposalActions({ post }: ProposalActionsProps) {
             style={styles.iconButton}
             disabled={isUpdatingSubscription}
           >
-            <IconBookmark color={subscribed ? accentColor : "white"} filled={subscribed} />
+            <IconBookmark color={"white"} filled={subscribed} />
           </ThemedButton>
-          <ShareButton proposalId={post.index} proposalTitle={post.title} />
+          <ShareButton proposalId={index} proposalTitle={title} />
         </View>
       </View>
 
       {showCommentBox && (
         <CommentBox
-          proposalIndex={post.index}
-          proposalType={post.proposalType}
+          proposalIndex={index}
+          proposalType={proposalType}
           onCommentSubmitted={() => {
             setShowCommentBox(false);
             setLocalCommentCount((prev) => prev + 1);
