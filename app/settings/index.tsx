@@ -102,6 +102,7 @@ export default function Settings() {
   const [isSaving, setIsSaving] = useState(false);
 
   const userProfile = useProfileStore((state) => state.profile);
+  const setProfile = useProfileStore((state) => state.setProfile)
 
   const { mutate: editProfile } = useEditProfile();
   const insets = useSafeAreaInsets();
@@ -155,6 +156,7 @@ export default function Settings() {
       const params = {} as EditProfileParams;
       if (username !== userProfile?.username) {
         params["username"] = username;
+        if(userProfile) setProfile({ ...userProfile, username });
       }
       if (uploadedImageUrl) {
         params["image"] = uploadedImageUrl;
@@ -166,6 +168,16 @@ export default function Settings() {
         text2: "Profile updated successfully",
       });
       setIsSaving(false);
+      if(!userProfile) return;
+
+      // Update profile store values
+      if(uploadedImageUrl){
+        if(userProfile) setProfile({ ...userProfile, profileDetails: { ...userProfile.profileDetails, image: uploadedImageUrl}});
+      }
+      if(username !== userProfile.username){
+       setProfile({ ...userProfile, username });
+      }
+      
     } catch (error) {
       console.error("Error updating profile:", error);
       Toast.show({
