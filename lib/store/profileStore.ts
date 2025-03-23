@@ -1,4 +1,6 @@
 import { create } from "zustand";
+import { persist, createJSONStorage } from "zustand/middleware";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { UserProfile } from "../types";
 
 interface ProfileState {
@@ -7,8 +9,18 @@ interface ProfileState {
   clearProfile: () => void;
 }
 
-export const useProfileStore = create<ProfileState>((set: (partial: Partial<ProfileState>) => void) => ({
-  profile: null,
-  setProfile: (profile: UserProfile) => set({ profile }),
-  clearProfile: () => set({ profile: null }),
-}));
+export const useProfileStore = create<ProfileState>()(
+  persist(
+    (set) => ({
+      profile: null,
+
+      setProfile: (profile) => set({ profile }),
+
+      clearProfile: () => set({ profile: null }),
+    }),
+    {
+      name: "user-profile-storage",
+      storage: createJSONStorage(() => AsyncStorage),
+    }
+  )
+);

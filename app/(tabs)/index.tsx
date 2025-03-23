@@ -30,13 +30,15 @@ import {
   TabView,
 } from "react-native-tab-view";
 import { EmptyViewWithTabBarHeight } from "@/lib/components/util";
-import { usePathname, useRouter } from "expo-router";
 import { Post } from "@/lib/types";
 import { ThemedText } from "@/lib/components/ThemedText";
 import { useThemeColor } from "@/lib/hooks/useThemeColor";
 import { ProposalCard, ProposalCardSkeleton } from "@/lib/components/proposal/ProposalCard";
 import { useProfileStore } from "@/lib/store/profileStore";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useGetUserById } from "@/lib/net/queries/profile";
+import getIdFromToken from "@/lib/util/jwt";
+import { useAuthStore } from "@/lib/store/authStore";
 
 const renderScene = SceneMap({
   profile: Profile,
@@ -60,6 +62,16 @@ const styles = StyleSheet.create({
 
 function Profile() {
   const userProfile = useProfileStore((state) => state.profile);
+  const accessToken = useAuthStore((state) => state.accessToken);
+
+  const userId = getIdFromToken(accessToken || "");
+  const { data } = useGetUserById(userId || "");
+
+  useEffect(() => {
+    if (data) {
+      useProfileStore.setState({ profile: data });
+    }
+  }, [data]);
 
   if (!userProfile) {
     return <ProfileSkeleton />;
