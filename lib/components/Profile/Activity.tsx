@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { IconPoints } from "../icons/icon-points";
 import { StyleSheet, Image, View } from "react-native";
 import { ThemedText } from "../ThemedText";
@@ -8,18 +8,27 @@ import { useGetUserActivity } from "@/lib/net/queries/actions/useGetUserActivity
 import { Skeleton } from "moti/skeleton";
 import { Link } from "expo-router";
 import { toTitleCase } from "@/lib/util/stringUtil";
-
+import { useActivityStore } from "@/lib/store/activityStore";
 
 const Activity = ({ userId }: { userId: string }) => {
-  const { data, isLoading } = useGetUserActivity({ userId});
 
-  if (isLoading) return <ActivitySkeleton />;
-  if (!data || data.length === 0) return <NoActivity />;
+  const { activities, setActivities } = useActivityStore();
+  const { data, isLoading } = useGetUserActivity({ userId });
+
+  // On every load, when data is fetched, update the store
+  useEffect(() => {
+    if (data) {
+      setActivities(data.slice(0, 10));
+    }
+  }, [data]);
+
+  if (!activities && isLoading) return <ActivitySkeleton />;
+  if (!activities || activities.length === 0) return <NoActivity />;
 
   return (
     <View style={styles.mainContainer}>
       <ThemedText type="bodySmall">RECENT ACTIVITY</ThemedText>
-      {data.slice(0, 10).map((item) => (
+      {activities.map((item) => (
         <ActivityItem key={item.id} item={item} />
       ))}
     </View>
@@ -29,7 +38,9 @@ const Activity = ({ userId }: { userId: string }) => {
 const ActivityItem = ({ item }: { item: UserActivity }) => (
   <ThemedView type="container" style={styles.activityItemContainer}>
     <IconPoints color="white" iconWidth={24} iconHeight={24} />
-    <ThemedText type="bodyMedium2">{toTitleCase(item.name.replaceAll("_", " "))}</ThemedText>
+    <ThemedText type="bodyMedium2">
+      {toTitleCase(item.name.replaceAll("_", " "))}
+    </ThemedText>
   </ThemedView>
 );
 
