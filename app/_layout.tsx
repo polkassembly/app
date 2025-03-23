@@ -44,21 +44,6 @@ export default function RootLayout() {
     }
   }, [loaded]);
 
-  useEffect(() => {
-    const userId = getIdFromToken(accessToken || "")
-    if (userId) {
-      queryClient.prefetchQuery({
-        queryKey: buildUserByIdQueryKey(userId),
-        queryFn: () => getUserById(userId),
-      });
-      queryClient.prefetchQuery({
-        queryKey: buildUserActivityQueryKey({ userId: userId}),
-        queryFn: () => getUserActivity(userId),
-
-      });
-    }
-  }, [accessToken]);
-
   if (!loaded) {
     return null;
   }
@@ -70,7 +55,7 @@ export default function RootLayout() {
     <QueryClientProvider client={queryClient}>
       <SafeAreaProvider>
         <Content needsLogin={needsLogin} accessToken={accessToken} />
-        <Toast config={toastConfig}/>
+        <Toast config={toastConfig} />
       </SafeAreaProvider>
     </QueryClientProvider>
 
@@ -83,8 +68,6 @@ function Content({ needsLogin, accessToken }: { needsLogin: boolean; accessToken
   // Extract user id from token if available.
   const userId = accessToken ? getIdFromToken(accessToken) : null;
   storage.setString(KEY_ID, userId ?? "");
-  const { data: userProfile } = useGetUserById(userId ?? "");
-  const setProfile = useProfileStore((state) => state.setProfile);
 
   // Redirect to login if authentication is required.
   useEffect(() => {
@@ -93,12 +76,21 @@ function Content({ needsLogin, accessToken }: { needsLogin: boolean; accessToken
     }
   }, [needsLogin, router]);
 
-  // When the user profile is fetched, update the profile store.
+  // Prefetch user data and activity.
   useEffect(() => {
-    if (userProfile) {
-      setProfile(userProfile);
+    const userId = getIdFromToken(accessToken || "")
+    if (userId) {
+      queryClient.prefetchQuery({
+        queryKey: buildUserByIdQueryKey(userId),
+        queryFn: () => getUserById(userId),
+      });
+      queryClient.prefetchQuery({
+        queryKey: buildUserActivityQueryKey({ userId: userId }),
+        queryFn: () => getUserActivity(userId),
+
+      });
     }
-  }, [userProfile, setProfile]);
+  }, []);
 
   if (needsLogin) {
     return (
