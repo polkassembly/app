@@ -10,7 +10,6 @@ import {
   Platform,
 } from "react-native";
 import { ProposalDetails } from "@/lib/components/proposal";
-import { PostFullDetails } from "@/lib/components/feed";
 import { BottomSheet } from "@/lib/components/shared";
 import { EProposalType, Post } from "@/lib/types";
 import { useProposalStore } from "@/lib/store/proposalStore";
@@ -18,6 +17,7 @@ import { useProposalByIndex } from "@/lib/net/queries/post";
 import { ThemedText } from "@/lib/components/ThemedText";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ThemedView } from "@/lib/components/ThemedView";
+import PostFullDetails from "@/lib/components/proposal/full-details";
 
 const getTotalLength = (arr: any[]) =>
   arr.reduce((sum, item) => {
@@ -79,7 +79,12 @@ export default function ProposalDetailScreenImpl() {
         <BottomButton onPress={() => router.push(`/proposal/vote/${index}?proposalType=${proposalType}`)} >Cast Your Vote</BottomButton>
       </View>
       <BottomSheet open={open} onClose={() => setOpen(false)}>
-        <PostFullDetails onClose={() => setOpen(false)} post={proposal} />
+        <PostFullDetails
+          onClose={() => setOpen(false)}
+          post={proposal}
+          proposalType={proposalType}
+          indexOrHash={index}
+        />
       </BottomSheet>
     </ThemedView>
   );
