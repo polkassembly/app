@@ -1,3 +1,3 @@
-import BatchVoteForm from "./BatchVoteForm";
+import { BatchVoteForm } from "./BatchVoteForm";
 
 export { BatchVoteForm };

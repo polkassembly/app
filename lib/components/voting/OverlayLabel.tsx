@@ -3,8 +3,9 @@ import IconAbstain from "../icons/shared/icon-abstain";
 import IconAye from "../icons/shared/icon-aye";
 import IconNay from "../icons/shared/icon-nay";
 import React from "react";
+import { Vote } from "@/lib/types/voting";
 
-const OverlayLabel = React.memo(({ type }: { type: "aye" | "nay" | "abstain" }) => {
+const OverlayLabel = React.memo(({ type }: { type: Vote }) => {
 	let overlayBackground, badgeBackground, IconComponent;
 	if (type === "nay") {
 		overlayBackground = "rgba(249, 201, 201, 0.7)";
@@ -14,7 +15,7 @@ const OverlayLabel = React.memo(({ type }: { type: "aye" | "nay" | "abstain" }) 
 		overlayBackground = "rgba(177, 234, 203, 0.7)";
 		badgeBackground = "#2ED47A";
 		IconComponent = IconAye;
-	} else if (type === "abstain") {
+	} else if (type === "splitAbstain") {
 		overlayBackground = "rgba(247, 219, 175, 0.7)";
 		badgeBackground = "#FFBF60";
 		IconComponent = IconAbstain;

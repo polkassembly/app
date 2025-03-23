@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import client from "@/lib/net/client";
 import { useProfileStore } from "@/lib/store/profileStore";
+import { Vote } from "@/lib/types/voting";
 export interface CartItem {
   id: string;
   createdAt: string;
@@ -8,7 +9,7 @@ export interface CartItem {
   userId: number;
   postIndexOrHash: string;
   proposalType: string;
-  decision: "aye" | "nay" | "abstain";
+  decision: Vote;
   amount: {
     aye?: string;
     nay?: string;

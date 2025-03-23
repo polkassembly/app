@@ -4,8 +4,8 @@ import IconAye from "../../icons/shared/icon-aye";
 import IconNay from "../../icons/shared/icon-nay";
 import { IconProps } from "../../icons/types";
 import { ThemedText } from "../../ThemedText";
-import { Vote } from "./BatchVoteForm";
 import { useThemeColor } from "@/lib/hooks";
+import { Vote } from "@/lib/types/voting";
 
 interface TriStateButtonsProps {
 	selected: Vote;
@@ -37,8 +37,8 @@ function TriStateButtons({ selected, onSelectionChanged }: TriStateButtonsProps)
 			<TriStateButton
 				Icon={IconAbstain}
 				color={colorAbstain}
-				selected={selected === "abstain"}
-				onPress={() => onSelectionChanged("abstain")}
+				selected={selected === "splitAbstain"}
+				onPress={() => onSelectionChanged("splitAbstain")}
 			>
 				ABSTAIN
 			</TriStateButton>

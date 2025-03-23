@@ -8,9 +8,10 @@ import { ThemedText } from "@/lib/components/ThemedText";
 import { TopBar } from "@/lib/components/Topbar";
 import useAddCartItem from "@/lib/net/queries/actions/useAddCartItem";
 import { Colors } from "@/lib/constants/Colors";
-import { Vote, BatchVoteForm } from "@/lib/components/voting/batch-voting/BatchVoteForm";
+import { BatchVoteForm } from "@/lib/components/voting/batch-voting/BatchVoteForm";
 import { EProposalType } from "@/lib/types";
 import { Note } from "@/lib/components/shared";
+import { Vote, Abstain } from "@/lib/types/voting";
 
 const ERROR_DEFAULT = "Something went wrong";
 
@@ -26,23 +27,39 @@ export default function BatchVotingScreen() {
   const [vote, setVote] = useState<Vote>("aye");
   const [ayeAmount, setAyeAmount] = useState<number>(1);
   const [nayAmount, setNayAmount] = useState<number>(1);
-  const [abstainAmount, setAbstainAmount] = useState<number>(1);
+  const [abstainAmount, setAbstainAmount] = useState<Abstain>({
+    abstain: 1,
+    aye: 1,
+    nay: 1
+  });
   const [conviction, setConviction] = useState<number>(0);
 
   async function onPressAddToCart() {
-    const amountMap = { aye: ayeAmount, nay: nayAmount, abstain: abstainAmount };
+    let amount: { aye?: string, nay?: string, abstain?: string} = {};
+    let amountSuccess;
+    
+    if (vote === "aye") {
+      amount.aye = ayeAmount.toString();
+      amountSuccess = amount.aye;
+    } else if (vote === "nay") {
+      amount.nay = nayAmount.toString();
+      amountSuccess = amount.nay;
+    } else if (vote === "splitAbstain") {
+      amount.aye = abstainAmount.aye.toString();
+      amount.nay = abstainAmount.nay.toString();
+      amount.abstain = abstainAmount.abstain.toString();
+      amountSuccess = amount.abstain;
+    }
 
     await mutateAsync({
-      amount: {
-        [vote]: amountMap[vote].toString(),
-      },
+      amount,
       conviction,
       decision: vote,
       postIndexOrHash: index,
       proposalType: proposalType,
     });
 
-    router.push(`/proposal/vote/success/${index}?dot=${amountMap[vote]}&conviction=${conviction}&decision=${vote}&proposalType=${proposalType}`);
+    router.push(`/proposal/vote/success/${index}?dot=${amountSuccess}&conviction=${conviction}&decision=${vote}&proposalType=${proposalType}`);
   }
 
   return (

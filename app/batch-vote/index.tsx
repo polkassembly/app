@@ -6,7 +6,7 @@ import { ThemedText } from "@/lib/components/ThemedText";
 import { ThemedView } from "@/lib/components/ThemedView";
 import { TopBar } from "@/lib/components/Topbar";
 import { Colors } from "@/lib/constants/Colors";
-import { Vote, BatchVoteForm } from "@/lib/components/voting/batch-voting/BatchVoteForm";
+import { BatchVoteForm } from "@/lib/components/voting/batch-voting/BatchVoteForm";
 import { IconVote } from "@/lib/components/icons/Profile";
 import { useQueryClient } from "@tanstack/react-query";
 import { activityFeedFunction, buildActivityFeedQueryKey } from "@/lib/net/queries/post";
@@ -14,15 +14,20 @@ import { buildCartItemsQueryKey, getCartItemsFunction } from "@/lib/net/queries/
 import { useProfileStore } from "@/lib/store/profileStore";
 import { useThemeColor } from "@/lib/hooks/useThemeColor";
 import { Note } from "@/lib/components/shared";
+import { useBatchVotingStore } from "@/lib/store/batchVotingStore";
 
 export default function BatchVotingScreen() {
-  const [vote, setVote] = useState<Vote>("aye");
-  const [ayeAmount, setAyeAmount] = useState<number>(1);
-  const [nayAmount, setNayAmount] = useState<number>(1);
-  const [abstainAmount, setAbstainAmount] = useState<number>(1);
-  const [conviction, setConviction] = useState<number>(0);
+  // Get values and setters from the Zustand store
+  const { 
+    vote, setVote,
+    ayeAmount, setAyeAmount,
+    nayAmount, setNayAmount,
+    abstainAmount, setAbstainAmount,
+    conviction, setConviction
+  } = useBatchVotingStore();
+
   const [noteContent, setNoteContent] = useState<string>();
-  const [ noteColor, setNoteColor ] = useState<string>();
+  const [noteColor, setNoteColor] = useState<string>();
 
   const queryClient = useQueryClient();
   const userId = useProfileStore((state) => state.profile?.id) ? String(useProfileStore((state) => state.profile?.id)) : "";
@@ -43,11 +48,14 @@ export default function BatchVotingScreen() {
       queryKey: buildCartItemsQueryKey(userId),
       queryFn: () => getCartItemsFunction({ userId }),
     })
-  }
-    , [queryClient]);
+  }, [queryClient, userId]);
 
   function onSaveAndNext() {
-    if( ayeAmount === 0 || nayAmount === 0 || abstainAmount === 0 ) setNoteColor("#F53C3C");
+    // Fixed the validation logic
+    if (ayeAmount === 0 || nayAmount === 0 || 
+        abstainAmount.abstain === 0 || abstainAmount.aye === 0 || abstainAmount.nay === 0) {
+      setNoteColor("#F53C3C");
+    }
 
     if (ayeAmount === 0) {
       setNoteContent("Please set non zero value for Aye votes");
@@ -57,14 +65,13 @@ export default function BatchVotingScreen() {
       setNoteContent("Please set non zero value for Nay votes");
       return;
     }
-    if (abstainAmount === 0) {
+    if (abstainAmount.abstain === 0 || abstainAmount.aye === 0 || abstainAmount.nay === 0) {
       setNoteContent("Please set non zero value for Abstain votes");
-      return
+      return;
     }
 
-    router.push(
-      `/batch-vote/cards?defaultConviction=${conviction}&defaultAyeAmount=${ayeAmount}&defaultNayAmount=${nayAmount}&defaultAbstainAmount=${abstainAmount}`
-    );
+    // Navigate to cards screen without query params - the store will provide the values
+    router.push('/batch-vote/cards');
   }
 
   return (

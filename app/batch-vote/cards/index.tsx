@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import { View, StyleSheet, Text, ActivityIndicator, TouchableOpacity } from "react-native";
 import Swiper from "react-native-deck-swiper";
-import { useLocalSearchParams } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import useAddCartItem from "@/lib/net/queries/actions/useAddCartItem";
 import { useActivityFeed } from "@/lib/net/queries/post/useActivityFeed";
@@ -19,7 +18,7 @@ import { ThemedText } from "@/lib/components/ThemedText";
 import { ProposalDetails } from "@/lib/components/proposal";
 import { ThemedView } from "@/lib/components/ThemedView";
 import { ProposalContentSummary } from "@/lib/components/proposal";
-import { bgColors } from "@/lib/constants/Colors";
+import { useBatchVotingStore } from "@/lib/store/batchVotingStore";
 
 interface MemoizedProposalCardProps {
   card: Post;
@@ -56,11 +55,12 @@ const MemoizedProposalCard = React.memo(({ card, index, showDetails }: MemoizedP
 });
 
 const ProposalVotingScreen: React.FC = () => {
-  const searchParams = useLocalSearchParams();
-  const defaultConviction = Number(searchParams?.defaultConviction) || 0;
-  const defaultAyeAmount = String(searchParams?.defaultAyeAmount) || "1";
-  const defaultNayAmount = String(searchParams?.defaultNayAmount) || "1";
-  const defaultAbstainAmount = String(searchParams?.defaultAbstainAmount) || "1";
+  const { 
+    conviction, 
+    ayeAmount, 
+    nayAmount, 
+    abstainAmount 
+  } = useBatchVotingStore();
 
   const feedParams = { limit: 20 };
   const { data, isLoading, isError, hasNextPage, fetchNextPage } = useActivityFeed(feedParams);
@@ -71,7 +71,7 @@ const ProposalVotingScreen: React.FC = () => {
   const [proposalDetailsOpen, setProposalDetailsOpen] = useState(false);
   const swiperRef = useRef<any>(null);
   const backgroundColor = useThemeColor({}, "container");
-  const [index, setIndex] = useState(0)
+  const [index, setIndex] = useState(0);
   const insets = useSafeAreaInsets();
 
   // Append new proposals as they are fetched
@@ -84,33 +84,37 @@ const ProposalVotingScreen: React.FC = () => {
 
   // Handler for swipe events
   const onSwiped = useCallback(
-    (direction: "aye" | "nay" | "abstain", cardIndex: number) => {
+    (direction: "aye" | "nay" | "splitAbstain", cardIndex: number) => {
       const proposal = proposals[cardIndex];
       if (!proposal) return;
-      setIndex(cardIndex + 1)
+      setIndex(cardIndex + 1);
 
       // trigger fetching more proposals
       if (cardIndex >= proposals.length - 10 && hasNextPage) {
         fetchNextPage();
       }
 
-      let amountValue = "0";
-      if (direction === "aye") amountValue = defaultAyeAmount;
-      else if (direction === "nay") amountValue = defaultNayAmount;
-      else if (direction === "abstain") amountValue = defaultAbstainAmount;
+      let amount = {};
+      if (direction === "aye") {
+        amount = { aye: String(ayeAmount) };
+      } else if (direction === "nay") {
+        amount = { nay: String(nayAmount) };
+      } else if (direction === "splitAbstain") {
+        // Use all values from the abstainAmount object
+        amount = {
+          abstain: String(abstainAmount.abstain),
+          aye: String(abstainAmount.aye),
+          nay: String(abstainAmount.nay)
+        };
+      }
 
       const params = {
         postIndexOrHash: String(proposal.index),
         proposalType: proposal.proposalType,
         decision: direction,
-        amount: { [direction]: amountValue },
-        conviction: defaultConviction,
+        amount,
+        conviction,
       };
-
-      if (direction === "abstain") {
-        params.amount["aye"] = defaultAyeAmount;
-        params.amount["nay"] = defaultNayAmount;
-      }
 
       voteMutation.mutate(params, {
         onError: () => {
@@ -124,10 +128,10 @@ const ProposalVotingScreen: React.FC = () => {
     },
     [
       proposals,
-      defaultAyeAmount,
-      defaultNayAmount,
-      defaultAbstainAmount,
-      defaultConviction,
+      ayeAmount,
+      nayAmount,
+      abstainAmount,
+      conviction,
       hasNextPage,
       fetchNextPage,
       voteMutation,
@@ -165,7 +169,7 @@ const ProposalVotingScreen: React.FC = () => {
                 renderCard={(cardData) => <MemoizedProposalCard card={cardData} key={cardData.index} index={cardData.index} showDetails={() => setProposalDetailsOpen(true)} />}
                 onSwipedLeft={(cardIndex) => onSwiped("nay", cardIndex)}
                 onSwipedRight={(cardIndex) => onSwiped("aye", cardIndex)}
-                onSwipedTop={(cardIndex) => onSwiped("abstain", cardIndex)}
+                onSwipedTop={(cardIndex) => onSwiped("splitAbstain", cardIndex)}
                 stackSize={1}
                 disableBottomSwipe
                 verticalSwipe
@@ -173,7 +177,7 @@ const ProposalVotingScreen: React.FC = () => {
                 overlayLabels={{
                   left: { element: <OverlayLabel type="nay" /> },
                   right: { element: <OverlayLabel type="aye" /> },
-                  top: { element: <OverlayLabel type="abstain" /> },
+                  top: { element: <OverlayLabel type="splitAbstain" /> },
                 }}
                 cardVerticalMargin={20}
                 cardHorizontalMargin={20}

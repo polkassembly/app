@@ -2,10 +2,11 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import client from "@/lib/net/client";
 import { buildCartItemsQueryKey, CartItem } from "./useGetCartItem";
 import { useProfileStore } from "@/lib/store/profileStore";
+import { Vote } from "@/lib/types/voting";
 
 interface UpdateCartItemParams {
   id: string;
-  decision: "aye" | "nay" | "abstain";
+  decision: Vote;
   amount: {
     aye?: string;
     nay?: string;

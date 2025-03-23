@@ -155,7 +155,7 @@ export interface UserActivity {
 export interface CartItemParams {
   postIndexOrHash: string;
   proposalType: string;
-  decision: "aye" | "nay" | "abstain";
+  decision: "aye" | "nay" | "splitAbstain" | "split";
   amount: {
     aye?: string;
     nay?: string;

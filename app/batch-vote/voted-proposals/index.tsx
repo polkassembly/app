@@ -23,6 +23,7 @@ import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context"
 import IconPencil from "@/lib/components/icons/shared/icon-pencil";
 import Toast from "react-native-toast-message";
 import { Note } from "@/lib/components/shared";
+import { Vote, Abstain } from "@/lib/types/voting";
 
 export default function VotedProposals() {
 	const { data: cart, isLoading: isCartLoading } = useGetCartItems();
@@ -173,29 +174,52 @@ function EditCartItem({ cartItem, onClose }: EditCartItemProps) {
 	});
 	const colorStroke = useThemeColor({}, "stroke");
 
-	const [vote, setVote] = useState(cartItem.decision);
-	const [ayeAmount, setAyeAmount] = useState(
-		cartItem.decision === "aye" ? cartItem.amount.aye || 1 : 1
+	const [vote, setVote] = useState<Vote>(cartItem.decision as Vote);
+	
+	// Initialize with proper values for aye amount
+	const [ayeAmount, setAyeAmount] = useState<number>(
+		cartItem.decision === "aye" && cartItem.amount.aye 
+			? parseFloat(cartItem.amount.aye) 
+			: 1
 	);
-	const [nayAmount, setNayAmount] = useState(
-		cartItem.decision === "nay" ? cartItem.amount.nay || 1 : 1
+	
+	// Initialize with proper values for nay amount
+	const [nayAmount, setNayAmount] = useState<number>(
+		cartItem.decision === "nay" && cartItem.amount.nay 
+			? parseFloat(cartItem.amount.nay) 
+			: 1
 	);
-	const [abstainAmount, setAbstainAmount] = useState(
-		cartItem.decision === "abstain" ? cartItem.amount.abstain || 1 : 1
-	);
+	
+	// Initialize abstain as an object
+	const [abstainAmount, setAbstainAmount] = useState<Abstain>({
+		abstain: cartItem.decision === "splitAbstain" && cartItem.amount.abstain 
+			? parseFloat(cartItem.amount.abstain) 
+			: 1,
+		aye: cartItem.decision === "splitAbstain" && cartItem.amount.aye 
+			? parseFloat(cartItem.amount.aye) 
+			: 1,
+		nay: cartItem.decision === "splitAbstain" && cartItem.amount.nay 
+			? parseFloat(cartItem.amount.nay) 
+			: 1
+	});
+	
 	const [conviction, setConviction] = useState(cartItem.conviction);
 
 	const { mutate: editCartItem } = useUpdateCartItem();
 	const handleConfirm = () => {
 		const amount: { aye?: string; nay?: string; abstain?: string } = {};
 
-		if( vote == "aye" ) amount.aye = ayeAmount.toString();
-		if( vote == "nay" ) amount.nay = nayAmount.toString();
-		if( vote == "abstain" ) {
-			amount.aye = ayeAmount.toString()
-			amount.nay = nayAmount.toString()
-			amount.abstain = abstainAmount.toString()
+		// Update amount object based on vote type
+		if (vote === "aye") {
+			amount.aye = ayeAmount.toString();
+		} else if (vote === "nay") {
+			amount.nay = nayAmount.toString();
+		} else if (vote === "splitAbstain") {
+			amount.abstain = abstainAmount.abstain.toString();
+			amount.aye = abstainAmount.aye.toString();
+			amount.nay = abstainAmount.nay.toString();
 		}
+		
 		editCartItem({
 			id: cartItem.id,
 			decision: vote,
@@ -214,7 +238,7 @@ function EditCartItem({ cartItem, onClose }: EditCartItemProps) {
 					type: "error",
 					text1: "Vote edit failed"
 				})
-				onClose()
+				onClose();
 			}
 		});
 	};
@@ -265,11 +289,11 @@ function EditCartItem({ cartItem, onClose }: EditCartItemProps) {
 				<BatchVoteForm
 					vote={vote}
 					onVoteChange={setVote}
-					ayeAmount={Number(ayeAmount)}
+					ayeAmount={ayeAmount}
 					setAyeAmount={setAyeAmount}
-					nayAmount={Number(nayAmount)}
+					nayAmount={nayAmount}
 					setNayAmount={setNayAmount}
-					abstainAmount={Number(abstainAmount)}
+					abstainAmount={abstainAmount}
 					setAbstainAmount={setAbstainAmount}
 					conviction={conviction}
 					setConviction={setConviction}
@@ -282,7 +306,7 @@ function EditCartItem({ cartItem, onClose }: EditCartItemProps) {
 	);
 }
 
-function VoteType({ decision }: { decision: "aye" | "nay" | "abstain" }) {
+function VoteType({ decision }: { decision: Vote }) {
 	return (
 		<View style={{ flexDirection: "row", gap: 5, alignItems: "center", minWidth: 70 }}>
 			{decision === "aye" && (
@@ -297,7 +321,7 @@ function VoteType({ decision }: { decision: "aye" | "nay" | "abstain" }) {
 					<ThemedText type="bodySmall">Nay</ThemedText>
 				</>
 			)}
-			{decision === "abstain" && (
+			{decision === "splitAbstain" && (
 				<>
 					<IconAbstain filled color="#FFBF60" />
 					<ThemedText type="bodySmall">Abstain</ThemedText>

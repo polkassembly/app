@@ -1,6 +1,5 @@
 import IconAbstain from "@/lib/components/icons/shared/icon-abstain";
 import IconAye from "@/lib/components/icons/shared/icon-aye";
-import IconInfo from "@/lib/components/icons/shared/icon-info";
 import IconNay from "@/lib/components/icons/shared/icon-nay";
 import IconPadlock from "@/lib/components/icons/shared/icon-padlock";
 import { IconProps } from "@/lib/components/icons/types";
@@ -9,19 +8,11 @@ import { ThemedText } from "@/lib/components/ThemedText";
 import { ThemedView } from "@/lib/components/ThemedView";
 import { Colors } from "@/lib/constants/Colors";
 import { useThemeColor } from "@/lib/hooks/useThemeColor";
-import Slider from "@react-native-community/slider";
 import React, { useState, useEffect } from "react";
-import { Image, StyleSheet, TextInput, TouchableOpacity, View } from "react-native";
+import { Image, StyleSheet, TextInput, View } from "react-native";
 import TriStateButtons from "./TriStateButton";
 import ConvictionSlider from "./ConvictionSlider";
-
-export type Vote = "aye" | "nay" | "abstain";
-
-export interface Abstain {
-  abstain: number;
-  aye: number;
-  nay: number;
-}
+import { Vote, Abstain } from "@/lib/types/voting";
 
 function getLockPeriodText(conviction: number): string {
   if (conviction === 0) return "No Lockup Period";
@@ -35,10 +26,8 @@ export interface BatchVoteFormProps {
   setAyeAmount: (value: number) => void;
   nayAmount: number;
   setNayAmount: (value: number) => void;
-  abstainAmount: number;
-  setAbstainAmount: (value: number) => void;
-  abstain?: Abstain;
-  onAbstainChange?: (value: Abstain) => void;
+  abstainAmount: Abstain;
+  setAbstainAmount: (abstain: Abstain) => void;
   conviction: number;
   setConviction: (value: number) => void;
   onSaveAndNext?: () => void;
@@ -57,8 +46,6 @@ export function BatchVoteForm({
   setNayAmount,
   abstainAmount,
   setAbstainAmount,
-  abstain,
-  onAbstainChange,
   conviction,
   setConviction,
   onSaveAndNext,
@@ -72,66 +59,66 @@ export function BatchVoteForm({
     if (singleVoteMode) {
       if (nextVote !== "aye") setAyeAmount(1);
       if (nextVote !== "nay") setNayAmount(1);
-      if (nextVote !== "abstain") setAbstainAmount(1);
+      if (nextVote !== "splitAbstain") setAbstainAmount({ abstain: 1, aye: 1, nay: 1 });
     }
   };
-
-  // Update abstain values if the props are provided
-  useEffect(() => {
-    if (abstain && onAbstainChange) {
-      if (vote === "aye") {
-        onAbstainChange({
-          ...abstain,
-          aye: ayeAmount
-        });
-      } else if (vote === "nay") {
-        onAbstainChange({
-          ...abstain,
-          nay: nayAmount
-        });
-      } else if (vote === "abstain") {
-        onAbstainChange({
-          ...abstain,
-          abstain: abstainAmount
-        });
-      }
-    }
-  }, [vote, ayeAmount, nayAmount, abstainAmount]);
 
   return (
     <ThemedView style={[styles.card, { gap: 24 }]}>
       <TriStateButtons selected={vote} onSelectionChanged={handleVoteChange} />
 
-      {/* For non-abstain mode, show only the specific selected vote input */}
+      {/* Display appropriate inputs based on selected vote */}
       {vote === "aye" && (
         <View style={{ gap: 8 }}>
           <SectionHeader title="Aye Amount" Icon={IconAye} color="#2ED47A" />
           <AmountInput value={ayeAmount} onChange={setAyeAmount} />
         </View>
       )}
+      
       {vote === "nay" && (
         <View style={{ gap: 8 }}>
           <SectionHeader title="Nay Amount" Icon={IconNay} color="#F53C3C" />
           <AmountInput value={nayAmount} onChange={setNayAmount} />
         </View>
       )}
-      {vote === "abstain" && (
-        <View style={{ gap: 8 }}>
-          <SectionHeader title="Abstain Amount" Icon={IconAbstain} color="#FFA013" />
-          <AmountInput value={abstainAmount} onChange={setAbstainAmount} />
-        </View>
-      )}
-
-      {/* For abstain mode, show all three inputs */}
-      {vote === "abstain" && abstain && (
+      
+      {/* Show all three inputs in abstain mode */}
+      {vote === "splitAbstain" && (
         <>
           <View style={{ gap: 8 }}>
-            <SectionHeader title="Aye Amount" Icon={IconAye} color="#2ED47A" />
-            <AmountInput value={abstain.aye} onChange={(value) => onAbstainChange && onAbstainChange({...abstain, aye: value})} />
+            <SectionHeader title="Abstain Amount" Icon={IconAbstain} color="#FFA013" />
+            <AmountInput value={abstainAmount.abstain} onChange={(value) => {
+              setAbstainAmount({
+                ...abstainAmount,
+                abstain: value
+              })
+            }} />
           </View>
+          
+          <View style={{ gap: 8 }}>
+            <SectionHeader title="Aye Amount" Icon={IconAye} color="#2ED47A" />
+            <AmountInput 
+              value={abstainAmount.aye} 
+              onChange={(value) => {
+                setAbstainAmount({
+                  ...abstainAmount,
+                  aye: value
+                });
+              }} 
+            />
+          </View>
+          
           <View style={{ gap: 8 }}>
             <SectionHeader title="Nay Amount" Icon={IconNay} color="#F53C3C" />
-            <AmountInput value={abstain.nay} onChange={(value) => onAbstainChange && onAbstainChange({...abstain, nay: value})} />
+            <AmountInput 
+              value={abstainAmount.nay} 
+              onChange={(value) => {
+                setAbstainAmount({
+                  ...abstainAmount,
+                  nay: value
+                });
+              }} 
+            />
           </View>
         </>
       )}
