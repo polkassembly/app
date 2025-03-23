@@ -1,9 +1,9 @@
 import Svg, { Path } from "react-native-svg";
 import { IconProps } from "./types";
 
-export function IconBrowser({ color, style }: IconProps) {
+export function IconBrowser({ color, style, iconHeight, iconWidth }: IconProps) {
   return (
-    <Svg width="32" height="32" viewBox="0 0 32 32" fill="none" style={style}>
+    <Svg width={iconWidth || 32} height={iconHeight || 32} viewBox="0 0 32 32" fill="none" style={style}>
       <Path
         d="M6.74933 17.3333C5.10972 18.2432 4 19.992 4 22C4 24.9454 6.38781 27.3333 9.33333 27.3333C12.2789 27.3333 14.6667 24.9454 14.6667 22H22.6667"
         stroke={color}

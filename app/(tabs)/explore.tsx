@@ -28,10 +28,12 @@ import { useThemeColor } from "@/lib/hooks/useThemeColor";
 
 export default function ChromeStyleBrowser() {
   const [isSearching, setIsSearching] = useState(false);
+  const [isSearchOverlayVisible, setIsSearchOverlayVisible] = useState(false);
   const [keyboardVisible, setKeyboardVisible] = useState(false);
   const contentOpacity = useRef(new Animated.Value(1)).current;
   const insets = useSafeAreaInsets();
   const backgroundColor = useThemeColor({}, "secondaryBackground");
+  const mediumTextColor = useThemeColor({}, "mediumText")
 
   // Listen for keyboard events (for browser UI)
   useEffect(() => {
@@ -48,7 +50,11 @@ export default function ChromeStyleBrowser() {
   }, []);
 
   const activateSearch = () => {
+    // First make overlay visible, but the animation will start with transform and opacity
+    setIsSearchOverlayVisible(true);
     setIsSearching(true);
+
+    // Fade out browser content
     Animated.timing(contentOpacity, {
       toValue: 0,
       duration: 200,
@@ -57,29 +63,45 @@ export default function ChromeStyleBrowser() {
   };
 
   const deactivateSearch = () => {
+    // Start fading in browser content
     Animated.timing(contentOpacity, {
       toValue: 1,
-      duration: 300,
+      duration: 500,
       useNativeDriver: true,
-    }).start(() => {
-      setIsSearching(false);
-    });
+    }).start();
+
+    // SearchOverlay will animate out by itself
+    setIsSearching(false);
+
+    // Wait for animation to complete before removing from DOM
+    setTimeout(() => {
+      setIsSearchOverlayVisible(false);
+    }, 300);
   };
 
   return (
     <View style={styles.mainContainer}>
       <View style={{ flex: 1, marginTop: insets.top, marginBottom: insets.bottom, marginLeft: insets.left, marginRight: insets.right }}>
-        
-        {/* Render Search Overlay only if search mode is active */}
-        {isSearching && (
-          <SearchOverlay 
-            onDeactivate={deactivateSearch} 
-            backgroundColor={backgroundColor} 
+
+        {/* Always render SearchOverlay but control visibility with props */}
+        {isSearchOverlayVisible && (
+          <SearchOverlay
+            onDeactivate={deactivateSearch}
+            backgroundColor={backgroundColor}
+            visible={isSearching}
           />
         )}
 
         {/* Browser UI */}
-        <Animated.View style={[styles.browserContent, { opacity: contentOpacity, display: isSearching ? 'none' : 'flex' }]}>
+        <Animated.View style={[
+          styles.browserContent,
+          {
+            opacity: contentOpacity,
+            // Hide but keep in DOM for smooth transition
+            position: isSearching ? 'absolute' : 'relative',
+            zIndex: isSearching ? -1 : 1
+          }
+        ]}>
           <TitleSection />
           <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 64 }}>
             <View style={styles.videoContainer}>
@@ -116,15 +138,19 @@ export default function ChromeStyleBrowser() {
 
             <View style={styles.browserInnerContent}>
               {/* Browser search input, activates search mode on focus */}
-              <View style={styles.searchInputBrowser}>
+              <TouchableOpacity
+                style={styles.searchInputBrowser}
+                activeOpacity={0.7}
+                onPress={activateSearch}
+              >
                 <IconSearch />
-                <TextInput
-                  placeholder="Search by name or enter URL"
-                  placeholderTextColor={Colors.dark.mediumText}
-                  style={{ color: Colors.dark.text, flex: 1 }}
-                  onFocus={activateSearch}
-                />
-              </View>
+                <ThemedText 
+                  type="bodySmall" 
+                  style={{ color: mediumTextColor}}
+                >
+                  Search by name or enter URL
+                </ThemedText>
+              </TouchableOpacity>
 
               <View style={styles.quickActionsContainer}>
                 <ThemedText type="bodyMedium2">FEATURED WEBSITES</ThemedText>
@@ -326,7 +352,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 32,
     paddingHorizontal: 15,
-    paddingVertical: 4,
+    paddingVertical: 10,
   },
   quickActionsContainer: {
     gap: 16,

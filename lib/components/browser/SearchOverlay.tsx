@@ -12,10 +12,13 @@ import { ThemedText } from "../ThemedText";
 import { ThemedView } from "../ThemedView";
 import { useThemeColor } from "@/lib/hooks";
 import HorizontalSeparator from "../shared/HorizontalSeparator";
+import { NETWORKS_DETAILS } from "@/lib/constants/networks";
+import { ENetwork } from "@/lib/types/post";
 
 interface SearchOverlayProps {
   onDeactivate: () => void;
   backgroundColor: string;
+  visible: boolean; // New prop to control visibility
 }
 
 interface SearchResult {
@@ -25,18 +28,27 @@ interface SearchResult {
   post_type: string;
 }
 
+const getFacetFilter = () => {
+  return [
+    [`post_type:${ProposalType.REFERENDUMS}`, `post_type:${ProposalType.REFERENDUM_V2}`, `post_type:${ProposalType.TREASURY_PROPOSALS}`],
+    [`network:${ENetwork.POLKADOT}`]
+  ];
+}
+
 // The segregated search overlay component
-function SearchOverlay({ onDeactivate, backgroundColor }: SearchOverlayProps) {
+function SearchOverlay({ onDeactivate, backgroundColor, visible }: SearchOverlayProps) {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<SearchResult[]>([]);
   const [loading, setLoading] = useState(false);
   const [keyboardVisible, setKeyboardVisible] = useState(false);
   const searchInputRef = useRef<TextInput>(null);
-  const searchBarAnim = useRef(new Animated.Value(100)).current;
+  const searchBarAnim = useRef(new Animated.Value(visible ? 0 : 100)).current;
+  const opacityAnim = useRef(new Animated.Value(visible ? 1 : 0)).current;
 
-	const textColor = useThemeColor({}, "text");
-	const secondaryBackground = useThemeColor({}, "secondaryBackground");
-  
+  const textColor = useThemeColor({}, "text");
+  const secondaryBackground = useThemeColor({}, "background");
+  const strokeColor = useThemeColor({}, "stroke")
+
   // Initialize Algolia client inside this component
   let algoliaClient: any;
   try {
@@ -46,6 +58,41 @@ function SearchOverlay({ onDeactivate, backgroundColor }: SearchOverlayProps) {
   } catch (error) {
     console.error("Algolia initialization failed:", error);
   }
+
+  // Track visibility changes to animate properly
+  useEffect(() => {
+    if (visible) {
+      Animated.parallel([
+        Animated.timing(searchBarAnim, {
+          toValue: 0,
+          duration: 500,
+          useNativeDriver: true,
+        }),
+        Animated.timing(opacityAnim, {
+          toValue: 1,
+          duration: 500,
+          useNativeDriver: true,
+        })
+      ]).start(() => {
+        if (searchInputRef.current) {
+          searchInputRef.current.focus();
+        }
+      });
+    } else {
+      Animated.parallel([
+        Animated.timing(searchBarAnim, {
+          toValue: 100,
+          duration: 500,
+          useNativeDriver: true,
+        }),
+        Animated.timing(opacityAnim, {
+          toValue: 0,
+          duration: 500,
+          useNativeDriver: true,
+        })
+      ]).start();
+    }
+  }, [visible]);
 
   useEffect(() => {
     const showSub = Keyboard.addListener("keyboardDidShow", () => {
@@ -65,16 +112,18 @@ function SearchOverlay({ onDeactivate, backgroundColor }: SearchOverlayProps) {
     const backHandler = BackHandler.addEventListener("hardwareBackPress", () => {
       if (keyboardVisible) {
         Keyboard.dismiss();
-      } else {
+        return true;
+      } else if (visible) {
         handleBackPress();
+        return true;
       }
-      return true;
+      return false;
     });
     return () => backHandler.remove();
-  }, [keyboardVisible]);
+  }, [keyboardVisible, visible]);
 
   const searchPosts = async (searchQuery: string) => {
-    if (!searchQuery || searchQuery.length < 2) {
+    if (!searchQuery || searchQuery.length < 1) {
       setResults([]);
       return;
     }
@@ -83,7 +132,11 @@ function SearchOverlay({ onDeactivate, backgroundColor }: SearchOverlayProps) {
       if (algoliaClient) {
         const { hits } = await algoliaClient.searchSingleIndex({
           indexName: "polkassembly_posts",
-          searchParams: { query: searchQuery, hitsPerPage: 10 }
+          searchParams: {
+            query: searchQuery,
+            hitsPerPage: 10,
+            facetFilters: getFacetFilter(),
+          }
         });
         setResults(hits);
       }
@@ -114,58 +167,54 @@ function SearchOverlay({ onDeactivate, backgroundColor }: SearchOverlayProps) {
   };
 
   const deactivateSearchOverlay = () => {
-    Animated.timing(searchBarAnim, {
-      toValue: 100,
-      duration: 300,
-      useNativeDriver: true,
-    }).start(() => {
-      setQuery("");
-      setResults([]);
+    // First dismiss keyboard to prevent flashing
+    Keyboard.dismiss();
+    
+    // Wait a bit for keyboard to start dismissing before animation
+    setTimeout(() => {
       onDeactivate();
-    });
+    }, 50);
   };
-
-  useEffect(() => {
-    Animated.timing(searchBarAnim, {
-      toValue: 0,
-      duration: 300,
-      useNativeDriver: true,
-    }).start(() => {
-      if (searchInputRef.current) {
-        searchInputRef.current.focus();
-      }
-    });
-  }, []);
 
   const renderSearchItem = ({ item }: { item: SearchResult }) => (
     <TouchableOpacity
-      style={[localStyles.searchResultItem, { backgroundColor }]}
+      style={[localStyles.searchResultItem, { backgroundColor: secondaryBackground }]}
       onPress={() => {
         const proposal_type = getSinglePostLinkFromProposalType(item.post_type as ProposalType);
         router.push(`/proposal/${item.id}?proposalType=${proposal_type as EProposalType}`);
       }}
     >
-      <ThemedText type="bodySmall3">{item.title}</ThemedText>
-			<HorizontalSeparator />
+      <ThemedText type="bodySmall">{item.title}</ThemedText>
     </TouchableOpacity>
   );
 
   return (
-    <View style={[localStyles.searchOverlay, { backgroundColor }]}>
-      <ThemedView 
-        style={localStyles.searchBarContainer} 
+    <Animated.View 
+      style={[
+        localStyles.searchOverlay, 
+        { 
+          backgroundColor,
+          opacity: opacityAnim,
+          pointerEvents: visible ? 'auto' : 'none'
+        }
+      ]}
+    >
+      <ThemedView
+        style={[localStyles.searchBarContainer, { borderWidth: 1, borderColor: strokeColor}]}
         type="secondaryBackground"
       >
-        <Animated.View style={[localStyles.animatedSearchBar, { transform: [{ translateY: searchBarAnim }] }]}>
+        <Animated.View style={[
+          localStyles.animatedSearchBar, 
+          { transform: [{ translateY: searchBarAnim }] }
+        ]}>
           <TouchableOpacity onPress={handleBackPress} style={localStyles.backButton}>
-            <IconBrowser color={"white"} style={localStyles.backIcon} />
+            <IconBrowser color={"white"} iconHeight={25} iconWidth={25}/>
           </TouchableOpacity>
-          <IconSearch />
           <TextInput
             ref={searchInputRef}
             placeholder="Search posts..."
-						placeholderTextColor={textColor}
-            style={[localStyles.overlaySearchInput, { color: "white"}]}
+            placeholderTextColor={textColor}
+            style={[localStyles.overlaySearchInput, { color: "white" }]}
             value={query}
             onChangeText={handleChangeText}
             returnKeyType="search"
@@ -189,11 +238,11 @@ function SearchOverlay({ onDeactivate, backgroundColor }: SearchOverlayProps) {
               ) : null
             }
             keyboardShouldPersistTaps="handled"
-						style={{ backgroundColor}}
+            style={{ backgroundColor }}
           />
         )}
       </View>
-    </View>
+    </Animated.View>
   );
 }
 
@@ -205,25 +254,21 @@ const localStyles = StyleSheet.create({
   },
   searchBarContainer: {
     width: "100%",
-    borderRadius: 10,
+    borderRadius: 50,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
+    marginTop: 8
   },
   animatedSearchBar: {
     width: "100%",
-    borderRadius: 10,
+    borderRadius: 50,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
   },
   backButton: {
     padding: 8,
-    marginRight: 8,
-  },
-  backIcon: {
-    width: 20,
-    height: 20,
   },
   overlaySearchInput: {
     flex: 1,
@@ -231,9 +276,9 @@ const localStyles = StyleSheet.create({
     height: 40,
   },
   searchResultItem: {
-    paddingVertical: 12,
+    paddingVertical: 8,
     paddingHorizontal: 10,
-    borderBottomWidth: 1,
+    borderBottomWidth: 2,
     borderBottomColor: Colors.dark.stroke,
   },
   emptyText: {
