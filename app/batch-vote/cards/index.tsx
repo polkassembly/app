@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
-import { View, StyleSheet, Text, ActivityIndicator, TouchableOpacity } from "react-native";
+import { View, StyleSheet, Text, ActivityIndicator, TouchableOpacity, Platform } from "react-native";
 import Swiper from "react-native-deck-swiper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import useAddCartItem from "@/lib/net/queries/actions/useAddCartItem";
@@ -155,41 +155,59 @@ const ProposalVotingScreen: React.FC = () => {
   }
 
   return (
-    <View style={{ flex: 1, backgroundColor }}>
-      <View style={{ flex: 1, backgroundColor, marginTop: insets.top, paddingLeft: insets.left, paddingRight: insets.right }}>
+    <View style={[styles.container, { backgroundColor }]}>
+      <View style={[
+        styles.contentContainer,
+        {
+          marginTop: Platform.OS === 'ios' ? insets.top : 0,
+          paddingLeft: insets.left,
+          paddingRight: insets.right
+        }
+      ]}>
         <TopBar style={{ paddingHorizontal: 16 }} />
-        <View style={{ flex: 1 }}>
-          <View style={{ flex: 1, paddingVertical: 20 }}>
-            <View style={{ flex: 1, zIndex: 5 }}>
+        <View style={styles.mainContent}>
+          <View style={styles.swiperContainer}>
+            <View style={styles.swiperWrapper}>
               <Swiper
-                containerStyle={{ backgroundColor: "" }}
+                containerStyle={styles.swiperStyle}
                 infinite
                 ref={swiperRef}
                 cards={proposals}
-                renderCard={(cardData) => <MemoizedProposalCard card={cardData} key={cardData.index} index={cardData.index} showDetails={() => setProposalDetailsOpen(true)} />}
+                renderCard={(cardData) => (
+                  <MemoizedProposalCard 
+                    card={cardData} 
+                    key={cardData.index} 
+                    index={cardData.index} 
+                    showDetails={() => setProposalDetailsOpen(true)} 
+                  />
+                )}
                 onSwipedLeft={(cardIndex) => onSwiped("nay", cardIndex)}
                 onSwipedRight={(cardIndex) => onSwiped("aye", cardIndex)}
                 onSwipedTop={(cardIndex) => onSwiped("splitAbstain", cardIndex)}
-                stackSize={1}
+                stackSize={2}
                 disableBottomSwipe
                 verticalSwipe
-                animateCardOpacity={false}
+                animateCardOpacity
                 overlayLabels={{
                   left: { element: <OverlayLabel type="nay" /> },
                   right: { element: <OverlayLabel type="aye" /> },
                   top: { element: <OverlayLabel type="splitAbstain" /> },
                 }}
-                cardVerticalMargin={20}
+                cardVerticalMargin={Platform.OS === 'ios' ? 30 : 20}
                 cardHorizontalMargin={20}
+                backgroundColor="transparent"
+                useViewOverflow={Platform.OS === 'ios'}
               />
             </View>
-            {/* FIXME: Bottom card for stack effect, workaround for vote card flashing */}
-            {
-              index + 1 < proposals.length &&
-              <View style={{ position: "absolute", left: 0, right: 0, bottom: 0, zIndex: 0, top: 20, padding: 30 }}>
-                <MemoizedProposalCard card={proposals[index + 1]} index={proposals[index + 1].index} showDetails={() => setProposalDetailsOpen(true)} />
+            {Platform.OS === 'ios' && index + 1 < proposals.length && (
+              <View style={styles.bottomCard}>
+                <MemoizedProposalCard 
+                  card={proposals[index + 1]} 
+                  index={proposals[index + 1].index} 
+                  showDetails={() => setProposalDetailsOpen(true)} 
+                />
               </View>
-            }
+            )}
           </View>
           <CartItemsPreview />
         </View>
@@ -224,13 +242,53 @@ const ProposalVotingScreen: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  contentContainer: {
+    flex: 1,
+  },
+  mainContent: {
+    flex: 1,
+  },
+  swiperContainer: {
+    flex: 1,
+    paddingVertical: 20,
+  },
+  swiperWrapper: {
+    flex: 1,
+    zIndex: 5,
+  },
+  swiperStyle: {
+    backgroundColor: 'transparent',
+  },
+  bottomCard: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    bottom: 0,
+    zIndex: 0,
+    top: 20,
+    padding: Platform.OS === 'ios' ? 40 : 30,
+  },
   cardContainer: {
     borderRadius: 10,
     padding: 10,
-    borderWidth: 1,
+    borderWidth: Platform.OS === 'ios' ? StyleSheet.hairlineWidth : 1,
     flex: 1,
-    maxHeight: "85%",
+    maxHeight: Platform.OS === 'ios' ? "80%" : "85%",
     overflow: "hidden",
+    ...Platform.select({
+      ios: {
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+      },
+      android: {
+        elevation: 2,
+      },
+    }),
   },
   centered: {
     flex: 1,
