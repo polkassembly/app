@@ -30,7 +30,7 @@ import { useProposalByIndex } from "@/lib/net/queries/post";
 import { useEffect, useState } from "react";
 import Timeline from "./Timeline";
 import OnChainInfo from "./OnChainInfo";
-import { ProposerInfo, BenificiariesInfo } from "./UserInfo";
+import { ProposerInfo, BeneficiariesInfo } from "./UserInfo";
 
 interface postFullDetailsProps {
 	post?: Post;
@@ -67,7 +67,7 @@ function PostFullDetails({ indexOrHash, post, proposalType, onClose }: postFullD
 					) : (
 						<View style={{ gap: 20 }}>
 							<ProposerInfo address={proposal.onChainInfo?.proposer} amount={0} />
-							<BenificiariesInfo benificiaries={proposal.onChainInfo?.beneficiaries || []} />
+							<BeneficiariesInfo beneficiaries={proposal.onChainInfo?.beneficiaries || []} />
 							{
 								proposal.onChainInfo && (
 									<ProposalPeriodStatus
