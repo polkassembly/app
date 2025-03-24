@@ -184,7 +184,7 @@ const ProposalVotingScreen: React.FC = () => {
                 onSwipedLeft={(cardIndex) => onSwiped("nay", cardIndex)}
                 onSwipedRight={(cardIndex) => onSwiped("aye", cardIndex)}
                 onSwipedTop={(cardIndex) => onSwiped("splitAbstain", cardIndex)}
-                stackSize={2}
+                stackSize={1}
                 disableBottomSwipe
                 verticalSwipe
                 animateCardOpacity
@@ -199,7 +199,7 @@ const ProposalVotingScreen: React.FC = () => {
                 useViewOverflow={Platform.OS === 'ios'}
               />
             </View>
-            {Platform.OS === 'ios' && index + 1 < proposals.length && (
+            {index + 1 < proposals.length && (
               <View style={styles.bottomCard}>
                 <MemoizedProposalCard 
                   card={proposals[index + 1]} 
