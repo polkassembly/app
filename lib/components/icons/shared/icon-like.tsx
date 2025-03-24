@@ -1,8 +1,8 @@
-import React from "react";
+import React, { memo } from "react";
 import Svg, { Path } from "react-native-svg";
 import { IconProps } from "../types";
 
-export default function IconLike({ color, filled = false, style }: IconProps) {
+const IconLike = ({ color, filled = false, style }: IconProps) => {
   return (
     <Svg width="16" height="16" viewBox="0 0 16 16" fill="none" style={style}>
       <Path
@@ -14,3 +14,5 @@ export default function IconLike({ color, filled = false, style }: IconProps) {
     </Svg>
   );
 }
+
+export default memo(IconLike);

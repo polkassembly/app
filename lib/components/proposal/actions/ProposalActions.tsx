@@ -261,7 +261,7 @@ function ProposalActions({ index, title, proposalType, metrics, reactions, allow
             style={styles.iconButton}
             disabled={isUpdatingLike || (reactionState.reaction === EReaction.like && !reactionState.id)}
           >
-            <IconLike color={"white"} filled={reactionState.reaction === EReaction.like} />
+            <IconLike key={`${reactionState.reaction}-${reactionState.id}`} color={"white"} filled={reactionState.reaction === EReaction.like} />
             <ThemedText type="bodySmall">{localLikeCount}</ThemedText>
           </ThemedButton>
           <ThemedButton
@@ -270,7 +270,7 @@ function ProposalActions({ index, title, proposalType, metrics, reactions, allow
             style={styles.iconButton}
             disabled={isUpdatingDislike || (reactionState.reaction === EReaction.dislike && !reactionState.id)}
           >
-            <IconDislike color={"white"} filled={reactionState.reaction === EReaction.dislike} />
+            <IconDislike key={`${reactionState.reaction}-${reactionState.id}`} color={"white"} filled={reactionState.reaction === EReaction.dislike} />
             <ThemedText type="bodySmall">{localDislikeCount}</ThemedText>
           </ThemedButton>
           <ThemedButton onPress={handleComment} buttonBgColor="selectedIcon" style={styles.iconButton}>
@@ -285,7 +285,7 @@ function ProposalActions({ index, title, proposalType, metrics, reactions, allow
             style={styles.iconButton}
             disabled={isUpdatingSubscription}
           >
-            <IconBookmark color={"white"} filled={subscribed} />
+            <IconBookmark key={`subscribed-${subscribed}`} color={"white"} filled={subscribed} />
           </ThemedButton>
           <ShareButton proposalId={index} proposalTitle={title} />
         </View>

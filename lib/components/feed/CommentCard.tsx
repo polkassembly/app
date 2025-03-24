@@ -267,7 +267,7 @@ function CommentCard({ comment, commentDisabled }: CommentCardProps) {
 						buttonBgColor="selectedIcon"
 						style={styles.iconButton}
 					>
-						<IconLike color="white" filled={isLiked} />
+						<IconLike key={`liked-${isLiked}`} color="white" filled={isLiked} />
 						<ThemedText type="bodySmall">{likes}</ThemedText>
 					</ThemedButton>
 					<ThemedButton
@@ -276,7 +276,7 @@ function CommentCard({ comment, commentDisabled }: CommentCardProps) {
 						buttonBgColor="selectedIcon"
 						style={styles.iconButton}
 					>
-						<IconDislike color="white" filled={isDisliked} />
+						<IconDislike key={`disliked-${isDisliked}`} color="white" filled={isDisliked} />
 						<ThemedText type="bodySmall">{dislikes}</ThemedText>
 					</ThemedButton>
 					{!commentDisabled && (
