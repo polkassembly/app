@@ -68,7 +68,16 @@ function PostFullDetails({ indexOrHash, post, proposalType, onClose }: postFullD
 						<View style={{ gap: 20 }}>
 							<ProposerInfo address={proposal.onChainInfo?.proposer} amount={0} />
 							<BenificiariesInfo benificiaries={proposal.onChainInfo?.beneficiaries || []} />
-							<ProposalPeriodStatus proposal={proposal} />
+							{
+								proposal.onChainInfo && (
+									<ProposalPeriodStatus
+										confirmationPeriodEndsAt={proposal.onChainInfo.confirmationPeriodEndsAt}
+										decisionPeriodEndsAt={proposal.onChainInfo.decisionPeriodEndsAt}
+										preparePeriodEndsAt={proposal.onChainInfo.preparePeriodEndsAt}
+										status={proposal.onChainInfo.status}
+									/>
+								)
+							}
 							<Timeline timeline={proposal.onChainInfo?.timeline || []} proposalType={proposal.proposalType} />
 							<OnChainInfo onChainInfo={proposal.onChainInfo} />
 						</View>

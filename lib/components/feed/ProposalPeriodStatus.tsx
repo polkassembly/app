@@ -1,165 +1,142 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import dayjs from 'dayjs';
-import { IStatusHistoryItem, Post } from '@/lib/types';
 import { ThemedView } from '../ThemedView';
 import { ThemedText } from '../ThemedText';
 import { useThemeColor } from '@/lib/hooks/useThemeColor';
-import { pascalToNormal } from '@/lib/util/stringUtil';
 
-export const calculateDecisionProgress = (decisionPeriodEndsAt: Date | string | null, durationInDays: number = 28) => {
-	if (!decisionPeriodEndsAt) return 0;
-	const now = dayjs();
-	const endDate = dayjs(decisionPeriodEndsAt);
-	const startDate = endDate.subtract(durationInDays, 'days');
-	if (now.isAfter(endDate)) return 100;
-	if (now.isBefore(startDate)) return 0;
-	return (now.diff(startDate, 'minutes') / (durationInDays * 24 * 60)) * 100;
+export const calculateDecisionProgress = (periodEndsAt: Date | string | null, durationInDays: number = 28) => {
+  if (!periodEndsAt) return 0;
+  const now = dayjs();
+  const endDate = dayjs(periodEndsAt);
+  const startDate = endDate.subtract(durationInDays, 'days');
+  if (now.isAfter(endDate)) return 100;
+  if (now.isBefore(startDate)) return 0;
+  return (now.diff(startDate, 'minutes') / (durationInDays * 24 * 60)) * 100;
 };
 
-
-interface ReferendumPeriodStatusProps {
-	proposal: Post;
+function PeriodProgress({ periodEndsAt, periodName }: { periodEndsAt?: Date; periodName: string }) {
+  const progress = calculateDecisionProgress(periodEndsAt || null);
+  const colorAccent = useThemeColor({}, "accent");
+  
+  return (
+    <View style={styles.periodProgressContainer}>
+      <View style={[styles.progressContainer, { backgroundColor: "white" }]}>
+        <View style={{ width: `${progress}%`, backgroundColor: colorAccent, borderRadius: 8, height: "100%" }} />
+      </View>
+      <ThemedText type="bodyMedium3">{periodName}</ThemedText>
+    </View>
+  );
 }
 
-const ProposalPeriodStatus = ({ proposal }: ReferendumPeriodStatusProps) => {
-	const { onChainInfo } = proposal;
-	if (!onChainInfo) return null;
+interface ProposalPeriodsProps {
+  confirmationPeriodEndsAt?: Date;
+  decisionPeriodEndsAt?: Date;
+  preparePeriodEndsAt?: Date;
+  status?: string;
+}
 
-	const {
-		preparePeriodEndsAt,
-		decisionPeriodEndsAt,
-		confirmationPeriodEndsAt,
-		status,
-	} = onChainInfo;
+const ProposalPeriodStatus = ({
+  confirmationPeriodEndsAt,
+  decisionPeriodEndsAt,
+  preparePeriodEndsAt,
+  status
+}: ProposalPeriodsProps) => {
+  // Simplified period checks
+  const preparePeriodEnded = preparePeriodEndsAt ? dayjs(preparePeriodEndsAt).isBefore(dayjs()) : false;
+  const decisionPeriodEnded = decisionPeriodEndsAt ? dayjs(decisionPeriodEndsAt).isBefore(dayjs()) : false;
+  const confirmationPeriodEnded = confirmationPeriodEndsAt ? dayjs(confirmationPeriodEndsAt).isBefore(dayjs()) : false;
 
-	const now = dayjs();
-	const preparePeriodEnded = preparePeriodEndsAt ? dayjs(preparePeriodEndsAt).isBefore(dayjs()) : false;
-	const decisionPeriodEnded = decisionPeriodEndsAt ? dayjs(decisionPeriodEndsAt).isBefore(dayjs()) : false;
-	const confirmationPeriodEnded = confirmationPeriodEndsAt ? dayjs(confirmationPeriodEndsAt).isBefore(dayjs()) : false;
+  const periodsEnded = [preparePeriodEnded, decisionPeriodEnded, confirmationPeriodEnded].filter((period) => period);
+  const currentStep = periodsEnded.length + 1 > 3 ? 3 : periodsEnded.length + 1;
 
-	const periodsEnded = [preparePeriodEnded, decisionPeriodEnded, confirmationPeriodEnded].filter((period) => period);
+  // Simplified header text determination
+  let headerText = 'Prepare Period';
+  if (confirmationPeriodEnded) {
+    headerText = status === 'Passed' || status === 'Executed' ? 'Proposal Passed' : 'Proposal Failed';
+  } else if (decisionPeriodEnded) {
+    headerText = 'Confirmation Period';
+  } else if (preparePeriodEnded) {
+    headerText = 'Voting has Started';
+  }
 
-	const StepText =
-		confirmationPeriodEnded
-			? status === 'Passed' || status === 'Executed'
-				? 'Proposal Passed'
-				: 'Proposal Failed'
-			: decisionPeriodEnded
-				? 'Confirmation Period'
-				: preparePeriodEnded
-					? 'Voting has Started'
-					: 'Prepare Period';
+  const colorStroke = useThemeColor({}, "mediumText");
 
-	const colorStroke = useThemeColor({}, "mediumText")
-
-	return (
-		<ThemedView type="background" style={styles.container}>
-			{/* Row 1: Header with step text and step number */}
-			<View style={styles.row}>
-				<ThemedText type="titleSmall">{StepText}</ThemedText>
-				<View style={{ flexDirection: 'row', alignItems: 'center', gap: 2 }}>
-					<ThemedText style={{ color: colorStroke, backgroundColor: "#E5E5FD", paddingHorizontal: 5, borderRadius: 6 }}>Step {periodsEnded.length + 1}</ThemedText>
-					<ThemedText style={{ color: colorStroke }}> of 3</ThemedText>
-				</View>
-			</View>
-			{confirmationPeriodEnded ? null : preparePeriodEnded ? (
-				<View className='flex flex-col gap-y-6'>
-					{
-						decisionPeriodEndsAt && (
-							<PeriodProgress
-								periodEndsAt={new Date(decisionPeriodEndsAt)}
-								periodName={"Voting Period"}
-							/>
-						)
-					}
-					{
-						confirmationPeriodEndsAt && (
-							<PeriodProgress
-								periodEndsAt={new Date(confirmationPeriodEndsAt)}
-								periodName={"Confirmation Period"}
-							/>
-						)
-					}
-				</View>
-			) : (
-				<View>
-					{
-						preparePeriodEndsAt && (
-							<PeriodProgress
-								periodEndsAt={new Date(preparePeriodEndsAt)}
-								periodName={"Prepare Period"}
-							/>
-						)
-					}
-				</View>
-			)}
-		</ThemedView>
-	);
+  return (
+    <ThemedView type="background" style={styles.container}>
+      {/* Header with step text and step number */}
+      <View style={styles.headerRow}>
+        <ThemedText type="titleSmall">{headerText}</ThemedText>
+        <View style={styles.stepContainer}>
+          <ThemedText style={styles.stepNumber}>{currentStep}</ThemedText>
+          <ThemedText style={{ color: colorStroke }}> of 3</ThemedText>
+        </View>
+      </View>
+      
+      {/* Progress sections */}
+      {confirmationPeriodEnded ? null : preparePeriodEnded ? (
+        <View style={styles.periodsContainer}>
+          {decisionPeriodEndsAt && (
+            <PeriodProgress
+              periodEndsAt={decisionPeriodEndsAt}
+              periodName="Decision Period"
+            />
+          )}
+          {confirmationPeriodEndsAt && (
+            <PeriodProgress
+              periodEndsAt={confirmationPeriodEndsAt}
+              periodName="Confirmation Period"
+            />
+          )}
+        </View>
+      ) : (
+        <View>
+          {preparePeriodEndsAt && (
+            <PeriodProgress
+              periodEndsAt={preparePeriodEndsAt}
+              periodName="Prepare Period"
+            />
+          )}
+        </View>
+      )}
+    </ThemedView>
+  );
 };
-
-function PeriodProgress({ periodEndsAt, periodName }: { periodEndsAt: Date, periodName: string }) {
-	const now = dayjs();
-	const periodEnd = dayjs(periodEndsAt);
-	const progress = calculateDecisionProgress(periodEndsAt);
-
-	const colorAccent = useThemeColor({}, "accent");
-	const colorStroke = useThemeColor({}, "mediumText")
-
-	return (
-		<View style={{ flexDirection: "column" }}>
-			<View style={[styles.progressContainer, { backgroundColor: "white" }]}>
-				<View style={{ width: `${progress}%`, backgroundColor: colorAccent, borderRadius: 8, height: "100%" }} />
-			</View>
-			<View style={styles.row}>
-				<ThemedText type="bodyMedium3">{periodName}</ThemedText>
-				<ThemedText style={{ color: colorStroke }}>
-					{periodEnd.diff(now, 'days')} days
-				</ThemedText>
-			</View>
-		</View>
-	);
-}
 
 const styles = StyleSheet.create({
-	container: {
-		padding: 16,
-		borderRadius: 8,
-		gap: 12,
-	},
-	row: {
-		flexDirection: 'row',
-		justifyContent: 'space-between',
-		alignItems: 'center',
-		marginBottom: 8,
-	},
-	stepNumber: {
-		fontSize: 16,
-		color: '#555',
-	},
-	progressContainer: {
-		height: 8,
-		borderRadius: 5,
-		overflow: 'hidden',
-		marginBottom: 8,
-	},
-	periodLabel: {
-		fontSize: 14,
-		color: '#333',
-	},
-	periodRange: {
-		fontSize: 12,
-		color: '#555',
-	},
-	finalStatusContainer: {
-		marginTop: 16,
-	},
-	finalStatusText: {
-		fontSize: 16,
-		fontWeight: 'bold',
-		color: '#E5007A',
-		textAlign: 'center',
-	},
+  container: {
+    padding: 16,
+    borderRadius: 8,
+    gap: 12,
+  },
+  headerRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  stepContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 2,
+  },
+  stepNumber: {
+    backgroundColor: "#E5E5FD",
+    paddingHorizontal: 5,
+    borderRadius: 6,
+  },
+  periodsContainer: {
+    gap: 24,
+  },
+  periodProgressContainer: {
+    gap: 8,
+  },
+  progressContainer: {
+    height: 8,
+    borderRadius: 5,
+    overflow: 'hidden',
+    marginBottom: 4,
+  },
 });
 
 export default ProposalPeriodStatus;
