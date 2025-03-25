@@ -37,7 +37,8 @@ export function formatBnBalance(value: string | BN, options: Options, network: E
 
 	if (compactNotation) {
 		const fullValue = parseFloat(`${prefix}.${suffix}`);
-		formattedValue = new Intl.NumberFormat('en-US', { notation: 'compact', maximumFractionDigits: numberAfterComma || 2 }).format(fullValue);
+		// Use custom compact notation formatter that works reliably on both iOS and Android
+		formattedValue = formatCompactNumber(fullValue, numberAfterComma || 2);
 	} else {
 		if (withThousandDelimitor) {
 			// TODO:fix this
@@ -50,4 +51,31 @@ export function formatBnBalance(value: string | BN, options: Options, network: E
 	const unit = withUnit ? (assetId ? NETWORKS_DETAILS[`${network}`]?.supportedAssets[`${assetId}`]?.symbol : NETWORKS_DETAILS[`${network}`]?.tokenSymbol) : '';
 
 	return `${formattedValue} ${unit}`.trim();
+}
+
+// Custom compact number formatter that works across all platforms
+function formatCompactNumber(num: number, digits: number): string {
+	if (num === 0) return "0";
+	
+	const lookup = [
+		{ value: 1, symbol: "" },
+		{ value: 1e3, symbol: "K" },
+		{ value: 1e6, symbol: "M" },
+		{ value: 1e9, symbol: "B" },
+		{ value: 1e12, symbol: "T" }
+	];
+	
+	// Find the appropriate suffix
+	const item = [...lookup].reverse().find(item => num >= item.value);
+	
+	if (!item) return "0";
+	
+	// Calculate the scaled value with proper precision
+	const scaledValue = num / item.value;
+	const formattedValue = scaledValue.toFixed(digits);
+	
+	// Remove trailing zeros
+	const cleanValue = formattedValue.replace(/\.0+$|(\.\d*[1-9])0+$/, "$1");
+	
+	return cleanValue + item.symbol;
 }

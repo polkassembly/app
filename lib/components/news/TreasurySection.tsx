@@ -43,10 +43,10 @@ function TreasurySection() {
 								) : latestTreasuryStats ? (
 									<>
 										<ThemedText style={styles.amountText}>
-											{formatBnBalance(latestTreasuryStats.total?.totalDot || "0", { compactNotation: true }, ENetwork.POLKADOT)} DOT
+											{formatBnBalance(latestTreasuryStats.total?.totalDot || "0", { compactNotation: true, numberAfterComma: 2 }, ENetwork.POLKADOT)} DOT
 										</ThemedText>
 										<ThemedText type="titleMedium" style={styles.usdcText}>
-											~${formatBnBalance(latestTreasuryStats.total?.totalUsdc || "0", { compactNotation: true }, ENetwork.POLKADOT, '1337')}
+											~${formatBnBalance(latestTreasuryStats.total?.totalUsdc || "0", { compactNotation: true, numberAfterComma: 2 }, ENetwork.POLKADOT, '1337')}
 										</ThemedText>
 									</>
 								) : (
