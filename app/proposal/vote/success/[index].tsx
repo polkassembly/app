@@ -23,7 +23,7 @@ export default function SuccessScreen() {
   const { conviction, decision, dot, index, proposalType } = useLocalSearchParams<Params>();
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor }}>
+    <View style={{ flex: 1, backgroundColor }}>
       <TopBar style={{ paddingHorizontal: 16 }} />
 
       <View style={{ justifyContent: "space-between", flex: 1, paddingHorizontal: 16 }}>
@@ -95,7 +95,7 @@ export default function SuccessScreen() {
           />
         </View>
       </View>
-    </SafeAreaView>
+    </View>
   );
 }
 

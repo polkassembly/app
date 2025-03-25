@@ -1,7 +1,7 @@
 import BottomButton from "@/lib/components/shared/BottomButton";
 import { TopBar } from "@/lib/components/Topbar";
 import { useThemeColor } from "@/lib/hooks/useThemeColor";
-import { Link, router, useLocalSearchParams } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import React, { useState } from "react";
 import {
   ActivityIndicator,
@@ -61,7 +61,7 @@ export default function ProposalDetailScreenImpl() {
   }
 
   return (
-    <ThemedView type="container" style={{ flex: 1, paddingBottom: insets.bottom, paddingTop: insets.top }}>
+    <ThemedView type="container" style={{ flex: 1 }}>
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.OS === "ios" ? "padding" : "height"}

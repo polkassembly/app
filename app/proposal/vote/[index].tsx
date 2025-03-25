@@ -63,7 +63,7 @@ export default function BatchVotingScreen() {
   }
 
   return (
-    <SafeAreaView style={styles.root}>
+    <View style={styles.root}>
       <TopBar />
       <ScrollView style={styles.scrollView} contentContainerStyle={{ marginTop: 20, gap: 20 }}>
         <ThemedText type="bodyLarge">Proposal #{index}</ThemedText>
@@ -100,7 +100,7 @@ export default function BatchVotingScreen() {
       <View style={{ position: "absolute", bottom: 0, left: 0, right: 0 }}>
         <BottomButton onPress={onPressAddToCart}>Add to Cart</BottomButton>
       </View>
-    </SafeAreaView>
+    </View>
   );
 }
 
