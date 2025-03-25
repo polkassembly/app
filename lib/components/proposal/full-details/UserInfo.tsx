@@ -58,7 +58,7 @@ const UserInfo: React.FC<UserInfoProps> = React.memo(({ address, amount, assetId
 				{user?.username || 'Anonymous'}
 			</ThemedText>
 			{formattedAmount && (
-				<ThemedText type="bodySmall">
+				<ThemedText type="bodySmall" style={{ opacity: 0.5 }}>
 					{`(${formattedAmount})`}
 				</ThemedText>
 			)}
@@ -111,6 +111,7 @@ const styles = StyleSheet.create({
 		borderColor: "#383838",
 		borderWidth: 1,
 		gap: 20,
+		flexWrap: "wrap"
 	},
 	flexRowJustifySpaceBetween: {
 		flexDirection: "row",
