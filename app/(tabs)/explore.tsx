@@ -1,7 +1,5 @@
-import React, { useState, useCallback, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
-  TextInput,
-  FlatList,
   StyleSheet,
   Keyboard,
   View,
@@ -12,7 +10,7 @@ import {
 } from "react-native";
 import { ResizeMode, Video } from "expo-av";
 import { LinearGradient } from "expo-linear-gradient";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import { openBrowserAsync } from "expo-web-browser";
 
 import { ThemedText } from "@/lib/components/ThemedText";
@@ -29,25 +27,10 @@ import { useThemeColor } from "@/lib/hooks/useThemeColor";
 export default function ChromeStyleBrowser() {
   const [isSearching, setIsSearching] = useState(false);
   const [isSearchOverlayVisible, setIsSearchOverlayVisible] = useState(false);
-  const [keyboardVisible, setKeyboardVisible] = useState(false);
   const contentOpacity = useRef(new Animated.Value(1)).current;
-  const insets = useSafeAreaInsets();
+
   const backgroundColor = useThemeColor({}, "secondaryBackground");
   const mediumTextColor = useThemeColor({}, "mediumText")
-
-  // Listen for keyboard events (for browser UI)
-  useEffect(() => {
-    const showSub = Keyboard.addListener("keyboardDidShow", () => {
-      setKeyboardVisible(true);
-    });
-    const hideSub = Keyboard.addListener("keyboardDidHide", () => {
-      setKeyboardVisible(false);
-    });
-    return () => {
-      showSub.remove();
-      hideSub.remove();
-    };
-  }, []);
 
   const activateSearch = () => {
     // First make overlay visible, but the animation will start with transform and opacity
@@ -80,8 +63,8 @@ export default function ChromeStyleBrowser() {
   };
 
   return (
-    <View style={styles.mainContainer}>
-      <View style={{ flex: 1, marginTop: insets.top, marginBottom: insets.bottom, marginLeft: insets.left, marginRight: insets.right }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor}}>
+      <View style={{ flex: 1 }}>
 
         {/* Always render SearchOverlay but control visibility with props */}
         {isSearchOverlayVisible && (
@@ -144,9 +127,9 @@ export default function ChromeStyleBrowser() {
                 onPress={activateSearch}
               >
                 <IconSearch />
-                <ThemedText 
-                  type="bodySmall" 
-                  style={{ color: mediumTextColor}}
+                <ThemedText
+                  type="bodySmall"
+                  style={{ color: mediumTextColor }}
                 >
                   Search by name or enter URL
                 </ThemedText>
@@ -200,7 +183,7 @@ export default function ChromeStyleBrowser() {
           </ScrollView>
         </Animated.View>
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -226,10 +209,6 @@ function TitleSection() {
 }
 
 const styles = StyleSheet.create({
-  mainContainer: {
-    flex: 1,
-    backgroundColor: Colors.dark.secondaryBackground,
-  },
   container: {
     flex: 1,
   },
@@ -238,7 +217,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     paddingHorizontal: 16,
-    paddingVertical: 16,
+    paddingVertical: 10,
     zIndex: 10,
   },
   titleLeft: {

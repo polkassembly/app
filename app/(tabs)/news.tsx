@@ -23,7 +23,7 @@ export default function NewsScreen() {
   const [htmlContent, setHtmlContent] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const backgroundColor = useThemeColor({}, "background")
+  const backgroundColor = useThemeColor({}, "secondaryBackground")
 
   // Load HTML asset and coin data on mount
   useEffect(() => {
@@ -48,7 +48,7 @@ export default function NewsScreen() {
   }, []);
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: Colors.dark.secondaryBackground, paddingTop: 10 }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor, paddingTop: 10 }}>
       <NewsHeader />
       <ScrollView style={{ flex: 1, marginTop: 20, gap: 20 }}>
 
