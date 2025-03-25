@@ -35,7 +35,7 @@ import { ThemedText } from "@/lib/components/ThemedText";
 import { useThemeColor } from "@/lib/hooks/useThemeColor";
 import { ProposalCard, ProposalCardSkeleton } from "@/lib/components/proposal/ProposalCard";
 import { useProfileStore } from "@/lib/store/profileStore";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import { useGetUserById } from "@/lib/net/queries/profile";
 import getIdFromToken from "@/lib/util/jwt";
 import { useAuthStore } from "@/lib/store/authStore";
@@ -159,7 +159,9 @@ export default function Home() {
     <SafeAreaView style={{ flex: 1 }}>
       <TabView
         renderTabBar={(props) => (
-          <TabViewWrapper>
+          <TabViewWrapper
+            key={props.navigationState.index}
+          >
             <TabBar
               {...props}
               style={{

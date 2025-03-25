@@ -8,6 +8,7 @@ import { BottomTabBarButtonProps } from "@react-navigation/bottom-tabs";
 import { IconBrowser } from "@/lib/components/icons/icon-browser";
 import { IconProfile } from "@/lib/components/icons/icon-profile";
 import { IconNews } from "@/lib/components/icons/Profile";
+import { useThemeColor } from "@/lib/hooks";
 
 const smallIconSize = 32;
 const largeIconSize = 44;
@@ -38,10 +39,11 @@ const styles = StyleSheet.create({
 
 export default function TabLayout() {
   const insets = useSafeAreaInsets();
+  const backgroundColor = useThemeColor({}, "secondaryBackground");
 
   return (
     // Wrap the Tabs with a View that adds bottom padding based on the safe area
-    <View style={{ flex: 1, paddingBottom: insets.bottom }}>
+    <View style={{ flex: 1 }}>
       <Tabs
         screenOptions={{
           tabBarShowLabel: false,
@@ -79,6 +81,10 @@ export default function TabLayout() {
           }}
         />
       </Tabs>
+      {/* This view sets the background color of the bottom safe area to match the color of bottom navigation */}
+      {
+        insets.bottom > 0 && <View style={{ height: insets.bottom, width: "100%", backgroundColor: backgroundColor }} />
+      }
     </View>
   );
 }
