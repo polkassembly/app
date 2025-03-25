@@ -15,7 +15,6 @@ const ThemedMarkdownDisplay = ({
 }: ThemedMarkdownDisplayProps) => {
 
 	if (!content) return null;
-	console.log("content", content)
 
 	const colorText = useThemeColor({}, "text");
 

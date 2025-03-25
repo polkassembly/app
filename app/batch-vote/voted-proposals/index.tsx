@@ -30,18 +30,18 @@ export default function VotedProposals() {
 	const [showEdit, setShowEdit] = useState(false);
 	const [cartItem, setCartItem] = useState<CartItem | null>(null);
 	const colorStroke = useThemeColor({}, "stroke");
-	const background = useThemeColor({}, "container");
-	const insets = useSafeAreaInsets();
+	const background = useThemeColor({}, "secondaryBackground");
+	const insets = useSafeAreaInsets()
 
 	if (isCartLoading) {
 		return <ActivityIndicator />;
 	}
 
 	return (
-		<>
-			<View style={{ backgroundColor: background, flex: 1, paddingTop: insets.top, paddingLeft: insets.left, paddingRight: insets.right }}>
-				<TopBar style={{ marginHorizontal: 16}}/>
-				<ScrollView style={{ padding: 20}}>
+		<ThemedView type="secondaryBackground" style={{ flex: 1 }}>
+			<TopBar style={{ paddingHorizontal: 16 }} />
+			<ScrollView style={{ marginTop: 20}}>
+				<View style={{ paddingHorizontal: 16}}>
 					<TouchableOpacity style={{ flexDirection: "row", alignItems: "center", marginBottom: 20, gap: 6 }} onPress={() => router.dismiss()}>
 						<Ionicons name="chevron-back" size={15} color="white" />
 						<ThemedText type="bodySmall">Back To Swiping</ThemedText>
@@ -68,13 +68,13 @@ export default function VotedProposals() {
 							/>
 						))}
 					</ThemedView>
-				</ScrollView>
-				<BottomView totalProposal={String(cart?.length || 0)} />
-			</View>
+				</View>
+			</ScrollView>
+			<BottomView totalProposal={String(cart?.length || 0)} />
 			{showEdit && cartItem && (
 				<EditCartItem cartItem={cartItem} onClose={() => setShowEdit(false)} />
 			)}
-		</>
+		</ThemedView>
 	);
 }
 
@@ -132,7 +132,7 @@ function CartItemCard({ cartItem, onEdit }: CartItemCardProps) {
 					#{cartItem.postIndexOrHash}
 				</ThemedText>
 				{isPostLoading ? (
-					<Skeleton width={50} height={15}/>
+					<Skeleton width={50} height={15} />
 				) : (
 					<ThemedText type="bodySmall">{trimText(post?.title || "", 30)}</ThemedText>
 				)}
@@ -175,34 +175,34 @@ function EditCartItem({ cartItem, onClose }: EditCartItemProps) {
 	const colorStroke = useThemeColor({}, "stroke");
 
 	const [vote, setVote] = useState<Vote>(cartItem.decision as Vote);
-	
+
 	// Initialize with proper values for aye amount
 	const [ayeAmount, setAyeAmount] = useState<number>(
-		cartItem.decision === "aye" && cartItem.amount.aye 
-			? parseFloat(cartItem.amount.aye) 
+		cartItem.decision === "aye" && cartItem.amount.aye
+			? parseFloat(cartItem.amount.aye)
 			: 1
 	);
-	
+
 	// Initialize with proper values for nay amount
 	const [nayAmount, setNayAmount] = useState<number>(
-		cartItem.decision === "nay" && cartItem.amount.nay 
-			? parseFloat(cartItem.amount.nay) 
+		cartItem.decision === "nay" && cartItem.amount.nay
+			? parseFloat(cartItem.amount.nay)
 			: 1
 	);
-	
+
 	// Initialize abstain as an object
 	const [abstainAmount, setAbstainAmount] = useState<Abstain>({
-		abstain: cartItem.decision === "splitAbstain" && cartItem.amount.abstain 
-			? parseFloat(cartItem.amount.abstain) 
+		abstain: cartItem.decision === "splitAbstain" && cartItem.amount.abstain
+			? parseFloat(cartItem.amount.abstain)
 			: 1,
-		aye: cartItem.decision === "splitAbstain" && cartItem.amount.aye 
-			? parseFloat(cartItem.amount.aye) 
+		aye: cartItem.decision === "splitAbstain" && cartItem.amount.aye
+			? parseFloat(cartItem.amount.aye)
 			: 1,
-		nay: cartItem.decision === "splitAbstain" && cartItem.amount.nay 
-			? parseFloat(cartItem.amount.nay) 
+		nay: cartItem.decision === "splitAbstain" && cartItem.amount.nay
+			? parseFloat(cartItem.amount.nay)
 			: 1
 	});
-	
+
 	const [conviction, setConviction] = useState(cartItem.conviction);
 
 	const { mutate: editCartItem } = useUpdateCartItem();
@@ -219,7 +219,7 @@ function EditCartItem({ cartItem, onClose }: EditCartItemProps) {
 			amount.aye = abstainAmount.aye.toString();
 			amount.nay = abstainAmount.nay.toString();
 		}
-		
+
 		editCartItem({
 			id: cartItem.id,
 			decision: vote,
@@ -254,7 +254,7 @@ function EditCartItem({ cartItem, onClose }: EditCartItemProps) {
 				paddingTop: 16,
 			}}
 		>
-			<ScrollView style={{ paddingHorizontal: 16}}>
+			<ScrollView style={{ paddingHorizontal: 16 }}>
 				<View
 					style={{
 						flexDirection: "row",

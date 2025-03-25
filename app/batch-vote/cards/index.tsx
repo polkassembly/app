@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import { View, StyleSheet, Text, ActivityIndicator, TouchableOpacity, Platform } from "react-native";
 import Swiper from "react-native-deck-swiper";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import useAddCartItem from "@/lib/net/queries/actions/useAddCartItem";
 import { useActivityFeed } from "@/lib/net/queries/post/useActivityFeed";
 import { TopBar } from "@/lib/components/Topbar";
@@ -72,7 +71,6 @@ const ProposalVotingScreen: React.FC = () => {
   const swiperRef = useRef<any>(null);
   const backgroundColor = useThemeColor({}, "container");
   const [index, setIndex] = useState(0);
-  const insets = useSafeAreaInsets();
 
   // Append new proposals as they are fetched
   useEffect(() => {
@@ -156,14 +154,7 @@ const ProposalVotingScreen: React.FC = () => {
 
   return (
     <View style={[styles.container, { backgroundColor }]}>
-      <View style={[
-        styles.contentContainer,
-        {
-          marginTop: Platform.OS === 'ios' ? insets.top : 0,
-          paddingLeft: insets.left,
-          paddingRight: insets.right
-        }
-      ]}>
+      <View style={styles.contentContainer}>
         <TopBar style={{ paddingHorizontal: 16 }} />
         <View style={styles.mainContent}>
           <View style={styles.swiperContainer}>
