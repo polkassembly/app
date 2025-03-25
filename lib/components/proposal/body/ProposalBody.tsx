@@ -1,11 +1,11 @@
 import { Ionicons } from "@expo/vector-icons";
 import React, { useState, useMemo, useCallback } from "react";
-import { View, TouchableOpacity, StyleSheet } from "react-native";
-import RenderHTML from "react-native-render-html";
+import { View, TouchableOpacity, StyleSheet, Text } from "react-native";
+import Markdown from 'react-native-markdown-display';
 
 import { EPostOrigin, UserProfile } from "@/lib/types";
 import { trimText } from "@/lib/util/stringUtil";
-import { UserAvatar } from "../../shared";
+import { ThemedMarkdownDisplay, UserAvatar } from "../../shared";
 import { ThemedText } from "../../ThemedText";
 import OriginBadge from "./OriginBadge";
 import TimeDisplay from "./TimeDisplay";
@@ -14,7 +14,7 @@ import { Skeleton } from "moti/skeleton";
 
 interface ProposalBodyProps {
 	title: string;
-	htmlContent: string;
+	content: string;
 	createdAt?: string;
 	proposerInfo: UserProfile | undefined;
 	descriptionLength?: number;
@@ -22,14 +22,9 @@ interface ProposalBodyProps {
 	withoutReadMore?: boolean;
 }
 
-// Memoize the RenderHTML component to prevent unnecessary re-renders
-const MemoizedRenderHTML = React.memo((props: any) => {
-	return <RenderHTML {...props} />;
-});
-
 function ProposalBody({
 	title,
-	htmlContent,
+	content,
 	createdAt,
 	proposerInfo,
 	descriptionLength = 300,
@@ -37,35 +32,17 @@ function ProposalBody({
 	withoutReadMore = false
 }: ProposalBodyProps) {
 	const [isReadMoreClicked, setIsReadMoreClicked] = useState(false);
-	const [postDescriptionHTML, setPostDescriptionHTML] = useState(
-		trimText(htmlContent, descriptionLength)
+	const [displayContent, setDisplayContent] = useState(
+		trimText(content, descriptionLength)
 	);
 
-	const colorText = useThemeColor({}, "text");
 	const colorAccent = useThemeColor({}, "accent");
 
 	// Memoize the toggle function
 	const toggleReadMore = useCallback(() => {
-		setPostDescriptionHTML(isReadMoreClicked ? trimText(htmlContent, descriptionLength) : htmlContent);
+		setDisplayContent(isReadMoreClicked ? trimText(content, descriptionLength) : content);
 		setIsReadMoreClicked(prev => !prev);
-	}, [isReadMoreClicked, htmlContent, descriptionLength]);
-
-	// Memoize the props passed to the RenderHTML component
-	const renderHTMLProps = useMemo(() => ({
-		source: { html: postDescriptionHTML },
-		baseStyle: {
-			color: colorText,
-			fontFamily: "PoppinsRegular",
-			fontSize: 12,
-			fontWeight: "400"
-		},
-		contentWidth: 300,
-		tagsStyles: {
-			body: { padding: 0, margin: 0 },
-			p: { padding: 0, margin: 0 },
-			span: { padding: 0, margin: 0 },
-		}
-	}), [postDescriptionHTML, colorText]);
+	}, [isReadMoreClicked, content, descriptionLength]);
 
 	return (
 		<View style={styles.flexColumnGap8}>
@@ -87,8 +64,12 @@ function ProposalBody({
 			<ThemedText type="bodyMedium2" style={{ letterSpacing: 1 }}>
 				{trimText(title, 80)}
 			</ThemedText>
-			<MemoizedRenderHTML {...renderHTMLProps} />
-			{!withoutReadMore && htmlContent.length > descriptionLength && (
+
+			<ThemedMarkdownDisplay
+				content={displayContent}
+			/>
+
+			{!withoutReadMore && content.length > descriptionLength && (
 				<TouchableOpacity onPress={toggleReadMore}>
 					<View style={styles.flexRowGap4}>
 						<ThemedText type="bodySmall" colorName="accent">

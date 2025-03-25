@@ -63,7 +63,7 @@ function ProposalCard({
 			<HorizontalSeparator />
 			<ProposalBody
 				title={post.title}
-				htmlContent={post.htmlContent}
+				content={post.content}
 				createdAt={post.onChainInfo?.createdAt}
 				proposerInfo={proposerInfo}
 				descriptionLength={descriptionLength}

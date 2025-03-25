@@ -12,9 +12,7 @@ export interface IComment {
 	createdAt: Date;
 	updatedAt: Date;
 	userId: number;
-	content: any; // FIXME: Type this
-	htmlContent: string;
-	markdownContent: string;
+	content: string;
 	network: ENetwork;
 	proposalType: EProposalType;
 	indexOrHash: string;

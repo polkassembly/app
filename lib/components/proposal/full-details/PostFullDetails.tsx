@@ -41,13 +41,13 @@ interface postFullDetailsProps {
 
 function PostFullDetails({ indexOrHash, post, proposalType, onClose }: postFullDetailsProps) {
 	const [proposal, setProposal] = useState<Post>(post || {} as Post);
-	const { data: prposal, isLoading } = useProposalByIndex({ proposalType, indexOrHash });
+	const { data } = useProposalByIndex({ proposalType, indexOrHash });
 
 	useEffect(() => {
-		if (prposal) {
-			setProposal(prposal);
+		if (data) {
+			setProposal(data);
 		}
-	}, [prposal]);
+	}, [data]);
 
 	return (
 		<ThemedView type="container" style={styles.sheet}>

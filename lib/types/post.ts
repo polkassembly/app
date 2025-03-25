@@ -179,8 +179,7 @@ export interface Post {
   id: "";
   index: string;
   title: string;
-  content: {};
-  htmlContent: string;
+  content: string;
   createdAt: string;
   updatedAt: string;
   tags: [];

@@ -1,13 +1,11 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import debounce from "lodash/debounce";
-import RenderHTML from "react-native-render-html";
 import { ICommentResponse, EReaction } from "@/lib/types";
 import { UserAvatar } from "../shared";
 import ThemedButton from "../ThemedButton";
 import { IconLike, IconDislike, IconComment } from "../icons/shared";
 import { ThemedText } from "../ThemedText";
-import { Colors } from "@/lib/constants/Colors";
 import VerticalSeprator from "../shared/VerticalSeprator";
 import StackedAvatars from "./StackedAvatars";
 import { extractUniqueChildrenAvatars } from "@/lib/util/commentUtil";
@@ -15,16 +13,12 @@ import CommentBox from "./CommentBox";
 import useAddCommentReaction from "@/lib/net/queries/actions/useAddCommentReaction";
 import useDeleteCommentReaction from "@/lib/net/queries/actions/useDeleteCommentReaction";
 import { useProfileStore } from "@/lib/store/profileStore";
+import { ThemedMarkdownDisplay } from "@/lib/components/shared";
 
 interface CommentCardProps {
 	comment: ICommentResponse;
 	commentDisabled?: boolean;
 }
-
-// Memoized RenderHTML component
-const MemoizedRenderHTML = React.memo((props: any) => {
-  return <RenderHTML {...props} />;
-});
 
 function CommentCard({ comment, commentDisabled }: CommentCardProps) {
 	const userProfile = useProfileStore((state) => state.profile);
@@ -230,16 +224,6 @@ function CommentCard({ comment, commentDisabled }: CommentCardProps) {
 		setShowReplyBox((prev) => !prev);
 	};
 
-	// Memoize the RenderHTML props to avoid unnecessary re-renders
-	const renderHTMLProps = useMemo(
-		() => ({
-			source: { html: comment.htmlContent },
-			contentWidth: 300,
-			baseStyle: { color: Colors.dark.mediumText },
-		}),
-		[comment.htmlContent]
-	);
-
 	return (
 		<View style={styles.mainContainer}>
 			<View style={{ flexDirection: "column", alignItems: "center", gap: 10 }}>
@@ -259,7 +243,9 @@ function CommentCard({ comment, commentDisabled }: CommentCardProps) {
 						{comment.user.username.toUpperCase()}
 					</ThemedText>
 				</View>
-				<MemoizedRenderHTML {...renderHTMLProps} />
+				<ThemedMarkdownDisplay
+					content={comment.content}
+				/>
 				<View style={styles.commentActionsContainer}>
 					<ThemedButton
 						onPress={handleLike}

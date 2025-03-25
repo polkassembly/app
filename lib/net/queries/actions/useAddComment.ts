@@ -24,11 +24,6 @@ interface AddCommentResponse {
   commentId: string;
 }
 
-// A helper to convert text to HTML
-const convertTextToHtml = (text: string): string => {
-  return `<p>${text.replace(/\n/g, "<br />")}</p>`;
-};
-
 const useAddComment = () => {
   const queryClient = useQueryClient();
   // Retrieve user info from the profile store at the top level of the hook.
@@ -75,8 +70,6 @@ const useAddComment = () => {
         updatedAt: new Date(),
         userId: userInfo.id,
         content: bodyParams.content,
-        htmlContent: convertTextToHtml(bodyParams.content),
-        markdownContent: bodyParams.content,
         network: ENetwork.POLKADOT,
         proposalType: pathParams.proposalType,
         indexOrHash: pathParams.postIndexOrHash,
