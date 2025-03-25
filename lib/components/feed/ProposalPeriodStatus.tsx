@@ -66,10 +66,10 @@ const ProposalPeriodStatus = ({
     <ThemedView type="background" style={styles.container}>
       {/* Header with step text and step number */}
       <View style={styles.headerRow}>
-        <ThemedText type="titleSmall">{headerText}</ThemedText>
+        <ThemedText type="bodyLarge">{headerText}</ThemedText>
         <View style={styles.stepContainer}>
-          <ThemedText style={styles.stepNumber}>Step {currentStep}</ThemedText>
-          <ThemedText style={{ color: colorStroke }}> of 3</ThemedText>
+          <ThemedText type="bodySmall3" colorName="mediumText" style={styles.stepNumber}>Step {currentStep}</ThemedText>
+          <ThemedText type="bodySmall3" colorName="ctaStroke" style={{ color: colorStroke }}> of 3</ThemedText>
         </View>
       </View>
       
@@ -123,6 +123,7 @@ const styles = StyleSheet.create({
   stepNumber: {
     backgroundColor: "#E5E5FD",
     paddingHorizontal: 5,
+    paddingVertical: 2,
     borderRadius: 6,
   },
   periodsContainer: {

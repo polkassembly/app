@@ -2,16 +2,13 @@ import React, { useMemo, useState } from "react";
 import { View, Dimensions, StyleSheet } from "react-native";
 import { ThemedText } from "@/lib/components/ThemedText";
 import WebView from "react-native-webview";
-import { useThemeColor } from "@/lib/hooks";
 import { twitterEmbedHTML } from "@/lib/util/twitterEmbedHTML";
 
 function NewsSection() {
   const htmlContent = useMemo(() => twitterEmbedHTML, []);
   const webViewRef = React.useRef<WebView>(null);
   const screenWidth = Dimensions.get('window').width;
-  const [height, setHeight] = useState(1200);
-
-  const backgroundColor = useThemeColor({}, "secondaryBackground");
+  const [height, setHeight] = useState(800);
 
   const handleWebViewMessage = (event: any) => {
     try {
@@ -19,10 +16,7 @@ function NewsSection() {
       console.log(message)
       if (message.action === 'resize' && message.height) {
         const newHeight = Math.round(message.height);
-        // if (Math.abs(newHeight - lastResizeHeight.current) > 5) {
-        //   lastResizeHeight.current = newHeight;
           setHeight(newHeight);
-        // }
       }
     } catch (error) {
       console.error("Error parsing WebView message:", error);
