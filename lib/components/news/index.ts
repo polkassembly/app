@@ -1,6 +1,6 @@
 import NewsHeader from "./NewsHeader";
 import TopCoinsSection from "./TopCoinsSection";
 import TreasurySection from "./TreasurySection";
-import { TwitterEmbed, TwitterEmbedSkeleton} from "./TwitterEmbed";
+import NewsSection from "./NewsSection";
 
-export { NewsHeader, TopCoinsSection, TwitterEmbed, TwitterEmbedSkeleton, TreasurySection };
+export { NewsHeader, TopCoinsSection, NewsSection, TreasurySection };
