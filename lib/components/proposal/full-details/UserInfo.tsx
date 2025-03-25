@@ -86,7 +86,7 @@ interface BeneficiariesInfoProps {
 
 const BeneficiariesInfo: React.FC<BeneficiariesInfoProps> = ({ beneficiaries }) => (
 	<ThemedView type="background" style={[styles.proposerInfo, styles.flexRowJustifySpaceBetween]}>
-		<ThemedText type="bodyLarge">Beneficiaries</ThemedText>
+		<ThemedText type="bodyLarge">{beneficiaries.length > 1 ? "Beneficiaries" : "Beneficiary"}</ThemedText>
 		<View style={styles.beneficiariesContainer}>
 			{beneficiaries.map((beneficiary) => (
 				<View
