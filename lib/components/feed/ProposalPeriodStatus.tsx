@@ -68,7 +68,7 @@ const ProposalPeriodStatus = ({
       <View style={styles.headerRow}>
         <ThemedText type="titleSmall">{headerText}</ThemedText>
         <View style={styles.stepContainer}>
-          <ThemedText style={styles.stepNumber}>{currentStep}</ThemedText>
+          <ThemedText style={styles.stepNumber}>Step {currentStep}</ThemedText>
           <ThemedText style={{ color: colorStroke }}> of 3</ThemedText>
         </View>
       </View>
