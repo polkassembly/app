@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
-import { View, StyleSheet, Text, ActivityIndicator, TouchableOpacity, Platform } from "react-native";
+import { View, StyleSheet, Text, ActivityIndicator, TouchableOpacity, Platform, useWindowDimensions } from "react-native";
 import Swiper from "react-native-deck-swiper";
 import useAddCartItem from "@/lib/net/queries/actions/useAddCartItem";
 import { useActivityFeed } from "@/lib/net/queries/post/useActivityFeed";
@@ -54,11 +54,11 @@ const MemoizedProposalCard = React.memo(({ card, index, showDetails }: MemoizedP
 });
 
 const ProposalVotingScreen: React.FC = () => {
-  const { 
-    conviction, 
-    ayeAmount, 
-    nayAmount, 
-    abstainAmount 
+  const {
+    conviction,
+    ayeAmount,
+    nayAmount,
+    abstainAmount
   } = useBatchVotingStore();
 
   const feedParams = { limit: 20 };
@@ -71,6 +71,8 @@ const ProposalVotingScreen: React.FC = () => {
   const swiperRef = useRef<any>(null);
   const backgroundColor = useThemeColor({}, "container");
   const [index, setIndex] = useState(0);
+
+  const { width, height } = useWindowDimensions();
 
   // Append new proposals as they are fetched
   useEffect(() => {
@@ -165,37 +167,51 @@ const ProposalVotingScreen: React.FC = () => {
                 ref={swiperRef}
                 cards={proposals}
                 renderCard={(cardData) => (
-                  <MemoizedProposalCard 
-                    card={cardData} 
-                    key={cardData.index} 
-                    index={cardData.index} 
-                    showDetails={() => setProposalDetailsOpen(true)} 
+                  <MemoizedProposalCard
+                    card={cardData}
+                    key={cardData.index}
+                    index={cardData.index}
+                    showDetails={() => setProposalDetailsOpen(true)}
                   />
                 )}
+                
+                // swipe events
                 onSwipedLeft={(cardIndex) => onSwiped("nay", cardIndex)}
                 onSwipedRight={(cardIndex) => onSwiped("aye", cardIndex)}
                 onSwipedTop={(cardIndex) => onSwiped("splitAbstain", cardIndex)}
-                stackSize={Platform.OS === "ios" ? 2 : 1}
                 disableBottomSwipe
                 verticalSwipe
-                animateCardOpacity
+                horizontalThreshold={100}
+
+                stackSize={Platform.OS === "ios" ? 2 : 1}
+
+                // overlay labels and opacity
+                animateOverlayLabelsOpacity
+                overlayOpacityHorizontalThreshold={5}
+                overlayOpacityVerticalThreshold={5} 
+                inputOverlayLabelsOpacityRangeX={[-width * 0.5, -width * 0.2, 0, width * 0.2, width * 0.5]}
+                outputOverlayLabelsOpacityRangeX={[1, 1, 0.5, 1, 1]}
+                inputOverlayLabelsOpacityRangeY={[-height * 0.5, -height * 0.2, 0, height * 0.2, height * 0.5]}
+                outputOverlayLabelsOpacityRangeY={[1, 1, 0.5, 1, 1]}
                 overlayLabels={{
                   left: { element: <OverlayLabel type="nay" /> },
                   right: { element: <OverlayLabel type="aye" /> },
                   top: { element: <OverlayLabel type="splitAbstain" /> },
                 }}
-                cardVerticalMargin={Platform.OS === 'ios' ? 30 : 20}
+
+                // card stack styling
+                cardVerticalMargin={20}
                 cardHorizontalMargin={20}
                 backgroundColor="transparent"
                 useViewOverflow={Platform.OS === 'ios'}
               />
             </View>
-            { index + 1 < proposals.length && (
+            {Platform.OS !== "ios" && index + 1 < proposals.length && (
               <View style={styles.bottomCard}>
-                <MemoizedProposalCard 
-                  card={proposals[index + 1]} 
-                  index={proposals[index + 1].index} 
-                  showDetails={() => setProposalDetailsOpen(true)} 
+                <MemoizedProposalCard
+                  card={proposals[index + 1]}
+                  index={proposals[index + 1].index}
+                  showDetails={() => setProposalDetailsOpen(true)}
                 />
               </View>
             )}
@@ -260,7 +276,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     zIndex: 0,
     top: 20,
-    padding: Platform.OS === 'ios' ? 40 : 30,
+    padding: 20,
   },
   cardContainer: {
     borderRadius: 10,
