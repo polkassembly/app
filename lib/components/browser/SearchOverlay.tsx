@@ -6,13 +6,10 @@ import { debounce } from "lodash";
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import { TextInput, Animated, Keyboard, BackHandler, TouchableOpacity, View, FlatList, StyleSheet } from "react-native";
 import { Colors } from "react-native/Libraries/NewAppScreen";
-import { IconBrowser } from "../icons/icon-browser";
-import { IconSearch } from "../icons/shared";
+import IconBrowser from "../icons/icon-browser";
 import { ThemedText } from "../ThemedText";
 import { ThemedView } from "../ThemedView";
 import { useThemeColor } from "@/lib/hooks";
-import HorizontalSeparator from "../shared/HorizontalSeparator";
-import { NETWORKS_DETAILS } from "@/lib/constants/networks";
 import { ENetwork } from "@/lib/types/post";
 
 interface SearchOverlayProps {

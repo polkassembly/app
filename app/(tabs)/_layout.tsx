@@ -4,7 +4,7 @@ import { StyleSheet, Pressable, SafeAreaView } from "react-native";
 import Svg, { Ellipse } from "react-native-svg";
 import { Colors } from "@/lib/constants/Colors";
 import { BottomTabBarButtonProps } from "@react-navigation/bottom-tabs";
-import { IconBrowser } from "@/lib/components/icons/icon-browser";
+import IconBrowser from "@/lib/components/icons/icon-browser";
 import { IconProfile } from "@/lib/components/icons/icon-profile";
 import { IconNews } from "@/lib/components/icons/Profile";
 import { useThemeColor } from "@/lib/hooks";
