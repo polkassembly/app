@@ -4,14 +4,16 @@ import { Image } from "react-native";
 import { Colors } from "react-native/Libraries/NewAppScreen";
 import IconPolkasafe from "../icons/browser/icon-polkasafe";
 import { ThemedText } from "../ThemedText";
+import { useThemeColor } from "@/lib/hooks";
 
 const FeaturedWebsites = () => {
+	const strokeColor = useThemeColor({}, "stroke")
 	return (
 		<View style={styles.container}>
 			<ThemedText type="bodyMedium2">FEATURED WEBSITES</ThemedText>
 			<View style={styles.featuredCardsWrapper}>
 				<TouchableOpacity
-					style={styles.featuredCard}
+					style={[styles.featuredCard, { borderWidth: 1, borderColor: strokeColor, }]}
 					onPress={() => openBrowserAsync("https://polkassembly.io/")}
 				>
 					<Image
@@ -19,13 +21,13 @@ const FeaturedWebsites = () => {
 						style={styles.featuredImage}
 					/>
 					<View>
-						<ThemedText type="bodySmall3">Polkassembly</ThemedText>
-						<ThemedText type="bodySmall4" style={styles.featuredSubtext}>Governance</ThemedText>
+						<ThemedText type="bodySmall3" adjustsFontSizeToFit numberOfLines={1}>Polkassembly</ThemedText>
+						<ThemedText adjustsFontSizeToFit numberOfLines={1} type="bodySmall4" style={styles.featuredSubtext}>Governance</ThemedText>
 					</View>
 				</TouchableOpacity>
 
 				<TouchableOpacity
-					style={styles.featuredCard}
+					style={[styles.featuredCard, { borderWidth: 1, borderColor: strokeColor, }]}
 					onPress={() => openBrowserAsync("https://townhallgov.com/")}
 				>
 					<Image
@@ -33,19 +35,19 @@ const FeaturedWebsites = () => {
 						style={styles.featuredImage}
 					/>
 					<View>
-						<ThemedText type="bodySmall3">Townhall</ThemedText>
-						<ThemedText type="bodySmall4" style={styles.featuredSubtext}>Governance</ThemedText>
+						<ThemedText adjustsFontSizeToFit numberOfLines={1} type="bodySmall3">Townhall</ThemedText>
+						<ThemedText adjustsFontSizeToFit numberOfLines={1} type="bodySmall4" style={styles.featuredSubtext}>Governance</ThemedText>
 					</View>
 				</TouchableOpacity>
 
 				<TouchableOpacity
-					style={styles.featuredCard}
+					style={[styles.featuredCard, { borderWidth: 1, borderColor: strokeColor, }]}
 					onPress={() => openBrowserAsync("https://polkasafe.xyz/")}
 				>
 					<IconPolkasafe />
 					<View>
-						<ThemedText type="bodySmall3">Polkasafe</ThemedText>
-						<ThemedText type="bodySmall4" style={styles.featuredSubtext}>Governance</ThemedText>
+						<ThemedText adjustsFontSizeToFit numberOfLines={1} type="bodySmall3">Polkasafe</ThemedText>
+						<ThemedText adjustsFontSizeToFit numberOfLines={1} type="bodySmall4" style={styles.featuredSubtext}>Governance</ThemedText>
 					</View>
 				</TouchableOpacity>
 			</View>
@@ -63,8 +65,6 @@ const styles = StyleSheet.create({
 	},
 	featuredCard: {
 		flex: 1,
-		borderWidth: 1,
-		borderColor: Colors.dark.stroke,
 		paddingHorizontal: 16,
 		paddingVertical: 16,
 		borderRadius: 8,
@@ -80,6 +80,9 @@ const styles = StyleSheet.create({
 	featuredSubtext: {
 		color: "#9B9B9B",
 	},
+	textResize: {
+		flexShrink: 1
+	}
 });
 
 export default FeaturedWebsites;
