@@ -1,22 +1,26 @@
-import { ContentSummary, EProposalType } from "@/lib/types";
+import { EProposalType } from "@/lib/types";
 import { ContainerType, ThemedView } from "../ThemedView";
 import { StyleSheet } from "react-native";
 import { useThemeColor } from "@/lib/hooks/useThemeColor";
 import { ThemedText } from "../ThemedText";
 import { useContentSummary } from "@/lib/net/queries/post";
-import Markdown from "react-native-markdown-display";
 import { trimText } from "@/lib/util/stringUtil";
+import { ThemedMarkdownDisplay } from "../shared";
 
 interface ProposalContentSummaryProps {
 	proposalType: EProposalType;
 	indexOrHash: string;
 	containerType?: ContainerType;
+	withEmptyLoadingScreen?: boolean
 }
 
-function ProposalContentSummary({ proposalType, indexOrHash, containerType = "container" }: ProposalContentSummaryProps) {
+function ProposalContentSummary({ proposalType, indexOrHash, containerType = "container", withEmptyLoadingScreen = false }: ProposalContentSummaryProps) {
 	const colorStroke = useThemeColor({}, "stroke")
-	const colorText = useThemeColor({}, "text")
 	const { data: contentSummary, isLoading, isError } = useContentSummary({ proposalType, indexOrHash });
+
+	if(withEmptyLoadingScreen && (isLoading || isError || !contentSummary)) {
+		return null
+	}
 
 	if (isLoading) {
 		return (
@@ -40,7 +44,7 @@ function ProposalContentSummary({ proposalType, indexOrHash, containerType = "co
 	return (
 		<ThemedView style={[styles.container, { borderColor: colorStroke }]} type={containerType}>
 			<ThemedText type="titleMedium">Content Summary</ThemedText>
-			<Markdown style={{ body: { color: colorText } }}>{trimText(contentSummary.postSummary || "", 500)}</Markdown>
+			<ThemedMarkdownDisplay content={trimText(contentSummary.postSummary || "", 500)} />
 		</ThemedView>
 	)
 }

@@ -47,7 +47,11 @@ const MemoizedProposalCard = React.memo(({ card, index, showDetails }: MemoizedP
             }}
           />
         </View>
-        <ProposalContentSummary proposalType={card.proposalType} indexOrHash={card.index} />
+        <ProposalContentSummary
+          proposalType={card.proposalType}
+          indexOrHash={card.index}
+          withEmptyLoadingScreen={true}
+        />
       </ProposalCard>
     </View>
   );
@@ -174,7 +178,7 @@ const ProposalVotingScreen: React.FC = () => {
                     showDetails={() => setProposalDetailsOpen(true)}
                   />
                 )}
-                
+
                 // swipe events
                 onSwipedLeft={(cardIndex) => onSwiped("nay", cardIndex)}
                 onSwipedRight={(cardIndex) => onSwiped("aye", cardIndex)}
@@ -188,7 +192,7 @@ const ProposalVotingScreen: React.FC = () => {
                 // overlay labels and opacity
                 animateOverlayLabelsOpacity
                 overlayOpacityHorizontalThreshold={5}
-                overlayOpacityVerticalThreshold={5} 
+                overlayOpacityVerticalThreshold={5}
                 inputOverlayLabelsOpacityRangeX={[-width * 0.5, -width * 0.2, 0, width * 0.2, width * 0.5]}
                 outputOverlayLabelsOpacityRangeX={[1, 1, 0.5, 1, 1]}
                 inputOverlayLabelsOpacityRangeY={[-height * 0.5, -height * 0.2, 0, height * 0.2, height * 0.5]}
