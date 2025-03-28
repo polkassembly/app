@@ -3,7 +3,6 @@ import React, { PropsWithChildren, useState } from "react";
 import {
   StyleSheet,
   useWindowDimensions,
-  View,
 } from "react-native";
 import Svg, { Defs, Ellipse, RadialGradient, Stop } from "react-native-svg";
 import {
@@ -12,9 +11,11 @@ import {
   TabBarIndicator,
   TabView,
 } from "react-native-tab-view";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { Profile } from "@/lib/components/Profile";
 import { Feed } from "@/lib/components/feed";
+import { ThemedView } from "@/lib/components/ThemedView";
+import { useThemeColor } from "@/lib/hooks";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const renderScene = SceneMap({
   profile: Profile,
@@ -29,9 +30,10 @@ const routes = [
 export default function Home() {
   const layout = useWindowDimensions();
   const [index, setIndex] = useState(0);
+  const backgroundColor = useThemeColor({}, "secondaryBackground")
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor }}>
       <TabView
         renderTabBar={(props) => (
           <TabViewWrapper
@@ -66,11 +68,11 @@ export default function Home() {
 
 function TabViewWrapper({ children }: PropsWithChildren) {
   return (
-    <View style={{ height: 52 }}>
+    <ThemedView type="secondaryBackground" style={{ height: 52 }}>
       <Svg
         viewBox="0 0 10 10"
         style={{
-          zIndex: -1,
+          zIndex: 0,
           position: "absolute",
           top: 0,
           width: "100%",
@@ -86,6 +88,6 @@ function TabViewWrapper({ children }: PropsWithChildren) {
         <Ellipse cx="5" cy="40" rx="40" ry="40" fill="url(#grad)" />
       </Svg>
       {children}
-    </View>
+    </ThemedView>
   );
 }

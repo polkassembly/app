@@ -22,7 +22,6 @@ function Feed() {
 	if (isLoading || !data) {
 		return (
 			<ThemedView type="background" style={[styles.container, { justifyContent: "center" }]}>
-
 				<ProposalCardSkeleton />
 				<ProposalCardSkeleton />
 				<ProposalCardSkeleton />
@@ -36,6 +35,7 @@ function Feed() {
 				contentContainerStyle={{
 					gap: 8,
 					paddingInline: 8,
+					marginTop: 16
 				}}
 				data={data?.pages.flatMap((page) => page.items)}
 				renderItem={renderItem}

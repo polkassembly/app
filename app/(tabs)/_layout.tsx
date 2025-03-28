@@ -1,8 +1,7 @@
 import { Tabs } from "expo-router";
 import React from "react";
-import { View, StyleSheet, Pressable } from "react-native";
+import { StyleSheet, Pressable, SafeAreaView } from "react-native";
 import Svg, { Ellipse } from "react-native-svg";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Colors } from "@/lib/constants/Colors";
 import { BottomTabBarButtonProps } from "@react-navigation/bottom-tabs";
 import { IconBrowser } from "@/lib/components/icons/icon-browser";
@@ -38,12 +37,9 @@ const styles = StyleSheet.create({
 });
 
 export default function TabLayout() {
-  const insets = useSafeAreaInsets();
   const backgroundColor = useThemeColor({}, "secondaryBackground");
-
   return (
-    // Wrap the Tabs with a View that adds bottom padding based on the safe area
-    <View style={{ flex: 1 }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor }}>
       <Tabs
         screenOptions={{
           tabBarShowLabel: false,
@@ -81,11 +77,7 @@ export default function TabLayout() {
           }}
         />
       </Tabs>
-      {/* This view sets the background color of the bottom safe area to match the color of bottom navigation */}
-      {
-        insets.bottom > 0 && <View style={{ height: insets.bottom, width: "100%", backgroundColor: backgroundColor }} />
-      }
-    </View>
+    </SafeAreaView>
   );
 }
 
