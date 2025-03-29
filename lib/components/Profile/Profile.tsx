@@ -7,7 +7,7 @@ import getIdFromToken from "@/lib/util/jwt";
 import { useEffect } from "react";
 import { ThemedView } from "../ThemedView";
 import { EmptyViewWithTabBarHeight } from "../util";
-import { Actions } from "./Actions";
+import { Actions, ActionsSkeleton } from "./Actions";
 import { Activity, ActivitySkeleton } from "./activity";
 import { Badges, BadgesSkeleton } from "./Badges";
 import { PointsView, PointsViewSkeleton } from "./PointsView";
@@ -78,7 +78,7 @@ const ProfileSkeleton = () => (
     <ProfileHeaderSkeleton />
     <PointsViewSkeleton />
     <BadgesSkeleton />
-    <Actions />
+    <ActionsSkeleton />
     <ActivitySkeleton />
   </ThemedView>
 );
