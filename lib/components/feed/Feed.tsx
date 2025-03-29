@@ -1,7 +1,7 @@
 import { useThemeColor } from "@/lib/hooks";
 import { useActivityFeed } from "@/lib/net/queries/post";
 import { Post } from "@/lib/types";
-import { FlatList, ActivityIndicator, StyleSheet } from "react-native";
+import { FlatList, ActivityIndicator, StyleSheet, RefreshControl } from "react-native";
 import { ProposalCard, ProposalCardSkeleton } from "../proposal";
 import { ThemedText } from "../ThemedText";
 import { ThemedView } from "../ThemedView";
@@ -14,6 +14,8 @@ function Feed() {
 		hasNextPage,
 		isFetchingNextPage,
 		isLoading,
+		refetch,
+		isRefetching,
 	} = useActivityFeed({ limit: 10 });
 
 	const renderItem = ({ item }: { item: Post }) => <ProposalCard post={item} />;
@@ -46,6 +48,15 @@ function Feed() {
 					}
 				}}
 				onEndReachedThreshold={0.5}
+				refreshControl={
+					<RefreshControl
+						refreshing={isRefetching}
+						onRefresh={refetch}
+						colors={[accentColor]}
+						tintColor={accentColor}
+						progressBackgroundColor={"transparent"}
+					/>
+				}
 				ListFooterComponent={
 					<EmptyViewWithTabBarHeight>
 						{isFetchingNextPage ? <ActivityIndicator size="small" color={accentColor} style={{ marginBottom: 20 }} /> : <ThemedText></ThemedText>}
