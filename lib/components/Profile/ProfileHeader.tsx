@@ -9,7 +9,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    marginRight: 8
+    marginRight: 8,
+    marginTop: 16
   },
   avatar: {
     width: 42,
