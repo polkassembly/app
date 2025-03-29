@@ -13,6 +13,7 @@ import { Badges, BadgesSkeleton } from "./Badges";
 import { PointsView, PointsViewSkeleton } from "./PointsView";
 import { ProfileHeader, ProfileHeaderSkeleton } from "./ProfileHeader";
 import { ThemedText } from "../ThemedText";
+import { useThemeColor } from "@/lib/hooks";
 
 function Profile() {
   const [refreshing, setRefreshing] = useState(false); // State to track refresh
@@ -22,6 +23,8 @@ function Profile() {
 
   const userId = getIdFromToken(accessToken || "");
   const { data, isLoading, isError, refetch } = useGetUserById(userId || "");
+
+  const accentColor = useThemeColor({}, "accent");
 
   useEffect(() => {
     if (data) {
@@ -38,8 +41,14 @@ function Profile() {
   if (isError && !userProfile) {
     return (
       <ScrollView
-        contentContainerStyle={[styles.errorContainer, {flexGrow: 1}]}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+        contentContainerStyle={[styles.errorContainer, { flexGrow: 1 }]}
+        refreshControl={<RefreshControl
+          refreshing={refreshing}
+          onRefresh={onRefresh}
+          tintColor={accentColor}
+          colors={[accentColor]}
+          progressBackgroundColor={"transparent"}
+        />}
       >
         <ThemedView type="container" style={styles.errorContent}>
           <ThemedText type="titleLarge">Error loading profile</ThemedText>
@@ -60,7 +69,13 @@ function Profile() {
       <ScrollView
         style={styles.scrollView}
         contentContainerStyle={{ gap: 20 }}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+        refreshControl={<RefreshControl
+          refreshing={refreshing}
+          onRefresh={onRefresh}
+          tintColor={accentColor}
+          colors={[accentColor]}
+          progressBackgroundColor={"transparent"}
+        />}
       >
         <ProfileHeader username={userProfile.username} avatarUrl={userProfile.profileDetails?.image} />
         <PointsView points={userProfile.profileScore} />
@@ -70,7 +85,7 @@ function Profile() {
         <EmptyViewWithTabBarHeight />
       </ScrollView>
     </ThemedView>
-  ); 
+  );
 }
 
 const ProfileSkeleton = () => (
