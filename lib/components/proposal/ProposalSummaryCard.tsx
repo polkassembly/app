@@ -44,7 +44,7 @@ function ProposalContentSummary({ proposalType, indexOrHash, containerType = "co
 	return (
 		<ThemedView style={[styles.container, { borderColor: colorStroke }]} type={containerType}>
 			<ThemedText type="titleMedium">Content Summary</ThemedText>
-			<ThemedMarkdownDisplay content={trimText(contentSummary.postSummary || "", 500)} />
+			<ThemedMarkdownDisplay content={trimText(contentSummary.postSummary || "", 500)}/>
 		</ThemedView>
 	)
 }

@@ -17,7 +17,7 @@ import { Colors } from "@/lib/constants/Colors";
 import { useThemeColor } from "@/lib/hooks/useThemeColor";
 import { ProposalCard } from "@/lib/components/proposal/ProposalCard";
 import StatusTag from "@/lib/components/feed/StatusTag";
-import { CommentList } from "@/lib/components/feed";
+import CommentList from "@/lib/components/feed/CommentList";
 import { formatBnBalance } from "@/lib/util";
 import { calculatePercentage } from "@/lib/util/calculatePercentage";
 import BN from "bn.js";
