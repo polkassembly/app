@@ -1,7 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
-import React, { useState, useMemo, useCallback } from "react";
-import { View, TouchableOpacity, StyleSheet, Text } from "react-native";
-import Markdown from 'react-native-markdown-display';
+import React, { useState, useCallback } from "react";
+import { View, TouchableOpacity, StyleSheet } from "react-native";
 
 import { EPostOrigin, UserProfile } from "@/lib/types";
 import { trimText } from "@/lib/util/stringUtil";

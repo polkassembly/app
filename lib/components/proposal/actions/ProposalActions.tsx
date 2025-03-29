@@ -31,9 +31,10 @@ interface ProposalActionsProps {
 function ProposalActions({ index, title, proposalType, metrics, reactions, allowedCommentor, userSubscriptionId }: ProposalActionsProps) {
   const isfocused = useIsFocused();
 
-  // Memoize only the metrics and reactions based on screen focus
+  // Memoize metrics and reactions based on screen focus to avoid unnecessary reactivity.
   const memoizedMetrics = useMemo(() => metrics, [isfocused]);
   const memoizedReactions = useMemo(() => reactions, [isfocused]);
+  const memoizedSubscriptionId = useMemo(() => userSubscriptionId, [isfocused]);
 
   // Get the user profile from the store.
   const userProfile = useProfileStore((state) => state.profile);
@@ -57,7 +58,7 @@ function ProposalActions({ index, title, proposalType, metrics, reactions, allow
   const [isUpdatingDislike, setIsUpdatingDislike] = useState(false);
   const [showCommentBox, setShowCommentBox] = useState(false);
 
-  const [subscribed, setSubscribed] = useState(userSubscriptionId ? true : false);
+  const [subscribed, setSubscribed] = useState(memoizedSubscriptionId ? true : false);
   const [isUpdatingSubscription, setIsUpdatingSubscription] = useState(false);
 
   const { mutate: addReaction } = useAddReaction();
@@ -81,9 +82,9 @@ function ProposalActions({ index, title, proposalType, metrics, reactions, allow
           : { reaction: null, id: undefined }
       );
 
-      setSubscribed(userSubscriptionId ? true : false);
+      setSubscribed(memoizedSubscriptionId ? true : false);
     }
-  }, [isfocused, memoizedMetrics, memoizedReactions, userProfile, userSubscriptionId]);
+  }, [isfocused, memoizedMetrics, memoizedReactions, userProfile, memoizedSubscriptionId]);
 
   const handleLike = () => {
     if (isUpdatingLike) return;

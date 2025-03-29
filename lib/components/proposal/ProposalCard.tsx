@@ -1,16 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { StyleSheet, View } from "react-native";
 import { ContainerType, ThemedView } from "../ThemedView";
 import HorizontalSeparator from "../shared/HorizontalSeparator";
 
-import { useGetUserByAddress, useGetUserById } from "@/lib/net/queries/profile";
+import { useGetUserByAddress } from "@/lib/net/queries/profile";
 import { EAllowedCommentor, ENetwork, Post } from "@/lib/types/post";
 import { ProposalActions } from "./actions";
 import { ProposalHeader, ProposalHeaderSkeleton } from "./header/ProposalHeader";
 import { ProposalBody, ProposalBodySkeleton } from "./body";
 import ViewMoreButton from "./ViewMoreButton";
 import { useThemeColor } from "@/lib/hooks/useThemeColor";
-import { useProfileStore } from "@/lib/store/profileStore";
 import { useQueryClient } from "@tanstack/react-query";
 import { buildProposalCommentsQueryKey, getProposalComments } from "@/lib/net/queries/post";
 
@@ -36,7 +35,6 @@ function ProposalCard({
 	children,
 }: ProposalCardProps) {
 
-	const userProfile = useProfileStore((state) => state.profile);
 	const colorStroke = useThemeColor({}, "stroke")
 	const queryClient = useQueryClient()
 

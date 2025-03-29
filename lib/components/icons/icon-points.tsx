@@ -3,7 +3,7 @@ import { IconProps } from "./types";
 
 export function IconPoints({ iconWidth, iconHeight, style, color }: IconProps) {
   return (
-    <Svg width={iconWidth} height={iconHeight} viewBox="0 0 24 24" style={style}>
+    <Svg width={iconWidth || 24} height={iconHeight || 24} viewBox="0 0 24 24" style={style}>
       <Path
         fillRule="evenodd"
         clipRule="evenodd"
