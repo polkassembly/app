@@ -1,11 +1,13 @@
 import { useThemeColor } from "@/lib/hooks";
 import { useActivityFeed } from "@/lib/net/queries/post";
 import { Post } from "@/lib/types";
-import { FlatList, ActivityIndicator, StyleSheet, RefreshControl } from "react-native";
+import { FlatList, ActivityIndicator, StyleSheet, RefreshControl, Touchable, TouchableOpacity } from "react-native";
 import { ProposalCard, ProposalCardSkeleton } from "../proposal";
 import { ThemedText } from "../ThemedText";
 import { ThemedView } from "../ThemedView";
 import { EmptyViewWithTabBarHeight } from "../util";
+import { router } from "expo-router";
+import { useProposalStore } from "@/lib/store/proposalStore";
 
 function Feed() {
 	const {
@@ -18,7 +20,18 @@ function Feed() {
 		isRefetching,
 	} = useActivityFeed({ limit: 10 });
 
-	const renderItem = ({ item }: { item: Post }) => <ProposalCard post={item} />;
+	const renderItem = ({ item }: { item: Post }) => {
+		return (
+			<TouchableOpacity
+				onPress={() => {
+					useProposalStore.getState().setProposal(item);
+					router.push(`/proposal/${item.index}?proposalType=${item.proposalType}`);
+				}}
+			>
+				<ProposalCard post={item} />
+			</TouchableOpacity>
+		)
+	};
 	const accentColor = useThemeColor({}, "accent");
 
 	if (isLoading || !data) {
