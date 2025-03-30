@@ -18,7 +18,7 @@ const CartItemsPreview = () => {
 				<IconVotedProposal />
 				<View style={styles.previewText}>
 					<ThemedText style={{ color: "#000" }}>Preview</ThemedText>
-					<ThemedText style={{ color: colorStroke }}>{ isLoading ? "loading.." : 0}</ThemedText>
+					<ThemedText style={{ color: colorStroke }}>{ isLoading ? "loading.." : "0 Proposals"}</ThemedText>
 				</View>
 				<TouchableOpacity>
 					<View style={[styles.iconView, { backgroundColor: accent }]}>
