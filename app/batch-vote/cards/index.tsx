@@ -134,6 +134,13 @@ const ProposalVotingScreen: React.FC = () => {
             text2: "There was an error while submitting your vote. Please try again.",
           });
         },
+        onSuccess: () => {
+          Toast.show({
+            type: "success",
+            text1: "Vote Submitted",
+            text2: `Your vote for proposal #${proposal.index} has been submitted.`,
+          });
+        }
       });
     },
     [proposals, hasNextPage, fetchNextPage, ayeAmount, nayAmount, abstainAmount, conviction]
