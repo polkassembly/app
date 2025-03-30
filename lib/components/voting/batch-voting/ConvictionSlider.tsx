@@ -1,6 +1,6 @@
 import { useThemeColor } from "@/lib/hooks";
 import Slider from "@react-native-community/slider";
-import { View } from "react-native";
+import { View, Platform } from "react-native";
 import { ThemedText } from "../../ThemedText";
 
 interface ConvictionSliderProps {
@@ -24,7 +24,7 @@ function ConvictionSlider({ conviction, onConvictionChange }: ConvictionSliderPr
 				minimumTrackTintColor={color}
 				maximumTrackTintColor="#39383A"
 				step={1 / STEPS}
-				onValueChange={(value: number) => onConvictionChange(transformOut(value))}
+				onSlidingComplete={(value: number) => onConvictionChange(transformOut(value))}
 			/>
 			<View style={{ flex: 1, flexDirection: "row", justifyContent: "space-between" }}>
 				<ThemedText type="bodyMedium3">0.1x</ThemedText>
