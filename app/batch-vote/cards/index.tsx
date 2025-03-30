@@ -21,15 +21,18 @@ import { useBatchVotingStore } from "@/lib/store/batchVotingStore";
 
 interface MemoizedProposalCardProps {
   card: Post;
-  index: string;
   showDetails: () => void;
 }
 
 // Memoized proposal card component
-const MemoizedProposalCard = React.memo(({ card, index, showDetails }: MemoizedProposalCardProps) => {
+const MemoizedProposalCard = React.memo(({ card, showDetails }: MemoizedProposalCardProps) => {
   const backgroundColor = useThemeColor({}, "container");
   return (
-    <View style={[styles.cardContainer, { backgroundColor }]} key={index}>
+    <View
+      style={[styles.cardContainer, { backgroundColor }]}
+      key={card.index}
+      renderToHardwareTextureAndroid={true}
+    >
       <ProposalCard
         post={card}
         descriptionLength={500}
@@ -73,9 +76,10 @@ const ProposalVotingScreen: React.FC = () => {
   const [proposals, setProposals] = useState<Post[]>([]);
   const [proposalDetailsOpen, setProposalDetailsOpen] = useState(false);
   const swiperRef = useRef<any>(null);
-  const backgroundColor = useThemeColor({}, "container");
   const [index, setIndex] = useState(0);
 
+  const backgroundColor = useThemeColor({}, "container");
+  const accentColor = useThemeColor({}, "accent");
   const { width, height } = useWindowDimensions();
 
   // Append new proposals as they are fetched
@@ -85,6 +89,8 @@ const ProposalVotingScreen: React.FC = () => {
       setProposals(prev => [...prev, ...newProposals]);
     }
   }, [data]);
+
+  const showDetails = useCallback(() => setProposalDetailsOpen(true), []);
 
   // Handler for swipe events
   const onSwiped = useCallback(
@@ -130,30 +136,21 @@ const ProposalVotingScreen: React.FC = () => {
         },
       });
     },
-    [
-      proposals,
-      ayeAmount,
-      nayAmount,
-      abstainAmount,
-      conviction,
-      hasNextPage,
-      fetchNextPage,
-      voteMutation,
-    ]
+    [proposals, hasNextPage, fetchNextPage, ayeAmount, nayAmount, abstainAmount, conviction]
   );
 
   if (isLoading || proposals.length === 0) {
     return (
       <View style={styles.centered}>
-        <ActivityIndicator size="large" color="#000" />
+        <ActivityIndicator size="large" color={accentColor} />
       </View>
     );
   }
 
-  if (isError) {
+  if (isError && proposals.length === 0) {
     return (
       <View style={styles.centered}>
-        <Text>Error loading proposals.</Text>
+        <ThemedText type="titleLarge">Error loading proposals.</ThemedText>
       </View>
     );
   }
@@ -173,9 +170,7 @@ const ProposalVotingScreen: React.FC = () => {
                 renderCard={(cardData) => (
                   <MemoizedProposalCard
                     card={cardData}
-                    key={cardData.index}
-                    index={cardData.index}
-                    showDetails={() => setProposalDetailsOpen(true)}
+                    showDetails={showDetails}
                   />
                 )}
 
@@ -204,17 +199,17 @@ const ProposalVotingScreen: React.FC = () => {
                 }}
 
                 // card stack styling
-                cardVerticalMargin={20}
+                cardVerticalMargin={10}
                 cardHorizontalMargin={20}
                 backgroundColor="transparent"
                 useViewOverflow={Platform.OS === 'ios'}
+                useNativeDriver={true}
               />
             </View>
             {Platform.OS !== "ios" && index + 1 < proposals.length && (
               <View style={styles.bottomCard}>
                 <MemoizedProposalCard
                   card={proposals[index + 1]}
-                  index={proposals[index + 1].index}
                   showDetails={() => setProposalDetailsOpen(true)}
                 />
               </View>
@@ -279,7 +274,7 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
     zIndex: 0,
-    top: 20,
+    top: 10,
     padding: 20,
   },
   cardContainer: {
