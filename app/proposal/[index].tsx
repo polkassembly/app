@@ -18,6 +18,9 @@ import { ThemedText } from "@/lib/components/ThemedText";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ThemedView } from "@/lib/components/ThemedView";
 import PostFullDetails from "@/lib/components/proposal/full-details";
+import { canVote } from "@/lib/util/vote/canVote";
+import dayjs from "dayjs";
+import Toast from "react-native-toast-message";
 
 const getTotalLength = (arr: any[]) =>
   arr.reduce((sum, item) => {
@@ -60,6 +63,20 @@ export default function ProposalDetailScreenImpl() {
     );
   }
 
+  const handleVote = () => {
+    if (!canVote(proposal.onChainInfo?.status, proposal.onChainInfo?.preparePeriodEndsAt)) {
+      Toast.show({
+        type: "error",
+        text1: "Voting ended",
+        text2: proposal.onChainInfo?.decisionPeriodEndsAt ? 
+          `Voting ended at ${dayjs(proposal.onChainInfo?.decisionPeriodEndsAt).format("YYYY-MM-DD HH:mm")}` :
+          "You cannot vote on this proposal.",
+      });
+      return;
+    }
+    router.push(`/proposal/vote/${index}?proposalType=${proposalType}`)
+  };
+
   return (
     <ThemedView type="container" style={{ flex: 1 }}>
       <KeyboardAvoidingView
@@ -76,7 +93,7 @@ export default function ProposalDetailScreenImpl() {
       {/* Bottom button outside of KeyboardAvoidingView */}
 
       <View style={{ position: "absolute", bottom: 0, width: "100%" }}>
-        <BottomButton onPress={() => router.push(`/proposal/vote/${index}?proposalType=${proposalType}`)} >Cast Your Vote</BottomButton>
+        <BottomButton onPress={handleVote} >Cast Your Vote</BottomButton>
       </View>
       <BottomSheet open={open} onClose={() => setOpen(false)}>
         <PostFullDetails
