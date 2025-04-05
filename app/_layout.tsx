@@ -84,6 +84,7 @@ function Content({ accessToken }: { accessToken: string | null }) {
           <Stack.Screen name="+not-found" />
           <Stack.Screen name="proposal" options={{ headerShown: false }} />
           <Stack.Screen name="batch-vote" options={{ headerShown: false }} />
+          <Stack.Screen name="profile" options={{ headerShown: false }} />
         </Stack>
         <StatusBar style="auto" />
       </ThemeProvider>

@@ -11,7 +11,7 @@ import { ThemedText } from "../../ThemedText";
 const ActivityItem = ({ item }: { item: UserActivity }) => {
 	const points = (REPUTATION_SCORES[item.name as keyof typeof REPUTATION_SCORES] as { value: number })?.value || 0;
 	const color = points > 0 ? "green" : "red";
-	const strokeColor = useThemeColor({}, "text")
+	const strokeColor = useThemeColor({}, "stroke")
 	const secondaryBackgroundColor = useThemeColor({}, "secondaryBackground")
 
 	const onPress = () => {
@@ -21,7 +21,7 @@ const ActivityItem = ({ item }: { item: UserActivity }) => {
 	}
 
 	return (
-		<TouchableOpacity style={[styles.activityItemContainer, { backgroundColor: secondaryBackgroundColor }]} onPress={onPress}>
+		<TouchableOpacity style={[styles.activityItemContainer, { backgroundColor: secondaryBackgroundColor, borderColor: strokeColor }]} onPress={onPress}>
 			<View style={{ flexDirection: "row", alignItems: "center" }}>
 				<IconPoints color="white" iconWidth={24} iconHeight={24} style={{ marginRight: 8 }} />
 				{points !== 0 &&
@@ -50,6 +50,7 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 		justifyContent: "space-between",
 		borderRadius: 34,
+		borderWidth: 1,
 	}
 });
 

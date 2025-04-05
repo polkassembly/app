@@ -64,13 +64,19 @@ function Badges({ badges }: BadgesProps): JSX.Element {
   };
 
   const backgroundColor = useThemeColor({}, "background");
+  const strokeColor = useThemeColor({}, "stroke");
 
   // Calculate responsive size based on device width (15% of width)
   const { width } = Dimensions.get("window");
   const responsiveSize = Math.round(width * 0.12);
 
   return (
-    <ThemedView type="container" style={styles.container}>
+    <ThemedView type="container" style={[
+      styles.container,
+      { borderColor: strokeColor },
+      styles.border,
+      
+    ]}>
       <View>
         <ThemedText type="bodyMedium1" style={styles.title}>
           Badges
@@ -93,7 +99,7 @@ function Badges({ badges }: BadgesProps): JSX.Element {
         <View
           style={[
             styles.carouselRow,
-            { flex: 1, overflow: "hidden", gap: width*0.05 , width: 200 },
+            { flex: 1, overflow: "hidden", gap: width * 0.05, width: 200 },
           ]}
         >
           <AnimatePresence>
@@ -119,10 +125,7 @@ function Badges({ badges }: BadgesProps): JSX.Element {
                       ? badgeImages[badge.name]
                       : badgeImages[`${badge.name} Locked`]
                   }
-                  style={[
-                    styles.badgeImage,
-                    { width: responsiveSize - 2, height: responsiveSize - 2 },
-                  ]}
+                  style={{ width: responsiveSize - 2, height: responsiveSize - 2 }}
                   resizeMode="contain"
                 />
               </MotiView>
@@ -139,34 +142,9 @@ function Badges({ badges }: BadgesProps): JSX.Element {
   );
 }
 
-const BadgesSkeleton = () => (
-  <ThemedView type="container" style={styles.container}>
-    <View>
-      <Skeleton height={12} width={80} />
-    </View>
-    <View style={styles.carouselRow}>
-      {Array(3)
-        .fill(null)
-        .map((_, index) => (
-          <SkeletonBadge key={index} />
-        ))}
-      <View style={styles.chevronContainer}>
-        <Skeleton height={24} width={24} radius={12} />
-      </View>
-    </View>
-  </ThemedView>
-);
-
-const SkeletonBadge = () => (
-  <ThemedView type="background" style={styles.badgeIconContainer}>
-    <Skeleton height={45} width={45} radius={25} />
-  </ThemedView>
-);
-
 const styles = StyleSheet.create({
   container: {
     padding: 20,
-    borderRadius: 15,
     flexDirection: "row",
     alignItems: "center",
     gap: 20,
@@ -187,12 +165,13 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  badgeImage: {
-    // Dimensions are set inline to match responsiveSize
-  },
   chevronContainer: {
     marginLeft: 10,
   },
+  border: {
+    borderWidth: 1,
+    borderRadius: 15,
+  }
 });
 
-export { Badges, BadgesSkeleton };
+export default Badges;
