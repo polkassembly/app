@@ -11,6 +11,8 @@ import { useProfileStore } from "@/lib/store/profileStore";
 import { AddReactionResponse, useAddReaction, useDeleteReaction, useSubscribeProposal, useUnsubscribeProposal } from "@/lib/net/queries/actions";
 import { useIsFocused } from "@react-navigation/native";
 import { EAllowedCommentor, EProposalType, Reaction } from "@/lib/types/post";
+import { getUserIdFromStorage } from "@/lib/net/queries/utils";
+import { useAuthModal } from "@/lib/context/authContext";
 
 interface ProposalActionsProps {
   index: string;
@@ -37,7 +39,9 @@ function ProposalActions({ index, title, proposalType, metrics, reactions, allow
   const memoizedSubscriptionId = useMemo(() => userSubscriptionId, [isfocused]);
 
   // Get the user profile from the store.
+  const userId = getUserIdFromStorage();
   const userProfile = useProfileStore((state) => state.profile);
+  const { openLoginModal } = useAuthModal();
 
   const currentUserReaction = memoizedReactions?.find(
     (reaction) => reaction.userId === userProfile?.id
@@ -87,6 +91,10 @@ function ProposalActions({ index, title, proposalType, metrics, reactions, allow
   }, [isfocused, memoizedMetrics, memoizedReactions, userProfile, memoizedSubscriptionId]);
 
   const handleLike = () => {
+    if(!userId) {
+      openLoginModal("Login to like proposal", false);
+      return;
+    }
     if (isUpdatingLike) return;
     setIsUpdatingLike(true);
 
@@ -147,6 +155,10 @@ function ProposalActions({ index, title, proposalType, metrics, reactions, allow
   };
 
   const handleDislike = () => {
+    if(!userId) {
+      openLoginModal("Login to dislike proposal", false);
+      return;
+    }
     if (isUpdatingDislike) return;
     setIsUpdatingDislike(true);
 
@@ -207,6 +219,10 @@ function ProposalActions({ index, title, proposalType, metrics, reactions, allow
   };
 
   const handleComment = () => {
+    if(!userId) {
+      openLoginModal("Login to comment on proposal", false);
+      return;
+    }
     if (showCommentBox) {
       setShowCommentBox(false);
       return;
@@ -231,6 +247,10 @@ function ProposalActions({ index, title, proposalType, metrics, reactions, allow
   };
 
   const handleBookmark = () => {
+    if(!userId) {
+      openLoginModal("Login to subscribe proposal", false);
+      return;
+    }
     if (isUpdatingSubscription) return;
     setIsUpdatingSubscription(true);
     if (subscribed) {

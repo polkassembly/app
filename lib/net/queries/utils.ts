@@ -73,10 +73,7 @@ function saveIdFromToken(token: string): void {
 
 function getUserIdFromStorage(): string {
   try {
-    const id = storage.getString(KEY_ID);
-    if (!id) {
-      throw new Error("User ID not present in store.");
-    }
+    const id = storage.getString(KEY_ID) || "";
     return id;
   } catch (e) {
     console.error("Unable to read user's ID: ", e);
