@@ -22,6 +22,14 @@ const HomeHeader = () => {
     }
   }
 
+  const handleCartPress = () => {
+    if (userId) {
+      router.push("/batch-vote/voted-proposals");
+    } else {
+      openLoginModal("Login to access your cart", false);
+    }
+  }
+
   return (
     <RadialBackgroundWrapper>
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginVertical: 20, paddingHorizontal: 16 }}>
@@ -36,7 +44,7 @@ const HomeHeader = () => {
             containerSize={30}
             containerType="background"
             iconSize={20}
-            onPress={() => router.push("/batch-vote")}
+            onPress={handleCartPress}
           />
           <TouchableOpacity
             onPress={handleProfilePress}
