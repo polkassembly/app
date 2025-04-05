@@ -14,7 +14,6 @@ const useGetUserById = (userId: string, options?: { enabled?: boolean }) => {
 };
 
 async function getUserById(userId: string) {
-  console.log("Fetching user by ID:", userId);
   const response = await client.get<UserProfile>(`users/id/${userId}`);
   return response.data;
 }

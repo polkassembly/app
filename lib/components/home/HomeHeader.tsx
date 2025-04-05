@@ -1,5 +1,4 @@
 import { useAuthModal } from "@/lib/context/authContext";
-import { getUserIdFromStorage } from "@/lib/net/queries/utils";
 import { useProfileStore } from "@/lib/store/profileStore";
 import { router } from "expo-router";
 import { View, TouchableOpacity } from "react-native";
@@ -10,20 +9,19 @@ import { RadialBackgroundWrapper } from "../shared/View";
 import { Image } from "react-native";
 
 const HomeHeader = () => {
-  const userId = getUserIdFromStorage();
   const user = useProfileStore((state) => state.profile);
   const { openLoginModal } = useAuthModal();
 
   const handleProfilePress = () => {
-    if (userId) {
-      //TODO: route to profile
+    if (user) {
+      router.push(`/profile/${user.id}`);
     }else {
       openLoginModal("Login to access your profile", false);
     }
   }
 
   const handleCartPress = () => {
-    if (userId) {
+    if (user) {
       router.push("/batch-vote/voted-proposals");
     } else {
       openLoginModal("Login to access your cart", false);

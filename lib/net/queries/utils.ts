@@ -1,6 +1,9 @@
 import { KEY_ACCESS_TOKEN, KEY_REFRESH_TOKEN, KEY_ID, storage } from "@/lib/store";
 import getIdFromToken from "@/lib/util/jwt";
 import { AxiosResponse } from "axios";
+import { getUserById } from "./profile";
+import { useAuthStore } from "@/lib/store/authStore";
+import { useProfileStore } from "@/lib/store/profileStore";
 
 export interface TokenPair {
   accessToken?: string;
@@ -71,14 +74,29 @@ function saveIdFromToken(token: string): void {
   }
 }
 
-function getUserIdFromStorage(): string {
-  try {
-    const id = storage.getString(KEY_ID) || "";
-    return id;
-  } catch (e) {
-    console.error("Unable to read user's ID: ", e);
-    throw e;
+const fetchAndStoreProfileFromToken = async (accessToken: string) => {
+  const setAccessToken = useAuthStore((state) => state.setAccessToken);
+  const setProfile = useProfileStore((state) => state.setProfile);
+  
+  if (!accessToken) {
+    console.error("Access token not found");
+    return;
   }
+
+  const id = getIdFromToken(accessToken ?? "");
+  if (!id ) {
+    console.error("Failed to get ID from token");
+    return;
+  }
+
+  const profile = await getUserById(id);
+  if (!profile) {
+    console.error("Failed to get profile");
+    return;
+  }
+
+  setAccessToken(accessToken);
+  setProfile(profile);
 }
 
-export { getUserIdFromStorage, tokenPairFromResponse, saveIdFromToken };
+export { fetchAndStoreProfileFromToken, tokenPairFromResponse, saveIdFromToken };

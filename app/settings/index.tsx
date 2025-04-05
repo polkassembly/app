@@ -36,7 +36,6 @@ import { EditProfileParams } from "@/lib/net/queries/profile/useEditProfile";
 import { useProfileStore } from "@/lib/store/profileStore";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useAuthModal } from "@/lib/context/authContext";
-import { getUserIdFromStorage } from "@/lib/net/queries/utils";
 
 // Function to process and compress the image.
 // It ensures that the resulting image is resized and compressed
@@ -103,7 +102,6 @@ export default function Settings() {
   const [username, setUsername] = useState<string>("");
   const [isSaving, setIsSaving] = useState(false);
 
-  const userId = getUserIdFromStorage();
   const userProfile = useProfileStore((state) => state.profile);
   const setProfile = useProfileStore((state) => state.setProfile)
   const { openLoginModal } = useAuthModal();
@@ -118,7 +116,7 @@ export default function Settings() {
     }
   }, [userProfile]);
 
-  if(!userId) {
+  if(!userProfile) {
     openLoginModal("Please login to access settings", true);
     return null;
   }

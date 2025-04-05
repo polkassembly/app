@@ -19,7 +19,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ThemedView } from "@/lib/components/ThemedView";
 import PostFullDetails from "@/lib/components/proposal/full-details";
 import { useAuthModal } from "@/lib/context/authContext";
-import { getUserIdFromStorage } from "@/lib/net/queries/utils";
+import { useProfileStore } from "@/lib/store/profileStore";
 
 const getTotalLength = (arr: any[]) =>
   arr.reduce((sum, item) => {
@@ -33,15 +33,15 @@ export default function ProposalDetailScreenImpl() {
 
   const { data, isLoading } = useProposalByIndex({ proposalType, indexOrHash: index });
   const storeProposal = useProposalStore(state => state.proposal);
+  const user = useProfileStore(state => state.profile);
   const insets = useSafeAreaInsets();
-  const userId = getUserIdFromStorage();
   const { openLoginModal } = useAuthModal();
 
   let proposal: Post | undefined;
 
   const accentColor = useThemeColor({}, "accent");
   const handleVote = () => {
-    if (!userId) {
+    if (!user) {
       openLoginModal("Please login to vote", true);
       return;
     }

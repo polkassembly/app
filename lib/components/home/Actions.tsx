@@ -12,15 +12,15 @@ import { ThemedView } from "../ThemedView";
 import { ActionButton } from "../shared/button";
 import { useThemeColor } from "@/lib/hooks";
 import { useAuthModal } from "@/lib/context/authContext";
-import { getUserIdFromStorage } from "@/lib/net/queries/utils";
+import { useProfileStore } from "@/lib/store/profileStore";
 
 function Actions() {
   const strokeColor = useThemeColor({}, "stroke");
   const { openLoginModal } = useAuthModal();
-  const userId = getUserIdFromStorage();
+  const user = useProfileStore((state) => state.profile);
 
   const handleVote = () => {
-    if (!userId) {
+    if (!user) {
       openLoginModal("Login to access batch vote", false);
       return;
     }
@@ -28,7 +28,7 @@ function Actions() {
   };
 
   const handleSettings = () => {
-    if (!userId) {
+    if (!user) {
       openLoginModal("Login to access settings", false);
       return;
     }

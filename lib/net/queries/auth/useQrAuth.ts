@@ -1,8 +1,11 @@
 import { useMutation } from "@tanstack/react-query";
 import client from "@/lib/net/client";
-import { saveIdFromToken, TokenPair, tokenPairFromResponse } from "../utils";
+import { fetchAndStoreProfileFromToken, TokenPair, tokenPairFromResponse } from "../utils";
 import { useAuthStore } from "@/lib/store/authStore";
 import { useRouter } from "expo-router";
+import getIdFromToken from "@/lib/util/jwt";
+import { useProfileStore } from "@/lib/store/profileStore";
+import { getUserById } from "../profile";
 
 export interface QrAuthRequest {
   sessionId: string;
@@ -11,6 +14,7 @@ export interface QrAuthRequest {
 const useQrAuth = () => {
   const router = useRouter();
   const setAccessToken = useAuthStore((state) => state.setAccessToken);
+  const setProfile = useProfileStore((state) => state.setProfile);
 
   return useMutation<TokenPair, Error, QrAuthRequest>({
     mutationFn: async (params) => {
@@ -24,11 +28,15 @@ const useQrAuth = () => {
         throw new Error("Failed to authenticate");
       }
     },
-    onSuccess: (data) => {
-      // Update the auth store with the access token
-      setAccessToken(data.accessToken ?? null);
+    onSuccess: async (data) => {
+      if (!data.accessToken) {
+        console.error("Access token not found");
+        return;
+      }
+
+      await fetchAndStoreProfileFromToken(data.accessToken)
     },
-    retry: 3,
+    retry: 1,
   });
 };
 
