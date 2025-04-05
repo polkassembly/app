@@ -18,6 +18,8 @@ import { ThemedText } from "@/lib/components/ThemedText";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ThemedView } from "@/lib/components/ThemedView";
 import PostFullDetails from "@/lib/components/proposal/full-details";
+import { useAuthModal } from "@/lib/context/authContext";
+import { getUserIdFromStorage } from "@/lib/net/queries/utils";
 
 const getTotalLength = (arr: any[]) =>
   arr.reduce((sum, item) => {
@@ -32,10 +34,19 @@ export default function ProposalDetailScreenImpl() {
   const { data, isLoading } = useProposalByIndex({ proposalType, indexOrHash: index });
   const storeProposal = useProposalStore(state => state.proposal);
   const insets = useSafeAreaInsets();
+  const userId = getUserIdFromStorage();
+  const { openLoginModal } = useAuthModal();
 
   let proposal: Post | undefined;
 
   const accentColor = useThemeColor({}, "accent");
+  const handleVote = () => {
+    if (!userId) {
+      openLoginModal("Please login to vote", true);
+      return;
+    }
+    router.push(`/proposal/vote/${index}?proposalType=${proposalType}`)
+  }
 
   // If the requested proposal is already in the store, use that instead of the fetched data
   if (storeProposal?.index !== undefined && String(storeProposal?.index) === index) {
@@ -76,7 +87,7 @@ export default function ProposalDetailScreenImpl() {
       {/* Bottom button outside of KeyboardAvoidingView */}
 
       <View style={{ position: "absolute", bottom: 0, width: "100%" }}>
-        <BottomButton onPress={() => router.push(`/proposal/vote/${index}?proposalType=${proposalType}`)} >Cast Your Vote</BottomButton>
+        <BottomButton onPress={() => handleVote} >Cast Your Vote</BottomButton>
       </View>
       <BottomSheet open={open} onClose={() => setOpen(false)}>
         <PostFullDetails
