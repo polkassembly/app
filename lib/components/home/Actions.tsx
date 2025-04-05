@@ -11,9 +11,29 @@ import { ThemedText } from "../ThemedText";
 import { ThemedView } from "../ThemedView";
 import { ActionButton } from "../shared/button";
 import { useThemeColor } from "@/lib/hooks";
+import { useAuthModal } from "@/lib/context/authContext";
+import { getUserIdFromStorage } from "@/lib/net/queries/utils";
 
 function Actions() {
   const strokeColor = useThemeColor({}, "stroke");
+  const { openLoginModal } = useAuthModal();
+  const userId = getUserIdFromStorage();
+
+  const handleVote = () => {
+    if (!userId) {
+      openLoginModal("Login to access batch vote", false);
+      return;
+    }
+    router.push("/batch-vote");
+  };
+
+  const handleSettings = () => {
+    if (!userId) {
+      openLoginModal("Login to access settings", false);
+      return;
+    }
+    router.push("/settings");
+  };
 
   return (
     <ThemedView
@@ -45,7 +65,7 @@ function Actions() {
             containerSize={68}
             iconSize={30}
             bordered
-            onPress={() => router.push("/batch-vote")}
+            onPress={handleVote}
           />
           <ActionButton
             Icon={IconDelegate}
@@ -69,7 +89,7 @@ function Actions() {
             containerSize={68}
             iconSize={30}
             bordered
-            onPress={() => router.push("/settings")}
+            onPress={handleSettings}
           />
         </View>
       </View>
