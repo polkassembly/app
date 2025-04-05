@@ -17,6 +17,7 @@ import { buildUserByIdQueryKey, getUserById } from "@/lib/net/queries/profile/us
 import { buildUserActivityQueryKey, getUserActivity } from "@/lib/net/queries/actions";
 import Toast from "react-native-toast-message";
 import { useToastConfig } from "@/lib/hooks";
+import { AuthModalProvider } from "@/lib/context/authContext";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -46,13 +47,10 @@ export default function RootLayout() {
     return null;
   }
 
-  // Determine if user needs to log in.
-  const needsLogin = accessToken === null;
-
   return (
     <QueryClientProvider client={queryClient}>
       <SafeAreaProvider>
-        <Content needsLogin={needsLogin} accessToken={accessToken} />
+        <Content accessToken={accessToken} />
         <Toast config={toastConfig} />
       </SafeAreaProvider>
     </QueryClientProvider>
@@ -60,21 +58,8 @@ export default function RootLayout() {
   );
 }
 
-function Content({ needsLogin, accessToken }: { needsLogin: boolean; accessToken: string | null }) {
-  const router = useRouter();
-
-  // Extract user id from token if available.
-  const userId = accessToken ? getIdFromToken(accessToken) : null;
-  storage.setString(KEY_ID, userId ?? "");
-
-  // Redirect to login if authentication is required.
-  useEffect(() => {
-    if (needsLogin) {
-      router.replace("/auth");
-    }
-  }, [needsLogin, router]);
-
-  // Prefetch user data and activity.
+function Content({ accessToken }: { accessToken: string | null }) {
+  // Prefetch user data and activity if user is logged in.
   useEffect(() => {
     const userId = getIdFromToken(accessToken || "")
     if (userId) {
@@ -85,33 +70,23 @@ function Content({ needsLogin, accessToken }: { needsLogin: boolean; accessToken
       queryClient.prefetchQuery({
         queryKey: buildUserActivityQueryKey({ userId: userId }),
         queryFn: () => getUserActivity(userId),
-
       });
     }
   }, []);
 
-  if (needsLogin) {
-    return (
+  return (
+    <AuthModalProvider>
       <ThemeProvider value={NavigationDarkTheme}>
-        <Stack>
+        <Stack initialRouteName="(tabs)">
           <Stack.Screen name="auth" options={{ headerShown: false }} />
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name="settings" options={{ headerShown: false }} />
+          <Stack.Screen name="+not-found" />
+          <Stack.Screen name="proposal" options={{ headerShown: false }} />
+          <Stack.Screen name="batch-vote" options={{ headerShown: false }} />
         </Stack>
         <StatusBar style="auto" />
       </ThemeProvider>
-    );
-  }
-
-  return (
-    <ThemeProvider value={NavigationDarkTheme}>
-      <Stack initialRouteName="(tabs)">
-        <Stack.Screen name="auth" options={{ headerShown: false }} />
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="settings" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" />
-        <Stack.Screen name="proposal" options={{ headerShown: false }} />
-        <Stack.Screen name="batch-vote" options={{ headerShown: false }} />
-      </Stack>
-      <StatusBar style="auto" />
-    </ThemeProvider>
+    </AuthModalProvider>
   );
 }
