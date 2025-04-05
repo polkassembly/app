@@ -47,25 +47,30 @@ export const AuthModalProvider: React.FC<AuthModalProviderProps> = ({ children }
   return (
     <AuthModalContext.Provider value={{ openLoginModal, closeLoginModal }}>
       {children}
-      <Modal
-        visible={modalVisible}
-        animationType="slide"
-        transparent
-        onRequestClose={closeLoginModal}
-      >
-        {/* When the backdrop is pressed, close the modal */}
-        <TouchableWithoutFeedback onPress={closeLoginModal}>
-          <View style={styles.modalOverlay}>
-            {/* Prevent the inner bottom sheet from closing when tapped */}
-            <TouchableWithoutFeedback onPress={(e) => e.stopPropagation()}>
-              <ThemedView style={styles.bottomSheetContainer}>
-                <ThemedText type='titleSmall' style={{ marginBottom: 16 }}>{modalMessage}</ThemedText>
-                <ThemedButton text='Login' onPress={onLogin}></ThemedButton>
-              </ThemedView>
-            </TouchableWithoutFeedback>
+      {
+        modalVisible && (
+          <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}>
+            <Modal
+              animationType="slide"
+              transparent
+              onRequestClose={closeLoginModal}
+            >
+              {/* When the backdrop is pressed, close the modal */}
+              <TouchableWithoutFeedback onPress={closeLoginModal}>
+                <View style={styles.modalOverlay}>
+                  {/* Prevent the inner bottom sheet from closing when tapped */}
+                  <TouchableWithoutFeedback onPress={(e) => e.stopPropagation()}>
+                    <ThemedView style={styles.bottomSheetContainer}>
+                      <ThemedText type='titleSmall' style={{ marginBottom: 16 }}>{modalMessage}</ThemedText>
+                      <ThemedButton text='Login' onPress={onLogin}></ThemedButton>
+                    </ThemedView>
+                  </TouchableWithoutFeedback>
+                </View>
+              </TouchableWithoutFeedback>
+            </Modal>
           </View>
-        </TouchableWithoutFeedback>
-      </Modal>
+        )
+      }
     </AuthModalContext.Provider>
   );
 };
