@@ -9,6 +9,7 @@ import { Dimensions, StyleSheet, TouchableOpacity, View } from "react-native";
 import { IconBounties, IconDelegate, IconSettings, IconVote } from "../icons/Profile";
 import { ThemedText } from "../ThemedText";
 import { ThemedView } from "../ThemedView";
+import { ActionButton } from "../shared/button";
 
 function Actions() {
   const screenWidth = Dimensions.get("window").width; // Get the full screen width
@@ -38,18 +39,18 @@ function Actions() {
         <ThemedText type="bodySmall">EXPLORE ACTIONS</ThemedText>
         <View style={styles.container2}>
           <TouchableOpacity onPress={() => router.push("/batch-vote")}>
-            <IconView Icon={IconVote} text="Batch Vote" />
+            <ActionButton Icon={IconVote} text="Batch Vote" containerSize={68} iconSize={30} bordered />
           </TouchableOpacity>
 
           <TouchableOpacity onPress={() => openBrowserAsync("https://polkadot.polkassembly.io/delegation")}>
-            <IconView Icon={IconDelegate} text="Delegate" />
+            <ActionButton Icon={IconDelegate} text="Delegate" containerSize={68} iconSize={30} bordered />
           </TouchableOpacity>
 
           <TouchableOpacity onPress={() => openBrowserAsync("https://polkadot.polkassembly.io/bounties")}>
-            <IconView Icon={IconBounties} text="Bounties" />
+            <ActionButton Icon={IconBounties} text="Bounties" containerSize={68} iconSize={30} bordered />
           </TouchableOpacity>
           <TouchableOpacity onPress={() => router.push("/settings")}>
-            <IconView Icon={IconSettings} text="Settings" />
+            <ActionButton Icon={IconSettings} text="Settings" containerSize={68} iconSize={30} bordered />
           </TouchableOpacity>
         </View>
       </View>
@@ -106,30 +107,6 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     width: "100%",
   },
-  icon: {
-    width: 26,
-    height: 26,
-  },
-  iconContainer: {
-    width: 68,
-    height: 68,
-    borderRadius: 34,
-    justifyContent: "center",
-    alignItems: "center",
-    borderWidth: 2,
-    borderColor: "#383838",
-  },
-  referContainer: {
-    width: "46%",
-    height: 68,
-    borderRadius: 34,
-    justifyContent: "center",
-    alignItems: "center",
-    borderWidth: 2,
-    borderColor: "#383838",
-    flexDirection: "row",
-    gap: 10,
-  },
   actionsWrapper: {
     flexDirection: "column",
     gap: 20,
@@ -142,22 +119,5 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
 });
-
-function IconView({
-  Icon,
-  text,
-}: {
-  Icon: (props: { color: string; size: number }) => JSX.Element;
-  text: string;
-}) {
-  return (
-    <View style={{ alignItems: "center", gap: 6 }}>
-      <ThemedView type="container" style={styles.iconContainer}>
-        <Icon color="#FFF" size={30} />
-      </ThemedView>
-      <ThemedText type="bodySmall">{text}</ThemedText>
-    </View>
-  );
-}
 
 export { Actions, ActionsSkeleton };
