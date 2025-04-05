@@ -1,5 +1,10 @@
 import React, { memo } from "react";
-import { StyleSheet, View } from "react-native";
+import {
+	StyleSheet,
+	TouchableOpacity,
+	TouchableOpacityProps,
+	ViewStyle,
+} from "react-native";
 import { ThemedText } from "../../ThemedText";
 import { ContainerType, ThemedView } from "../../ThemedView";
 
@@ -9,14 +14,13 @@ interface IconProps {
 	iconHeight: number;
 }
 
-interface ActionButtonProps {
+interface ActionButtonProps extends TouchableOpacityProps {
 	Icon: React.FC<IconProps>;
 	text?: string;
 	containerSize: number;
 	iconSize: number;
-	containerType?: ContainerType
-	onPress?: () => void;
-	bordered?: boolean
+	containerType?: ContainerType;
+	bordered?: boolean;
 }
 
 const ActionButton: React.FC<ActionButtonProps> = ({
@@ -24,25 +28,28 @@ const ActionButton: React.FC<ActionButtonProps> = ({
 	text,
 	containerSize,
 	iconSize,
-	containerType,
-	bordered = false
+	containerType = "container",
+	bordered = false,
+	style,
+	...touchableProps
 }) => {
+	const containerStyle: ViewStyle[] = [
+		styles.iconContainer,
+		{
+			width: containerSize,
+			height: containerSize,
+			borderRadius: containerSize / 2,
+		},
+		bordered ? styles.bordered : {}
+	];
+
 	return (
-		<View style={styles.wrapper}>
-			<ThemedView
-				type={containerType || "container"}
-				style={[
-					styles.iconContainer,
-					{ width: containerSize, height: containerSize, borderRadius: containerSize/2 },
-					bordered && styles.bordered
-				]}
-			>
+		<TouchableOpacity style={[styles.wrapper, style]} {...touchableProps}>
+			<ThemedView type={containerType} style={containerStyle}>
 				<Icon color="#FFF" iconWidth={iconSize} iconHeight={iconSize} />
 			</ThemedView>
-			{
-				text && <ThemedText type="bodySmall">{text}</ThemedText>
-			}
-		</View>
+			{text && <ThemedText type="bodySmall">{text}</ThemedText>}
+		</TouchableOpacity>
 	);
 };
 
@@ -58,7 +65,7 @@ const styles = StyleSheet.create({
 	bordered: {
 		borderWidth: 2,
 		borderColor: "#383838",
-	}
+	},
 });
 
-export default ActionButton;
+export default memo(ActionButton);

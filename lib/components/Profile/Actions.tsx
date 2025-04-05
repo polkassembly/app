@@ -1,57 +1,76 @@
-import { Ionicons } from "@expo/vector-icons";
+import React from "react";
+import { StyleSheet, View } from "react-native";
 import { ResizeMode, Video } from "expo-av";
 import { LinearGradient } from "expo-linear-gradient";
-import { router } from "expo-router";
 import { openBrowserAsync } from "expo-web-browser";
+import { router } from "expo-router";
 import { Skeleton } from "moti/skeleton";
-import React from "react";
-import { Dimensions, StyleSheet, TouchableOpacity, View } from "react-native";
+
 import { IconBounties, IconDelegate, IconSettings, IconVote } from "../icons/Profile";
 import { ThemedText } from "../ThemedText";
 import { ThemedView } from "../ThemedView";
 import { ActionButton } from "../shared/button";
+import { useThemeColor } from "@/lib/hooks";
 
 function Actions() {
-  const screenWidth = Dimensions.get("window").width; // Get the full screen width
+  const strokeColor = useThemeColor({}, "stroke");
 
   return (
     <ThemedView
       type="secondaryBackground"
-      style={[styles.container, { width: screenWidth }]} // Override the width
+      style={[styles.container, { borderColor: strokeColor }]}
     >
       <Video
         source={require("@/assets/videos/actions.mp4")}
-        style={[styles.video, { bottom: -200 }]} // Apply absolute positioning to the video
+        style={[styles.video, { bottom: -200, opacity: 0.8 }]}
         resizeMode={ResizeMode.COVER}
         shouldPlay
         isLooping
         isMuted
       />
-      {/* Apply the linear gradient */}
+
       <LinearGradient
         colors={["rgba(0, 0, 0, 0)", "#000000"]}
         start={{ x: 0.5, y: 0.18 }}
         end={{ x: 0.5, y: 0.46 }}
-        style={[styles.gradient, { bottom: -200 }]} // Apply absolute positioning to the gradient
+        style={[styles.gradient, { bottom: -100 }]}
       />
 
-      <View style={{ flexDirection: "column", gap: 20 }}>
+      <View style={styles.content}>
         <ThemedText type="bodySmall">EXPLORE ACTIONS</ThemedText>
-        <View style={styles.container2}>
-          <TouchableOpacity onPress={() => router.push("/batch-vote")}>
-            <ActionButton Icon={IconVote} text="Batch Vote" containerSize={68} iconSize={30} bordered />
-          </TouchableOpacity>
-
-          <TouchableOpacity onPress={() => openBrowserAsync("https://polkadot.polkassembly.io/delegation")}>
-            <ActionButton Icon={IconDelegate} text="Delegate" containerSize={68} iconSize={30} bordered />
-          </TouchableOpacity>
-
-          <TouchableOpacity onPress={() => openBrowserAsync("https://polkadot.polkassembly.io/bounties")}>
-            <ActionButton Icon={IconBounties} text="Bounties" containerSize={68} iconSize={30} bordered />
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => router.push("/settings")}>
-            <ActionButton Icon={IconSettings} text="Settings" containerSize={68} iconSize={30} bordered />
-          </TouchableOpacity>
+        <View style={styles.actionsRow}>
+          <ActionButton
+            Icon={IconVote}
+            text="Batch Vote"
+            containerSize={68}
+            iconSize={30}
+            bordered
+            onPress={() => router.push("/batch-vote")}
+          />
+          <ActionButton
+            Icon={IconDelegate}
+            text="Delegate"
+            containerSize={68}
+            iconSize={30}
+            bordered
+            onPress={() => openBrowserAsync("https://polkadot.polkassembly.io/delegation")}
+          />
+          <ActionButton
+            Icon={IconBounties}
+            text="Bounties"
+            containerSize={68}
+            iconSize={30}
+            bordered
+            onPress={() => openBrowserAsync("https://polkadot.polkassembly.io/bounties")}
+          />
+          <ActionButton
+            Icon={IconSettings}
+            text="Settings"
+            containerSize={68}
+            iconSize={30}
+            bordered
+            onPress={() => router.push("/settings")}
+          />
         </View>
       </View>
     </ThemedView>
@@ -59,19 +78,16 @@ function Actions() {
 }
 
 const ActionsSkeleton = () => (
-  <ThemedView type="secondaryBackground" style={{ padding: 10 }}>
+  <ThemedView type="secondaryBackground" style={styles.skeletonWrapper}>
     <View style={styles.actionsWrapper}>
       <Skeleton height={16} width={120} />
-      <View style={styles.actionsRow}>
-        {Array(4).fill(null).map((_, index) => (
-          <SkeletonAction key={index} />
-        ))}
-      </View>
-      <View style={styles.actionsRow}>
-        {Array(4).fill(null).map((_, index) => (
-          <SkeletonAction key={index} />
-        ))}
-      </View>
+      {[...Array(2)].map((_, rowIndex) => (
+        <View style={styles.actionsRow} key={rowIndex}>
+          {[...Array(4)].map((_, i) => (
+            <SkeletonAction key={i} />
+          ))}
+        </View>
+      ))}
     </View>
   </ThemedView>
 );
@@ -85,12 +101,12 @@ const SkeletonAction = () => (
 
 const styles = StyleSheet.create({
   container: {
-    marginLeft: -16,
-    paddingHorizontal: 16,
     paddingVertical: 29,
     flexDirection: "column",
     position: "relative",
     overflow: "hidden",
+    borderTopWidth: 1,
+    borderBottomWidth: 1,
   },
   video: {
     ...StyleSheet.absoluteFillObject,
@@ -102,21 +118,24 @@ const styles = StyleSheet.create({
     top: 0,
     left: 0,
   },
-  container2: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    width: "100%",
-  },
-  actionsWrapper: {
+  content: {
     flexDirection: "column",
     gap: 20,
+    paddingHorizontal: 16,
   },
   actionsRow: {
     flexDirection: "row",
     justifyContent: "space-between",
   },
+  actionsWrapper: {
+    flexDirection: "column",
+    gap: 20,
+  },
   iconWrapper: {
     alignItems: "center",
+  },
+  skeletonWrapper: {
+    padding: 10,
   },
 });
 
