@@ -1,15 +1,15 @@
 import { useThemeColor } from "@/lib/hooks";
 import { useActivityFeed } from "@/lib/net/queries/post";
 import { Post } from "@/lib/types";
-import { FlatList, ActivityIndicator, StyleSheet, RefreshControl, Touchable, TouchableOpacity } from "react-native";
+import { FlatList, ActivityIndicator, StyleSheet, RefreshControl, TouchableOpacity } from "react-native";
 import { ProposalCard, ProposalCardSkeleton } from "../proposal";
-import { ThemedText } from "../ThemedText";
 import { ThemedView } from "../ThemedView";
 import { EmptyViewWithTabBarHeight } from "../util";
 import { router } from "expo-router";
 import { useProposalStore } from "@/lib/store/proposalStore";
+import { Actions } from "./Actions";
 
-function Feed() {
+function FeedWithActions() {
 	const {
 		data,
 		fetchNextPage,
@@ -45,12 +45,17 @@ function Feed() {
 	}
 
 	return (
-		<ThemedView type="background" style={styles.container}>
+		<ThemedView type="secondaryBackground" style={styles.container}>
 			<FlatList
 				contentContainerStyle={{
-					gap: 8,
-					paddingInline: 8,
-					marginTop: 16
+					gap: 20,
+					marginInline: 16,
+				}}
+				ListHeaderComponent={
+					<Actions />
+				}
+				ListHeaderComponentStyle={{
+					marginInline: -16,
 				}}
 				data={data?.pages.flatMap((page) => page.items)}
 				renderItem={renderItem}
@@ -72,7 +77,7 @@ function Feed() {
 				}
 				ListFooterComponent={
 					<EmptyViewWithTabBarHeight>
-						{isFetchingNextPage ? <ActivityIndicator size="small" color={accentColor} style={{ marginBottom: 20 }} /> : <ThemedText></ThemedText>}
+						{isFetchingNextPage ? <ActivityIndicator size="small" color={accentColor} style={{ marginBottom: 20 }} /> : null}
 					</EmptyViewWithTabBarHeight>
 				}
 				ListEmptyComponent={<EmptyViewWithTabBarHeight />}
@@ -91,4 +96,4 @@ const styles = StyleSheet.create({
 	},
 });
 
-export default Feed;
+export default FeedWithActions;
