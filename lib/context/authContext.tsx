@@ -43,7 +43,7 @@ export const AuthModalProvider: React.FC<AuthModalProviderProps> = ({ children }
   };
 
   const onLogin = () => {
-    router.push('/auth/qrAuth')
+    router.push('/auth/loginOptionsScreen')
     setModalVisible(false);
   }
 
@@ -78,7 +78,6 @@ export const AuthModalProvider: React.FC<AuthModalProviderProps> = ({ children }
                     </TouchableWithoutFeedback>
                   </View>
                 </TouchableWithoutFeedback>
-
               </Modal>
             </View>
           </View>
