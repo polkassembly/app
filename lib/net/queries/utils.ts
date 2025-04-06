@@ -75,16 +75,14 @@ function saveIdFromToken(token: string): void {
 }
 
 const fetchAndStoreProfileFromToken = async (accessToken: string) => {
-  const setAccessToken = useAuthStore((state) => state.setAccessToken);
-  const setProfile = useProfileStore((state) => state.setProfile);
-  
+
   if (!accessToken) {
     console.error("Access token not found");
     return;
   }
 
   const id = getIdFromToken(accessToken ?? "");
-  if (!id ) {
+  if (!id) {
     console.error("Failed to get ID from token");
     return;
   }
@@ -94,9 +92,10 @@ const fetchAndStoreProfileFromToken = async (accessToken: string) => {
     console.error("Failed to get profile");
     return;
   }
+  console.log("Fetched profile:", profile);
 
-  setAccessToken(accessToken);
-  setProfile(profile);
+  useAuthStore.getState().setAccessToken(accessToken);
+  useProfileStore.getState().setProfile(profile);
 }
 
 export { fetchAndStoreProfileFromToken, tokenPairFromResponse, saveIdFromToken };
