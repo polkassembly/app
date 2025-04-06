@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { memo, useEffect } from "react";
 import { StyleSheet, View } from "react-native";
 import { ContainerType, ThemedView } from "../ThemedView";
 import HorizontalSeparator from "../shared/HorizontalSeparator";
@@ -20,11 +20,18 @@ type ProposalCardProps = {
 	withoutIndex?: boolean;
 	containerType?: ContainerType;
 	descriptionLength?: number;
+	/**
+	 * Renders components after ProposalBody but before ProposalActions.
+	 */
 	children?: React.ReactNode;
+	/**
+	 * Renders components after ViewMoreButton or ProposalActions (at the very end).
+	 */
+	childrenEnd?: React.ReactNode;
 	withoutReadMore?: boolean
 };
 
-function ProposalCard({
+const ProposalCard = ({
 	post,
 	withoutViewMore = false,
 	withoutActions = false,
@@ -33,7 +40,8 @@ function ProposalCard({
 	containerType = "container",
 	descriptionLength = 300,
 	children,
-}: ProposalCardProps) {
+	childrenEnd,
+}: ProposalCardProps) => {
 
 	const colorStroke = useThemeColor({}, "stroke")
 	const queryClient = useQueryClient()
@@ -86,11 +94,12 @@ function ProposalCard({
 			{!withoutViewMore && (
 				<ViewMoreButton post={post} />
 			)}
+			{childrenEnd}
 		</ThemedView>
 	);
 }
 
-function ProposalCardSkeleton() {
+const ProposalCardSkeleton = () => {
 	return (
 		<View style={styles.container}>
 			<ProposalHeaderSkeleton />
@@ -111,4 +120,7 @@ const styles = StyleSheet.create({
 	}
 });
 
-export { ProposalCard, ProposalCardSkeleton };
+const MemoizedProposalCard = memo(ProposalCard);
+const MemoizedProposalCardSkeleton = memo(ProposalCardSkeleton);
+
+export { MemoizedProposalCard as ProposalCard, MemoizedProposalCardSkeleton as ProposalCardSkeleton };

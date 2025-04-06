@@ -23,16 +23,19 @@ import BN from "bn.js";
 import { ENetwork, EProposalType, IVoteMetrics } from "@/lib/types/post";
 import { useProposalComments } from "@/lib/net/queries/post";
 import StatusTag from "./header/StatusTag";
+import ThemedButton from "../ThemedButton";
+import { router } from "expo-router";
 
 interface ProposalDetailsProps {
   post: any;
   withoutFullDetails?: boolean
   withoutHeaderText?: boolean
   withoutProposalCardIndex?: boolean
+  withVotingButton?: boolean
   openFullDetails?: () => void
 }
 
-export function ProposalDetails({ post, openFullDetails, withoutFullDetails, withoutHeaderText, withoutProposalCardIndex=true }: ProposalDetailsProps) {
+export function ProposalDetails({ post, openFullDetails, withoutFullDetails, withoutHeaderText, withoutProposalCardIndex = true, withVotingButton = true }: ProposalDetailsProps) {
   const accentColor = useThemeColor({}, "accent");
 
   if (!post) {
@@ -69,6 +72,16 @@ export function ProposalDetails({ post, openFullDetails, withoutFullDetails, wit
           withoutViewMore
           containerType="background"
           withoutIndex={withoutProposalCardIndex}
+          childrenEnd={
+            withVotingButton && (
+              <ThemedButton
+                text="Cast Your Vote"
+                textType="bodyMedium2"
+                style={{ paddingVertical: 8, borderRadius: 8 }}
+                onPress={() => router.push(`/proposal/vote/${post.index}?proposalType=${post.proposalType}`)}
+              />
+            )
+          }
         />
 
         <Summary
@@ -138,7 +151,7 @@ function Summary({ ayePercent, status, voteMetrics, nayPercent }: SummaryProps) 
         <View style={{ marginHorizontal: 8, flexDirection: "row", justifyContent: "space-between" }}>
           <View style={{ flexDirection: "row", gap: 16 }}>
             <ThemedText type="bodySmall1">Aye</ThemedText>
-            <ThemedText colorName="mediumText" type="bodySmall1" style={{ lineHeight: 22}}>
+            <ThemedText colorName="mediumText" type="bodySmall1" style={{ lineHeight: 22 }}>
               {formatBnBalance(
                 voteMetrics?.aye.value || "0",
                 { withUnit: true, numberAfterComma: 2, compactNotation: true },
@@ -148,7 +161,7 @@ function Summary({ ayePercent, status, voteMetrics, nayPercent }: SummaryProps) 
           </View>
           <View style={{ flexDirection: "row", gap: 16 }}>
             <ThemedText type="bodySmall1">Nay</ThemedText>
-            <ThemedText colorName="mediumText" type="bodySmall1" style={{ lineHeight: 22}}>
+            <ThemedText colorName="mediumText" type="bodySmall1" style={{ lineHeight: 22 }}>
               {formatBnBalance(
                 voteMetrics?.nay.value || "0",
                 { withUnit: true, numberAfterComma: 2, compactNotation: true },

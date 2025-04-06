@@ -246,6 +246,7 @@ const ProposalVotingScreen: React.FC = () => {
               withoutFullDetails
               withoutHeaderText
               withoutProposalCardIndex={false}
+              withVotingButton={false}
             />
           )}
         </ThemedView>
