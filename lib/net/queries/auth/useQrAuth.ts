@@ -12,10 +12,6 @@ export interface QrAuthRequest {
 }
 
 const useQrAuth = () => {
-  const router = useRouter();
-  const setAccessToken = useAuthStore((state) => state.setAccessToken);
-  const setProfile = useProfileStore((state) => state.setProfile);
-
   return useMutation<TokenPair, Error, QrAuthRequest>({
     mutationFn: async (params) => {
       try {
