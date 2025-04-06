@@ -109,7 +109,7 @@ const QrCodeScanner = () => {
         setLoginError("Login failed");
         return;
       }
-
+      router.dismissAll();
       router.replace("/(tabs)");
     } catch (error) {
       console.error(error);

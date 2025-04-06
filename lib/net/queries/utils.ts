@@ -92,7 +92,6 @@ const fetchAndStoreProfileFromToken = async (accessToken: string) => {
     console.error("Failed to get profile");
     return;
   }
-  console.log("Fetched profile:", profile);
 
   useAuthStore.getState().setAccessToken(accessToken);
   useProfileStore.getState().setProfile(profile);

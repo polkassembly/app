@@ -13,7 +13,7 @@ const Colors = {
 	errorBackground: "#6C0516",
 };
 
-export default function loginOptionsScreen() {
+export default function LoginOptionsScreen() {
 	const secondaryBackgroundColor = useThemeColor({}, "secondaryBackground");
 	const strokeColor = useThemeColor({}, "stroke");
 
@@ -39,7 +39,7 @@ export default function loginOptionsScreen() {
 					</ThemedText>
 					<View style={{ flex: 1, height: 1, backgroundColor: strokeColor }} />
 				</View>
-				<ThemedButton text='Log in Via Email' onPress={() => router.push("/auth/qrAuth")} bordered style={{ marginVertical: 10 }} />
+				<ThemedButton text='Log in Via Email' onPress={() => router.push("/auth/web2auth")} bordered style={{ marginVertical: 10 }} />
 			</ThemedView>
 		</SafeAreaView>
 	);
