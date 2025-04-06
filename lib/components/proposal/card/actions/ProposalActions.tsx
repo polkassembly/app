@@ -1,17 +1,17 @@
 import { EReaction } from "@/lib/types";
 import { StyleSheet, View } from "react-native";
 import ShareButton from "./ShareButton";
-import { IconLike, IconDislike, IconComment, IconBookmark } from "../../icons/shared";
-import ThemedButton from "../../ThemedButton";
-import { ThemedText } from "../../ThemedText";
+import { IconLike, IconDislike, IconComment, IconBookmark } from "../../../icons/shared";
+import ThemedButton from "../../../ThemedButton";
+import { ThemedText } from "../../../ThemedText";
 import { useEffect, useMemo, useState } from "react";
-import CommentBox from "../../feed/CommentBox";
 import Toast from "react-native-toast-message";
 import { useProfileStore } from "@/lib/store/profileStore";
 import { AddReactionResponse, useAddReaction, useDeleteReaction, useSubscribeProposal, useUnsubscribeProposal } from "@/lib/net/queries/actions";
 import { useIsFocused } from "@react-navigation/native";
 import { EAllowedCommentor, EProposalType, Reaction } from "@/lib/types/post";
 import { useAuthModal } from "@/lib/context/authContext";
+import { CommentBox } from "../../comments";
 
 interface ProposalActionsProps {
   index: string;

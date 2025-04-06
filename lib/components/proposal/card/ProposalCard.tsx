@@ -1,17 +1,17 @@
 import React, { memo, useEffect } from "react";
 import { StyleSheet, View } from "react-native";
-import { ContainerType, ThemedView } from "../ThemedView";
-import HorizontalSeparator from "../shared/HorizontalSeparator";
 
 import { useGetUserByAddress } from "@/lib/net/queries/profile";
 import { EAllowedCommentor, ENetwork, Post } from "@/lib/types/post";
 import { ProposalActions } from "./actions";
 import { ProposalHeader, ProposalHeaderSkeleton } from "./header/ProposalHeader";
 import { ProposalBody, ProposalBodySkeleton } from "./body";
-import ViewMoreButton from "./ViewMoreButton";
 import { useThemeColor } from "@/lib/hooks/useThemeColor";
 import { useQueryClient } from "@tanstack/react-query";
 import { buildProposalCommentsQueryKey, getProposalComments } from "@/lib/net/queries/post";
+import HorizontalSeparator from "../../shared/HorizontalSeparator";
+import { ContainerType, ThemedView } from "../../ThemedView";
+import ViewMoreButton from "./ViewMoreButton";
 
 type ProposalCardProps = {
 	post: Post;

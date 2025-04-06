@@ -5,7 +5,6 @@ import useAddCartItem from "@/lib/net/queries/actions/useAddCartItem";
 import { useActivityFeed } from "@/lib/net/queries/post/useActivityFeed";
 import { TopBar } from "@/lib/components/Topbar";
 import { useThemeColor } from "@/lib/hooks/useThemeColor";
-import { ProposalCard } from "@/lib/components/proposal/ProposalCard";
 import { Post } from "@/lib/types";
 import { BottomSheet } from "@/lib/components/shared";
 import CartItemsPreview from "@/lib/components/voting/CartItemsPreview";
@@ -18,6 +17,7 @@ import { ProposalDetails } from "@/lib/components/proposal";
 import { ThemedView } from "@/lib/components/ThemedView";
 import { ProposalContentSummary } from "@/lib/components/proposal";
 import { useBatchVotingStore } from "@/lib/store/batchVotingStore";
+import { ProposalCard } from "@/lib/components/proposal";
 
 interface MemoizedProposalCardProps {
   card: Post;

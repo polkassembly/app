@@ -15,16 +15,16 @@ import { ThemedText } from "@/lib/components/ThemedText";
 import { ThemedView } from "@/lib/components/ThemedView";
 import { Colors } from "@/lib/constants/Colors";
 import { useThemeColor } from "@/lib/hooks/useThemeColor";
-import { ProposalCard } from "@/lib/components/proposal/ProposalCard";
-import CommentList from "@/lib/components/feed/CommentList";
+import { CommentList } from "@/lib/components/proposal/comments";
 import { formatBnBalance } from "@/lib/util";
 import { calculatePercentage } from "@/lib/util/calculatePercentage";
 import BN from "bn.js";
 import { ENetwork, EProposalType, IVoteMetrics } from "@/lib/types/post";
 import { useProposalComments } from "@/lib/net/queries/post";
-import StatusTag from "./header/StatusTag";
+import StatusTag from "./card/header/StatusTag";
 import ThemedButton from "../ThemedButton";
 import { router } from "expo-router";
+import { ProposalCard } from "./card";
 
 interface ProposalDetailsProps {
   post: any;
