@@ -14,7 +14,6 @@ interface ButtonButtonProps {
 const BottomButton = forwardRef<View, ButtonButtonProps>(
   ({ onPress, containerProps, style, children }: ButtonButtonProps, ref) => {
     const colorStroke = useThemeColor({}, "stroke");
-    const insets = useSafeAreaInsets();
 
     return (
       <View

@@ -21,6 +21,9 @@ import { useProfileStore } from "@/lib/store/profileStore";
 import { BottomButton } from "@/lib/components/shared/button";
 import { TopBar } from "@/lib/components/shared";
 import { useThemeColor } from "@/lib/hooks/useThemeColor";
+import { canVote } from "@/lib/util/vote/canVote";
+import dayjs from "dayjs";
+import Toast from "react-native-toast-message";
 
 const getTotalLength = (arr: any[]) =>
   arr.reduce((sum, item) => {
@@ -71,6 +74,20 @@ export default function ProposalDetailScreenImpl() {
       </View>
     );
   }
+
+  const handleVote = () => {
+    if (!canVote(proposal.onChainInfo?.status, proposal.onChainInfo?.preparePeriodEndsAt)) {
+      Toast.show({
+        type: "error",
+        text1: "Voting ended",
+        text2: proposal.onChainInfo?.decisionPeriodEndsAt ? 
+          `Voting ended at ${dayjs(proposal.onChainInfo?.decisionPeriodEndsAt).format("YYYY-MM-DD HH:mm")}` :
+          "You cannot vote on this proposal.",
+      });
+      return;
+    }
+    router.push(`/proposal/vote/${index}?proposalType=${proposalType}`)
+  };
 
   return (
     <ThemedView type="container" style={{ flex: 1 }}>
