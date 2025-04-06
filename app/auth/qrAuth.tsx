@@ -2,13 +2,15 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { StyleSheet, View, Text, Image, ActivityIndicator } from "react-native";
 import { CameraView, useCameraPermissions, BarcodeScanningResult } from "expo-camera";
 import useQrAuth from "@/lib/net/queries/auth/useQrAuth";
-import { useRouter } from "expo-router";
+import { Link, useRouter } from "expo-router";
 import { ThemedView } from "@/lib/components/ThemedView";
 import { useState, useEffect } from "react";
 import { ThemedText } from "@/lib/components/ThemedText";
 import { useThemeColor } from "@/lib/hooks/useThemeColor";
 import ThemedButton from "@/lib/components/ThemedButton";
 import IconWarn from "@/lib/components/icons/auth/icon-warn";
+import { Ionicons } from "@expo/vector-icons";
+import { IconExternalLink } from "@/lib/components/icons/auth";
 
 const Colors = {
   primaryBackground: "#222121",
@@ -20,26 +22,43 @@ const Colors = {
 export default function QrAuthScreen() {
   const [showScanner, setShowScanner] = useState(false);
   const secondaryBackgroundColor = useThemeColor({}, "secondaryBackground");
+  const accentColor = useThemeColor({}, "accent");
 
   return (
     <>
       <SafeAreaView style={[styles.safeAreaView, { backgroundColor: secondaryBackgroundColor }]}>
         <View style={styles.headerContainer}>
           <Image style={styles.logo} source={require("@/assets/images/logo-wide.png")} />
-          <Image style={{ flexGrow: 0.8, flexBasis: 0}} resizeMode="contain" source={require("@/assets/images/auth/qr-auth-screen.gif")} />
+          <Image style={{ flexGrow: 0.8, flexBasis: 0 }} resizeMode="contain" source={require("@/assets/images/auth/qr-auth-screen.gif")} />
           <View style={styles.loginText}>
-            <ThemedText type="display">Login to the App</ThemedText>
-            <ThemedText type="bodyMedium2" colorName="mediumText">
-              Explore Proposals on the go and add your vote!
+            <ThemedText type="display">Scan QR</ThemedText>
+            <ThemedText type="bodyMedium2" colorName="mediumText" style={{ paddingHorizontal: 42, textAlign: "center" }}>
+              Connect to your Polkassembly account through web login
             </ThemedText>
           </View>
         </View>
+        <Link href="/auth/loginOptionsScreen" style={{ paddingLeft: 24, paddingBottom: 16 }}>
+          <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
+            <Ionicons name="arrow-back" size={16} color={accentColor} />
+            <ThemedText type="bodyMedium2" colorName="accent">Go Back</ThemedText>
+          </View>
+        </Link>
 
         <ThemedView type="background" style={styles.loginDescContainer}>
-          <ThemedText type="bodyMedium2" style={styles.loginDescText}>1. Head To polkadot.polkassembly.io</ThemedText>
-          <ThemedText type="bodyMedium2" style={styles.loginDescText}>2. Connect Wallet To Log In To Your Account</ThemedText>
+          <ThemedText type="bodyMedium2" style={styles.loginDescText}>1. Log In to your Polkassembly account on Desktop</ThemedText>
+          <View style={{ flexDirection: "row", alignItems: "center", backgroundColor: Colors.primaryBackground }}>
+            <ThemedText type="bodyMedium2" style={[styles.loginDescText, { paddingRight: 4 }]}>2. Head to Profile</ThemedText>
+            <Ionicons name='arrow-forward' size={16} color={Colors.textPrimary} />
+            <ThemedText type="bodyMedium2" style={[styles.loginDescText, { paddingLeft: 4 }]}>Mobile Login</ThemedText>
+          </View>
           <ThemedText type="bodyMedium2" style={styles.loginDescText}>3. Scan QR To Log In To Mobile App</ThemedText>
           <ThemedButton textType="bodyLarge" text="Scan QR Code" onPress={() => setShowScanner(true)} />
+          <Link href="/">
+            <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
+              <ThemedText type="bodyMedium2" colorName="text" style={{ textAlign: "center", paddingVertical: 10 }}>Can't Find QR?</ThemedText>
+              <IconExternalLink />
+            </View>
+          </Link>
         </ThemedView>
       </SafeAreaView>
       {showScanner && <QrCodeScanner />}
@@ -84,7 +103,7 @@ const QrCodeScanner = () => {
         return;
       }
 
-      await claimSession({ sessionId });  
+      await claimSession({ sessionId });
 
       if (isError) {
         setLoginError("Login failed");
@@ -188,8 +207,9 @@ const styles = StyleSheet.create({
   loginDescContainer: {
     display: "flex",
     flexDirection: "column",
-    padding: 24,
-    gap: 20,
+    paddingHorizontal: 24,
+    paddingVertical: 16,
+    gap: 16,
   },
   loginDescText: {
     backgroundColor: Colors.primaryBackground,
