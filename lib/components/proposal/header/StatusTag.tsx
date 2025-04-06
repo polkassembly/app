@@ -4,7 +4,6 @@ import { ThemedText } from '../../ThemedText';
 
 interface StatusTagProps {
 	status?: string;
-	colorInverted?: boolean;
 	style?: ViewStyle;
 }
 
@@ -52,16 +51,16 @@ const ProposalStatusTexts: { [key: string]: string } = {
 // Map groups to their color styles
 const groupStyles: Record<
 string,
-{ backgroundColor: string; borderColor: string; textColor: string }
+{ backgroundColor: string; borderColor: string; }
 > = {
-orange: { backgroundColor: '#F97316', borderColor: '#F97316', textColor: '#FFFFFF' },
-blue: { backgroundColor: '#3B82F6', borderColor: '#3B82F6', textColor: '#FFFFFF' },
-red: { backgroundColor: '#EF4444', borderColor: '#EF4444', textColor: '#FFFFFF' },
-green: { backgroundColor: '#22C55E', borderColor: '#22C55E', textColor: '#FFFFFF' },
-gray: { backgroundColor: '#666666', borderColor: '#666666', textColor: '#FFFFFF' },
+orange: { backgroundColor: '#D05704', borderColor: '#D05704' },
+blue: { backgroundColor: '#3866CE', borderColor: '#3866CE' },
+red: { backgroundColor: '#BD2020', borderColor: '#BD2020' },
+green: { backgroundColor: '#478F37', borderColor: '#478F37' },
+gray: { backgroundColor: '#666666', borderColor: '#666666' },
 };
 
-const StatusTag: React.FC<StatusTagProps> = ({ status, colorInverted, style }) => {
+const StatusTag: React.FC<StatusTagProps> = ({ status, style }) => {
 	// Normalize the status string (lowercase and underscores)
 	const normalizedStatus = status ? status.toLowerCase().replace(/\s+/g, '_') : '';
 
@@ -82,7 +81,7 @@ const StatusTag: React.FC<StatusTagProps> = ({ status, colorInverted, style }) =
 	const statusText = ProposalStatusTexts[normalizedStatus] || status || '';
 
 	const containerStyle: ViewStyle = {
-		backgroundColor: colorInverted ? '#FFFFFF' : groupStyles[group].backgroundColor,
+		backgroundColor: groupStyles[group].backgroundColor,
 		borderColor: groupStyles[group].borderColor,
 		borderWidth: 2,
 		paddingHorizontal: 4,
@@ -93,7 +92,7 @@ const StatusTag: React.FC<StatusTagProps> = ({ status, colorInverted, style }) =
 	};
 
 	const textStyle: TextStyle = {
-		color: colorInverted ? '#4B5563' : groupStyles[group].textColor,
+		color: '#FFFFFF',
 	};
 
 	return (

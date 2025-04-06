@@ -16,13 +16,13 @@ import { ThemedView } from "@/lib/components/ThemedView";
 import { Colors } from "@/lib/constants/Colors";
 import { useThemeColor } from "@/lib/hooks/useThemeColor";
 import { ProposalCard } from "@/lib/components/proposal/ProposalCard";
-import StatusTag from "@/lib/components/feed/StatusTag";
 import CommentList from "@/lib/components/feed/CommentList";
 import { formatBnBalance } from "@/lib/util";
 import { calculatePercentage } from "@/lib/util/calculatePercentage";
 import BN from "bn.js";
 import { ENetwork, EProposalType, IVoteMetrics } from "@/lib/types/post";
 import { useProposalComments } from "@/lib/net/queries/post";
+import StatusTag from "./header/StatusTag";
 
 interface ProposalDetailsProps {
   post: any;
