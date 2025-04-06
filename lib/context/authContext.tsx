@@ -4,7 +4,8 @@ import { Modal, View, Text, TouchableOpacity, StyleSheet, TouchableWithoutFeedba
 import { ThemedView } from '../components/ThemedView';
 import { ThemedText } from '../components/ThemedText';
 import ThemedButton from '../components/ThemedButton';
-import HorizontalSeparator from '../components/shared/HorizontalSeparator';
+import { useThemeColor } from '../hooks';
+import IconClose from '../components/icons/shared/icon-close';
 
 // Define the shape of the context
 interface AuthModalContextType {
@@ -24,6 +25,8 @@ export const AuthModalProvider: React.FC<AuthModalProviderProps> = ({ children }
   const [modalVisible, setModalVisible] = useState<boolean>(false);
   const [modalMessage, setModalMessage] = useState<string>('');
   const [removeScreenFromRouter, setRemoveScreenFromRouter] = useState<boolean>(false);
+
+  const strokeColor = useThemeColor({}, 'stroke');
 
   const openLoginModal = (message: string, removeScreenFromRouter: boolean = false) => {
     setModalMessage(message);
@@ -50,24 +53,34 @@ export const AuthModalProvider: React.FC<AuthModalProviderProps> = ({ children }
       {
         modalVisible && (
           <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}>
-            <Modal
-              animationType="slide"
-              transparent
-              onRequestClose={closeLoginModal}
-            >
-              {/* When the backdrop is pressed, close the modal */}
-              <TouchableWithoutFeedback onPress={closeLoginModal}>
-                <View style={styles.modalOverlay}>
+            <View style={styles.modalOverlay}>
+              <Modal
+                animationType="slide"
+                transparent
+                onRequestClose={closeLoginModal}
+              >
+                {/* When the backdrop is pressed, close the modal */}
+                <TouchableWithoutFeedback onPress={closeLoginModal}>
                   {/* Prevent the inner bottom sheet from closing when tapped */}
-                  <TouchableWithoutFeedback onPress={(e) => e.stopPropagation()}>
-                    <ThemedView style={styles.bottomSheetContainer}>
-                      <ThemedText type='titleSmall' style={{ marginBottom: 16 }}>{modalMessage}</ThemedText>
-                      <ThemedButton text='Login' onPress={onLogin}></ThemedButton>
-                    </ThemedView>
-                  </TouchableWithoutFeedback>
-                </View>
-              </TouchableWithoutFeedback>
-            </Modal>
+                  <View style={{ flex: 1, justifyContent: 'flex-end' }}> 
+                    <TouchableWithoutFeedback onPress={(e) => e.stopPropagation()}>
+                      <ThemedView type='secondaryBackground' style={[styles.bottomSheetContainer, { borderColor: strokeColor }]}>
+                        <View style={{ marginBottom: 16, gap: 8 }}>
+                          <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+                            <ThemedText type="titleMedium" style={{ textAlign: "center" }}>{modalMessage}</ThemedText>
+                            <TouchableOpacity onPress={closeLoginModal}>
+                              <IconClose />
+                            </TouchableOpacity>
+                          </View>
+                        </View>
+                        <ThemedButton text='Log in' onPress={onLogin} style={{ marginVertical: 10 }}></ThemedButton>
+                      </ThemedView>
+                    </TouchableWithoutFeedback>
+                  </View>
+                </TouchableWithoutFeedback>
+
+              </Modal>
+            </View>
           </View>
         )
       }
@@ -91,9 +104,13 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end'
   },
   bottomSheetContainer: {
-    padding: 20,
+    paddingHorizontal: 16,
+    paddingVertical: 24,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
+    borderTopWidth: 1,
+    borderStartWidth: 1,
+    borderEndWidth: 1,
   },
   loginButton: {
     backgroundColor: '#007bff',
