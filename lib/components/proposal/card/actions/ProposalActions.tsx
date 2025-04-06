@@ -2,8 +2,6 @@ import { EReaction } from "@/lib/types";
 import { StyleSheet, View } from "react-native";
 import ShareButton from "./ShareButton";
 import { IconLike, IconDislike, IconComment, IconBookmark } from "../../../icons/shared";
-import ThemedButton from "../../../ThemedButton";
-import { ThemedText } from "../../../ThemedText";
 import { useEffect, useMemo, useState } from "react";
 import Toast from "react-native-toast-message";
 import { useProfileStore } from "@/lib/store/profileStore";
@@ -12,6 +10,8 @@ import { useIsFocused } from "@react-navigation/native";
 import { EAllowedCommentor, EProposalType, Reaction } from "@/lib/types/post";
 import { useAuthModal } from "@/lib/context/authContext";
 import { CommentBox } from "../../comments";
+import { ThemedButton } from "@/lib/components/shared/button";
+import { ThemedText } from "@/lib/components/shared/text";
 
 interface ProposalActionsProps {
   index: string;

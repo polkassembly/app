@@ -1,5 +1,5 @@
-import { ThemedText } from "../../ThemedText";
-import { formatTime } from "../../util/time";
+import { ThemedText } from "@/lib/components/shared/text";
+import { formatTime } from "@/lib/components/util/time";
 
 function TimeDisplay({ createdAt }: { createdAt: string }) {
   const readableTime = formatTime(new Date(createdAt));

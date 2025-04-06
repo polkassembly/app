@@ -2,16 +2,14 @@ import { AxiosError } from "axios";
 import { router, useLocalSearchParams } from "expo-router";
 import React, { useState } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import BottomButton from "@/lib/components/shared/BottomButton";
-import { ThemedText } from "@/lib/components/ThemedText";
-import { TopBar } from "@/lib/components/Topbar";
 import useAddCartItem from "@/lib/net/queries/actions/useAddCartItem";
 import { Colors } from "@/lib/constants/Colors";
 import { BatchVoteForm } from "@/lib/components/voting/batch-voting/BatchVoteForm";
 import { EProposalType } from "@/lib/types";
-import { Note } from "@/lib/components/shared";
+import { Note, TopBar } from "@/lib/components/shared";
 import { Vote, Abstain } from "@/lib/types/voting";
+import { BottomButton } from "@/lib/components/shared/button";
+import { ThemedText } from "@/lib/components/shared/text";
 
 const ERROR_DEFAULT = "Something went wrong";
 

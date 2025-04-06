@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { View, useWindowDimensions } from "react-native";
 import Carousel from "react-native-reanimated-carousel";
 import GlitterBackground from "@/lib/components/icons/browser/glitter-background";
-import { ThemedText } from "@/lib/components/ThemedText";
+import { ThemedText } from "@/lib/components/shared/text/ThemedText";
 import { Colors } from "@/lib/constants/Colors";
 import QuickActionCard, { QuickActionCardProps } from "./QuickActionCard"; // adjust the path as needed
 import { StyleSheet } from "react-native";

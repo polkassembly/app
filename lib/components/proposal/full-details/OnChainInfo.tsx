@@ -1,9 +1,9 @@
 import { OnChainPostInfo } from "@/lib/types/post";
 import { pascalToNormal } from "@/lib/util/stringUtil";
 import { StyleSheet, View } from "react-native";
-import HorizontalSeparator from "../../shared/HorizontalSeparator";
-import { ThemedText } from "../../ThemedText";
-import { ThemedView } from "../../ThemedView";
+import HorizontalSeparator from "../../shared/View/HorizontalSeparator";
+import { ThemedText } from "../../shared/text/ThemedText";
+import { ThemedView } from "../../shared/View/ThemedView";
 
 function OnChainInfo({ onChainInfo }: { onChainInfo: OnChainPostInfo }) {
 	return (

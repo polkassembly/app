@@ -20,10 +20,10 @@
 
 import { EProposalType, Post } from "@/lib/types";
 import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
-import { ThemedView } from "../../ThemedView";
-import { ThemedText } from "../../ThemedText";
+import { ThemedView } from "../../shared/View/ThemedView";
+import { ThemedText } from "../../shared/text/ThemedText";
 import IconClose from "../../icons/shared/icon-close";
-import HorizontalSeparator from "../../shared/HorizontalSeparator";
+import HorizontalSeparator from "../../shared/View/HorizontalSeparator";
 import { Skeleton } from "moti/skeleton";
 import ProposalPeriodStatus from "../../feed/ProposalPeriodStatus";
 import { useProposalByIndex } from "@/lib/net/queries/post";

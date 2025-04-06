@@ -1,8 +1,8 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import dayjs from 'dayjs';
-import { ThemedView } from '../ThemedView';
-import { ThemedText } from '../ThemedText';
+import { ThemedView } from '../shared/View/ThemedView';
+import { ThemedText } from '../shared/text/ThemedText';
 import { useThemeColor } from '@/lib/hooks/useThemeColor';
 
 export const calculateDecisionProgress = (periodEndsAt: Date | string | null, durationInDays: number = 28) => {

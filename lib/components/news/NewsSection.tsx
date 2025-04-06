@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from "react";
 import { View, Dimensions, StyleSheet } from "react-native";
-import { ThemedText } from "@/lib/components/ThemedText";
+import { ThemedText } from "@/lib/components/shared/text/ThemedText";
 import WebView from "react-native-webview";
 import { twitterEmbedHTML } from "@/lib/util/twitterEmbedHTML";
 

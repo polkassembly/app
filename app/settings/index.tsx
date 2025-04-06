@@ -15,9 +15,6 @@ import * as ImageManipulator from "expo-image-manipulator";
 import * as FileSystem from "expo-file-system";
 
 import { IconSettings } from "@/lib/components/icons/Profile";
-import ThemedButton from "@/lib/components/ThemedButton";
-import { ThemedText } from "@/lib/components/ThemedText";
-import { TopBar } from "@/lib/components/Topbar";
 import { useThemeColor } from "@/lib/hooks/useThemeColor";
 import { useEditProfile } from "@/lib/net/queries/profile";
 
@@ -36,6 +33,9 @@ import { EditProfileParams } from "@/lib/net/queries/profile/useEditProfile";
 import { useProfileStore } from "@/lib/store/profileStore";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useAuthModal } from "@/lib/context/authContext";
+import { TopBar } from "@/lib/components/shared";
+import { ThemedButton } from "@/lib/components/shared/button";
+import { ThemedText } from "@/lib/components/shared/text";
 
 // Function to process and compress the image.
 // It ensures that the resulting image is resized and compressed

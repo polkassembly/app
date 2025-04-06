@@ -7,8 +7,8 @@ import React, { useState, useRef, useEffect, useCallback } from "react";
 import { TextInput, Animated, Keyboard, BackHandler, TouchableOpacity, View, FlatList, StyleSheet } from "react-native";
 import { Colors } from "react-native/Libraries/NewAppScreen";
 import IconBrowser from "../icons/icon-browser";
-import { ThemedText } from "../ThemedText";
-import { ThemedView } from "../ThemedView";
+import { ThemedText } from "../shared/text/ThemedText";
+import { ThemedView } from "../shared/View/ThemedView";
 import { useThemeColor } from "@/lib/hooks";
 import { ENetwork } from "@/lib/types/post";
 

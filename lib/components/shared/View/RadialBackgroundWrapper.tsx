@@ -1,7 +1,7 @@
 import { PropsWithChildren } from "react";
 import Svg, { Defs, RadialGradient, Stop, Ellipse } from "react-native-svg";
 import { Colors } from "react-native/Libraries/NewAppScreen";
-import { ThemedView } from "../../ThemedView";
+import { ThemedView } from "./ThemedView";
 
 const RadialBackgroundWrapper = ({ children }: PropsWithChildren) => {
   return (

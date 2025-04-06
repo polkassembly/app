@@ -1,7 +1,7 @@
 import { Video, ResizeMode } from "expo-av"
 import { LinearGradient } from "expo-linear-gradient"
 import { StyleSheet, View } from "react-native"
-import { ThemedText } from "../ThemedText"
+import { ThemedText } from "../shared/text/ThemedText"
 import { Image } from "react-native"
 import { memo } from "react"
 

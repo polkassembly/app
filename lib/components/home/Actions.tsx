@@ -7,8 +7,8 @@ import { router } from "expo-router";
 import { Skeleton } from "moti/skeleton";
 
 import { IconBounties, IconDelegate, IconSettings, IconVote } from "../icons/Profile";
-import { ThemedText } from "../ThemedText";
-import { ThemedView } from "../ThemedView";
+import { ThemedText } from "../shared/text/ThemedText";
+import { ThemedView } from "../shared/View/ThemedView";
 import { ActionButton } from "../shared/button";
 import { useThemeColor } from "@/lib/hooks";
 import { useAuthModal } from "@/lib/context/authContext";

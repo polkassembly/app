@@ -1,8 +1,8 @@
 import { EProposalType } from "@/lib/types";
-import { ContainerType, ThemedView } from "../ThemedView";
+import { ContainerType, ThemedView } from "../shared/View/ThemedView";
 import { StyleSheet } from "react-native";
 import { useThemeColor } from "@/lib/hooks/useThemeColor";
-import { ThemedText } from "../ThemedText";
+import { ThemedText } from "../shared/text/ThemedText";
 import { useContentSummary } from "@/lib/net/queries/post";
 import { trimText } from "@/lib/util/stringUtil";
 import { ThemedMarkdownDisplay } from "../shared";

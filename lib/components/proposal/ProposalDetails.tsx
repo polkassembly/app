@@ -10,9 +10,6 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Svg, { Rect } from "react-native-svg";
 
 import IconArrowRightEnclosed from "@/lib/components/icons/icon-arrow-right-enclosed";
-import HorizontalSeparator from "@/lib/components/shared/HorizontalSeparator";
-import { ThemedText } from "@/lib/components/ThemedText";
-import { ThemedView } from "@/lib/components/ThemedView";
 import { Colors } from "@/lib/constants/Colors";
 import { useThemeColor } from "@/lib/hooks/useThemeColor";
 import { CommentList } from "@/lib/components/proposal/comments";
@@ -22,9 +19,11 @@ import BN from "bn.js";
 import { ENetwork, EProposalType, IVoteMetrics } from "@/lib/types/post";
 import { useProposalComments } from "@/lib/net/queries/post";
 import StatusTag from "./card/header/StatusTag";
-import ThemedButton from "../ThemedButton";
 import { router } from "expo-router";
 import { ProposalCard } from "./card";
+import { ThemedButton } from "../shared/button";
+import { ThemedText } from "../shared/text";
+import { ThemedView, HorizontalSeparator } from "../shared/View";
 
 interface ProposalDetailsProps {
   post: any;

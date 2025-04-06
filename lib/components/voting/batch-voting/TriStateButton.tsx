@@ -3,7 +3,7 @@ import IconAbstain from "../../icons/shared/icon-abstain";
 import IconAye from "../../icons/shared/icon-aye";
 import IconNay from "../../icons/shared/icon-nay";
 import { IconProps } from "../../icons/types";
-import { ThemedText } from "../../ThemedText";
+import { ThemedText } from "../../shared/text/ThemedText";
 import { useThemeColor } from "@/lib/hooks";
 import { Vote } from "@/lib/types/voting";
 

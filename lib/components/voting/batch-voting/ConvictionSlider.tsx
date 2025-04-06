@@ -1,7 +1,7 @@
 import { useThemeColor } from "@/lib/hooks";
 import Slider from "@react-native-community/slider";
 import { View, Platform } from "react-native";
-import { ThemedText } from "../../ThemedText";
+import { ThemedText } from "../../shared/text/ThemedText";
 
 interface ConvictionSliderProps {
 	conviction: number;

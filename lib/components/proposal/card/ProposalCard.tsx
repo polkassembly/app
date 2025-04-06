@@ -9,8 +9,8 @@ import { ProposalBody, ProposalBodySkeleton } from "./body";
 import { useThemeColor } from "@/lib/hooks/useThemeColor";
 import { useQueryClient } from "@tanstack/react-query";
 import { buildProposalCommentsQueryKey, getProposalComments } from "@/lib/net/queries/post";
-import HorizontalSeparator from "../../shared/HorizontalSeparator";
-import { ContainerType, ThemedView } from "../../ThemedView";
+import HorizontalSeparator from "../../shared/View/HorizontalSeparator";
+import { ContainerType, ThemedView } from "../../shared/View/ThemedView";
 import ViewMoreButton from "./ViewMoreButton";
 
 type ProposalCardProps = {

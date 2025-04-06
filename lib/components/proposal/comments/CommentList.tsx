@@ -2,7 +2,7 @@ import React from "react";
 import { View, StyleSheet } from "react-native";
 import { ICommentResponse } from "@/lib/types";
 import CommentCard from "./CommentCard";
-import HorizontalSeparator from "../../shared/HorizontalSeparator";
+import HorizontalSeparator from "../../shared/View/HorizontalSeparator";
 
 interface CommentListProps {
   comments: ICommentResponse[];

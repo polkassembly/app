@@ -6,8 +6,8 @@ import { formatBnBalance } from "@/lib/util";
 import { Skeleton } from "moti/skeleton";
 import { StyleSheet, View } from "react-native";
 import { UserAvatar } from "../../shared";
-import { ThemedText } from "../../ThemedText";
-import { ThemedView } from "../../ThemedView";
+import { ThemedText } from "../../shared/text/ThemedText";
+import { ThemedView } from "../../shared/View/ThemedView";
 
 interface UserInfoProps {
 	address?: string;

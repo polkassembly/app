@@ -1,10 +1,10 @@
 import React from "react";
 import { Image, ImageSourcePropType } from "react-native";
 import { openBrowserAsync } from "expo-web-browser";
-import { ThemedView } from "@/lib/components/ThemedView";
-import { ThemedText } from "@/lib/components/ThemedText";
-import ThemedButton from "@/lib/components/ThemedButton";
 import { Colors } from "@/lib/constants/Colors";
+import { ThemedButton } from "../shared/button";
+import { ThemedText } from "../shared/text";
+import { ThemedView } from "../shared/View";
 
 export interface QuickActionCardProps {
   title: string;

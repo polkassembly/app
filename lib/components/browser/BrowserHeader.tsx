@@ -2,8 +2,8 @@ import { useProfileStore } from "@/lib/store/profileStore";
 import { StyleSheet, View } from "react-native";
 import IconBrowser  from "../icons/icon-browser";
 import { IconPoints } from "../icons/icon-points";
-import { ThemedText } from "../ThemedText";
-import { ThemedView } from "../ThemedView";
+import { ThemedText } from "../shared/text/ThemedText";
+import { ThemedView } from "../shared/View/ThemedView";
 
 const BrowserHeader = () => {
   const userProfile = useProfileStore((state) => state.profile);

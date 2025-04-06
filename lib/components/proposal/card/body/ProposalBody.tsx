@@ -4,12 +4,12 @@ import { View, TouchableOpacity, StyleSheet } from "react-native";
 
 import { EPostOrigin, UserProfile } from "@/lib/types";
 import { trimText } from "@/lib/util/stringUtil";
-import { ThemedMarkdownDisplay, UserAvatar } from "../../shared";
-import { ThemedText } from "../../ThemedText";
 import OriginBadge from "./OriginBadge";
 import TimeDisplay from "./TimeDisplay";
 import { useThemeColor } from "@/lib/hooks/useThemeColor";
 import { Skeleton } from "moti/skeleton";
+import { UserAvatar, ThemedMarkdownDisplay } from "@/lib/components/shared";
+import { ThemedText } from "@/lib/components/shared/text";
 
 interface ProposalBodyProps {
 	title: string;

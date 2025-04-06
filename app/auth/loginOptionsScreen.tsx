@@ -1,10 +1,10 @@
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StyleSheet, View, Image } from "react-native";
 import { router } from "expo-router";
-import { ThemedView } from "@/lib/components/ThemedView";
-import { ThemedText } from "@/lib/components/ThemedText";
+import { ThemedView } from "@/lib/components/shared/View";
+import { ThemedText } from "@/lib/components/shared/text";
 import { useThemeColor } from "@/lib/hooks/useThemeColor";
-import ThemedButton from "@/lib/components/ThemedButton";
+import { ThemedButton } from "@/lib/components/shared/button";
 
 const Colors = {
 	primaryBackground: "#222121",

@@ -1,6 +1,6 @@
-import IntroPager from "@/lib/components/IntroPager";
-import ThemedButton from "@/lib/components/ThemedButton";
-import { ThemedText } from "@/lib/components/ThemedText";
+import IntroPager from "@/lib/components/shared/IntroPager";
+import { ThemedButton } from "@/lib/components/shared/button";
+import { ThemedText } from "@/lib/components/shared/text";
 import { useThemeColor } from "@/lib/hooks/useThemeColor";
 import { Link } from "expo-router";
 import React from "react";

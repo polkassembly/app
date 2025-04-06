@@ -1,3 +1,7 @@
+import BottomSheet from "./BottomSheet";
+import HorizontalSeparator from "./HorizontalSeparator";
 import RadialBackgroundWrapper from "./RadialBackgroundWrapper";
+import { ThemedView } from "./ThemedView";
+import VerticalSeprator from "./VerticalSeprator";
 
-export { RadialBackgroundWrapper };
+export { BottomSheet, HorizontalSeparator, RadialBackgroundWrapper, ThemedView, VerticalSeprator };

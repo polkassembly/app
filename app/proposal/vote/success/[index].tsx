@@ -1,12 +1,11 @@
 import IconInfo from "@/lib/components/icons/shared/icon-info";
-import ThemedButton from "@/lib/components/ThemedButton";
-import { ThemedText } from "@/lib/components/ThemedText";
-import { TopBar } from "@/lib/components/Topbar";
+import {ThemedButton} from "@/lib/components/shared/button";
+import { ThemedText } from "@/lib/components/shared/text";
+import { TopBar } from "@/lib/components/shared";
 import { useThemeColor } from "@/lib/hooks/useThemeColor";
 import { router } from "expo-router";
 import { useLocalSearchParams } from "expo-router/build/hooks";
 import { Image, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { EProposalType, EVoteDecision } from "@/lib/types/post";
 import { toTitleCase } from "@/lib/util/stringUtil";
 

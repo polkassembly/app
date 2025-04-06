@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, ViewStyle, TextStyle } from 'react-native';
-import { ThemedText } from '../../../ThemedText';
+import { ThemedText } from '../../../shared/text/ThemedText';
 
 interface StatusTagProps {
 	status?: string;

@@ -6,7 +6,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { IconPoints } from "../../icons/icon-points";
-import { ThemedText } from "../../ThemedText";
+import { ThemedText } from "../../shared/text/ThemedText";
 
 const ActivityItem = ({ item }: { item: UserActivity }) => {
 	const points = (REPUTATION_SCORES[item.name as keyof typeof REPUTATION_SCORES] as { value: number })?.value || 0;

@@ -1,6 +1,6 @@
 import { View } from "react-native";
 import IconInfo from "../icons/shared/icon-info";
-import { ThemedText } from "../ThemedText";
+import { ThemedText } from "./text/ThemedText";
 
 interface NoteProps {
   content: string;
@@ -10,7 +10,7 @@ interface NoteProps {
   bgColor?: string;
 }
 
-export function Note({ iconColor, iconSize, content, textColor, bgColor }: NoteProps) {
+export default function Note({ iconColor, iconSize, content, textColor, bgColor }: NoteProps) {
   return (
     <View
       style={{

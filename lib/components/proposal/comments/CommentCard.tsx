@@ -3,10 +3,8 @@ import { StyleSheet, View } from "react-native";
 import debounce from "lodash/debounce";
 import { ICommentResponse, EReaction } from "@/lib/types";
 import { UserAvatar } from "../../shared";
-import ThemedButton from "../../ThemedButton";
 import { IconLike, IconDislike, IconComment } from "../../icons/shared";
-import { ThemedText } from "../../ThemedText";
-import VerticalSeprator from "../../shared/VerticalSeprator";
+import VerticalSeprator from "../../shared/View/VerticalSeprator";
 import StackedAvatars from "../../feed/StackedAvatars";
 import { extractUniqueChildrenAvatars } from "@/lib/util/commentUtil";
 import CommentBox from "./CommentBox";
@@ -14,6 +12,8 @@ import useAddCommentReaction from "@/lib/net/queries/actions/useAddCommentReacti
 import useDeleteCommentReaction from "@/lib/net/queries/actions/useDeleteCommentReaction";
 import { useProfileStore } from "@/lib/store/profileStore";
 import { ThemedMarkdownDisplay } from "@/lib/components/shared";
+import { ThemedButton } from "../../shared/button";
+import { ThemedText } from "../../shared/text";
 
 interface CommentCardProps {
 	comment: ICommentResponse;
@@ -54,7 +54,8 @@ function CommentCard({ comment, commentDisabled }: CommentCardProps) {
 		setAvatars(extractUniqueChildrenAvatars(comment));
 	}, [comment]);
 
-	// Debounced like handler
+	// Debounced like handlerimport { ThemedText } from "../../shared/text/ThemedText";
+
 	const handleLike = useCallback(
 		debounce(() => {
 			if (processing) return;

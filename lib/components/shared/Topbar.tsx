@@ -2,12 +2,12 @@ import React, { ReactNode } from "react";
 import { StyleProp, ViewStyle, TouchableOpacity } from "react-native";
 import { Link } from "expo-router";
 import { View } from "moti";
-import { useThemeColor } from "../hooks/useThemeColor";
-import IconBack from "./icons/icon-back";
-import { IconPoints } from "./icons/icon-points";
-import { ThemedText } from "./ThemedText";
+import { useThemeColor } from "../../hooks/useThemeColor";
+import IconBack from "../icons/icon-back";
+import { IconPoints } from "../icons/icon-points";
+import { ThemedText } from "./text/ThemedText";
 import { Skeleton } from "moti/skeleton";
-import { useProfileStore } from "../store/profileStore";
+import { useProfileStore } from "../../store/profileStore";
 
 interface TopBarProps {
   style?: StyleProp<ViewStyle>;
@@ -15,7 +15,7 @@ interface TopBarProps {
   children?: ReactNode;
 }
 
-export function TopBar({
+export default function TopBar({
   style,
   children,
 }: TopBarProps): JSX.Element {

@@ -1,7 +1,7 @@
 import { View } from "react-native";
 import { IconPoints } from "../icons/icon-points";
 import { IconNews } from "../icons/Profile";
-import { ThemedText } from "../ThemedText";
+import { ThemedText } from "../shared/text/ThemedText";
 import { useProfileStore } from "@/lib/store/profileStore";
 
 function NewsHeader() {

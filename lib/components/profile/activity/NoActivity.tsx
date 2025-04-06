@@ -1,7 +1,7 @@
 import { Link } from "expo-router";
 import { StyleSheet } from "react-native";
-import { ThemedText } from "../../ThemedText";
-import { ThemedView } from "../../ThemedView";
+import { ThemedText } from "../../shared/text/ThemedText";
+import { ThemedView } from "../../shared/View/ThemedView";
 import { Image } from "react-native";
 
 const NoActivity = () => (

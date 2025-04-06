@@ -1,7 +1,7 @@
 
 import { Share, StyleSheet } from "react-native";
 import { IconShare } from "../../../icons/shared";
-import ThemedButton from "../../../ThemedButton";
+import { ThemedButton } from "@/lib/components/shared/button";
 
 const POLKASSEMBLY_URL = process.env.EXPO_PUBLIC_POLKASSEMBLY_URL;
 

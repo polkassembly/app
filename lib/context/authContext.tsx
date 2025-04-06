@@ -1,11 +1,11 @@
 import { router } from 'expo-router';
 import React, { createContext, useState, useContext, ReactNode } from 'react';
 import { Modal, View, Text, TouchableOpacity, StyleSheet, TouchableWithoutFeedback } from 'react-native';
-import { ThemedView } from '../components/ThemedView';
-import { ThemedText } from '../components/ThemedText';
-import ThemedButton from '../components/ThemedButton';
 import { useThemeColor } from '../hooks';
 import IconClose from '../components/icons/shared/icon-close';
+import { ThemedButton } from '../components/shared/button';
+import { ThemedText } from '../components/shared/text';
+import { ThemedView } from '../components/shared/View';
 
 // Define the shape of the context
 interface AuthModalContextType {

@@ -4,7 +4,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { View, TouchableOpacity, StyleSheet } from "react-native";
 import IconVotedProposal from "../icons/proposals/icon-voted-proposal";
-import { ThemedText } from "../ThemedText";
+import { ThemedText } from "../shared/text/ThemedText";
 
 const CartItemsPreview = () => {
 	const { data: cartItems, isLoading } = useGetCartItems();

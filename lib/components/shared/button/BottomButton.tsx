@@ -1,8 +1,8 @@
 import { useThemeColor } from "@/lib/hooks/useThemeColor";
 import { forwardRef } from "react";
 import { TouchableOpacity, View, ViewProps, ViewStyle } from "react-native";
-import { ThemedText } from "../ThemedText";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { ThemedText } from "../text";
 
 interface ButtonButtonProps {
   onPress?: () => void;

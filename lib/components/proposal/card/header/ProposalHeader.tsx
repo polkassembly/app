@@ -3,7 +3,7 @@ import { ENetwork, IBeneficiary } from '@/lib/types/post';
 import { formatBnBalance } from '@/lib/util';
 import { groupBeneficiariesByAsset } from '@/lib/util/groupBenificaryByAsset';
 import { StyleSheet, View } from 'react-native';
-import { ThemedText } from '../../../ThemedText';
+import { ThemedText } from '../../../shared/text/ThemedText';
 import StatusTag from './StatusTag';
 import { Skeleton } from 'moti/skeleton';
 

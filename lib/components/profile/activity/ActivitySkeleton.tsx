@@ -1,6 +1,6 @@
 import { Skeleton } from "moti/skeleton";
 import { StyleSheet, View } from "react-native";
-import { ThemedView } from "../../ThemedView";
+import { ThemedView } from "../../shared/View/ThemedView";
 
 const ActivitySkeleton = () => (
 	<View style={styles.mainContainer}>

@@ -1,8 +1,6 @@
-import BottomButton from "@/lib/components/shared/BottomButton";
-import { TopBar } from "@/lib/components/Topbar";
-import { useThemeColor } from "@/lib/hooks/useThemeColor";
-import { router, useLocalSearchParams } from "expo-router";
+
 import React, { useState } from "react";
+import { router, useLocalSearchParams } from "expo-router";
 import {
   ActivityIndicator,
   KeyboardAvoidingView,
@@ -14,12 +12,15 @@ import { BottomSheet } from "@/lib/components/shared";
 import { EProposalType, Post } from "@/lib/types";
 import { useProposalStore } from "@/lib/store/proposalStore";
 import { useProposalByIndex } from "@/lib/net/queries/post";
-import { ThemedText } from "@/lib/components/ThemedText";
+import { ThemedText } from "@/lib/components/shared/text/ThemedText";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { ThemedView } from "@/lib/components/ThemedView";
+import { ThemedView } from "@/lib/components/shared/View/ThemedView";
 import PostFullDetails from "@/lib/components/proposal/full-details";
 import { useAuthModal } from "@/lib/context/authContext";
 import { useProfileStore } from "@/lib/store/profileStore";
+import { BottomButton } from "@/lib/components/shared/button";
+import { TopBar } from "@/lib/components/shared";
+import { useThemeColor } from "@/lib/hooks/useThemeColor";
 
 const getTotalLength = (arr: any[]) =>
   arr.reduce((sum, item) => {
@@ -40,11 +41,11 @@ export default function ProposalDetailScreenImpl() {
   let proposal: Post | undefined;
 
   const accentColor = useThemeColor({}, "accent");
-  const handleVote = () => {
+  const handleComment = () => {
     if (!user) {
-      openLoginModal("Please login to vote", true);
+      openLoginModal("Please login to comment", true);
       return;
-    }
+    } index
     router.push(`/proposal/vote/${index}?proposalType=${proposalType}`)
   }
 
@@ -87,7 +88,7 @@ export default function ProposalDetailScreenImpl() {
       {/* Bottom button outside of KeyboardAvoidingView */}
 
       <View style={{ position: "absolute", bottom: 0, width: "100%" }}>
-        <BottomButton onPress={() => handleVote} >Cast Your Vote</BottomButton>
+        <BottomButton onPress={() => handleComment} >Add a Comment</BottomButton>
       </View>
       <BottomSheet open={open} onClose={() => setOpen(false)}>
         <PostFullDetails

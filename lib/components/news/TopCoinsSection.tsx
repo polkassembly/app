@@ -7,7 +7,7 @@ import {
   Image,
 } from "react-native";
 import Svg, { Path } from "react-native-svg";
-import { ThemedText } from "@/lib/components/ThemedText";
+import { ThemedText } from "@/lib/components/shared/text/ThemedText";
 import { Colors } from "@/lib/constants/Colors";
 import { useThemeColor } from "@/lib/hooks";
 import { Ionicons } from "@expo/vector-icons";

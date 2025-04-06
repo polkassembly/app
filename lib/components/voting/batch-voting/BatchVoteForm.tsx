@@ -3,9 +3,9 @@ import IconAye from "@/lib/components/icons/shared/icon-aye";
 import IconNay from "@/lib/components/icons/shared/icon-nay";
 import IconPadlock from "@/lib/components/icons/shared/icon-padlock";
 import { IconProps } from "@/lib/components/icons/types";
-import ThemedButton from "@/lib/components/ThemedButton";
-import { ThemedText } from "@/lib/components/ThemedText";
-import { ThemedView } from "@/lib/components/ThemedView";
+import { ThemedButton } from "@/lib/components/shared/button";
+import { ThemedText } from "@/lib/components/shared/text";
+import { ThemedView } from "@/lib/components/shared/View";
 import { Colors } from "@/lib/constants/Colors";
 import { useThemeColor } from "@/lib/hooks/useThemeColor";
 import React, { useState, useEffect } from "react";
@@ -74,14 +74,14 @@ export function BatchVoteForm({
           <AmountInput value={ayeAmount} onChange={setAyeAmount} />
         </View>
       )}
-      
+
       {vote === "nay" && (
         <View style={{ gap: 8 }}>
           <SectionHeader title="Nay Amount" Icon={IconNay} color="#F53C3C" />
           <AmountInput value={nayAmount} onChange={setNayAmount} />
         </View>
       )}
-      
+
       {/* Show all three inputs in abstain mode */}
       {vote === "splitAbstain" && (
         <>
@@ -94,30 +94,30 @@ export function BatchVoteForm({
               })
             }} />
           </View>
-          
+
           <View style={{ gap: 8 }}>
             <SectionHeader title="Aye Amount" Icon={IconAye} color="#2ED47A" />
-            <AmountInput 
-              value={abstainAmount.aye} 
+            <AmountInput
+              value={abstainAmount.aye}
               onChange={(value) => {
                 setAbstainAmount({
                   ...abstainAmount,
                   aye: value
                 });
-              }} 
+              }}
             />
           </View>
-          
+
           <View style={{ gap: 8 }}>
             <SectionHeader title="Nay Amount" Icon={IconNay} color="#F53C3C" />
-            <AmountInput 
-              value={abstainAmount.nay} 
+            <AmountInput
+              value={abstainAmount.nay}
               onChange={(value) => {
                 setAbstainAmount({
                   ...abstainAmount,
                   nay: value
                 });
-              }} 
+              }}
             />
           </View>
         </>
@@ -266,12 +266,12 @@ function AmountInput({ value, onChange }: AmountInputProps) {
           // Ensure only one decimal point
           const parts = sanitized.split('.');
           const formattedText = parts[0] + (parts.length > 1 ? '.' + parts.slice(1).join('') : '');
-          
+
           setInputValue(formattedText);
-          
+
           // Parse as floating point for decimal support
           let parsed = parseFloat(formattedText);
-          
+
           // Handle validation
           if (isNaN(parsed)) {
             parsed = 1;
@@ -280,7 +280,7 @@ function AmountInput({ value, onChange }: AmountInputProps) {
           } else if (parsed > MAX_VOTING_VALUE) {
             parsed = MAX_VOTING_VALUE;
           }
-          
+
           // Only update if value has changed
           onChange(parsed);
         }}

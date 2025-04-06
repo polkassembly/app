@@ -3,11 +3,6 @@ import IconAbstain from "@/lib/components/icons/shared/icon-abstain";
 import IconAye from "@/lib/components/icons/shared/icon-aye";
 import IconClose from "@/lib/components/icons/shared/icon-close";
 import IconNay from "@/lib/components/icons/shared/icon-nay";
-import HorizontalSeparator from "@/lib/components/shared/HorizontalSeparator";
-import ThemedButton from "@/lib/components/ThemedButton";
-import { ThemedText } from "@/lib/components/ThemedText";
-import { ThemedView } from "@/lib/components/ThemedView";
-import { TopBar } from "@/lib/components/Topbar";
 import { useThemeColor } from "@/lib/hooks/useThemeColor";
 import useUpdateCartItem from "@/lib/net/queries/actions/useUpdateCartItem";
 import useDeleteCartItem from "@/lib/net/queries/actions/useDeleteCardItem";
@@ -22,8 +17,11 @@ import { ActivityIndicator, ScrollView, TouchableOpacity, View } from "react-nat
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import IconPencil from "@/lib/components/icons/shared/icon-pencil";
 import Toast from "react-native-toast-message";
-import { Note } from "@/lib/components/shared";
+import { Note, TopBar } from "@/lib/components/shared";
 import { Vote, Abstain } from "@/lib/types/voting";
+import { ThemedButton } from "@/lib/components/shared/button";
+import { ThemedText } from "@/lib/components/shared/text";
+import { ThemedView, HorizontalSeparator } from "@/lib/components/shared/View";
 
 export default function VotedProposals() {
 	const { data: cart, isLoading: isCartLoading } = useGetCartItems();

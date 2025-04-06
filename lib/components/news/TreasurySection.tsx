@@ -1,11 +1,11 @@
 import React from "react";
 import { View, Image, StyleSheet } from "react-native";
-import { ThemedText } from "../ThemedText";
+import { ThemedText } from "../shared/text/ThemedText";
 import useTreasuryStats from "@/lib/net/queries/treasury/useTreasuryStats";
 import { formatBnBalance } from "@/lib/util";
 import { ENetwork } from "@/lib/types/post";
 import { LinearGradient } from "expo-linear-gradient";
-import { ThemedView } from "../ThemedView";
+import { ThemedView } from "../shared/View/ThemedView";
 
 function TreasurySection() {
 	const { data, error, isLoading } = useTreasuryStats();

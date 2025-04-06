@@ -3,10 +3,10 @@ import { EProposalStatus } from "@/lib/types/post";
 import { getFormattedDateTime } from "@/lib/util/dateUtil";
 import { StyleSheet, View } from "react-native";
 import IconEdit from "../../icons/proposals/icon-edit";
-import HorizontalSeparator from "../../shared/HorizontalSeparator";
-import VerticalSeprator from "../../shared/VerticalSeprator";
-import { ThemedText } from "../../ThemedText";
-import { ThemedView } from "../../ThemedView";
+import HorizontalSeparator from "../../shared/View/HorizontalSeparator";
+import VerticalSeprator from "../../shared/View/VerticalSeprator";
+import { ThemedText } from "../../shared/text/ThemedText";
+import { ThemedView } from "../../shared/View/ThemedView";
 
 interface TimelineItemProps {
 	timeline: IStatusHistoryItem[];

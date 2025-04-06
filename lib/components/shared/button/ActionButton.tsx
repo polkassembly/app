@@ -5,8 +5,8 @@ import {
 	TouchableOpacityProps,
 	ViewStyle,
 } from "react-native";
-import { ThemedText } from "../../ThemedText";
-import { ContainerType, ThemedView } from "../../ThemedView";
+import { ThemedText } from "../text/ThemedText";
+import { ContainerType, ThemedView } from "../View/ThemedView";
 
 interface IconProps {
 	color: string;

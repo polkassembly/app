@@ -1,10 +1,10 @@
 import { Link, router } from "expo-router";
 import { IconViewMore } from "../../icons/shared";
-import ThemedButton from "../../ThemedButton";
-import { ThemedText } from "../../ThemedText";
 import { StyleSheet } from "react-native";
 import { Post } from "@/lib/types";
 import { useProposalStore } from "@/lib/store/proposalStore";
+import { ThemedButton } from "../../shared/button";
+import { ThemedText } from "../../shared/text";
 
 interface ViewMoreButtonProps {
 	post: Post;

@@ -1,6 +1,6 @@
 import { StyleSheet, View } from "react-native";
 import { IconProps } from "../../icons/types";
-import { ThemedText } from "../../ThemedText";
+import { ThemedText } from "../../shared/text/ThemedText";
 
 interface SectionHeaderProps {
 	title: string;

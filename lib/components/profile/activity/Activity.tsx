@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { StyleSheet, View, } from "react-native";
-import { ThemedText } from "../../ThemedText";
+import { ThemedText } from "../../shared/text/ThemedText";
 import { useGetUserActivity } from "@/lib/net/queries/actions/useGetUserActivity";
 import { useActivityStore } from "@/lib/store/activityStore";
 import ActivityItem from "./ActivityItem";

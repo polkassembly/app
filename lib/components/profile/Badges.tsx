@@ -6,8 +6,8 @@ import {
   TouchableOpacity,
   Dimensions,
 } from "react-native";
-import { ThemedText } from "@/lib/components/ThemedText";
-import { ThemedView } from "../ThemedView";
+import { ThemedText } from "@/lib/components/shared/text/ThemedText";
+import { ThemedView } from "../shared/View/ThemedView";
 import { badgeDetails as badgeData, BadgeDetails } from "../util/badgeInfo";
 import { Skeleton } from "moti/skeleton";
 import { UserBadgeDetails } from "@/lib/types/user";

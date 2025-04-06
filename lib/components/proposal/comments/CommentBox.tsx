@@ -3,11 +3,11 @@ import { EProposalType, Post, UserProfile } from "@/lib/types";
 import { useThemeColor } from "@/lib/hooks/useThemeColor";
 import { useState } from "react";
 import { useAddComment } from "@/lib/net/queries/actions";
-import { UserAvatar } from "../../shared";
-import ThemedButton from "../../ThemedButton";
-import { ThemedText } from "../../ThemedText";
 import { useProfileStore } from "@/lib/store/profileStore";
 import { AddCommentBody } from "@/lib/net/queries/actions/useAddComment";
+import { UserAvatar } from "../../shared";
+import { ThemedButton } from "../../shared/button";
+import { ThemedText } from "../../shared/text";
 
 
 function CommentBox({

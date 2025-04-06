@@ -8,7 +8,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { ThemedText } from "@/lib/components/ThemedText";
+import { ThemedText } from "@/lib/components/shared/text/ThemedText";
 import { IconSearch } from "@/lib/components/icons/shared";
 import { Colors } from "@/lib/constants/Colors";
 import { BrowserHeader, BrowserHeroSection, FeaturedWebsites, QuickActions, SearchOverlay } from "@/lib/components/browser";

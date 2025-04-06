@@ -7,9 +7,9 @@ import getIdFromToken from "@/lib/util/jwt";
 import { useEffect } from "react";
 import { useThemeColor } from "@/lib/hooks";
 import { useAuthModal } from "@/lib/context/authContext";
-import { ThemedText } from "@/lib/components/ThemedText";
-import { ThemedView } from "@/lib/components/ThemedView";
-import { EmptyViewWithTabBarHeight } from "@/lib/components/util";
+import { ThemedText } from "@/lib/components/shared/text/ThemedText";
+import { ThemedView } from "@/lib/components/shared/View/ThemedView";
+import { EmptyViewWithTabBarHeight } from "@/lib/components/shared/util";
 import { Activity, Badges, PointsView, ProfileHeader } from "@/lib/components/profile";
 
 function Profile() {

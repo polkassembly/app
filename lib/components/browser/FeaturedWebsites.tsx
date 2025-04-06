@@ -3,7 +3,7 @@ import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { Image } from "react-native";
 import { Colors } from "react-native/Libraries/NewAppScreen";
 import IconPolkasafe from "../icons/browser/icon-polkasafe";
-import { ThemedText } from "../ThemedText";
+import { ThemedText } from "../shared/text/ThemedText";
 import { useThemeColor } from "@/lib/hooks";
 
 const FeaturedWebsites = () => {

@@ -1,4 +1,6 @@
 import { Colors } from "@/lib/constants/Colors";
+import { useThemeColor } from "@/lib/hooks";
+import { ColorName } from "@/lib/hooks/useThemeColor";
 import React from "react";
 import {
   ActivityIndicator,
@@ -9,10 +11,8 @@ import {
   View,
 } from "react-native";
 import { TouchableOpacityProps } from "react-native-gesture-handler";
-import { ThemedText, ThemedTextProps } from "./ThemedText";
-import { useThemeColor } from "../hooks/useThemeColor";
-
-type ColorName = keyof typeof Colors.dark & keyof typeof Colors.light;
+import { ThemedText } from "../text";
+import { ThemedTextProps } from "../text/ThemedText";
 
 const styles = StyleSheet.create({
   button: {

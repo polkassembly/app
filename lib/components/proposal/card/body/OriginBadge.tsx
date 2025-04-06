@@ -1,6 +1,6 @@
+import { ThemedText } from "@/lib/components/shared/text";
 import { EPostOrigin } from "@/lib/types/post";
 import { getOriginBadgeStyle } from "@/lib/util";
-import { ThemedText } from "../../ThemedText";
 import { StyleSheet } from "react-native";
 
 const formatOriginText = (text: string): string => {

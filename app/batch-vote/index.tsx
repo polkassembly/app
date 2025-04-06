@@ -1,10 +1,5 @@
 import { useState, useEffect } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { router } from "expo-router";
-import { ThemedText } from "@/lib/components/ThemedText";
-import { ThemedView } from "@/lib/components/ThemedView";
-import { TopBar } from "@/lib/components/Topbar";
 import { Colors } from "@/lib/constants/Colors";
 import { BatchVoteForm } from "@/lib/components/voting/batch-voting/BatchVoteForm";
 import { IconVote } from "@/lib/components/icons/Profile";
@@ -13,8 +8,11 @@ import { activityFeedFunction, buildActivityFeedQueryKey } from "@/lib/net/queri
 import { buildCartItemsQueryKey, getCartItemsFunction } from "@/lib/net/queries/actions";
 import { useProfileStore } from "@/lib/store/profileStore";
 import { useThemeColor } from "@/lib/hooks/useThemeColor";
-import { Note } from "@/lib/components/shared";
+import { Note, TopBar } from "@/lib/components/shared";
 import { useBatchVotingStore } from "@/lib/store/batchVotingStore";
+import { ThemedText } from "@/lib/components/shared/text";
+import { ThemedView } from "@/lib/components/shared/View";
+import { router } from "expo-router";
 
 export default function BatchVotingScreen() {
   // Get values and setters from the Zustand store

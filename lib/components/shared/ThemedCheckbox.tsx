@@ -1,6 +1,6 @@
 import Checkbox, { CheckboxProps } from "expo-checkbox";
 import { StyleSheet, View } from "react-native";
-import { ThemedText } from "../ThemedText";
+import { ThemedText } from "./text/ThemedText";
 import { useThemeColor } from "@/lib/hooks/useThemeColor";
 
 export interface ThemedCheckboxProps extends CheckboxProps {
