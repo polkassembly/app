@@ -20,7 +20,18 @@ function FeedWithActions() {
 		isRefetching,
 	} = useActivityFeed({ limit: 10 });
 
-	const renderItem = ({ item }: { item: Post }) => {
+	const accentColor = useThemeColor({}, "accent");
+
+	// Generate skeleton items for loading state
+	const skeletonItems = isLoading ? [1, 2, 3] : [];
+
+	const renderItem = ({ item }: { item: Post | number }) => {
+		// Render skeleton if item is a number
+		if (typeof item === 'number') {
+			return <ProposalCardSkeleton />;
+		}
+
+		// Render proposal card
 		return (
 			<TouchableOpacity
 				onPress={() => {
@@ -30,19 +41,13 @@ function FeedWithActions() {
 			>
 				<ProposalCard post={item} />
 			</TouchableOpacity>
-		)
-	};
-	const accentColor = useThemeColor({}, "accent");
-
-	if (isLoading || !data) {
-		return (
-			<ThemedView type="background" style={[styles.container, { justifyContent: "center" }]}>
-				<ProposalCardSkeleton />
-				<ProposalCardSkeleton />
-				<ProposalCardSkeleton />
-			</ThemedView>
 		);
-	}
+	};
+
+	// Use real data if available, otherwise use skeleton placeholders
+	const listData = isLoading ?
+		skeletonItems :
+		data?.pages.flatMap((page) => page.items) || [];
 
 	return (
 		<ThemedView type="secondaryBackground" style={styles.container}>
@@ -57,9 +62,9 @@ function FeedWithActions() {
 				ListHeaderComponentStyle={{
 					marginInline: -16,
 				}}
-				data={data?.pages.flatMap((page) => page.items)}
+				data={listData}
 				renderItem={renderItem}
-				keyExtractor={(item) => item.index.toString()}
+				keyExtractor={(item) => typeof item === 'number' ? `skeleton-${item}` : item.index.toString()}
 				onEndReached={() => {
 					if (hasNextPage && !isFetchingNextPage) {
 						fetchNextPage();
