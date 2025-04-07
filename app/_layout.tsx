@@ -7,7 +7,7 @@ import getIdFromToken from "@/lib/util/jwt";
 import { ThemeProvider } from "@react-navigation/native";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useFonts } from "expo-font";
-import { Stack, useRouter } from "expo-router";
+import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
@@ -18,6 +18,7 @@ import { buildUserActivityQueryKey, getUserActivity } from "@/lib/net/queries/ac
 import Toast from "react-native-toast-message";
 import { useToastConfig } from "@/lib/hooks";
 import { AuthModalProvider } from "@/lib/context/authContext";
+import { BottomSheetProvider } from "@/lib/context/bottomSheetContext";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -50,11 +51,12 @@ export default function RootLayout() {
   return (
     <QueryClientProvider client={queryClient}>
       <SafeAreaProvider>
-        <Content accessToken={accessToken} />
+        <BottomSheetProvider>
+          <Content accessToken={accessToken} />
+        </BottomSheetProvider>
         <Toast config={toastConfig} />
       </SafeAreaProvider>
     </QueryClientProvider>
-
   );
 }
 
