@@ -14,6 +14,10 @@ import { useProfileStore } from "@/lib/store/profileStore";
 import { ThemedMarkdownDisplay } from "@/lib/components/shared";
 import { ThemedButton } from "../../shared/button";
 import { ThemedText } from "../../shared/text";
+import IconReply from "../../icons/proposals/icon-reply";
+import { useThemeColor } from "@/lib/hooks";
+import dayjs from "dayjs";
+import { formatTime } from "../../util/time";
 
 interface CommentCardProps {
 	comment: ICommentResponse;
@@ -22,6 +26,7 @@ interface CommentCardProps {
 
 function CommentCard({ comment, commentDisabled }: CommentCardProps) {
 	const userProfile = useProfileStore((state) => state.profile);
+	const mediumTextColor = useThemeColor({}, "mediumText");
 
 	// Local state to manage like/dislike actions
 	const [isLiked, setIsLiked] = useState<boolean>(
@@ -54,8 +59,7 @@ function CommentCard({ comment, commentDisabled }: CommentCardProps) {
 		setAvatars(extractUniqueChildrenAvatars(comment));
 	}, [comment]);
 
-	// Debounced like handlerimport { ThemedText } from "../../shared/text/ThemedText";
-
+	// Debounced likehandler
 	const handleLike = useCallback(
 		debounce(() => {
 			if (processing) return;
@@ -224,7 +228,6 @@ function CommentCard({ comment, commentDisabled }: CommentCardProps) {
 	const onToggleComment = () => {
 		setShowReplyBox((prev) => !prev);
 	};
-
 	return (
 		<View style={styles.mainContainer}>
 			<View style={{ flexDirection: "column", alignItems: "center", gap: 10 }}>
@@ -240,40 +243,41 @@ function CommentCard({ comment, commentDisabled }: CommentCardProps) {
 			</View>
 			<View style={styles.commentContainer}>
 				<View style={styles.headerContainer}>
-					<ThemedText style={{ marginTop: 3 }} type="bodySmall">
-						{comment.user.username.toUpperCase()}
+					<ThemedText type="bodySmall">
+						{comment.user.username}
 					</ThemedText>
+					<ThemedText type="bodySmall3" colorName="mediumText" >{formatTime(new Date(comment.createdAt))}</ThemedText>
 				</View>
 				<ThemedMarkdownDisplay
 					content={comment.content}
+					textColor="mediumText"
 				/>
+
+				{/* Comment actions */}
 				<View style={styles.commentActionsContainer}>
 					<ThemedButton
 						onPress={handleLike}
 						disabled={processing}
-						buttonBgColor="selectedIcon"
-						style={styles.iconButton}
+						style={[styles.iconButton, { backgroundColor: "transparent" }]}
 					>
-						<IconLike key={`liked-${isLiked}`} color="white" filled={isLiked} />
-						<ThemedText type="bodySmall">{likes}</ThemedText>
+						<IconLike key={`liked-${isLiked}`} color={mediumTextColor} filled={isLiked} />
+						<ThemedText type="bodySmall" colorName="mediumText">{likes}</ThemedText>
 					</ThemedButton>
 					<ThemedButton
 						onPress={handleDislike}
 						disabled={processing}
-						buttonBgColor="selectedIcon"
-						style={styles.iconButton}
+						style={[styles.iconButton, { backgroundColor: "transparent" }]}
 					>
-						<IconDislike key={`disliked-${isDisliked}`} color="white" filled={isDisliked} />
-						<ThemedText type="bodySmall">{dislikes}</ThemedText>
+						<IconDislike key={`disliked-${isDisliked}`} color={mediumTextColor} filled={isDisliked} />
+						<ThemedText type="bodySmall" colorName="mediumText">{dislikes}</ThemedText>
 					</ThemedButton>
 					{!commentDisabled && (
 						<ThemedButton
 							onPress={onToggleComment}
-							buttonBgColor="selectedIcon"
-							style={styles.iconButton}
+							style={[styles.iconButton, { backgroundColor: "transparent" }]}
 						>
-							<IconComment color="white" filled={false} />
-							<ThemedText type="bodySmall">{commentsCount}</ThemedText>
+							<IconReply color={mediumTextColor} />
+							<ThemedText type="bodySmall" colorName="mediumText">{commentsCount}</ThemedText>
 						</ThemedButton>
 					)}
 				</View>
@@ -319,7 +323,9 @@ const styles = StyleSheet.create({
 	},
 	headerContainer: {
 		flexDirection: "row",
-		justifyContent: "space-between",
+		alignItems: "center",
+		gap: 4,
+		marginVertical: 4,
 	},
 	commentActionsContainer: {
 		flexDirection: "row",
