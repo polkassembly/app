@@ -20,6 +20,8 @@ import { useToastConfig } from "@/lib/hooks";
 import { AuthModalProvider } from "@/lib/context/authContext";
 import { BottomSheetProvider } from "@/lib/context/bottomSheetContext";
 import { CommentSheetProvider } from "@/lib/context/commentContext";
+import { activityFeedFunction, buildActivityFeedQueryKey } from "@/lib/net/queries/post";
+import { ACTIVITY_FEED_LIMIT } from "@/lib/net/queries/post/useActivityFeed";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -37,6 +39,19 @@ export default function RootLayout() {
   });
   const accessToken = useAuthStore((state) => state.accessToken);
   const toastConfig = useToastConfig();
+
+  // Prefetch activity feed data on app startup
+  useEffect(() => {
+    queryClient.prefetchInfiniteQuery({
+      queryKey: buildActivityFeedQueryKey({ limit: ACTIVITY_FEED_LIMIT }),
+      queryFn: ({ pageParam }) => activityFeedFunction({
+        params: { limit: ACTIVITY_FEED_LIMIT },
+        pageParam: Number(pageParam)
+      }),
+      initialPageParam: 1
+    });
+  }, []);
+
 
   // Once fonts are loaded, hide the splash screen.
   useEffect(() => {
