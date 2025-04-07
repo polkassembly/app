@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef, useCallback } from "react";
 import { View, StyleSheet, Text, ActivityIndicator, TouchableOpacity, Platform, useWindowDimensions } from "react-native";
 import Swiper from "react-native-deck-swiper";
 import useAddCartItem from "@/lib/net/queries/actions/useAddCartItem";
-import { useActivityFeed } from "@/lib/net/queries/post/useActivityFeed";
+import { ACTIVITY_FEED_LIMIT, useActivityFeed } from "@/lib/net/queries/post/useActivityFeed";
 import { useThemeColor } from "@/lib/hooks/useThemeColor";
 import { Post } from "@/lib/types";
 import { BottomSheet, TopBar } from "@/lib/components/shared";
@@ -67,7 +67,7 @@ const ProposalVotingScreen: React.FC = () => {
     abstainAmount
   } = useBatchVotingStore();
 
-  const feedParams = { limit: 20 };
+  const feedParams = { limit: ACTIVITY_FEED_LIMIT };
   const { data, isLoading, isError, hasNextPage, fetchNextPage } = useActivityFeed(feedParams);
   const voteMutation = useAddCartItem();
 
@@ -99,7 +99,7 @@ const ProposalVotingScreen: React.FC = () => {
       setIndex(cardIndex + 1);
 
       // trigger fetching more proposals
-      if (cardIndex >= proposals.length - 10 && hasNextPage) {
+      if (cardIndex >= proposals.length - 5 && hasNextPage) {
         fetchNextPage();
       }
 
