@@ -10,6 +10,10 @@ import { useThemeColor } from "@/lib/hooks/useThemeColor";
 import { Skeleton } from "moti/skeleton";
 import { UserAvatar, ThemedMarkdownDisplay } from "@/lib/components/shared";
 import { ThemedText } from "@/lib/components/shared/text";
+import ProfileCard from "@/lib/components/profile/ProfileCard";
+import { useBottomSheet } from "@/lib/context/bottomSheetContext";
+import * as Clipboard from "expo-clipboard";
+import Toast from "react-native-toast-message";
 
 interface ProposalBodyProps {
 	title: string;
@@ -36,6 +40,7 @@ function ProposalBody({
 	);
 
 	const colorAccent = useThemeColor({}, "accent");
+	const { openBottomSheet, closeBottomSheet } = useBottomSheet();
 
 	// Memoize the toggle function
 	const toggleReadMore = useCallback(() => {
@@ -43,17 +48,33 @@ function ProposalBody({
 		setIsReadMoreClicked(prev => !prev);
 	}, [isReadMoreClicked, content, descriptionLength]);
 
+	const handleOpenProfile = async () => {
+		const user = proposerInfo as UserProfile;
+		if (!proposerInfo) {
+			Toast.show({
+				type: "success",
+				text1: `Address copied to clipboard`,
+			})
+			return;
+		};
+		openBottomSheet(
+			<ProfileCard user={user} />
+		);
+	};
+
 	return (
 		<View style={styles.flexColumnGap8}>
 			<View style={{ flexDirection: "row", gap: 6, alignItems: "center" }}>
-				<View style={styles.flexRowGap4}>
-					<View style={{ width: 12, height: 12, borderRadius: 16 }}>
-						<UserAvatar avatarUrl={proposerInfo?.profileDetails?.image || ""} width={12} height={12} />
+				<TouchableOpacity onPress={handleOpenProfile}>
+					<View style={styles.flexRowGap4}>
+						<View style={{ width: 12, height: 12, borderRadius: 16 }}>
+							<UserAvatar avatarUrl={proposerInfo?.profileDetails?.image || ""} width={12} height={12} />
+						</View>
+						<ThemedText type="bodySmall3" style={{ fontWeight: "400" }}>
+							{proposerInfo?.username || "User"}
+						</ThemedText>
 					</View>
-					<ThemedText type="bodySmall3" style={{ fontWeight: "400" }}>
-						{proposerInfo?.username || "User"}
-					</ThemedText>
-				</View>
+				</TouchableOpacity>
 
 				{origin && <OriginBadge origin={origin} />}
 				<View style={{ width: 1, height: "100%", backgroundColor: "#383838" }} />

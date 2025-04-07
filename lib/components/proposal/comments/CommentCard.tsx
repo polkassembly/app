@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
 import debounce from "lodash/debounce";
-import { ICommentResponse, EReaction } from "@/lib/types";
+import { ICommentResponse, EReaction, UserProfile } from "@/lib/types";
 import { UserAvatar } from "../../shared";
 import { IconLike, IconDislike, IconComment } from "../../icons/shared";
 import VerticalSeprator from "../../shared/View/VerticalSeprator";
@@ -18,6 +18,9 @@ import IconReply from "../../icons/proposals/icon-reply";
 import { useThemeColor } from "@/lib/hooks";
 import dayjs from "dayjs";
 import { formatTime } from "../../util/time";
+import Toast from "react-native-toast-message";
+import { useBottomSheet } from "@/lib/context/bottomSheetContext";
+import ProfileCard from "../../profile/ProfileCard";
 
 interface CommentCardProps {
 	comment: ICommentResponse;
@@ -54,6 +57,7 @@ function CommentCard({ comment, commentDisabled }: CommentCardProps) {
 
 	const addReactionMutation = useAddCommentReaction();
 	const deleteReactionMutation = useDeleteCommentReaction();
+	const { openBottomSheet } = useBottomSheet();
 
 	useEffect(() => {
 		setAvatars(extractUniqueChildrenAvatars(comment));
@@ -225,17 +229,33 @@ function CommentCard({ comment, commentDisabled }: CommentCardProps) {
 		]
 	);
 
+	const handleOpenProfile = async () => {
+		const user = comment.user as UserProfile;
+		if (!user) {
+			Toast.show({
+				type: "success",
+				text1: `Address copied to clipboard`,
+			})
+			return;
+		};
+		openBottomSheet(
+			<ProfileCard user={user} />
+		);
+	};
+
 	const onToggleComment = () => {
 		setShowReplyBox((prev) => !prev);
 	};
 	return (
 		<View style={styles.mainContainer}>
 			<View style={{ flexDirection: "column", alignItems: "center", gap: 10 }}>
-				<UserAvatar
-					avatarUrl={comment.user.profileDetails.image}
-					width={35}
-					height={35}
-				/>
+				<TouchableOpacity onPress={handleOpenProfile}>
+					<UserAvatar
+						avatarUrl={comment.user.profileDetails.image}
+						width={35}
+						height={35}
+					/>
+				</TouchableOpacity>
 				{!showReplies && <VerticalSeprator />}
 				{!showReplies && (comment.children?.length || 0) > 0 && (
 					<StackedAvatars avatars={avatars} />
@@ -243,9 +263,11 @@ function CommentCard({ comment, commentDisabled }: CommentCardProps) {
 			</View>
 			<View style={styles.commentContainer}>
 				<View style={styles.headerContainer}>
-					<ThemedText type="bodySmall">
-						{comment.user.username}
-					</ThemedText>
+					<TouchableOpacity onPress={handleOpenProfile}>
+						<ThemedText type="bodySmall">
+							{comment.user.username}
+						</ThemedText>
+					</TouchableOpacity>
 					<ThemedText type="bodySmall3" colorName="mediumText" >{formatTime(new Date(comment.createdAt))}</ThemedText>
 				</View>
 				<ThemedMarkdownDisplay
@@ -308,7 +330,7 @@ function CommentCard({ comment, commentDisabled }: CommentCardProps) {
 					/>
 				)}
 			</View>
-		</View>
+		</View >
 	);
 }
 

@@ -52,7 +52,7 @@ export default function ProfileCard({ user }: { user: UserProfile }) {
 
       {/* Name and Address */}
       <TouchableOpacity
-        onPress={() => handleCopy(user.username, "Username")}
+        onPress={() => handleCopy(user.addresses[0], "Address")}
       >
         <View style={{ flexDirection: "row", alignItems: "center", gap: 8, marginTop: 16 }}>
           <ThemedText type="titleMedium">{user.username}</ThemedText>
