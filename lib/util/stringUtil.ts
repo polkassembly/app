@@ -14,5 +14,9 @@ function trimText(text: string, maxLength: number): string {
   return text.length > maxLength ? `${text.slice(0, maxLength)}...` : text;
 }
 
+const formatAddress = (address: string) => {
+  if (!address || address.length < 8) return address;
+  return `${address.slice(0, 4)}...${address.slice(-4)}`;
+};
 
-export { pascalToNormal, trimText, toTitleCase };
+export { formatAddress, pascalToNormal, trimText, toTitleCase };
