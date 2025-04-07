@@ -1,21 +1,23 @@
 import React, { memo, useMemo } from 'react';
 import Markdown from 'react-native-markdown-display';
-import { useThemeColor } from "@/lib/hooks/useThemeColor";
+import { ColorName, useThemeColor } from "@/lib/hooks/useThemeColor";
 import { bgColors, Colors } from "@/lib/constants/Colors";
 import { TextStyle } from 'react-native';
 
 interface ThemedMarkdownDisplayProps {
   content: string;
+  textColor?: ColorName;
 }
 
 const ThemedMarkdownDisplay = ({
   content,
+  textColor = "text",
 }: ThemedMarkdownDisplayProps) => {
 
   if (!content) return null;
 
   // Retrieve theme colors using our hook
-  const colorText = useThemeColor({}, "text");
+  const colorText = useThemeColor({}, textColor);
   const accentColor = useThemeColor({}, "accent");
   const codeBlockColor = useThemeColor({}, "background");
 
