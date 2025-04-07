@@ -19,6 +19,7 @@ import Toast from "react-native-toast-message";
 import { useToastConfig } from "@/lib/hooks";
 import { AuthModalProvider } from "@/lib/context/authContext";
 import { BottomSheetProvider } from "@/lib/context/bottomSheetContext";
+import { CommentSheetProvider } from "@/lib/context/commentContext";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -52,7 +53,9 @@ export default function RootLayout() {
     <QueryClientProvider client={queryClient}>
       <SafeAreaProvider>
         <BottomSheetProvider>
-          <Content accessToken={accessToken} />
+          <CommentSheetProvider>
+            <Content accessToken={accessToken} />
+          </CommentSheetProvider>
         </BottomSheetProvider>
         <Toast config={toastConfig} />
       </SafeAreaProvider>
