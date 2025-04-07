@@ -23,7 +23,9 @@ import { useAuthModal } from "@/lib/context/authContext";
 import { useProposalByIndex } from "@/lib/net/queries/post";
 import { useThemeColor } from "@/lib/hooks/useThemeColor";
 import { canVote } from "@/lib/util/vote/canVote";
-import { EProposalType, Post } from "@/lib/types";
+import { EProposalType, Post, UserProfile } from "@/lib/types";
+import { useCommentSheet } from "@/lib/context/commentContext";
+import { useGetUserByAddress, useGetUserById } from "@/lib/net/queries/profile";
 
 const getTotalLength = (arr: any[]) =>
   arr.reduce((sum, item) => {
@@ -33,7 +35,7 @@ const getTotalLength = (arr: any[]) =>
 
 export default function ProposalDetailScreenImpl() {
   const [open, setOpen] = useState(false);
-  const [showCommentBox, setShowCommentBox] = useState(false);
+  const { openCommentSheet } = useCommentSheet();
 
   const { index, proposalType } = useLocalSearchParams<{
     index: string;
@@ -51,14 +53,6 @@ export default function ProposalDetailScreenImpl() {
   const { openLoginModal } = useAuthModal();
   const accentColor = useThemeColor({}, "accent");
 
-  const handleComment = () => {
-    if (!user) {
-      openLoginModal("Please login to comment", true);
-      return;
-    }
-    setShowCommentBox(true);
-  };
-
   let proposal: Post | undefined;
 
   // Prefer store proposal if available
@@ -67,6 +61,24 @@ export default function ProposalDetailScreenImpl() {
   } else {
     proposal = data;
   }
+  // Fetch author data
+  const { data: author } = useGetUserByAddress(proposal?.onChainInfo?.proposer || "")
+  const handleComment = () => {
+    if (!user) {
+      openLoginModal("Please login to comment", true);
+      return;
+    }
+    openCommentSheet({
+      author: author as UserProfile,
+      isReply: false,
+      proposalTitle: proposal?.title,
+      proposalType: proposalType,
+      proposalIndex: index,
+      createdAt: proposal?.createdAt,
+      postOrigin: proposal?.onChainInfo?.origin,
+
+    })
+  };
 
   if (isLoading && proposal === undefined) {
     return (
@@ -85,26 +97,6 @@ export default function ProposalDetailScreenImpl() {
       </View>
     );
   }
-
-  const handleVote = () => {
-    if (
-      !canVote(
-        proposal.onChainInfo?.status,
-        proposal.onChainInfo?.preparePeriodEndsAt
-      )
-    ) {
-      Toast.show({
-        type: "error",
-        text1: "Voting ended",
-        text2: proposal.onChainInfo?.decisionPeriodEndsAt
-          ? `Voting ended at ${dayjs(proposal.onChainInfo.decisionPeriodEndsAt).format("YYYY-MM-DD HH:mm")}`
-          : "You cannot vote on this proposal.",
-      });
-      return;
-    }
-
-    router.push(`/proposal/vote/${index}?proposalType=${proposalType}`);
-  };
 
   return (
     <ThemedView type="container" style={{ flex: 1 }}>
@@ -135,11 +127,6 @@ export default function ProposalDetailScreenImpl() {
           proposalType={proposalType}
           indexOrHash={index}
         />
-      </BottomSheet>
-
-      {/* Comment Sheet */}
-      <BottomSheet open={showCommentBox} onClose={() => setShowCommentBox(false)}>
-        <CommentSheet onClose={() => setShowCommentBox(false)} />
       </BottomSheet>
     </ThemedView>
   );

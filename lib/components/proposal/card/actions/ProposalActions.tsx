@@ -1,4 +1,4 @@
-import { EReaction } from "@/lib/types";
+import { EReaction, UserProfile } from "@/lib/types";
 import { StyleSheet, View } from "react-native";
 import ShareButton from "./ShareButton";
 import { IconLike, IconDislike, IconComment, IconBookmark } from "../../../icons/shared";
@@ -7,11 +7,12 @@ import Toast from "react-native-toast-message";
 import { useProfileStore } from "@/lib/store/profileStore";
 import { AddReactionResponse, useAddReaction, useDeleteReaction, useSubscribeProposal, useUnsubscribeProposal } from "@/lib/net/queries/actions";
 import { useIsFocused } from "@react-navigation/native";
-import { EAllowedCommentor, EProposalType, Reaction } from "@/lib/types/post";
+import { EAllowedCommentor, EPostOrigin, EProposalType, Reaction } from "@/lib/types/post";
 import { useAuthModal } from "@/lib/context/authContext";
-import { CommentBox } from "../../comments";
 import { ThemedButton } from "@/lib/components/shared/button";
 import { ThemedText } from "@/lib/components/shared/text";
+import { useCommentSheet } from "@/lib/context/commentContext";
+import { useGetUserByAddress } from "@/lib/net/queries/profile";
 
 interface ProposalActionsProps {
   index: string;
@@ -27,9 +28,24 @@ interface ProposalActionsProps {
   reactions: Reaction[];
   allowedCommentor: EAllowedCommentor;
   userSubscriptionId?: string;
+  origin: EPostOrigin;
+  createdAt: string;
+  authorAddress: string;
 }
 
-function ProposalActions({ index, title, proposalType, metrics, reactions, allowedCommentor, userSubscriptionId }: ProposalActionsProps) {
+function ProposalActions(
+  {
+    index,
+    title,
+    proposalType,
+    metrics,
+    reactions,
+    allowedCommentor,
+    userSubscriptionId,
+    origin,
+    createdAt,
+    authorAddress,
+  }: ProposalActionsProps) {
   const isfocused = useIsFocused();
 
   // Memoize metrics and reactions based on screen focus to avoid unnecessary reactivity.
@@ -40,6 +56,7 @@ function ProposalActions({ index, title, proposalType, metrics, reactions, allow
   // Get the user profile from the store.
   const userProfile = useProfileStore((state) => state.profile);
   const { openLoginModal } = useAuthModal();
+  const { openCommentSheet } = useCommentSheet();
 
   const currentUserReaction = memoizedReactions?.find(
     (reaction) => reaction.userId === userProfile?.id
@@ -58,7 +75,6 @@ function ProposalActions({ index, title, proposalType, metrics, reactions, allow
   );
   const [isUpdatingLike, setIsUpdatingLike] = useState(false);
   const [isUpdatingDislike, setIsUpdatingDislike] = useState(false);
-  const [showCommentBox, setShowCommentBox] = useState(false);
 
   const [subscribed, setSubscribed] = useState(memoizedSubscriptionId ? true : false);
   const [isUpdatingSubscription, setIsUpdatingSubscription] = useState(false);
@@ -67,6 +83,8 @@ function ProposalActions({ index, title, proposalType, metrics, reactions, allow
   const { mutate: deleteReaction } = useDeleteReaction();
   const { mutate: subscribeProposal } = useSubscribeProposal();
   const { mutate: unsubscribeProposal } = useUnsubscribeProposal();
+  const { data: author } = useGetUserByAddress(authorAddress);
+
 
   // Reset the local state when the screen is focused.
   useEffect(() => {
@@ -89,7 +107,7 @@ function ProposalActions({ index, title, proposalType, metrics, reactions, allow
   }, [isfocused, memoizedMetrics, memoizedReactions, userProfile, memoizedSubscriptionId]);
 
   const handleLike = () => {
-    if(!userProfile) {
+    if (!userProfile) {
       openLoginModal("Login to like proposal", false);
       return;
     }
@@ -153,7 +171,7 @@ function ProposalActions({ index, title, proposalType, metrics, reactions, allow
   };
 
   const handleDislike = () => {
-    if(!userProfile) {
+    if (!userProfile) {
       openLoginModal("Login to dislike proposal", false);
       return;
     }
@@ -217,12 +235,8 @@ function ProposalActions({ index, title, proposalType, metrics, reactions, allow
   };
 
   const handleComment = () => {
-    if(!userProfile) {
+    if (!userProfile) {
       openLoginModal("Login to comment on proposal", false);
-      return;
-    }
-    if (showCommentBox) {
-      setShowCommentBox(false);
       return;
     }
     if (allowedCommentor === "none") {
@@ -241,11 +255,20 @@ function ProposalActions({ index, title, proposalType, metrics, reactions, allow
       });
       return;
     }
-    setShowCommentBox(true);
+    openCommentSheet({
+      author: author as UserProfile,
+      isReply: false,
+      proposalTitle: title,
+      proposalType: proposalType,
+      proposalIndex: index,
+      createdAt: createdAt,
+      postOrigin: origin,
+
+    })
   };
 
   const handleBookmark = () => {
-    if(!userProfile) {
+    if (!userProfile) {
       openLoginModal("Login to subscribe proposal", false);
       return;
     }
@@ -271,56 +294,43 @@ function ProposalActions({ index, title, proposalType, metrics, reactions, allow
   };
 
   return (
-    <>
-      <View style={styles.flexRowJustifySpaceBetween}>
-        <View style={styles.flexRowGap8}>
-          <ThemedButton
-            onPress={handleLike}
-            buttonBgColor="selectedIcon"
-            style={styles.iconButton}
-            disabled={isUpdatingLike || (reactionState.reaction === EReaction.like && !reactionState.id)}
-          >
-            <IconLike key={`${reactionState.reaction}-${reactionState.id}`} color={"white"} filled={reactionState.reaction === EReaction.like} />
-            <ThemedText type="bodySmall">{localLikeCount}</ThemedText>
-          </ThemedButton>
-          <ThemedButton
-            onPress={handleDislike}
-            buttonBgColor="selectedIcon"
-            style={styles.iconButton}
-            disabled={isUpdatingDislike || (reactionState.reaction === EReaction.dislike && !reactionState.id)}
-          >
-            <IconDislike key={`${reactionState.reaction}-${reactionState.id}`} color={"white"} filled={reactionState.reaction === EReaction.dislike} />
-            <ThemedText type="bodySmall">{localDislikeCount}</ThemedText>
-          </ThemedButton>
-          <ThemedButton onPress={handleComment} buttonBgColor="selectedIcon" style={styles.iconButton}>
-            <IconComment color="white" filled={false} />
-            <ThemedText type="bodySmall">{localCommentCount}</ThemedText>
-          </ThemedButton>
-        </View>
-        <View style={styles.flexRowGap8}>
-          <ThemedButton
-            onPress={handleBookmark}
-            buttonBgColor="selectedIcon"
-            style={styles.iconButton}
-            disabled={isUpdatingSubscription}
-          >
-            <IconBookmark key={`subscribed-${subscribed}`} color={"white"} filled={subscribed} />
-          </ThemedButton>
-          <ShareButton proposalId={index} proposalTitle={title} />
-        </View>
+    <View style={styles.flexRowJustifySpaceBetween}>
+      <View style={styles.flexRowGap8}>
+        <ThemedButton
+          onPress={handleLike}
+          buttonBgColor="selectedIcon"
+          style={styles.iconButton}
+          disabled={isUpdatingLike || (reactionState.reaction === EReaction.like && !reactionState.id)}
+        >
+          <IconLike key={`${reactionState.reaction}-${reactionState.id}`} color={"white"} filled={reactionState.reaction === EReaction.like} />
+          <ThemedText type="bodySmall">{localLikeCount}</ThemedText>
+        </ThemedButton>
+        <ThemedButton
+          onPress={handleDislike}
+          buttonBgColor="selectedIcon"
+          style={styles.iconButton}
+          disabled={isUpdatingDislike || (reactionState.reaction === EReaction.dislike && !reactionState.id)}
+        >
+          <IconDislike key={`${reactionState.reaction}-${reactionState.id}`} color={"white"} filled={reactionState.reaction === EReaction.dislike} />
+          <ThemedText type="bodySmall">{localDislikeCount}</ThemedText>
+        </ThemedButton>
+        <ThemedButton onPress={handleComment} buttonBgColor="selectedIcon" style={styles.iconButton}>
+          <IconComment color="white" filled={false} />
+          <ThemedText type="bodySmall">{localCommentCount}</ThemedText>
+        </ThemedButton>
       </View>
-
-      {showCommentBox && (
-        <CommentBox
-          proposalIndex={index}
-          proposalType={proposalType}
-          onCommentSubmitted={() => {
-            setShowCommentBox(false);
-            setLocalCommentCount((prev) => prev + 1);
-          }}
-        />
-      )}
-    </>
+      <View style={styles.flexRowGap8}>
+        <ThemedButton
+          onPress={handleBookmark}
+          buttonBgColor="selectedIcon"
+          style={styles.iconButton}
+          disabled={isUpdatingSubscription}
+        >
+          <IconBookmark key={`subscribed-${subscribed}`} color={"white"} filled={subscribed} />
+        </ThemedButton>
+        <ShareButton proposalId={index} proposalTitle={title} />
+      </View>
+    </View>
   );
 }
 

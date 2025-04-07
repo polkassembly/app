@@ -1,13 +1,12 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 import debounce from "lodash/debounce";
 import { ICommentResponse, EReaction, UserProfile } from "@/lib/types";
 import { UserAvatar } from "../../shared";
-import { IconLike, IconDislike, IconComment } from "../../icons/shared";
+import { IconLike, IconDislike } from "../../icons/shared";
 import VerticalSeprator from "../../shared/View/VerticalSeprator";
 import StackedAvatars from "../../feed/StackedAvatars";
 import { extractUniqueChildrenAvatars } from "@/lib/util/commentUtil";
-import CommentBox from "./CommentBox";
 import useAddCommentReaction from "@/lib/net/queries/actions/useAddCommentReaction";
 import useDeleteCommentReaction from "@/lib/net/queries/actions/useDeleteCommentReaction";
 import { useProfileStore } from "@/lib/store/profileStore";
@@ -16,11 +15,12 @@ import { ThemedButton } from "../../shared/button";
 import { ThemedText } from "../../shared/text";
 import IconReply from "../../icons/proposals/icon-reply";
 import { useThemeColor } from "@/lib/hooks";
-import dayjs from "dayjs";
 import { formatTime } from "../../util/time";
 import Toast from "react-native-toast-message";
 import { useBottomSheet } from "@/lib/context/bottomSheetContext";
 import ProfileCard from "../../profile/ProfileCard";
+import { useCommentSheet } from "@/lib/context/commentContext";
+import { useAuthModal } from "@/lib/context/authContext";
 
 interface CommentCardProps {
 	comment: ICommentResponse;
@@ -47,7 +47,6 @@ function CommentCard({ comment, commentDisabled }: CommentCardProps) {
 	const [commentsCount, setCommentsCount] = useState<number>(
 		comment.children?.length || 0
 	);
-	const [showReplyBox, setShowReplyBox] = useState<boolean>(false);
 	const [showReplies, setShowReplies] = useState<boolean>(false);
 	const [avatars, setAvatars] = useState<string[]>([]);
 	// Flag to disable like/dislike buttons until processing is done
@@ -58,6 +57,8 @@ function CommentCard({ comment, commentDisabled }: CommentCardProps) {
 	const addReactionMutation = useAddCommentReaction();
 	const deleteReactionMutation = useDeleteCommentReaction();
 	const { openBottomSheet } = useBottomSheet();
+	const { openLoginModal } = useAuthModal();
+	const { openCommentSheet } = useCommentSheet();
 
 	useEffect(() => {
 		setAvatars(extractUniqueChildrenAvatars(comment));
@@ -244,7 +245,20 @@ function CommentCard({ comment, commentDisabled }: CommentCardProps) {
 	};
 
 	const onToggleComment = () => {
-		setShowReplyBox((prev) => !prev);
+		if (!userProfile) {
+			openLoginModal("Please login to comment", true);
+			return;
+		}
+
+		openCommentSheet({
+			author: comment.user as UserProfile,
+			isReply: true,
+			proposalType: comment.proposalType,
+			proposalIndex: comment.indexOrHash,
+			createdAt: comment?.createdAt.toString(),
+			parentComment: comment.content,
+			parentCommentId: comment.id,
+		})
 	};
 	return (
 		<View style={styles.mainContainer}>
@@ -303,17 +317,6 @@ function CommentCard({ comment, commentDisabled }: CommentCardProps) {
 						</ThemedButton>
 					)}
 				</View>
-				{showReplyBox && (
-					<CommentBox
-						proposalIndex={comment.indexOrHash}
-						proposalType={comment.proposalType}
-						parentCommentId={comment.id}
-						onCommentSubmitted={() => {
-							setCommentsCount((prev) => prev + 1);
-							setShowReplyBox(false);
-						}}
-					/>
-				)}
 				{showReplies && comment.children && comment.children.length > 0 && (
 					<View style={styles.repliesContainer}>
 						{comment.children.map((reply) => (

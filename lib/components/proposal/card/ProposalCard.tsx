@@ -2,7 +2,7 @@ import React, { memo, useEffect } from "react";
 import { StyleSheet, View } from "react-native";
 
 import { useGetUserByAddress } from "@/lib/net/queries/profile";
-import { EAllowedCommentor, ENetwork, Post } from "@/lib/types/post";
+import { EAllowedCommentor, ENetwork, EPostOrigin, Post } from "@/lib/types/post";
 import { ProposalActions } from "./actions";
 import { ProposalHeader, ProposalHeaderSkeleton } from "./header/ProposalHeader";
 import { ProposalBody, ProposalBodySkeleton } from "./body";
@@ -88,6 +88,9 @@ const ProposalCard = ({
 					reactions={post.reactions || []}
 					allowedCommentor={post.allowedCommentor || EAllowedCommentor.ALL}
 					userSubscriptionId={post.userSubscriptionId}
+					createdAt={post.createdAt}
+					authorAddress={post.onChainInfo?.proposer || ""}
+					origin={post.onChainInfo?.origin as EPostOrigin}
 				/>
 			)}
 

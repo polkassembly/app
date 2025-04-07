@@ -78,12 +78,6 @@ export default function SuccessScreen() {
             </ThemedText>
           </View>
 
-          {/* <CommentBox proposalIndex={index} proposalType={proposalType} onCommentSubmitted={() => {
-            Toast.show({
-              text1: "Comment added successfully"
-            })
-          }}/> */}
-
           <Note content="NOTE: Login Via web view to confirm your vote" />
 
           <ThemedButton
