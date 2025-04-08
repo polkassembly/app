@@ -5,22 +5,19 @@ import Svg, { Ellipse } from "react-native-svg";
 import { Colors } from "@/lib/constants/Colors";
 import { BottomTabBarButtonProps } from "@react-navigation/bottom-tabs";
 import IconBrowser from "@/lib/components/icons/icon-browser";
-import { IconProfile } from "@/lib/components/icons/icon-profile";
 import { IconNews } from "@/lib/components/icons/Profile";
 import { useThemeColor } from "@/lib/hooks";
+import { IconFeed } from "@/lib/components/icons/shared";
 
 const smallIconSize = 32;
 const largeIconSize = 44;
 
 const styles = StyleSheet.create({
   smallIcon: {
-    height: smallIconSize,
     marginTop: 36,
   },
   largeIcon: {
     marginTop: 12,
-    height: largeIconSize,
-    width: largeIconSize,
   },
   tabBarStyle: {
     elevation: 0,
@@ -53,7 +50,12 @@ export default function TabLayout() {
           name="news"
           options={{
             tabBarIcon: ({ color }) => (
-              <IconNews style={styles.smallIcon} color={color} />
+              <IconNews
+                style={styles.smallIcon}
+                color={color}
+                iconHeight={smallIconSize}
+                iconWidth={smallIconSize}
+              />
             ),
           }}
         />
@@ -62,7 +64,12 @@ export default function TabLayout() {
           name="index"
           options={{
             tabBarIcon: ({ color }) => (
-              <IconProfile style={styles.largeIcon} color={color} />
+              <IconFeed
+              style={styles.largeIcon}
+              color={color}
+              iconHeight={largeIconSize}
+              iconWidth={largeIconSize}
+              />
             ),
           }}
         />
@@ -71,7 +78,12 @@ export default function TabLayout() {
           name="explore"
           options={{
             tabBarIcon: ({ color }) => (
-              <IconBrowser style={styles.smallIcon} color={color} />
+              <IconBrowser
+              style={styles.smallIcon}
+              color={color}
+              iconHeight={smallIconSize}
+              iconWidth={smallIconSize}
+              />
             ),
           }}
         />
