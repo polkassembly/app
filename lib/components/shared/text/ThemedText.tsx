@@ -7,7 +7,23 @@ export type ThemedTextProps = TextProps & {
   darkColor?: string;
   colorName?: ColorName;
   type?: keyof typeof styles;
+  fontWeight?: number;
 };
+
+function poppinsFont(weight: number = 400): string {
+  switch (weight) {
+    case 100: return "Poppins-Thin";
+    case 200: return "Poppins-ExtraLight";
+    case 300: return "Poppins-Light";
+    case 400: return "Poppins-Regular";
+    case 500: return "Poppins-Medium";
+    case 600: return "Poppins-SemiBold";
+    case 700: return "Poppins-Bold";
+    case 800: return "Poppins-ExtraBold";
+    case 900: return "Poppins-Black";
+    default: return "Poppins-Regular";
+  }
+}
 
 export function ThemedText({
   style,
@@ -15,6 +31,7 @@ export function ThemedText({
   darkColor,
   colorName,
   type = "bodyLarge",
+  fontWeight,
   ...rest
 }: ThemedTextProps) {
   const color = useThemeColor(
@@ -22,135 +39,102 @@ export function ThemedText({
     colorName ?? "text"
   );
 
-  return <Text style={[{ color }, styles[type], style]} {...rest} />;
+  const fontFamily = fontWeight ? poppinsFont(fontWeight) : styles[type].fontFamily;
+
+  return (
+    <Text
+      style={[{ color, fontFamily }, styles[type], style]}
+      {...rest}
+    />
+  );
 }
 
 export const styles = StyleSheet.create({
   bodyLarge: {
     fontSize: 16,
-    fontWeight: 600,
     lineHeight: 24,
-    fontFamily: "PoppinsMedium",
+    fontFamily: "Poppins-Medium",
   },
   bodyMedium1: {
     fontSize: 16,
-    fontWeight: 600,
     lineHeight: 19,
-    fontFamily: "PoppinsSemiBold",
+    fontFamily: "Poppins-SemiBold",
   },
   bodyMedium2: {
     fontSize: 14,
-    fontWeight: 500,
     lineHeight: 21,
-    fontFamily: "PoppinsMedium",
-
+    fontFamily: "Poppins-Medium",
   },
   bodyMedium3: {
     fontSize: 14,
-    fontWeight: 400,
     lineHeight: 18,
-    fontFamily: "PoppinsRegular",
+    fontFamily: "Poppins-Regular",
   },
   bodySmall: {
     fontSize: 12,
-    fontWeight: 500,
     lineHeight: 18,
-    fontFamily: "PoppinsRegular",
+    fontFamily: "Poppins-Regular",
   },
   bodySmall1: {
     fontSize: 12,
-    fontWeight: 500,
     lineHeight: 20,
-    fontFamily: "PoppinsMedium",
+    fontFamily: "Poppins-Medium",
   },
   bodySmall3: {
     fontSize: 10,
-    fontWeight: 500,
     lineHeight: 15,
-    fontFamily: "PoppinsRegular",
+    fontFamily: "Poppins-Regular",
   },
-
-
-  /**
-   * This font style is not documented in Figma as on of the
-   * typography style but still uses repeatedly in the game screen.
-   */
-
   bodySmall4: {
     fontSize: 8,
-    fontWeight: 500,
     lineHeight: 12,
-    fontFamily: "PoppinsRegular",
+    fontFamily: "Poppins-Regular",
   },
-
-  /**
-   * This font style is *not* documented in Figma as on of the
-   * typography style but still uses it in the intro screens.
-   */
   display: {
     fontSize: 28,
-    fontWeight: 600,
     lineHeight: 42,
-    fontFamily: "PoppinsMedium",
+    fontFamily: "Poppins-Medium",
   },
-
   titleLarge: {
     fontSize: 24,
-    fontWeight: 500,
     lineHeight: 36,
-    fontFamily: "PoppinsSemiBold",
+    fontFamily: "Poppins-SemiBold",
   },
   titleMedium: {
     fontSize: 20,
-    fontWeight: 600,
     lineHeight: 30,
-    fontFamily: "PoppinsSemiBold",
+    fontFamily: "Poppins-SemiBold",
   },
   titleMedium1: {
     fontSize: 18,
-    fontWeight: 600,
     lineHeight: 27,
-    fontFamily: "PoppinsSemiBold",
+    fontFamily: "Poppins-SemiBold",
   },
-
-  /**
-   * Not part of the design spec. Marked for removal.
-   */
   titleSmall: {
     fontSize: 16,
-    fontWeight: 600,
     lineHeight: 27,
-    fontFamily: "PoppinsRegular",
+    fontFamily: "Poppins-Regular",
   },
   link: {
     lineHeight: 30,
     fontSize: 16,
     color: "#0a7ea4",
-    fontFamily: "PoppinsRegular",
+    fontFamily: "Poppins-Regular",
   },
-
-  /**
-   * This font style is *not* documented in Figma as on of the
-   * typography style but still uses it in the intro screens.
-   */
   buttonLarge: {
     lineHeight: 24,
     fontSize: 16,
-    fontWeight: 600,
-    fontFamily: "PoppinsSemiBold",
+    fontFamily: "Poppins-SemiBold",
   },
-
   button1: {
     lineHeight: 21,
     fontSize: 14,
-    fontWeight: 500,
     textTransform: "capitalize",
-    fontFamily: "PoppinsMedium",
+    fontFamily: "Poppins-Medium",
   },
   button2: {
     lineHeight: 21,
     fontSize: 14,
-    fontWeight: 500,
-    fontFamily: "PoppinsMedium",
+    fontFamily: "Poppins-Medium",
   },
 });
