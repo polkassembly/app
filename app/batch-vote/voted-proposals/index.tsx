@@ -13,8 +13,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { Skeleton } from "moti/skeleton";
 import { useState } from "react";
-import { ActivityIndicator, ScrollView, TouchableOpacity, View } from "react-native";
-import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
+import { ScrollView, TouchableOpacity, View } from "react-native";
 import IconPencil from "@/lib/components/icons/shared/icon-pencil";
 import Toast from "react-native-toast-message";
 import { Note, TopBar } from "@/lib/components/shared";
@@ -28,18 +27,13 @@ export default function VotedProposals() {
 	const [showEdit, setShowEdit] = useState(false);
 	const [cartItem, setCartItem] = useState<CartItem | null>(null);
 	const colorStroke = useThemeColor({}, "stroke");
-	const background = useThemeColor({}, "secondaryBackground");
-	const insets = useSafeAreaInsets()
 
-	if (isCartLoading) {
-		return <ActivityIndicator />;
-	}
 
 	return (
 		<ThemedView type="secondaryBackground" style={{ flex: 1 }}>
 			<TopBar style={{ paddingHorizontal: 16 }} />
-			<ScrollView style={{ marginTop: 20}}>
-				<View style={{ paddingHorizontal: 16}}>
+			<ScrollView style={{ marginTop: 20 }}>
+				<View style={{ paddingHorizontal: 16 }}>
 					<TouchableOpacity style={{ flexDirection: "row", alignItems: "center", marginBottom: 20, gap: 6 }} onPress={() => router.dismiss()}>
 						<Ionicons name="chevron-back" size={15} color="white" />
 						<ThemedText type="bodySmall">Back To Swiping</ThemedText>
@@ -55,16 +49,34 @@ export default function VotedProposals() {
 						}}
 					>
 						<ThemedText type="bodyLarge">Voted Proposals{`(${cart?.length || 0})`}</ThemedText>
-						{cart?.map((item) => (
-							<CartItemCard
-								key={item.id}
-								cartItem={item}
-								onEdit={(item: CartItem) => {
-									setCartItem(item);
-									setShowEdit(true);
-								}}
-							/>
-						))}
+						{
+							isCartLoading ? (
+								<View
+									style={{
+										gap: 20,
+										padding: 10,
+										borderRadius: 10,
+										borderWidth: 1,
+										borderColor: colorStroke,
+									}}
+								>
+									<Skeleton width={150} height={20} />
+
+									{/* Skeleton for cart items */}
+									{[1, 2, 3].map((item) => (
+										<SkeletonCartItem key={item} />
+									))}
+								</View>
+							) : cart?.map((item) => (
+								<CartItemCard
+									key={item.id}
+									cartItem={item}
+									onEdit={(item: CartItem) => {
+										setCartItem(item);
+										setShowEdit(true);
+									}}
+								/>
+							))}
 					</ThemedView>
 				</View>
 			</ScrollView>
@@ -72,6 +84,46 @@ export default function VotedProposals() {
 			{showEdit && cartItem && (
 				<EditCartItem cartItem={cartItem} onClose={() => setShowEdit(false)} />
 			)}
+		</ThemedView>
+	);
+}
+
+function SkeletonCartItem() {
+	const colorStroke = useThemeColor({}, "stroke");
+
+	return (
+		<ThemedView
+			type="container"
+			style={{
+				padding: 20,
+				borderRadius: 10,
+				gap: 10,
+				borderWidth: 1,
+				borderColor: colorStroke,
+			}}
+		>
+			<View style={{ flexDirection: "row", gap: 10, alignContent: "center" }}>
+				<Skeleton width={30} height={15} />
+				<Skeleton width={120} height={15} />
+			</View>
+			<HorizontalSeparator />
+			<View
+				style={{
+					flexDirection: "row",
+					justifyContent: "space-between",
+					alignItems: "center",
+				}}
+			>
+				<View style={{ flexDirection: "row", gap: 5, alignItems: "center", minWidth: 70 }}>
+					<Skeleton width={20} height={20} radius={10} />
+					<Skeleton width={40} height={15} />
+				</View>
+				<Skeleton width={20} height={15} />
+				<View style={{ flexDirection: "row", gap: 20, alignItems: "center" }}>
+					<Skeleton width={20} height={20} radius={5} />
+					<Skeleton width={20} height={20} radius={5} />
+				</View>
+			</View>
 		</ThemedView>
 	);
 }
@@ -130,7 +182,7 @@ function CartItemCard({ cartItem, onEdit }: CartItemCardProps) {
 					#{cartItem.postIndexOrHash}
 				</ThemedText>
 				{isPostLoading ? (
-					<Skeleton width={50} height={15} />
+					<Skeleton width={150} height={15} />
 				) : (
 					<ThemedText type="bodySmall">{trimText(post?.title || "", 30)}</ThemedText>
 				)}
@@ -151,7 +203,7 @@ function CartItemCard({ cartItem, onEdit }: CartItemCardProps) {
 					</TouchableOpacity>
 					<TouchableOpacity onPress={handleDelete}>
 						{
-							isDeleting ? <ActivityIndicator color="#79767D" /> : <Ionicons name="trash" size={20} color="#79767D" />
+							isDeleting ? <Skeleton width={20} height={20} radius={10} /> : <Ionicons name="trash" size={20} color="#79767D" />
 						}
 					</TouchableOpacity>
 				</View>
@@ -279,7 +331,7 @@ function EditCartItem({ cartItem, onClose }: EditCartItemProps) {
 						#{cartItem.postIndexOrHash}
 					</ThemedText>
 					{isPostLoading ? (
-						<Skeleton width={50} />
+						<Skeleton width={150} height={15} />
 					) : (
 						<ThemedText type="bodySmall">{trimText(post?.title || "", 30)}</ThemedText>
 					)}
