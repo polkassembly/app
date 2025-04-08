@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { router, useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams } from "expo-router";
 import {
   ActivityIndicator,
   KeyboardAvoidingView,
@@ -7,12 +7,9 @@ import {
   Platform,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import Toast from "react-native-toast-message";
-import dayjs from "dayjs";
 
 import { ProposalDetails } from "@/lib/components/proposal";
 import PostFullDetails from "@/lib/components/proposal/full-details";
-import { CommentSheet } from "@/lib/components/proposal/comments";
 import { BottomSheet, TopBar } from "@/lib/components/shared";
 import { BottomButton } from "@/lib/components/shared/button";
 import { ThemedText } from "@/lib/components/shared/text/ThemedText";
@@ -22,10 +19,9 @@ import { useProfileStore } from "@/lib/store/profileStore";
 import { useAuthModal } from "@/lib/context/authContext";
 import { useProposalByIndex } from "@/lib/net/queries/post";
 import { useThemeColor } from "@/lib/hooks/useThemeColor";
-import { canVote } from "@/lib/util/vote/canVote";
 import { EProposalType, Post, UserProfile } from "@/lib/types";
 import { useCommentSheet } from "@/lib/context/commentContext";
-import { useGetUserByAddress, useGetUserById } from "@/lib/net/queries/profile";
+import { useGetUserByAddress } from "@/lib/net/queries/profile";
 
 const getTotalLength = (arr: any[]) =>
   arr.reduce((sum, item) => {
@@ -65,7 +61,7 @@ export default function ProposalDetailScreenImpl() {
   const { data: author } = useGetUserByAddress(proposal?.onChainInfo?.proposer || "")
   const handleComment = () => {
     if (!user) {
-      openLoginModal("Please login to comment", true);
+      openLoginModal("Please login to comment", false);
       return;
     }
     openCommentSheet({

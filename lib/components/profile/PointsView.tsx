@@ -17,18 +17,22 @@ function PointsView({ points }: pointsViewProps) {
       <View style={styles.pointsContainer}>
         <View style={{ flex: 1, flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
           <ThemedText type="bodyMedium3" >Your Points</ThemedText>
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              gap: 8,
-            }}
-          >
-            <IconPoints iconWidth={24} iconHeight={24} />
-            <ThemedText type="titleLarge" style={{ fontWeight: "700", lineHeight: 37.5 }}>
-              {points || 0}
-            </ThemedText>
-          </View>
+          {
+            points && (
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  gap: 8,
+                }}
+              >
+                <IconPoints iconWidth={24} iconHeight={24} />
+                <ThemedText type="titleLarge" style={{ fontWeight: "700", lineHeight: 37.5 }}>
+                  {points || 0}
+                </ThemedText>
+              </View>
+            )
+          }
         </View>
       </View>
     </View>

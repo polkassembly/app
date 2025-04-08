@@ -24,6 +24,8 @@ import { ProposalCard } from "./card";
 import { ThemedButton } from "../shared/button";
 import { ThemedText } from "../shared/text";
 import { ThemedView, HorizontalSeparator } from "../shared/View";
+import { useProfileStore } from "@/lib/store/profileStore";
+import { useAuthModal } from "@/lib/context/authContext";
 
 interface ProposalDetailsProps {
   post: any;
@@ -36,6 +38,8 @@ interface ProposalDetailsProps {
 
 export function ProposalDetails({ post, openFullDetails, withoutFullDetails, withoutHeaderText, withoutProposalCardIndex = true, withVotingButton = true }: ProposalDetailsProps) {
   const accentColor = useThemeColor({}, "accent");
+  const user = useProfileStore((state) => state.profile);
+  const { openLoginModal } = useAuthModal();
 
   if (!post) {
     return (
@@ -51,6 +55,14 @@ export function ProposalDetails({ post, openFullDetails, withoutFullDetails, wit
   const totalValue = ayeValue.add(nayValue);
   const ayePercent = totalValue.isZero() ? 0 : calculatePercentage(post.onChainInfo?.voteMetrics?.aye.value || "0", totalValue);
   const nayPercent = totalValue.isZero() ? 0 : calculatePercentage(post.onChainInfo?.voteMetrics?.nay.value || "0", totalValue);
+
+  const handleVote = () => {
+    if (!user) {
+      openLoginModal("Login to vote on proposal", false);
+      return;
+    }
+    router.push(`/proposal/vote/${post.index}?proposalType=${post.proposalType}`)
+  }
 
   return (
     <ScrollView style={{ flex: 1 }}>
@@ -77,7 +89,7 @@ export function ProposalDetails({ post, openFullDetails, withoutFullDetails, wit
                 text="Cast Your Vote"
                 textType="bodyMedium2"
                 style={{ paddingVertical: 8, borderRadius: 8 }}
-                onPress={() => router.push(`/proposal/vote/${post.index}?proposalType=${post.proposalType}`)}
+                onPress={handleVote}
               />
             )
           }

@@ -1,11 +1,8 @@
-import { REPUTATION_SCORES } from "@/lib/constants/reputationPoints";
 import { useThemeColor } from "@/lib/hooks";
 import { UserActivity } from "@/lib/net/queries/actions/type";
-import { toTitleCase, trimText } from "@/lib/util/stringUtil";
-import { Feather, Ionicons } from "@expo/vector-icons";
+import { Feather } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
-import { IconPoints } from "../../icons/icon-points";
 import { ThemedText } from "../../shared/text/ThemedText";
 import { useProposalByIndex } from "@/lib/net/queries/post";
 import { formatTime } from "../../util/time";

@@ -30,7 +30,7 @@ export default function TopBar({
         {
           backgroundColor,
           flexDirection: "row",
-          alignItems: "center", 
+          alignItems: "center",
         },
         style,
       ]}
@@ -48,14 +48,16 @@ export default function TopBar({
         }
       </View>
       <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
-        <IconPoints iconWidth={24} iconHeight={24} />
-        {!userProfile ? (
-          <Skeleton width={50} />
-        ) : (
-          <ThemedText type="titleMedium" style={{ fontWeight: 700 }}>
-            {userProfile?.profileScore}
-          </ThemedText>
-        )}
+        {
+          userProfile?.profileScore && (
+            <>
+              <IconPoints iconWidth={24} iconHeight={24} />
+              <ThemedText type="titleMedium" style={{ fontWeight: 700 }}>
+                {userProfile?.profileScore}
+              </ThemedText>
+            </>
+          )
+        }
       </View>
     </View>
   );

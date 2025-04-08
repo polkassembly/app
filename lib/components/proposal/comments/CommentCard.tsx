@@ -67,6 +67,10 @@ function CommentCard({ comment, commentDisabled }: CommentCardProps) {
 	// Debounced likehandler
 	const handleLike = useCallback(
 		debounce(() => {
+			if(!userProfile) {
+				openLoginModal("Please login to like comment", false);
+				return;
+			}
 			if (processing) return;
 			setProcessing(true);
 
@@ -147,6 +151,10 @@ function CommentCard({ comment, commentDisabled }: CommentCardProps) {
 	// Debounced dislike handler
 	const handleDislike = useCallback(
 		debounce(() => {
+			if (!userProfile) {
+				openLoginModal("Please login to dislike comment", false);
+				return;
+			}
 			if (processing) return;
 			setProcessing(true);
 
@@ -246,7 +254,7 @@ function CommentCard({ comment, commentDisabled }: CommentCardProps) {
 
 	const onToggleComment = () => {
 		if (!userProfile) {
-			openLoginModal("Please login to comment", true);
+			openLoginModal("Please login to comment", false);
 			return;
 		}
 

@@ -68,12 +68,16 @@ export default function ProfileCard({ user }: { user: UserProfile }) {
         <View style={[styles.tag, { backgroundColor: "#6366f1" }]}>
           <ThemedText type="bodySmall">Rank #{user.rank}</ThemedText>
         </View>
-        <View style={[styles.tag, { backgroundColor: "#FCC636" }]}>
-          <IconPoints iconWidth={16} iconHeight={16} color="grey" />
-          <ThemedText type="bodySmall" colorName="mediumText">
-            {user.profileScore}
-          </ThemedText>
-        </View>
+        {
+          user.profileScore && (
+            <View style={[styles.tag, { backgroundColor: "#FCC636" }]}>
+              <IconPoints iconWidth={16} iconHeight={16} color="grey" />
+              <ThemedText type="bodySmall" colorName="mediumText">
+                {user.profileScore}
+              </ThemedText>
+            </View>
+          )
+        }
       </View>
 
       {/* Date Row */}
