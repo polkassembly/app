@@ -11,11 +11,14 @@ import { useGetCartItems } from "@/lib/net/queries/actions";
 import { useThemeColor } from "@/lib/hooks";
 
 const HomeHeader = () => {
+  // Get user from profile store
   const user = useProfileStore((state) => state.profile);
-  const { data: cart } = useGetCartItems()
-  const { openLoginModal } = useAuthModal();
-
+  // Get accent color
   const accentColor = useThemeColor({}, "accent");
+  // Get auth modal
+  const { openLoginModal } = useAuthModal();
+  // Get cart items - place this hook after the other hooks to maintain the same order
+  const { data: cart } = useGetCartItems();
 
   const handleProfilePress = () => {
     if (user) {
@@ -23,7 +26,7 @@ const HomeHeader = () => {
     } else {
       openLoginModal("Login to access your profile", false);
     }
-  }
+  };
 
   const handleCartPress = () => {
     if (user) {
@@ -31,7 +34,8 @@ const HomeHeader = () => {
     } else {
       openLoginModal("Login to access your cart", false);
     }
-  }
+  };
+  console.log("cart", cart);
 
   return (
     <RadialBackgroundWrapper>
@@ -51,9 +55,9 @@ const HomeHeader = () => {
               onPress={handleCartPress}
             />
             {
-              (cart?.length ?? 0) > 0 && (
+              cart && (
                 <View
-                style={{ backgroundColor: accentColor, position: "absolute", top: 0, right: 0, width: 8, height: 8, borderRadius: 4}}
+                  style={{ backgroundColor: accentColor, position: "absolute", top: 0, right: 0, width: 8, height: 8, borderRadius: 4}}
                 />
               )
             }
@@ -61,12 +65,12 @@ const HomeHeader = () => {
           <TouchableOpacity
             onPress={handleProfilePress}
           >
-            <UserAvatar avatarUrl={user?.profileDetails.image || ""} width={30} height={30} />
+            <UserAvatar avatarUrl={user?.profileDetails?.image || ""} width={30} height={30} />
           </TouchableOpacity>
         </View>
       </View>
     </RadialBackgroundWrapper>
-  )
-}
+  );
+};
 
 export default HomeHeader;
