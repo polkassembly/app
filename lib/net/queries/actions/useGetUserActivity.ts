@@ -12,6 +12,7 @@ const useGetUserActivity = (params: GetUserActivityPathParams) => {
   return useQuery<UserActivity[], Error>({
     queryKey: buildUserActivityQueryKey(params),
     queryFn: () => getUserActivity(params.userId),
+    enabled: !!params.userId,
 		refetchOnWindowFocus: true,
   });
 };

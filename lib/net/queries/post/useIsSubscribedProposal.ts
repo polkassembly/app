@@ -1,6 +1,7 @@
 import { useMutation, useQuery } from "@tanstack/react-query"
 import client from "../../client";
 import { EProposalType } from "@/lib/types";
+import { useProfileStore } from "@/lib/store/profileStore";
 
 interface IsSubscribedProposalParams {
 	proposalType: EProposalType;
@@ -19,6 +20,7 @@ const buildIsSubscribedProposalKey = ({ proposalType, postIndexOrHash }: IsSubsc
 // Returns subscription ID if found, 404 error if not subscribed
 const useIsSubscribedProposal = ({ proposalType, postIndexOrHash }: IsSubscribedProposalParams) => {
 	const queryKey = buildIsSubscribedProposalKey({ proposalType, postIndexOrHash });
+	const user = useProfileStore((state) => state.profile);
 
 	return useQuery<IsSubscribedProposalResponse, Error>({
 		queryKey,
@@ -31,7 +33,8 @@ const useIsSubscribedProposal = ({ proposalType, postIndexOrHash }: IsSubscribed
 			} catch (error) {
 				console.error(error);
 			}
-		}
+		},
+		enabled: !!user,
 	})
 };
 

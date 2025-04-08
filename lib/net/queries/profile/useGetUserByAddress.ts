@@ -11,6 +11,7 @@ const useGetUserByAddress = (address: string) => {
       const response = await client.get<UserProfile>(`users/address/${address}`);
       return response.data;
     },
+    enabled: !!address,
     refetchOnWindowFocus: false,
   });
 };

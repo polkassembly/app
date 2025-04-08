@@ -1,12 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import client from "@/lib/net/client";
 import { fetchAndStoreProfileFromToken, TokenPair, tokenPairFromResponse } from "../utils";
-import { useAuthStore } from "@/lib/store/authStore";
-import { useRouter } from "expo-router";
-import getIdFromToken from "@/lib/util/jwt";
-import { useProfileStore } from "@/lib/store/profileStore";
-import { getUserById } from "../profile";
-
 export interface QrAuthRequest {
   sessionId: string;
 }

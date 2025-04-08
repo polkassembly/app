@@ -23,10 +23,14 @@ export interface CartItem {
 const buildCartItemsQueryKey = (userId: string) => ["cart-items", userId];
 
 const useGetCartItems = () => {
-	const userId = useProfileStore((state) => state.profile?.id) ? String(useProfileStore((state) => state.profile?.id)) : "";
+  const userProfile = useProfileStore((state) => state.profile);
+  console.log("userProfile", userProfile);
+  const userId = String(userProfile?.id) || ""
+
   return useQuery<CartItem[], Error>({
     queryKey: buildCartItemsQueryKey(userId),
     queryFn: () => getCartItemsFunction({ userId }),
+    enabled: !!userProfile,
     refetchOnWindowFocus: true,
   });
 };
