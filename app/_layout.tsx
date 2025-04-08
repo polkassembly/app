@@ -1,7 +1,6 @@
-import React from "react";
-
+import React, { useState, useEffect } from "react";
+import { Animated, View } from "react-native";
 import { NavigationDarkTheme } from "@/lib/constants/Colors";
-import { KEY_ID, storage } from "@/lib/store";
 import { useAuthStore } from "@/lib/store/authStore";
 import getIdFromToken from "@/lib/util/jwt";
 import { ThemeProvider } from "@react-navigation/native";
@@ -10,13 +9,12 @@ import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
-import { useEffect } from "react";
 import "react-native-reanimated";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { buildUserByIdQueryKey, getUserById } from "@/lib/net/queries/profile/useGetUserById";
 import { buildUserActivityQueryKey, getUserActivity } from "@/lib/net/queries/actions";
 import Toast from "react-native-toast-message";
-import { useToastConfig } from "@/lib/hooks";
+import { useThemeColor, useToastConfig } from "@/lib/hooks";
 import { AuthModalProvider } from "@/lib/context/authContext";
 import { BottomSheetProvider } from "@/lib/context/bottomSheetContext";
 import { CommentSheetProvider } from "@/lib/context/commentContext";
@@ -28,20 +26,60 @@ SplashScreen.preventAutoHideAsync();
 
 const queryClient = new QueryClient();
 
+const fonts = {
+  PoppinsRegular: require("../assets/fonts/Poppins-Regular.ttf"),
+  PoppinsMedium: require("@/assets/fonts/Poppins-Medium.ttf"),
+  LilitaOneRegular: require("@/assets/fonts/LilitaOne-Regular.ttf"),
+  Recharge: require("@/assets/fonts/Recharge.ttf"),
+  SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
+  PoppinsSemiBold: require("@/assets/fonts/Poppins-SemiBold.ttf"),
+};
+
 export default function RootLayout() {
-  const [loaded] = useFonts({
-    LilitaOneRegular: require("@/assets/fonts/LilitaOne-Regular.ttf"),
-    Recharge: require("@/assets/fonts/Recharge.ttf"),
-    SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
-    PoppinsRegular: require("../assets/fonts/Poppins-Regular.ttf"),
-    PoppinsMedium: require("@/assets/fonts/Poppins-Medium.ttf"),
-    PoppinsSemiBold: require("@/assets/fonts/Poppins-SemiBold.ttf"),
-  });
+  // Only load essential fonts initially
+  const [fontsLoaded] = useFonts(fonts);
   const accessToken = useAuthStore((state) => state.accessToken);
   const toastConfig = useToastConfig();
+  const secondaryBackgroundColor = useThemeColor({}, "secondaryBackground");
 
-  // Prefetch activity feed data on app startup
+  // Animation state
+  const [appIsReady, setAppIsReady] = useState(false);
+  const [splashHidden, setSplashHidden] = useState(false);
+  const fadeAnim = useState(new Animated.Value(1))[0];
+
+  // Prepare initial app state
   useEffect(() => {
+    async function prepare() {
+      try {
+        if (fontsLoaded) {
+          setAppIsReady(true);
+        }
+      } catch (e) {
+        console.warn(e);
+      }
+    }
+
+    prepare();
+  }, [fontsLoaded]);
+
+  // Handle the splash screen transition
+  useEffect(() => {
+    if (appIsReady) {
+      Animated.timing(fadeAnim, {
+        toValue: 0,
+        duration: 500,
+        useNativeDriver: true,
+      }).start(async () => {
+        await SplashScreen.hideAsync();
+        setSplashHidden(true);
+
+        prefetchData();
+      });
+    }
+  }, [appIsReady]);
+
+  const prefetchData = () => {
+    // Prefetch activities
     queryClient.prefetchInfiniteQuery({
       queryKey: buildActivityFeedQueryKey({ limit: ACTIVITY_FEED_LIMIT }),
       queryFn: ({ pageParam }) => activityFeedFunction({
@@ -50,37 +88,8 @@ export default function RootLayout() {
       }),
       initialPageParam: 1
     });
-  }, []);
 
-
-  // Once fonts are loaded, hide the splash screen.
-  useEffect(() => {
-    if (loaded) {
-      SplashScreen.hideAsync();
-    }
-  }, [loaded]);
-
-  if (!loaded) {
-    return null;
-  }
-
-  return (
-    <QueryClientProvider client={queryClient}>
-      <SafeAreaProvider>
-        <BottomSheetProvider>
-          <CommentSheetProvider>
-            <Content accessToken={accessToken} />
-          </CommentSheetProvider>
-        </BottomSheetProvider>
-        <Toast config={toastConfig} />
-      </SafeAreaProvider>
-    </QueryClientProvider>
-  );
-}
-
-function Content({ accessToken }: { accessToken: string | null }) {
-  // Prefetch user data and activity if user is logged in.
-  useEffect(() => {
+    // Prefetch user data if logged in
     const userId = getIdFromToken(accessToken || "")
     if (userId) {
       queryClient.prefetchQuery({
@@ -92,8 +101,41 @@ function Content({ accessToken }: { accessToken: string | null }) {
         queryFn: () => getUserActivity(userId),
       });
     }
-  }, []);
+  };
 
+  if (!fontsLoaded) {
+    return null;
+  }
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      {!splashHidden && (
+        <Animated.View
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: secondaryBackgroundColor,
+            opacity: fadeAnim,
+            zIndex: 999,
+          }}
+        />
+      )}
+      <SafeAreaProvider>
+        <BottomSheetProvider>
+          <CommentSheetProvider>
+            <Content />
+          </CommentSheetProvider>
+        </BottomSheetProvider>
+        <Toast config={toastConfig} />
+      </SafeAreaProvider>
+    </QueryClientProvider>
+  );
+}
+
+function Content() {
   return (
     <AuthModalProvider>
       <ThemeProvider value={NavigationDarkTheme}>
