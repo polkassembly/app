@@ -9,7 +9,6 @@ import {
 import { ThemedText } from "@/lib/components/shared/text/ThemedText";
 import { ThemedView } from "../shared/View/ThemedView";
 import { badgeDetails as badgeData, BadgeDetails } from "../util/badgeInfo";
-import { Skeleton } from "moti/skeleton";
 import { UserBadgeDetails } from "@/lib/types/user";
 import { MotiView, AnimatePresence } from "moti";
 import IconArrowRightEnclosed from "../icons/icon-arrow-right-enclosed";
@@ -25,7 +24,7 @@ const badgeImages: Record<string, any> = {
   "Council Member Locked": require("@/assets/images/profile/badges/council_locked.png"),
   "Active Voter": require("@/assets/images/profile/badges/active_voter.png"),
   "Active Voter Locked": require("@/assets/images/profile/badges/active_voter_locked.png"),
-  "Whale": require("@/assets/images/profile/badges/whale.png"),
+  "Whale": require("@/assets/images/profile/badges/whale-badge.png"),
   "Whale Locked": require("@/assets/images/profile/badges/whale_locked.png"),
 };
 
@@ -66,107 +65,95 @@ function Badges({ badges }: BadgesProps): JSX.Element {
   const backgroundColor = useThemeColor({}, "background");
   const strokeColor = useThemeColor({}, "stroke");
 
-  // Calculate responsive size based on device width (15% of width)
-  const { width } = Dimensions.get("window");
-  const responsiveSize = Math.round(width * 0.12);
-
   return (
-    <ThemedView type="container" style={[
-      styles.container,
-      { borderColor: strokeColor },
-      styles.border,
-      
-    ]}>
+    <ThemedView
+      type="container"
+      style={[
+        styles.container,
+        { borderColor: strokeColor },
+        styles.border,
+      ]}
+    >
       <View>
-        <ThemedText type="bodyMedium1" style={styles.title}>
+        <ThemedText type="titleMedium1">
           Badges
         </ThemedText>
         {earnedCount > 0 && (
-          <ThemedText type="bodySmall" style={styles.subtitle}>
+          <ThemedText type="bodySmall3">
             {earnedCount} Badges Earned
           </ThemedText>
         )}
       </View>
-
-      <View
-        style={{
-          flexDirection: "row",
-          alignItems: "center",
-          justifyContent: "space-between",
-          flex: 1,
-        }}
-      >
-        <View
-          style={[
-            styles.carouselRow,
-            { flex: 1, overflow: "hidden", gap: width * 0.05, width: 200 },
-          ]}
+      <AnimatePresence exitBeforeEnter>
+        <MotiView
+          style={styles.carouselRow}
+          from={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ type: 'timing', duration: 300 }}
+          key={currentIndex}
         >
-          <AnimatePresence>
-            {visibleBadges.map((badge) => (
-              <MotiView
-                key={`${badge.name}-${currentIndex}`}
-                from={{ translateX: 30, opacity: 0, scale: 0.8 }}
-                animate={{ translateX: 0, opacity: 1, scale: 1 }}
-                exit={{ translateX: -30, opacity: 0, scale: 0.8 }}
-                transition={{ type: "timing", duration: 300 }}
-                style={[
-                  styles.badgeIconContainer,
-                  {
-                    width: responsiveSize,
-                    height: responsiveSize,
-                    backgroundColor,
-                  },
-                ]}
-              >
-                <Image
-                  source={
-                    badge.isUnlocked
-                      ? badgeImages[badge.name]
-                      : badgeImages[`${badge.name} Locked`]
-                  }
-                  style={{ width: responsiveSize - 2, height: responsiveSize - 2 }}
-                  resizeMode="contain"
-                />
-              </MotiView>
-            ))}
-          </AnimatePresence>
-        </View>
-        {fullBadgeList.length > 3 && (
-          <TouchableOpacity onPress={handleSlide} style={styles.chevronContainer}>
-            <IconArrowRightEnclosed color="#FFF" iconHeight={40} iconWidth={40} />
-          </TouchableOpacity>
-        )}
-      </View>
+          {visibleBadges.map((badge) => (
+            <View
+              key={`${badge.name}`}
+              style={[
+                styles.badgeContainer,
+                { backgroundColor }
+              ]}
+            >
+              <Image
+                source={
+                  badge.isUnlocked
+                    ? badgeImages[badge.name]
+                    : badgeImages[`${badge.name} Locked`]
+                }
+                style={styles.badgeImage}
+                key={badge.name}
+                resizeMode="contain"
+              />
+            </View>
+          ))}
+        </MotiView>
+      </AnimatePresence>
+      <TouchableOpacity
+        onPress={handleSlide}
+      >
+        <IconArrowRightEnclosed color="#FFF" iconHeight={40} iconWidth={40} />
+      </TouchableOpacity>
     </ThemedView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    padding: 20,
+    paddingHorizontal: 10,
+    paddingVertical: 16,
     flexDirection: "row",
     alignItems: "center",
-    gap: 20,
-  },
-  title: {
-    fontSize: 18,
-  },
-  subtitle: {
-    fontSize: 10,
-    lineHeight: 15,
+    gap: 16
   },
   carouselRow: {
+    flex: 1,
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "space-between",
+
   },
-  badgeIconContainer: {
-    borderRadius: 25,
+  badgeContainer: {
+    borderRadius: 50,
+    padding: 2,
+    margin: 4,
+    aspectRatio: 1,
     justifyContent: "center",
     alignItems: "center",
+    flexShrink: 1
   },
-  chevronContainer: {
-    marginLeft: 10,
+  badgeImage: {
+    width: "100%",
+    height: "100%",
+    aspectRatio: 1,
+    maxWidth: 50,
+    maxHeight: 50,
   },
   border: {
     borderWidth: 1,
