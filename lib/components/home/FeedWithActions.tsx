@@ -8,8 +8,15 @@ import { EmptyViewWithTabBarHeight } from "../shared/util";
 import { router } from "expo-router";
 import { useProposalStore } from "@/lib/store/proposalStore";
 import { Actions } from "./Actions";
+import { useCallback } from "react";
 
 function FeedWithActions() {
+
+	const handleCardPress = useCallback((item: Post) => {
+		useProposalStore.getState().setProposal(item);
+		router.push(`/proposal/${item.index}?proposalType=${item.proposalType}`);
+	}, []);
+
 	const {
 		data,
 		fetchNextPage,
@@ -33,12 +40,7 @@ function FeedWithActions() {
 
 		// Render proposal card
 		return (
-			<TouchableOpacity
-				onPress={() => {
-					useProposalStore.getState().setProposal(item);
-					router.push(`/proposal/${item.index}?proposalType=${item.proposalType}`);
-				}}
-			>
+			<TouchableOpacity onPress={() => handleCardPress(item)} >
 				<ProposalCard post={item} />
 			</TouchableOpacity>
 		);

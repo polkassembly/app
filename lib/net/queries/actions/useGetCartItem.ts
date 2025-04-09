@@ -24,14 +24,12 @@ const buildCartItemsQueryKey = (userId: string) => ["cart-items", userId];
 
 const useGetCartItems = () => {
   const userProfile = useProfileStore((state) => state.profile);
-  console.log("userProfile", userProfile);
   const userId = String(userProfile?.id) || ""
 
   return useQuery<CartItem[], Error>({
     queryKey: buildCartItemsQueryKey(userId),
     queryFn: () => getCartItemsFunction({ userId }),
     enabled: !!userProfile,
-    refetchOnWindowFocus: true,
   });
 };
 

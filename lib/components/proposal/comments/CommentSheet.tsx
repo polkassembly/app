@@ -41,7 +41,6 @@ const CommentSheet = ({ author, isReply, proposalTitle, proposalIndex, proposalT
 
 		const bodyParam = { content: comment } as AddCommentBody
 		if (parentCommentId) bodyParam["parentCommentId"] = parentCommentId
-		console.log("bodyParam", bodyParam, "proposalType", proposalType, "proposalIndex", proposalIndex)
 		addComment({
 			pathParams: {
 				proposalType: proposalType,

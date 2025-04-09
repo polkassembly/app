@@ -13,7 +13,6 @@ function NewsSection() {
   const handleWebViewMessage = (event: any) => {
     try {
       const message = JSON.parse(event.nativeEvent.data);
-      console.log(message)
       if (message.action === 'resize' && message.height) {
         const newHeight = Math.round(message.height);
           setHeight(newHeight);

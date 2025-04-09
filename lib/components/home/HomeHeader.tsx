@@ -35,7 +35,6 @@ const HomeHeader = () => {
       openLoginModal("Login to access your cart", false);
     }
   };
-  console.log("cart", cart);
 
   return (
     <RadialBackgroundWrapper>

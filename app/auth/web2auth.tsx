@@ -35,9 +35,9 @@ export default function Web2Auth() {
 			router.dismissAll();
 			router.replace("/(tabs)");
 		} catch (e) {
-			console.log(e);
+			console.error(e);
 			if (e instanceof AxiosError) {
-				console.log(e.response?.data);
+				console.error(e.response?.data);
 			}
 
 			// FIXME: report errors to UI
