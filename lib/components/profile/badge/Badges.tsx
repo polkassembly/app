@@ -35,7 +35,7 @@ function Badges({ badges }: BadgesProps): JSX.Element {
       return {
         ...badge,
         isUnlocked: !!unlocked,
-      }; View
+      };
     }
   );
 
