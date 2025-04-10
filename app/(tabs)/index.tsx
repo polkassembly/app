@@ -7,7 +7,10 @@ import { HomeHeader } from "@/lib/components/home";
 const Home = () => {
   const backgroundColor = useThemeColor({}, "secondaryBackground")
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor }}>
+    <SafeAreaView 
+      style={{ flex: 1, backgroundColor }}
+      edges={['left', 'right', 'bottom']}
+    >
       <HomeHeader />
       <FeedWithActions />
     </SafeAreaView>
