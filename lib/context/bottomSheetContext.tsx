@@ -7,7 +7,6 @@ import {
   BottomSheetBackdrop,
 } from '@gorhom/bottom-sheet';
 import { useThemeColor } from "../hooks";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 interface BottomSheetContextProps {
   bottomSheetVisible: boolean;

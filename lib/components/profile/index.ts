@@ -1,5 +1,5 @@
 import { Activity, ActivitySkeleton } from "./activity";
-import Badges from "./Badges";
+import { Badges } from "./badge";
 import PointsView from "./PointsView";
 import ProfileHeader from "./ProfileHeader";
 

@@ -4,31 +4,16 @@ import {
   StyleSheet,
   Image,
   TouchableOpacity,
-  Dimensions,
 } from "react-native";
 import { ThemedText } from "@/lib/components/shared/text/ThemedText";
-import { ThemedView } from "../shared/View/ThemedView";
-import { badgeDetails as badgeData, BadgeDetails } from "../util/badgeInfo";
+import { badgeDetails as badgeData, BadgeDetails, BADGEIMAGES } from "../../util/badgeInfo";
 import { UserBadgeDetails } from "@/lib/types/user";
 import { MotiView, AnimatePresence } from "moti";
-import IconArrowRightEnclosed from "../icons/icon-arrow-right-enclosed";
 import { useThemeColor } from "@/lib/hooks/useThemeColor";
 import { useBottomSheet } from "@/lib/context/bottomSheetContext";
 import BadgeInfo from "./BadgeInfo";
-
-// Predefined Mapping of Images
-export const BADGEIMAGES: Record<string, any> = {
-  "Decentralised Voice": require("@/assets/images/profile/badges/decentralised_voice.png"),
-  "Decentralised Voice Locked": require("@/assets/images/profile/badges/decentralised_voice_locked.png"),
-  "Fellow": require("@/assets/images/profile/badges/fellow.png"),
-  "Fellow Locked": require("@/assets/images/profile/badges/fellow_locked.png"),
-  "Council Member": require("@/assets/images/profile/badges/council.png"),
-  "Council Member Locked": require("@/assets/images/profile/badges/council_locked.png"),
-  "Active Voter": require("@/assets/images/profile/badges/active_voter.png"),
-  "Active Voter Locked": require("@/assets/images/profile/badges/active_voter_locked.png"),
-  "Whale": require("@/assets/images/profile/badges/whale-badge.png"),
-  "Whale Locked": require("@/assets/images/profile/badges/whale_locked.png"),
-};
+import IconArrowRightEnclosed from "../../icons/icon-arrow-right-enclosed";
+import { ThemedView } from "../../shared/View";
 
 interface BadgesProps {
   badges?: UserBadgeDetails[];

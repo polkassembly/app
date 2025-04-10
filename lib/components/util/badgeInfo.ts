@@ -60,3 +60,17 @@ export const badgeDetails: BadgeDetails[] = [
 		}
 	}
 ];
+
+// Predefined Mapping of Images
+export const BADGEIMAGES: Record<string, any> = {
+	"Decentralised Voice": require("@/assets/images/profile/badges/decentralised_voice.png"),
+	"Decentralised Voice Locked": require("@/assets/images/profile/badges/decentralised_voice_locked.png"),
+	"Fellow": require("@/assets/images/profile/badges/fellow.png"),
+	"Fellow Locked": require("@/assets/images/profile/badges/fellow_locked.png"),
+	"Council Member": require("@/assets/images/profile/badges/council.png"),
+	"Council Member Locked": require("@/assets/images/profile/badges/council_locked.png"),
+	"Active Voter": require("@/assets/images/profile/badges/active_voter.png"),
+	"Active Voter Locked": require("@/assets/images/profile/badges/active_voter_locked.png"),
+	"Whale": require("@/assets/images/profile/badges/whale-badge.png"),
+	"Whale Locked": require("@/assets/images/profile/badges/whale_locked.png"),
+};
