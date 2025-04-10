@@ -13,9 +13,11 @@ import { UserBadgeDetails } from "@/lib/types/user";
 import { MotiView, AnimatePresence } from "moti";
 import IconArrowRightEnclosed from "../icons/icon-arrow-right-enclosed";
 import { useThemeColor } from "@/lib/hooks/useThemeColor";
+import { useBottomSheet } from "@/lib/context/bottomSheetContext";
+import BadgeInfo from "./BadgeInfo";
 
 // Predefined Mapping of Images
-const badgeImages: Record<string, any> = {
+export const BADGEIMAGES: Record<string, any> = {
   "Decentralised Voice": require("@/assets/images/profile/badges/decentralised_voice.png"),
   "Decentralised Voice Locked": require("@/assets/images/profile/badges/decentralised_voice_locked.png"),
   "Fellow": require("@/assets/images/profile/badges/fellow.png"),
@@ -33,6 +35,14 @@ interface BadgesProps {
 }
 
 function Badges({ badges }: BadgesProps): JSX.Element {
+
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  const backgroundColor = useThemeColor({}, "background");
+  const strokeColor = useThemeColor({}, "stroke");
+
+  const { openBottomSheet } = useBottomSheet();
+
   // Map badgeData and mark unlocked badges
   const badgesToShow: (BadgeDetails & { isUnlocked: boolean })[] = badgeData.map(
     (badge) => {
@@ -40,30 +50,28 @@ function Badges({ badges }: BadgesProps): JSX.Element {
       return {
         ...badge,
         isUnlocked: !!unlocked,
-      };
+      }; View
     }
   );
 
   const fullBadgeList = badgesToShow;
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const earnedCount = fullBadgeList.filter((badge) => badge.isUnlocked).length;
 
-  // Compute 3 visible badges (wrap-around if needed)
+  // Compute 3 visible badges
   const visibleBadges = [];
   for (let i = 0; i < 3; i++) {
     const index = (currentIndex + i) % fullBadgeList.length;
     visibleBadges.push(fullBadgeList[index]);
   }
 
-  // Count of earned badges
-  const earnedCount = fullBadgeList.filter((badge) => badge.isUnlocked).length;
-
   // Handler to slide to the next badge
   const handleSlide = () => {
     setCurrentIndex((prev) => (prev + 1) % fullBadgeList.length);
   };
 
-  const backgroundColor = useThemeColor({}, "background");
-  const strokeColor = useThemeColor({}, "stroke");
+  const handleBadgeClick = (badge: BadgeDetails & { isUnlocked: boolean }) => {
+    openBottomSheet(<BadgeInfo badge={badge} />)
+  }
 
   return (
     <ThemedView
@@ -94,24 +102,25 @@ function Badges({ badges }: BadgesProps): JSX.Element {
           key={currentIndex}
         >
           {visibleBadges.map((badge) => (
-            <View
+            <TouchableOpacity
               key={`${badge.name}`}
               style={[
                 styles.badgeContainer,
                 { backgroundColor }
               ]}
+              onPress={() => handleBadgeClick(badge)}
             >
               <Image
                 source={
                   badge.isUnlocked
-                    ? badgeImages[badge.name]
-                    : badgeImages[`${badge.name} Locked`]
+                    ? BADGEIMAGES[badge.name]
+                    : BADGEIMAGES[`${badge.name} Locked`]
                 }
                 style={styles.badgeImage}
                 key={badge.name}
                 resizeMode="contain"
               />
-            </View>
+            </TouchableOpacity>
           ))}
         </MotiView>
       </AnimatePresence>
