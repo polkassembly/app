@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, ReactNode, useRef, useEffect } from "react";
-import { BackHandler, StyleSheet } from "react-native";
+import { BackHandler, Easing, StyleSheet } from "react-native";
 import {
   BottomSheetModal,
   BottomSheetView,
@@ -7,6 +7,7 @@ import {
   BottomSheetBackdrop,
 } from '@gorhom/bottom-sheet';
 import { useThemeColor } from "../hooks";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 interface BottomSheetContextProps {
   bottomSheetVisible: boolean;
@@ -61,7 +62,7 @@ export const BottomSheetProvider = ({ children }: { children: ReactNode }) => {
       {...props}
       disappearsOnIndex={-1}
       appearsOnIndex={0}
-      pressBehavior="close" // This enables closing by pressing the backdrop
+      pressBehavior="close"
     />
   );
 
@@ -77,11 +78,12 @@ export const BottomSheetProvider = ({ children }: { children: ReactNode }) => {
           backdropComponent={renderBackdrop}
           backgroundStyle={{ backgroundColor: "transparent" }}
           handleComponent={null}
+          animationConfigs={{
+            duration: 300
+          }}
         >
           <BottomSheetView style={styles.contentContainer}>
-            {/* <SafeAreaView style={{ flex: 1, backgroundColor }}> */}
               {bottomSheetContent}
-            {/* </SafeAreaView> */}
           </BottomSheetView>
         </BottomSheetModal>
       </BottomSheetModalProvider>
