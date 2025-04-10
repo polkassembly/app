@@ -1,6 +1,13 @@
-import React, { createContext, useContext, useState, ReactNode } from "react";
-import { Modal, View, StyleSheet, TouchableWithoutFeedback } from "react-native";
-import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
+import React, { createContext, useContext, useState, ReactNode, useRef, useEffect } from "react";
+import { BackHandler, StyleSheet } from "react-native";
+import {
+  BottomSheetModal,
+  BottomSheetView,
+  BottomSheetModalProvider,
+  BottomSheetBackdrop,
+} from '@gorhom/bottom-sheet';
+import { useThemeColor } from "../hooks";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 interface BottomSheetContextProps {
   bottomSheetVisible: boolean;
@@ -14,46 +21,71 @@ const BottomSheetContext = createContext<BottomSheetContextProps | undefined>(un
 export const BottomSheetProvider = ({ children }: { children: ReactNode }) => {
   const [bottomSheetVisible, setBottomSheetVisible] = useState(false);
   const [bottomSheetContent, setBottomSheetContent] = useState<ReactNode | null>(null);
-  const insets = useSafeAreaInsets();
+
+  const bottomSheetModalRef = useRef<BottomSheetModal>(null);
+  const backgroundColor = useThemeColor({}, "secondaryBackground");
+
+  // Handle back button press
+  useEffect(() => {
+    const backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
+      if (bottomSheetVisible) {
+        closeBottomSheet();
+        return true;
+      }
+      return false;
+    });
+
+    return () => backHandler.remove();
+  }, [bottomSheetVisible]);
 
   const openBottomSheet = (content: ReactNode) => {
     setBottomSheetContent(content);
+    bottomSheetModalRef.current?.present();
     setBottomSheetVisible(true);
   };
 
   const closeBottomSheet = () => {
+    bottomSheetModalRef.current?.dismiss();
     setBottomSheetVisible(false);
-    setBottomSheetContent(null);
   };
+
+  const handleSheetChanges = (index: number) => {
+    if (index === -1) {
+      setBottomSheetContent(null);
+      setBottomSheetVisible(false);
+    }
+  };
+
+  // Custom backdrop component to handle taps outside the sheet
+  const renderBackdrop = (props: any) => (
+    <BottomSheetBackdrop
+      {...props}
+      disappearsOnIndex={-1}
+      appearsOnIndex={0}
+      pressBehavior="close" // This enables closing by pressing the backdrop
+    />
+  );
 
   return (
     <BottomSheetContext.Provider
       value={{ bottomSheetVisible, bottomSheetContent, openBottomSheet, closeBottomSheet }}
     >
       {children}
-      {
-        bottomSheetVisible && (
-          <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}>
-            <View style={styles.bottomSheetOverlay}>
-              <Modal
-                animationType="slide"
-                transparent={true}
-                onRequestClose={closeBottomSheet}
-              >
-                <TouchableWithoutFeedback onPress={closeBottomSheet}>
-                  <View style={{ flex: 1, justifyContent: 'flex-end' }}>
-                    <TouchableWithoutFeedback onPress={(e) => e.stopPropagation()}>
-                      <SafeAreaView>
-                        {bottomSheetContent}
-                      </SafeAreaView>
-                    </TouchableWithoutFeedback>
-                  </View>
-                </TouchableWithoutFeedback>
-              </Modal>
-            </View>
-          </View>
-        )
-      }
+      <BottomSheetModalProvider>
+        <BottomSheetModal
+          ref={bottomSheetModalRef}
+          onChange={handleSheetChanges}
+          backdropComponent={renderBackdrop}
+          backgroundStyle={{ backgroundColor: "transparent" }}
+          handleComponent={null}
+        >
+          <BottomSheetView style={styles.contentContainer}>
+            {/* <SafeAreaView style={{ flex: 1, backgroundColor }}> */}
+              {bottomSheetContent}
+            {/* </SafeAreaView> */}
+          </BottomSheetView>
+        </BottomSheetModal>
+      </BottomSheetModalProvider>
     </BottomSheetContext.Provider>
   );
 };
@@ -67,9 +99,7 @@ export const useBottomSheet = () => {
 };
 
 const styles = StyleSheet.create({
-  bottomSheetOverlay: {
+  contentContainer: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.5)',
-    justifyContent: 'flex-end'
   },
 });

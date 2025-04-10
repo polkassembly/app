@@ -20,6 +20,7 @@ import { BottomSheetProvider } from "@/lib/context/bottomSheetContext";
 import { CommentSheetProvider } from "@/lib/context/commentContext";
 import { activityFeedFunction, buildActivityFeedQueryKey } from "@/lib/net/queries/post";
 import { ACTIVITY_FEED_LIMIT } from "@/lib/net/queries/post/useActivityFeed";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -109,28 +110,30 @@ export default function RootLayout() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      {!splashHidden && (
-        <Animated.View
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            backgroundColor: secondaryBackgroundColor,
-            opacity: fadeAnim,
-            zIndex: 999,
-          }}
-        />
-      )}
-      <SafeAreaProvider>
-        <BottomSheetProvider>
-          <CommentSheetProvider>
-            <Content />
-          </CommentSheetProvider>
-        </BottomSheetProvider>
-        <Toast config={toastConfig} />
-      </SafeAreaProvider>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        {!splashHidden && (
+          <Animated.View
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              backgroundColor: secondaryBackgroundColor,
+              opacity: fadeAnim,
+              zIndex: 999,
+            }}
+          />
+        )}
+        <SafeAreaProvider>
+          <BottomSheetProvider>
+            <CommentSheetProvider>
+              <Content />
+            </CommentSheetProvider>
+          </BottomSheetProvider>
+          <Toast config={toastConfig} />
+        </SafeAreaProvider>
+      </GestureHandlerRootView>
     </QueryClientProvider>
   );
 }
