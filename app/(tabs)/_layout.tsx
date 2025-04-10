@@ -65,10 +65,10 @@ export default function TabLayout() {
           options={{
             tabBarIcon: ({ color }) => (
               <IconFeed
-              style={styles.largeIcon}
-              color={color}
-              iconHeight={largeIconSize}
-              iconWidth={largeIconSize}
+                style={styles.largeIcon}
+                color={color}
+                iconHeight={largeIconSize}
+                iconWidth={largeIconSize}
               />
             ),
           }}
@@ -79,10 +79,10 @@ export default function TabLayout() {
           options={{
             tabBarIcon: ({ color }) => (
               <IconBrowser
-              style={styles.smallIcon}
-              color={color}
-              iconHeight={smallIconSize}
-              iconWidth={smallIconSize}
+                style={styles.smallIcon}
+                color={color}
+                iconHeight={smallIconSize}
+                iconWidth={smallIconSize}
               />
             ),
           }}

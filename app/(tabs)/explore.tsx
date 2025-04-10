@@ -53,7 +53,10 @@ export default function ChromeStyleBrowser() {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor}}>
+    <SafeAreaView 
+      style={{ flex: 1, backgroundColor}}
+      edges={['left', 'right', 'bottom']}
+    >
       <View style={{ flex: 1 }}>
 
         {/* Always render SearchOverlay but control visibility with props */}

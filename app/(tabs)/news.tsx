@@ -12,7 +12,10 @@ export default function NewsScreen() {
   const backgroundColor = useThemeColor({}, "secondaryBackground")
 
   return (
-    <SafeAreaView style={[styles.mainContainer, { backgroundColor }]}>
+    <SafeAreaView 
+      style={[styles.mainContainer, { backgroundColor }]}
+      edges={['left', 'right', 'bottom']}
+    >
       <NewsHeader />
       <ScrollView style={styles.scrollView}>
         <TreasurySection />
@@ -28,7 +31,6 @@ export default function NewsScreen() {
 const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
-    paddingTop: 10
   },
   scrollView: {
     flex: 1,
