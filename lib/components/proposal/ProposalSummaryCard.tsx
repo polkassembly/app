@@ -12,9 +12,10 @@ interface ProposalContentSummaryProps {
 	indexOrHash: string;
 	containerType?: ContainerType;
 	withEmptyLoadingScreen?: boolean
+	summaryLength?: number
 }
 
-function ProposalContentSummary({ proposalType, indexOrHash, containerType = "container", withEmptyLoadingScreen = false }: ProposalContentSummaryProps) {
+function ProposalContentSummary({ proposalType, indexOrHash, containerType = "container", withEmptyLoadingScreen = false, summaryLength }: ProposalContentSummaryProps) {
 	const colorStroke = useThemeColor({}, "stroke")
 	const { data: contentSummary, isLoading, isError } = useContentSummary({ proposalType, indexOrHash });
 
@@ -44,7 +45,7 @@ function ProposalContentSummary({ proposalType, indexOrHash, containerType = "co
 	return (
 		<ThemedView style={[styles.container, { borderColor: colorStroke }]} type={containerType}>
 			<ThemedText type="titleMedium">Content Summary</ThemedText>
-			<ThemedMarkdownDisplay content={trimText(contentSummary.postSummary || "", 500)}/>
+			<ThemedMarkdownDisplay content={trimText(contentSummary.postSummary || "", summaryLength || 500)}/>
 		</ThemedView>
 	)
 }
