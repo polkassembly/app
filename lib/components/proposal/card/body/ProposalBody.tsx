@@ -3,7 +3,7 @@ import React, { useState, useCallback } from "react";
 import { View, TouchableOpacity, StyleSheet } from "react-native";
 
 import { EPostOrigin, UserProfile } from "@/lib/types";
-import { trimText } from "@/lib/util/stringUtil";
+import { formatAddress, trimText } from "@/lib/util/stringUtil";
 import OriginBadge from "./OriginBadge";
 import TimeDisplay from "./TimeDisplay";
 import { useThemeColor } from "@/lib/hooks/useThemeColor";
@@ -71,7 +71,7 @@ function ProposalBody({
 							<UserAvatar avatarUrl={proposerInfo?.profileDetails?.image || ""} width={12} height={12} />
 						</View>
 						<ThemedText type="bodySmall3" style={{ fontWeight: "400" }}>
-							{proposerInfo?.username || "User"}
+							{proposerInfo?.username || formatAddress(proposerAddress) || "User"}
 						</ThemedText>
 					</View>
 				</TouchableOpacity>
