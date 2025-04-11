@@ -70,16 +70,16 @@ const ThemedButton = React.forwardRef<View, ThemedButtonProps>(
       { light: buttonBgLightColor, dark: buttonBgDarkColor },
       buttonBgColor ?? "accent"
     );
-    
+
     return (
       <TouchableOpacity
         {...props}
         ref={ref}
         style={[
           styles.button,
-          { backgroundColor: color },
           bordered && styles.bordered,
           borderless && styles.borderless,
+          { backgroundColor: color },
           props.style,
         ]}
       >
