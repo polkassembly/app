@@ -72,7 +72,6 @@ export default function ProposalDetailScreenImpl() {
       proposalIndex: index,
       createdAt: proposal?.createdAt,
       postOrigin: proposal?.onChainInfo?.origin,
-
     })
   };
 

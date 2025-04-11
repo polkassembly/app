@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   ScrollView,
@@ -248,6 +248,10 @@ function Comments({ proposalIndex, proposalType }: { proposalIndex: string; prop
     proposalType: proposalType.toString(),
     proposalId: proposalIndex.toString(),
   });
+
+  useEffect(() => {
+    comments
+  }, [comments]);
   const insets = useSafeAreaInsets();
 
   const getTotalLength = (arr: any[]) =>

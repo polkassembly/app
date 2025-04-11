@@ -113,13 +113,6 @@ const useAddComment = () => {
     },
     onSettled: (_, __, { pathParams }) => {
       // Invalidate queries to fetch fresh data from the backend.
-      queryClient.invalidateQueries({ queryKey: buildActivityFeedQueryKey({ limit: 10 }) });
-      queryClient.invalidateQueries({
-        queryKey: buildProposalByIndexQueryKey({
-          proposalType: pathParams.proposalType,
-          indexOrHash: pathParams.postIndexOrHash,
-        }),
-      });
       queryClient.invalidateQueries({
         queryKey: buildProposalCommentsQueryKey({
           proposalType: pathParams.proposalType,

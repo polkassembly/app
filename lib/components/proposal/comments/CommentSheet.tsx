@@ -27,7 +27,7 @@ interface CommentSheetProps {
 	onCommentSubmitted?: ({ comment }: { comment?: string }) => void;
 }
 
-const CommentSheet = ({ author, isReply, proposalTitle, proposalIndex, proposalType, postOrigin, createdAt, parentComment, parentCommentId, onClose }: CommentSheetProps) => {
+const CommentSheet = ({ author, isReply, proposalTitle, proposalIndex, proposalType, postOrigin, createdAt, parentComment, parentCommentId, onClose, onCommentSubmitted }: CommentSheetProps) => {
 	const user = useProfileStore((state) => state.profile)
 	const textColor = useThemeColor({}, "text")
 	const mediumTextColor = useThemeColor({}, "mediumText")
@@ -49,7 +49,10 @@ const CommentSheet = ({ author, isReply, proposalTitle, proposalIndex, proposalT
 			bodyParams: bodyParam,
 		},
 		);
-
+		if (onCommentSubmitted) {
+			onCommentSubmitted({ comment });
+		}
+		
 		setComment("");
 		onClose();
 	};

@@ -263,7 +263,9 @@ function ProposalActions(
       proposalIndex: index,
       createdAt: createdAt,
       postOrigin: origin,
-
+      onCommentSuccess: () => {
+        setLocalCommentCount((prev) => prev + 1);
+      }
     })
   };
 

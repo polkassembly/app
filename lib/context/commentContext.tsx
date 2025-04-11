@@ -13,6 +13,7 @@ interface CommentSheetOptions {
 	createdAt?: string;
 	parentComment?: string;
 	postOrigin?: EPostOrigin;
+	onCommentSuccess?: ({ comment }: { comment?: string }) => void;
 }
 
 interface CommentSheetContextProps {
@@ -36,6 +37,12 @@ export const CommentSheetProvider = ({ children }: { children: ReactNode }) => {
 		setOptions(null);
 	};
 
+	const handleComment = () => {
+		if (options && options.onCommentSuccess) {
+			options.onCommentSuccess({ comment: options.parentComment });
+		}
+	}
+
 	return (
 		<CommentSheetContext.Provider value={{ openCommentSheet, closeCommentSheet }}>
 			{children}
@@ -51,7 +58,7 @@ export const CommentSheetProvider = ({ children }: { children: ReactNode }) => {
 							<TouchableWithoutFeedback onPress={closeCommentSheet}>
 								<View style={{ flex: 1, justifyContent: 'flex-end' }}>
 									<TouchableWithoutFeedback onPress={(e) => e.stopPropagation()}>
-										<CommentSheet {...options} onClose={closeCommentSheet} />
+										<CommentSheet {...options} onClose={closeCommentSheet} onCommentSubmitted={handleComment} />
 									</TouchableWithoutFeedback>
 								</View>
 							</TouchableWithoutFeedback>
@@ -65,10 +72,10 @@ export const CommentSheetProvider = ({ children }: { children: ReactNode }) => {
 
 const styles = StyleSheet.create({
 	sheetOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.5)',
-    justifyContent: 'flex-end'
-  },
+		flex: 1,
+		backgroundColor: 'rgba(0,0,0,0.5)',
+		justifyContent: 'flex-end'
+	},
 })
 
 export const useCommentSheet = () => {
