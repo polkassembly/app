@@ -1,22 +1,18 @@
 import { useGetUserByAddress } from "@/lib/net/queries/profile";
-import { View, ActivityIndicator, TouchableOpacity } from "react-native";
 import ProfileCard from "../../profile/ProfileCard";
-import { ThemedView } from "../View";
-import { ThemedText } from "../text";
-import { useThemeColor } from "@/lib/hooks";
 import { useBottomSheet } from "@/lib/context/bottomSheetContext";
 import { Text } from "react-native";
-import { memo, useEffect, useState } from "react";
+import { memo } from "react";
+import { openBrowserAsync } from "expo-web-browser";
 
 interface MarkdownLinkProps {
   content: string;
   target: string;
   children: React.ReactNode;
   styles: { [key: string]: any };
-  key: string;
 }
 
-const MarkdownLink = memo(({ content, target, children, styles, key }: MarkdownLinkProps) => {
+const MarkdownLink = memo(({ content, target, children, styles }: MarkdownLinkProps) => {
   const isMention = content.startsWith("@");
   const address = target.split("-")[0];
   const { openBottomSheet } = useBottomSheet();
@@ -34,7 +30,6 @@ const MarkdownLink = memo(({ content, target, children, styles, key }: MarkdownL
   return (
     isMention ? (
       <Text
-        key={key}
         style={[{ paddingVertical: 0 }]}
         onPress={handleMentionPress}
       >
@@ -42,10 +37,9 @@ const MarkdownLink = memo(({ content, target, children, styles, key }: MarkdownL
       </Text>
     ) : (
       <Text
-        key={key}
         style={styles}
         onPress={() => {
-          console.log(`Link pressed: ${target}`);
+          openBrowserAsync(target)
         }}
       >
         {children}
