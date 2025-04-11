@@ -1,7 +1,9 @@
 import React, { memo, useMemo } from 'react';
-import Markdown from 'react-native-markdown-display';
+import Markdown, { RenderRules } from 'react-native-markdown-display';
 import { ColorName, useThemeColor } from "@/lib/hooks/useThemeColor";
 import { TextStyle, View, Text, ViewStyle, ImageStyle } from 'react-native';
+import { ASTNode } from 'react-native-markdown-display';
+import MarkdownLink from './MarkdownLink';
 
 interface ThemedMarkdownDisplayProps {
   content: string;
@@ -25,13 +27,13 @@ const ThemedMarkdownDisplay = ({
   accentColor = "accent",
   codeBackgroundColor = "background",
   fontSize = {
-    base: 14,
-    heading1: 24,
-    heading2: 20,
-    heading3: 18,
-    heading4: 16,
-    heading5: 14,
-    heading6: 12,
+    base: 12,
+    heading1: 22,
+    heading2: 18,
+    heading3: 16,
+    heading4: 14,
+    heading5: 12,
+    heading6: 10,
   },
 }: ThemedMarkdownDisplayProps) => {
   if (!content) return null;
@@ -40,15 +42,37 @@ const ThemedMarkdownDisplay = ({
   const colorText = useThemeColor({}, textColor);
   const colorAccent = useThemeColor({}, accentColor);
   const colorCodeBackground = useThemeColor({}, codeBackgroundColor);
+  const mediumText = useThemeColor({}, "mediumText");
 
   // Extract font sizes with defaults
-  const baseFontSize = fontSize.base || 14;
-  const h1FontSize = fontSize.heading1 || 24;
-  const h2FontSize = fontSize.heading2 || 20;
-  const h3FontSize = fontSize.heading3 || 18;
-  const h4FontSize = fontSize.heading4 || 16;
-  const h5FontSize = fontSize.heading5 || 14;
-  const h6FontSize = fontSize.heading6 || 12;
+  const baseFontSize = fontSize.base || 8;
+  const h1FontSize = fontSize.heading1 || 22;
+  const h2FontSize = fontSize.heading2 || 18;
+  const h3FontSize = fontSize.heading3 || 16;
+  const h4FontSize = fontSize.heading4 || 14;
+  const h5FontSize = fontSize.heading5 || 12;
+  const h6FontSize = fontSize.heading6 || 10;
+
+  const customRules: RenderRules = {
+  link: (
+    node: ASTNode,
+    children: React.ReactNode[],
+    styles: { [key: string]: any }
+  ) => {
+    const content = node?.children[0]?.content as string;
+    const target = node.attributes?.href || '';
+    return (
+      <MarkdownLink
+        content={content}
+        target={target}
+        styles={styles?.link}
+        key={node.key}
+      >
+        {children}
+      </MarkdownLink>
+    )
+  },
+};
 
   // Memoize markdown styles to prevent unnecessary recalculations
   const markdownStyles = useMemo(() => ({
@@ -60,10 +84,9 @@ const ThemedMarkdownDisplay = ({
     } as TextStyle,
     paragraph: {
       color: colorText,
-      fontSize: baseFontSize,
+      fontSize: fontSize.base,
       marginBottom: 8,
       marginTop: 0,
-      lineHeight: baseFontSize * 1.65,
       fontFamily: 'PoppinsRegular',
       fontWeight: 100,
     } as TextStyle,
@@ -121,7 +144,7 @@ const ThemedMarkdownDisplay = ({
     // Links
     link: {
       color: colorAccent,
-      textDecorationLine: "underline",
+      textDecorationLine: "none",
       fontFamily: 'PoppinsRegular',
     } as TextStyle,
 
@@ -153,22 +176,23 @@ const ThemedMarkdownDisplay = ({
       backgroundColor: colorCodeBackground,
       padding: 8,
       borderRadius: 4,
-      marginVertical: 8,
+      borderWidth: 0,
+      marginBottom: 8,
+      
     } as TextStyle,
     fence: {
       color: colorText,
       fontFamily: 'SpaceMono',
       backgroundColor: colorCodeBackground,
       padding: 8,
-      borderRadius: 4,
       marginVertical: 8,
     } as TextStyle,
 
     // Horizontal rule
     hr: {
-      borderBottomColor: colorAccent,
+      borderBottomColor: mediumText,
       borderBottomWidth: 1,
-      marginVertical: 16,
+      marginVertical: 8,
     } as ViewStyle,
 
     // Lists
@@ -248,7 +272,7 @@ const ThemedMarkdownDisplay = ({
       alignSelf: 'flex-start' as ViewStyle["alignSelf"],
     } as ViewStyle,
     mention: {
-      color: colorAccent,
+      color: mediumText,
       fontWeight: 'bold',
       fontSize: baseFontSize,
       fontFamily: 'PoppinsMedium',
@@ -258,6 +282,7 @@ const ThemedMarkdownDisplay = ({
   return (
     <Markdown
       style={markdownStyles}
+      rules={customRules}
     >
       {content}
     </Markdown>

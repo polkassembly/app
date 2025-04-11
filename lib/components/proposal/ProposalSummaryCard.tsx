@@ -5,7 +5,7 @@ import { useThemeColor } from "@/lib/hooks/useThemeColor";
 import { ThemedText } from "../shared/text/ThemedText";
 import { useContentSummary } from "@/lib/net/queries/post";
 import { trimText } from "@/lib/util/stringUtil";
-import { ThemedMarkdownDisplay } from "../shared";
+import { ThemedMarkdownDisplay } from "../shared/ThemedMarkdownDisplay";
 
 interface ProposalContentSummaryProps {
 	proposalType: EProposalType;

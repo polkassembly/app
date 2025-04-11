@@ -10,7 +10,6 @@ import { extractUniqueChildrenAvatars } from "@/lib/util/commentUtil";
 import useAddCommentReaction from "@/lib/net/queries/actions/useAddCommentReaction";
 import useDeleteCommentReaction from "@/lib/net/queries/actions/useDeleteCommentReaction";
 import { useProfileStore } from "@/lib/store/profileStore";
-import { ThemedMarkdownDisplay } from "@/lib/components/shared";
 import { ThemedButton } from "../../shared/button";
 import { ThemedText } from "../../shared/text";
 import IconReply from "../../icons/proposals/icon-reply";
@@ -21,6 +20,7 @@ import { useBottomSheet } from "@/lib/context/bottomSheetContext";
 import ProfileCard from "../../profile/ProfileCard";
 import { useCommentSheet } from "@/lib/context/commentContext";
 import { useAuthModal } from "@/lib/context/authContext";
+import { ThemedMarkdownDisplay } from "../../shared/ThemedMarkdownDisplay";
 
 interface CommentCardProps {
 	comment: ICommentResponse;

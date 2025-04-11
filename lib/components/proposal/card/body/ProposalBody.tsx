@@ -8,12 +8,13 @@ import OriginBadge from "./OriginBadge";
 import TimeDisplay from "./TimeDisplay";
 import { useThemeColor } from "@/lib/hooks/useThemeColor";
 import { Skeleton } from "moti/skeleton";
-import { UserAvatar, ThemedMarkdownDisplay } from "@/lib/components/shared";
+import { UserAvatar } from "@/lib/components/shared";
 import { ThemedText } from "@/lib/components/shared/text";
 import ProfileCard from "@/lib/components/profile/ProfileCard";
 import { useBottomSheet } from "@/lib/context/bottomSheetContext";
 import * as Clipboard from "expo-clipboard";
 import Toast from "react-native-toast-message";
+import { ThemedMarkdownDisplay } from "@/lib/components/shared/ThemedMarkdownDisplay";
 
 interface ProposalBodyProps {
 	title: string;

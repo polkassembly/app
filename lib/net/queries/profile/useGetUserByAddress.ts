@@ -4,7 +4,7 @@ import { UserProfile } from "@/lib/types";
 
 const buildUserByAddressQueryKey = (address: string) => ["user", "address", address];
 
-const useGetUserByAddress = (address: string) => {
+const useGetUserByAddress = (address: string, options?: { initialData: UserProfile }) => {
   return useQuery<UserProfile, Error>({
     queryKey: buildUserByAddressQueryKey(address),
     queryFn: async () => {
@@ -12,6 +12,7 @@ const useGetUserByAddress = (address: string) => {
       return response.data;
     },
     enabled: !!address,
+    initialData: options?.initialData,
     refetchOnWindowFocus: false,
   });
 };
