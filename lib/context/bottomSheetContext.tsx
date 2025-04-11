@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, ReactNode, useRef, useEffect } from "react";
-import { BackHandler, Easing, StyleSheet } from "react-native";
+import { BackHandler, StyleSheet } from "react-native";
 import {
   BottomSheetModal,
   BottomSheetView,
@@ -7,7 +7,6 @@ import {
   BottomSheetBackdrop,
 } from '@gorhom/bottom-sheet';
 import { useThemeColor } from "../hooks";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 interface BottomSheetContextProps {
   bottomSheetVisible: boolean;
@@ -23,7 +22,6 @@ export const BottomSheetProvider = ({ children }: { children: ReactNode }) => {
   const [bottomSheetContent, setBottomSheetContent] = useState<ReactNode | null>(null);
 
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
-  const backgroundColor = useThemeColor({}, "secondaryBackground");
 
   // Handle back button press
   useEffect(() => {

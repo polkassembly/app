@@ -38,7 +38,7 @@ const HomeHeader = () => {
 
   return (
     <RadialBackgroundWrapper>
-      <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginVertical: 20, paddingHorizontal: 16 }}>
+      <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 20, paddingHorizontal: 16 }}>
         <Image
           source={require('@/assets/images/logo-wide.png')}
           style={{ width: 132, height: 40 }}

@@ -10,7 +10,7 @@ import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import "react-native-reanimated";
-import { SafeAreaProvider } from "react-native-safe-area-context";
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { buildUserByIdQueryKey, getUserById } from "@/lib/net/queries/profile/useGetUserById";
 import { buildUserActivityQueryKey, getUserActivity } from "@/lib/net/queries/actions";
 import Toast from "react-native-toast-message";
@@ -128,7 +128,9 @@ export default function RootLayout() {
         <SafeAreaProvider>
           <BottomSheetProvider>
             <CommentSheetProvider>
-              <Content />
+              <SafeAreaView style={{ flex: 1 }}>
+                <Content />
+              </SafeAreaView>
             </CommentSheetProvider>
           </BottomSheetProvider>
           <Toast config={toastConfig} />

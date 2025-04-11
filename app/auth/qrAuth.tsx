@@ -1,5 +1,4 @@
-import { SafeAreaView } from "react-native-safe-area-context";
-import { StyleSheet, View, Text, Image, ActivityIndicator } from "react-native";
+import { StyleSheet, View, Image, ActivityIndicator } from "react-native";
 import { CameraView, useCameraPermissions, BarcodeScanningResult } from "expo-camera";
 import useQrAuth from "@/lib/net/queries/auth/useQrAuth";
 import { Link, useRouter } from "expo-router";
@@ -21,12 +20,11 @@ const Colors = {
 
 export default function QrAuthScreen() {
   const [showScanner, setShowScanner] = useState(false);
-  const secondaryBackgroundColor = useThemeColor({}, "secondaryBackground");
   const accentColor = useThemeColor({}, "accent");
 
   return (
     <>
-      <SafeAreaView style={[styles.safeAreaView, { backgroundColor: secondaryBackgroundColor }]}>
+      <ThemedView type="secondaryBackground" style={styles.safeAreaView}>
         <View style={styles.headerContainer}>
           <Image style={styles.logo} source={require("@/assets/images/logo-wide.png")} />
           <Image style={{ flexGrow: 0.8, flexBasis: 0 }} resizeMode="contain" source={require("@/assets/images/auth/qr-auth-screen.gif")} />
@@ -60,7 +58,7 @@ export default function QrAuthScreen() {
             </View>
           </Link>
         </ThemedView>
-      </SafeAreaView>
+      </ThemedView>
       {showScanner && <QrCodeScanner />}
     </>
   );

@@ -1,19 +1,14 @@
 import React from "react";
-import { useThemeColor } from "@/lib/hooks";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { FeedWithActions } from "@/lib/components/home";
 import { HomeHeader } from "@/lib/components/home";
+import { ThemedView } from "@/lib/components/shared/View";
 
 const Home = () => {
-  const backgroundColor = useThemeColor({}, "secondaryBackground")
   return (
-    <SafeAreaView 
-      style={{ flex: 1, backgroundColor }}
-      edges={['left', 'right', 'bottom', 'top']}
-    >
+    <ThemedView type="secondaryBackground" style = {{ flex: 1}}>
       <HomeHeader />
       <FeedWithActions />
-    </SafeAreaView>
+    </ThemedView>
   );
 }
 

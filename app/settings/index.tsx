@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import {
   Image,
-  SafeAreaView,
   TouchableOpacity,
   View,
   StyleSheet,
@@ -36,6 +35,7 @@ import { useAuthModal } from "@/lib/context/authContext";
 import { TopBar } from "@/lib/components/shared";
 import { ThemedButton } from "@/lib/components/shared/button";
 import { ThemedText } from "@/lib/components/shared/text";
+import { ThemedView } from "@/lib/components/shared/View";
 
 // Function to process and compress the image.
 // It ensures that the resulting image is resized and compressed
@@ -116,16 +116,16 @@ export default function Settings() {
     }
   }, [userProfile]);
 
-  if(!userProfile) {
+  if (!userProfile) {
     openLoginModal("Please login to access settings", true);
     return null;
   }
 
   if (!userProfile) {
     return (
-      <SafeAreaView style={styles.centered}>
+      <ThemedView type="secondaryBackground" style={styles.centered}>
         <ThemedText>Failed to load user</ThemedText>
-      </SafeAreaView>
+      </ThemedView>
     );
   }
 
@@ -163,7 +163,7 @@ export default function Settings() {
       const params = {} as EditProfileParams;
       if (username !== userProfile?.username) {
         params["username"] = username;
-        if(userProfile) setProfile({ ...userProfile, username });
+        if (userProfile) setProfile({ ...userProfile, username });
       }
       if (uploadedImageUrl) {
         params["image"] = uploadedImageUrl;
@@ -175,16 +175,16 @@ export default function Settings() {
         text2: "Profile updated successfully",
       });
       setIsSaving(false);
-      if(!userProfile) return;
+      if (!userProfile) return;
 
       // Update profile store values
-      if(uploadedImageUrl){
-        if(userProfile) setProfile({ ...userProfile, profileDetails: { ...userProfile.profileDetails, image: uploadedImageUrl}});
+      if (uploadedImageUrl) {
+        if (userProfile) setProfile({ ...userProfile, profileDetails: { ...userProfile.profileDetails, image: uploadedImageUrl } });
       }
-      if(username !== userProfile.username){
-       setProfile({ ...userProfile, username });
+      if (username !== userProfile.username) {
+        setProfile({ ...userProfile, username });
       }
-      
+
     } catch (error) {
       console.error("Error updating profile:", error);
       Toast.show({
@@ -212,7 +212,7 @@ export default function Settings() {
 
   return (
     <>
-      <View style={[styles.container, { backgroundColor, paddingTop: insets.top}]}>
+      <View style={[styles.container, { backgroundColor, paddingTop: insets.top }]}>
         <TopBar />
         <View style={{ gap: 32, paddingLeft: insets.left, paddingRight: insets.right }}>
           <View style={styles.header}>

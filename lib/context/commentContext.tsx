@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, ReactNode } from "react";
 import { UserProfile, EProposalType, EPostOrigin } from "@/lib/types";
 import CommentSheet from "../components/proposal/comments/CommentSheet";
-import { View, Modal, TouchableWithoutFeedback, SafeAreaView, StyleSheet } from "react-native";
+import { View, Modal, TouchableWithoutFeedback, StyleSheet } from "react-native";
 
 interface CommentSheetOptions {
 	author: UserProfile;
@@ -51,9 +51,7 @@ export const CommentSheetProvider = ({ children }: { children: ReactNode }) => {
 							<TouchableWithoutFeedback onPress={closeCommentSheet}>
 								<View style={{ flex: 1, justifyContent: 'flex-end' }}>
 									<TouchableWithoutFeedback onPress={(e) => e.stopPropagation()}>
-										<SafeAreaView>
 										<CommentSheet {...options} onClose={closeCommentSheet} />
-										</SafeAreaView>
 									</TouchableWithoutFeedback>
 								</View>
 							</TouchableWithoutFeedback>

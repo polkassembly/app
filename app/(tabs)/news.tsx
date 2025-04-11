@@ -4,18 +4,12 @@ import {
   ScrollView,
   Platform,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { NewsHeader, NewsSection, TopCoinsSection, TreasurySection } from "@/lib/components/news";
-import { useThemeColor } from "@/lib/hooks";
+import { ThemedView } from "@/lib/components/shared/View";
 
 export default function NewsScreen() {
-  const backgroundColor = useThemeColor({}, "secondaryBackground")
-
   return (
-    <SafeAreaView 
-      style={[styles.mainContainer, { backgroundColor }]}
-      edges={['left', 'right', 'bottom', 'top']}
-    >
+    <ThemedView type="secondaryBackground" style={{ flex: 1}}>
       <NewsHeader />
       <ScrollView style={styles.scrollView}>
         <TreasurySection />
@@ -24,7 +18,7 @@ export default function NewsScreen() {
           Platform.OS !== "ios" && <NewsSection />
         }
       </ScrollView>
-    </SafeAreaView>
+    </ThemedView>
   );
 }
 

@@ -5,7 +5,6 @@ import { useThemeColor } from "@/lib/hooks/useThemeColor";
 import { Link } from "expo-router";
 import React from "react";
 import { Image, StyleSheet, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 const styles = StyleSheet.create({
   container: {
@@ -46,7 +45,7 @@ export default function IntroScreen() {
   return (
     <View style={[styles.container, { backgroundColor: bgColor}]}>
 
-      <SafeAreaView style={styles.container}>
+      <View style={styles.container}>
         <Slides />
 
         <View style={styles.bottom}>
@@ -57,7 +56,7 @@ export default function IntroScreen() {
             />
           </Link>
         </View>
-      </SafeAreaView>
+      </View>
     </View>
   );
 }

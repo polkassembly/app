@@ -1,4 +1,3 @@
-import { SafeAreaView } from "react-native-safe-area-context";
 import { StyleSheet, View, Image } from "react-native";
 import { router } from "expo-router";
 import { ThemedView } from "@/lib/components/shared/View";
@@ -14,11 +13,10 @@ const Colors = {
 };
 
 export default function LoginOptionsScreen() {
-	const secondaryBackgroundColor = useThemeColor({}, "secondaryBackground");
 	const strokeColor = useThemeColor({}, "stroke");
 
 	return (
-		<SafeAreaView style={[styles.safeAreaView, { backgroundColor: secondaryBackgroundColor }]}>
+		<ThemedView type="secondaryBackground" style={styles.safeAreaView}>
 			<View style={styles.headerContainer}>
 				<Image style={styles.logo} source={require("@/assets/images/logo-wide.png")} />
 				<Image style={{ flexGrow: 0.8, flexBasis: 0 }} resizeMode="contain" source={require("@/assets/images/auth/qr-auth-screen.gif")} />
@@ -41,7 +39,7 @@ export default function LoginOptionsScreen() {
 				</View>
 				<ThemedButton text='Log in Via Email' onPress={() => router.push("/auth/web2auth")} bordered style={{ marginVertical: 10 }} />
 			</ThemedView>
-		</SafeAreaView>
+		</ThemedView>
 	);
 }
 

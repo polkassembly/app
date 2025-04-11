@@ -1,4 +1,3 @@
-import { SafeAreaView } from "react-native-safe-area-context";
 import { StyleSheet, View, Image } from "react-native";
 import { Link, router } from "expo-router";
 import { ThemedView } from "@/lib/components/shared/View";
@@ -51,7 +50,7 @@ export default function Web2Auth() {
 	const accentColor = useThemeColor({}, "accent");
 
 	return (
-		<SafeAreaView style={[styles.safeAreaView, { backgroundColor: secondaryBackgroundColor }]}>
+		<ThemedView type="secondaryBackground" style={styles.safeAreaView}>
 			<View style={styles.headerContainer}>
 				<Image style={styles.logo} source={require("@/assets/images/logo-wide.png")} />
 				<Image style={{ flexGrow: 0.8, flexBasis: 0 }} resizeMode="contain" source={require("@/assets/images/auth/qr-auth-screen.gif")} />
@@ -106,7 +105,7 @@ export default function Web2Auth() {
 					loading={isPending}
 				/>
 			</ThemedView>
-		</SafeAreaView>
+		</ThemedView>
 	);
 }
 

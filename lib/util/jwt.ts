@@ -1,6 +1,7 @@
 import { jwtDecode } from "jwt-decode";
 
 function getIdFromToken(token: string): string | null {
+  if(!token) return null;
   try {
     const decodedToken = jwtDecode<{ id: number }>(token);
     if (!decodedToken.id) {

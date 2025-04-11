@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef } from "react";
 import {
   StyleSheet,
   View,
@@ -6,7 +6,6 @@ import {
   Animated,
   ScrollView,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 import { ThemedText } from "@/lib/components/shared/text/ThemedText";
 import { IconSearch } from "@/lib/components/icons/shared";
@@ -53,57 +52,52 @@ export default function ChromeStyleBrowser() {
   };
 
   return (
-    <SafeAreaView 
-      style={{ flex: 1, backgroundColor}}
-      edges={['left', 'right', 'bottom', 'top']}
-    >
-      <View style={{ flex: 1 }}>
+    <View style={{ flex: 1 }}>
 
-        {/* Always render SearchOverlay but control visibility with props */}
-        {isSearchOverlayVisible && (
-          <SearchOverlay
-            onDeactivate={deactivateSearch}
-            backgroundColor={backgroundColor}
-            visible={isSearching}
-          />
-        )}
+      {/* Always render SearchOverlay but control visibility with props */}
+      {isSearchOverlayVisible && (
+        <SearchOverlay
+          onDeactivate={deactivateSearch}
+          backgroundColor={backgroundColor}
+          visible={isSearching}
+        />
+      )}
 
-        {/* Browser UI */}
-        <Animated.View style={[
-          styles.browserContent,
-          {
-            opacity: contentOpacity,
-            position: isSearching ? 'absolute' : 'relative',
-            zIndex: isSearching ? -1 : 1
-          }
-        ]}>
-          <BrowserHeader />
-          <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 64 }}>
-            <BrowserHeroSection />
+      {/* Browser UI */}
+      <Animated.View style={[
+        styles.browserContent,
+        {
+          opacity: contentOpacity,
+          position: isSearching ? 'absolute' : 'relative',
+          zIndex: isSearching ? -1 : 1
+        }
+      ]}>
+        <BrowserHeader />
+        <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 64 }}>
+          <BrowserHeroSection />
 
-            <View style={styles.browserInnerContent}>
-              {/* Browser search input, activates search mode on focus */}
-              <TouchableOpacity
-                style={styles.searchInputBrowser}
-                activeOpacity={0.7}
-                onPress={activateSearch}
+          <View style={styles.browserInnerContent}>
+            {/* Browser search input, activates search mode on focus */}
+            <TouchableOpacity
+              style={styles.searchInputBrowser}
+              activeOpacity={0.7}
+              onPress={activateSearch}
+            >
+              <IconSearch />
+              <ThemedText
+                type="bodySmall"
+                style={{ color: mediumTextColor }}
               >
-                <IconSearch />
-                <ThemedText
-                  type="bodySmall"
-                  style={{ color: mediumTextColor }}
-                >
-                  Search by name or enter URL
-                </ThemedText>
-              </TouchableOpacity>
-              <FeaturedWebsites />
-              
-            </View>
-            <QuickActions />
-          </ScrollView>
-        </Animated.View>
-      </View>
-    </SafeAreaView>
+                Search by name or enter URL
+              </ThemedText>
+            </TouchableOpacity>
+            <FeaturedWebsites />
+
+          </View>
+          <QuickActions />
+        </ScrollView>
+      </Animated.View>
+    </View>
   );
 }
 
