@@ -1,4 +1,5 @@
 import IntroPager from "@/lib/components/shared/IntroPager";
+import { ThemedView } from "@/lib/components/shared/View";
 import { ThemedButton } from "@/lib/components/shared/button";
 import { ThemedText } from "@/lib/components/shared/text";
 import { useThemeColor } from "@/lib/hooks/useThemeColor";
@@ -40,10 +41,8 @@ const styles = StyleSheet.create({
 });
 
 export default function IntroScreen() {
-
-  const bgColor = useThemeColor({}, "container")
   return (
-    <View style={[styles.container, { backgroundColor: bgColor}]}>
+    <ThemedView type="secondaryBackground" style={styles.container}>
 
       <View style={styles.container}>
         <Slides />
@@ -57,7 +56,7 @@ export default function IntroScreen() {
           </Link>
         </View>
       </View>
-    </View>
+    </ThemedView>
   );
 }
 

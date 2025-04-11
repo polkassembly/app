@@ -7,6 +7,7 @@ import { BottomTabBarButtonProps } from "@react-navigation/bottom-tabs";
 import IconBrowser from "@/lib/components/icons/icon-browser";
 import { IconNews } from "@/lib/components/icons/Profile";
 import { IconFeed } from "@/lib/components/icons/shared";
+import { ThemedView } from "@/lib/components/shared/View";
 
 const smallIconSize = 32;
 const largeIconSize = 44;
@@ -33,58 +34,60 @@ const styles = StyleSheet.create({
 
 export default function TabLayout() {
   return (
-    <Tabs
-      screenOptions={{
-        tabBarShowLabel: false,
-        tabBarActiveTintColor: Colors["dark"].tint,
-        headerShown: false,
-        tabBarButton: TabBarButton,
-        tabBarBackground: TabBarBackground,
-        tabBarStyle: styles.tabBarStyle,
-      }}
-    >
-      <Tabs.Screen
-        name="news"
-        options={{
-          tabBarIcon: ({ color }) => (
-            <IconNews
-              style={styles.smallIcon}
-              color={color}
-              iconHeight={smallIconSize}
-              iconWidth={smallIconSize}
-            />
-          ),
+    <ThemedView type="secondaryBackground" style={{ flex: 1, paddingTop: 16 }}>
+      <Tabs
+        screenOptions={{
+          tabBarShowLabel: false,
+          tabBarActiveTintColor: Colors["dark"].tint,
+          headerShown: false,
+          tabBarButton: TabBarButton,
+          tabBarBackground: TabBarBackground,
+          tabBarStyle: styles.tabBarStyle,
         }}
-      />
+      >
+        <Tabs.Screen
+          name="news"
+          options={{
+            tabBarIcon: ({ color }) => (
+              <IconNews
+                style={styles.smallIcon}
+                color={color}
+                iconHeight={smallIconSize}
+                iconWidth={smallIconSize}
+              />
+            ),
+          }}
+        />
 
-      <Tabs.Screen
-        name="index"
-        options={{
-          tabBarIcon: ({ color }) => (
-            <IconFeed
-              style={styles.largeIcon}
-              color={color}
-              iconHeight={largeIconSize}
-              iconWidth={largeIconSize}
-            />
-          ),
-        }}
-      />
+        <Tabs.Screen
+          name="index"
+          options={{
+            tabBarIcon: ({ color }) => (
+              <IconFeed
+                style={styles.largeIcon}
+                color={color}
+                iconHeight={largeIconSize}
+                iconWidth={largeIconSize}
+              />
+            ),
+          }}
+        />
 
-      <Tabs.Screen
-        name="explore"
-        options={{
-          tabBarIcon: ({ color }) => (
-            <IconBrowser
-              style={styles.smallIcon}
-              color={color}
-              iconHeight={smallIconSize}
-              iconWidth={smallIconSize}
-            />
-          ),
-        }}
-      />
-    </Tabs>
+        <Tabs.Screen
+          name="explore"
+          options={{
+            tabBarIcon: ({ color }) => (
+              <IconBrowser
+                style={styles.smallIcon}
+                color={color}
+                iconHeight={smallIconSize}
+                iconWidth={smallIconSize}
+              />
+            ),
+          }}
+        />
+      </Tabs>
+    </ThemedView >
   );
 }
 

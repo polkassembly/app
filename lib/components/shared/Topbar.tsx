@@ -6,7 +6,6 @@ import { useThemeColor } from "../../hooks/useThemeColor";
 import IconBack from "../icons/icon-back";
 import { IconPoints } from "../icons/icon-points";
 import { ThemedText } from "./text/ThemedText";
-import { Skeleton } from "moti/skeleton";
 import { useProfileStore } from "../../store/profileStore";
 
 interface TopBarProps {
@@ -39,7 +38,7 @@ export default function TopBar({
         <Link asChild href="..">
           <TouchableOpacity>
             <View>
-              <IconBack color={textColor} iconWidth={30} iconHeight={30} />
+              <IconBack color={textColor} iconWidth={24} iconHeight={24} />
             </View>
           </TouchableOpacity>
         </Link>

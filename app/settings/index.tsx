@@ -30,7 +30,6 @@ import { Ionicons } from "@expo/vector-icons";
 import { uploadImageToStorage } from "@/lib/net/api/uploadImageToStorage";
 import { EditProfileParams } from "@/lib/net/queries/profile/useEditProfile";
 import { useProfileStore } from "@/lib/store/profileStore";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useAuthModal } from "@/lib/context/authContext";
 import { TopBar } from "@/lib/components/shared";
 import { ThemedButton } from "@/lib/components/shared/button";
@@ -107,7 +106,6 @@ export default function Settings() {
   const { openLoginModal } = useAuthModal();
 
   const { mutate: editProfile } = useEditProfile();
-  const insets = useSafeAreaInsets();
 
   useEffect(() => {
     if (userProfile) {
@@ -208,13 +206,12 @@ export default function Settings() {
     avatar6,
   ];
   const colorStroke = useThemeColor({}, "mediumText");
-  const backgroundColor = useThemeColor({}, "container");
 
   return (
     <>
-      <View style={[styles.container, { backgroundColor, paddingTop: insets.top }]}>
+      <ThemedView type="secondaryBackground" style={styles.container}>
         <TopBar />
-        <View style={{ gap: 32, paddingLeft: insets.left, paddingRight: insets.right }}>
+        <View style={{ gap: 3 }}>
           <View style={styles.header}>
             <IconSettings color="white" iconWidth={24} iconHeight={24} />
             <ThemedText type="titleMedium">Settings</ThemedText>
@@ -292,7 +289,7 @@ export default function Settings() {
           </View>
           <ThemedButton text={isSaving ? "Saving..." : "Save"} onPress={handleSave} />
         </View>
-      </View>
+      </ThemedView>
       {isSaving && (
         <View style={styles.savingOverlay}>
           <ActivityIndicator size="large" color="white" />

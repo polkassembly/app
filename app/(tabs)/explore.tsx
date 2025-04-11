@@ -12,6 +12,7 @@ import { IconSearch } from "@/lib/components/icons/shared";
 import { Colors } from "@/lib/constants/Colors";
 import { BrowserHeader, BrowserHeroSection, FeaturedWebsites, QuickActions, SearchOverlay } from "@/lib/components/browser";
 import { useThemeColor } from "@/lib/hooks/useThemeColor";
+import { ThemedView } from "@/lib/components/shared/View";
 
 export default function ChromeStyleBrowser() {
   const [isSearching, setIsSearching] = useState(false);
@@ -72,30 +73,32 @@ export default function ChromeStyleBrowser() {
           zIndex: isSearching ? -1 : 1
         }
       ]}>
-        <BrowserHeader />
-        <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 64 }}>
-          <BrowserHeroSection />
+        <ThemedView type="secondaryBackground" style={{ flex: 1 }} >
+          <BrowserHeader />
+          <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 64 }}>
+            <BrowserHeroSection />
 
-          <View style={styles.browserInnerContent}>
-            {/* Browser search input, activates search mode on focus */}
-            <TouchableOpacity
-              style={styles.searchInputBrowser}
-              activeOpacity={0.7}
-              onPress={activateSearch}
-            >
-              <IconSearch />
-              <ThemedText
-                type="bodySmall"
-                style={{ color: mediumTextColor }}
+            <View style={styles.browserInnerContent}>
+              {/* Browser search input, activates search mode on focus */}
+              <TouchableOpacity
+                style={styles.searchInputBrowser}
+                activeOpacity={0.7}
+                onPress={activateSearch}
               >
-                Search by name or enter URL
-              </ThemedText>
-            </TouchableOpacity>
-            <FeaturedWebsites />
+                <IconSearch />
+                <ThemedText
+                  type="bodySmall"
+                  style={{ color: mediumTextColor }}
+                >
+                  Search by name or enter URL
+                </ThemedText>
+              </TouchableOpacity>
+              <FeaturedWebsites />
 
-          </View>
-          <QuickActions />
-        </ScrollView>
+            </View>
+            <QuickActions />
+          </ScrollView>
+        </ThemedView>
       </Animated.View>
     </View>
   );

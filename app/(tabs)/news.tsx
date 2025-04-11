@@ -9,7 +9,7 @@ import { ThemedView } from "@/lib/components/shared/View";
 
 export default function NewsScreen() {
   return (
-    <ThemedView type="secondaryBackground" style={{ flex: 1}}>
+    <ThemedView type="secondaryBackground" style={{ flex: 1 }}>
       <NewsHeader />
       <ScrollView style={styles.scrollView}>
         <TreasurySection />

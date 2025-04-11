@@ -128,7 +128,7 @@ export default function RootLayout() {
         <SafeAreaProvider>
           <BottomSheetProvider>
             <CommentSheetProvider>
-              <SafeAreaView style={{ flex: 1 }}>
+              <SafeAreaView style={{ flex: 1, backgroundColor: secondaryBackgroundColor }}>
                 <Content />
               </SafeAreaView>
             </CommentSheetProvider>

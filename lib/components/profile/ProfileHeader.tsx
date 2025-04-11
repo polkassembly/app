@@ -25,7 +25,7 @@ const ProfileHeader = () => {
   }
 
   return (
-    <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignContent: "center", marginVertical: 20, paddingHorizontal: 16 }}>
+    <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignContent: "center", marginBottom: 20, paddingHorizontal: 16 }}>
       <TouchableOpacity onPress={() => router.back()} >
         <IconBack iconHeight={24} iconWidth={24} />
       </TouchableOpacity>

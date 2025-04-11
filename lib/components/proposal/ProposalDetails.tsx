@@ -264,7 +264,7 @@ function Comments({ proposalIndex, proposalType }: { proposalIndex: string; prop
         {
           alignContent: "stretch",
           gap: 16,
-          marginBottom: 50 + insets.bottom,
+          marginBottom: 50,
         },
       ]}
     >

@@ -1,7 +1,7 @@
 import Svg, { Path } from "react-native-svg";
 import { IconProps } from "../types";
 
-export default function IconNews({ style, color = "#575756", iconHeight, iconWidth, filled }: IconProps) {
+export default function IconNews({ style, color = "#FFFFFF", iconHeight, iconWidth, filled }: IconProps) {
   return (
     <Svg
       width={iconWidth || 30}
