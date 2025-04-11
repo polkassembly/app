@@ -37,7 +37,7 @@ export default function LoginOptionsScreen() {
 					</ThemedText>
 					<View style={{ flex: 1, height: 1, backgroundColor: strokeColor }} />
 				</View>
-				<ThemedButton text='Log in Via Email' onPress={() => router.push("/auth/web2auth")} bordered style={{ marginVertical: 10 }} />
+				<ThemedButton buttonBgColor="secondaryBackground" text='Log in Via Email' onPress={() => router.push("/auth/web2auth")} bordered style={{ marginVertical: 10 }} />
 			</ThemedView>
 		</ThemedView>
 	);
