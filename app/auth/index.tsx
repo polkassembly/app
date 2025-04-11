@@ -43,18 +43,15 @@ const styles = StyleSheet.create({
 export default function IntroScreen() {
   return (
     <ThemedView type="secondaryBackground" style={styles.container}>
+      <Slides />
 
-      <View style={styles.container}>
-        <Slides />
-
-        <View style={styles.bottom}>
-          <Link href="/auth/qrAuth" asChild>
-            <ThemedButton
-              textType="bodyLarge"
-              text="Get Started"
-            />
-          </Link>
-        </View>
+      <View style={styles.bottom}>
+        <Link href="/auth/qrAuth" asChild>
+          <ThemedButton
+            textType="bodyLarge"
+            text="Get Started"
+          />
+        </Link>
       </View>
     </ThemedView>
   );
