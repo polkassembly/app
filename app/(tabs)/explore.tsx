@@ -55,7 +55,7 @@ export default function ChromeStyleBrowser() {
   return (
     <SafeAreaView 
       style={{ flex: 1, backgroundColor}}
-      edges={['left', 'right', 'bottom']}
+      edges={['left', 'right', 'bottom', 'top']}
     >
       <View style={{ flex: 1 }}>
 

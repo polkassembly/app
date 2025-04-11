@@ -14,7 +14,7 @@ export default function NewsScreen() {
   return (
     <SafeAreaView 
       style={[styles.mainContainer, { backgroundColor }]}
-      edges={['left', 'right', 'bottom']}
+      edges={['left', 'right', 'bottom', 'top']}
     >
       <NewsHeader />
       <ScrollView style={styles.scrollView}>

@@ -25,7 +25,7 @@ const MarkdownLink = memo(({ content, target, children, styles, key }: MarkdownL
   const handleMentionPress = () => {
 		if(isLoading) return;
 		if (!user) return;
-		
+
     openBottomSheet(
       <ProfileCard user={user} />
     );
@@ -33,13 +33,13 @@ const MarkdownLink = memo(({ content, target, children, styles, key }: MarkdownL
 
   return (
     isMention ? (
-      <TouchableOpacity
+      <Text
         key={key}
         style={[{ paddingVertical: 0 }]}
         onPress={handleMentionPress}
       >
         {children}
-      </TouchableOpacity>
+      </Text>
     ) : (
       <Text
         key={key}

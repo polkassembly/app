@@ -9,7 +9,7 @@ const Home = () => {
   return (
     <SafeAreaView 
       style={{ flex: 1, backgroundColor }}
-      edges={['left', 'right', 'bottom']}
+      edges={['left', 'right', 'bottom', 'top']}
     >
       <HomeHeader />
       <FeedWithActions />
