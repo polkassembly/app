@@ -11,11 +11,9 @@ import { useQueryClient } from "@tanstack/react-query";
 import { buildProposalCommentsQueryKey, getProposalComments } from "@/lib/net/queries/post";
 import HorizontalSeparator from "../../shared/View/HorizontalSeparator";
 import { ContainerType, ThemedView } from "../../shared/View/ThemedView";
-import ViewMoreButton from "./ViewMoreButton";
 
 type ProposalCardProps = {
 	post: Post;
-	withoutViewMore?: boolean;
 	withoutActions?: boolean;
 	withoutIndex?: boolean;
 	containerType?: ContainerType;
@@ -33,7 +31,6 @@ type ProposalCardProps = {
 
 const ProposalCard = ({
 	post,
-	withoutViewMore = false,
 	withoutActions = false,
 	withoutIndex = false,
 	withoutReadMore = false,
@@ -79,7 +76,7 @@ const ProposalCard = ({
 			/>
 			{/* Render children between read-more and actions */}
 			{children}
-			{(!withoutActions || !withoutViewMore) && <HorizontalSeparator />}
+			{(!withoutActions) && <HorizontalSeparator />}
 			{!withoutActions && (
 				<ProposalActions
 					index={post.index}
@@ -93,10 +90,6 @@ const ProposalCard = ({
 					authorAddress={post.onChainInfo?.proposer || ""}
 					origin={post.onChainInfo?.origin as EPostOrigin}
 				/>
-			)}
-
-			{!withoutViewMore && (
-				<ViewMoreButton post={post} />
 			)}
 			{childrenEnd}
 		</ThemedView>

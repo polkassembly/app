@@ -11,11 +11,12 @@ import { Actions } from "./Actions";
 import { useCallback } from "react";
 
 function FeedWithActions() {
-
+	
+	const setProposal = useProposalStore((state) => state.setProposal);
 	const handleCardPress = useCallback((item: Post) => {
-		useProposalStore.getState().setProposal(item);
+		setProposal(item);
 		router.push(`/proposal/${item.index}?proposalType=${item.proposalType}`);
-	}, []);
+	}, [setProposal]);
 
 	const {
 		data,

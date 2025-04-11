@@ -36,7 +36,6 @@ const MemoizedProposalCard = React.memo(({ card, showDetails }: MemoizedProposal
         post={card}
         descriptionLength={500}
         withoutActions
-        withoutViewMore
         withoutReadMore={true}
       >
         <View style={{ flexDirection: "row", justifyContent: "center", alignItems: "center", width: "100%", }}>

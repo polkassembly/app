@@ -80,7 +80,6 @@ export function ProposalDetails({ post, openFullDetails, withoutFullDetails, wit
 
         <ProposalCard
           post={post}
-          withoutViewMore
           containerType="background"
           withoutIndex={withoutProposalCardIndex}
           childrenEnd={
