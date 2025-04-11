@@ -18,7 +18,6 @@ import { IconPoints } from "../icons/icon-points";
 import { openBrowserAsync } from "expo-web-browser";
 import { POLKASSEMBLY_WEB_URL } from "@/lib/constants/web";
 import * as Clipboard from "expo-clipboard";
-import Toast from "react-native-toast-message";
 
 export default function ProfileCard({ user }: { user: UserProfile }) {
   const colorMediumText = useThemeColor({}, "mediumText");
@@ -28,10 +27,6 @@ export default function ProfileCard({ user }: { user: UserProfile }) {
 
   const handleCopy = async (text: string, label: string) => {
     await Clipboard.setStringAsync(text);
-    Toast.show({
-      type: "success",
-      text1: `${label} copied to clipboard`,
-    })
   };
 
   return (

@@ -71,6 +71,7 @@ const ProposalCard = ({
 				title={post.title}
 				content={post.content}
 				createdAt={post.onChainInfo?.createdAt}
+				proposerAddress={post.onChainInfo?.proposer || ""}
 				proposerInfo={proposerInfo}
 				descriptionLength={descriptionLength}
 				origin={post.onChainInfo?.origin}

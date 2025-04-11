@@ -19,8 +19,9 @@ import { ThemedMarkdownDisplay } from "@/lib/components/shared/ThemedMarkdownDis
 interface ProposalBodyProps {
 	title: string;
 	content: string;
-	createdAt?: string;
 	proposerInfo: UserProfile | undefined;
+	proposerAddress: string;
+	createdAt?: string;
 	descriptionLength?: number;
 	origin?: EPostOrigin;
 	withoutReadMore?: boolean;
@@ -30,6 +31,7 @@ function ProposalBody({
 	title,
 	content,
 	createdAt,
+	proposerAddress,
 	proposerInfo,
 	descriptionLength = 300,
 	origin,
@@ -52,10 +54,7 @@ function ProposalBody({
 	const handleOpenProfile = async () => {
 		const user = proposerInfo as UserProfile;
 		if (!proposerInfo) {
-			Toast.show({
-				type: "success",
-				text1: `Address copied to clipboard`,
-			})
+			Clipboard.setStringAsync(proposerAddress);
 			return;
 		};
 		openBottomSheet(
