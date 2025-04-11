@@ -42,7 +42,7 @@ function FeedWithActions() {
 		// Render proposal card
 		return (
 			<TouchableOpacity onPress={() => handleCardPress(item)} >
-				<ProposalCard post={item} />
+				<ProposalCard post={item} descriptionLength={200} />
 			</TouchableOpacity>
 		);
 	};
