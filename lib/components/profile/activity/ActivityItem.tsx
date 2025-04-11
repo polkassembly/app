@@ -27,38 +27,36 @@ const ActivityItem = ({ item }: { item: UserActivity }) => {
 	}
 
 	return (
-		<TouchableOpacity style={[styles.activityItemContainer, { backgroundColor: secondaryBackgroundColor, borderColor: strokeColor }]} onPress={onPress}>
-			<View style={{ flexDirection: "row", gap: 8 }}>
+		<View style={{ flexDirection: "row", gap: 8, flex: 1 }}>
+			<TouchableOpacity style={[styles.activityItemContainer, { backgroundColor: secondaryBackgroundColor, borderColor: strokeColor }]} onPress={onPress}>
 				<UserAvatar
 					avatarUrl={userProfile?.profileDetails.image || ""}
 					width={32}
 					height={32}
 				/>
-				<View style={{ gap: 8 }}>
+				<View style={{ gap: 8, flex: 1 }}>
 					{ACTIVITY_MAP[item.name] ?? (
 						<ThemedText>{item.name.replaceAll("_", " ")}</ThemedText>
 					)}
 					{
 						item.indexOrHash && item.proposalType && (
-							<View style={{ flexDirection: "row", gap: 8 }}>
+							<View style={{ flexDirection: "row", gap: 8, paddingRight: 40}}>
 								<View>
 									<ThemedText
 										type="bodySmall3"
 										colorName="secondaryText"
 										style={{ backgroundColor: "#EAEDF0", padding: 2, borderRadius: 4 }}
 									>
-										#{proposal?.index}
+										#{item.indexOrHash}
 									</ThemedText>
 								</View>
 								<ThemedText
 									type="bodySmall"
 									colorName="mediumText"
-									numberOfLines={2}
-									adjustsFontSizeToFit
-									style={{ flexShrink: 1 }}
+									numberOfLines={3}
 									ellipsizeMode="tail"
 								>
-									`{proposal?.title}`
+									{proposal?.title}
 								</ThemedText>
 							</View>
 						)
@@ -68,8 +66,8 @@ const ActivityItem = ({ item }: { item: UserActivity }) => {
 						<ThemedText type="bodySmall" colorName="mediumText">{formatTime(new Date(item.createdAt))}</ThemedText>
 					</View>
 				</View>
-			</View>
-		</TouchableOpacity>
+			</TouchableOpacity>
+		</View>
 	);
 }
 
@@ -77,10 +75,10 @@ const styles = StyleSheet.create({
 	activityItemContainer: {
 		flexDirection: "row",
 		padding: 12,
-		alignItems: "center",
-		justifyContent: "space-between",
+		gap: 8,
 		borderRadius: 12,
 		borderWidth: 1,
+		flex: 1
 	}
 });
 
