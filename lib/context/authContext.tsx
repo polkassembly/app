@@ -6,6 +6,7 @@ import IconClose from '../components/icons/shared/icon-close';
 import { ThemedButton } from '../components/shared/button';
 import { ThemedText } from '../components/shared/text';
 import { ThemedView } from '../components/shared/View';
+import { useBottomSheet } from './bottomSheetContext';
 
 // Define the shape of the context
 interface AuthModalContextType {
@@ -22,70 +23,43 @@ interface AuthModalProviderProps {
 }
 
 export const AuthModalProvider: React.FC<AuthModalProviderProps> = ({ children }) => {
-  const [modalVisible, setModalVisible] = useState<boolean>(false);
-  const [modalMessage, setModalMessage] = useState<string>('');
-  const [removeScreenFromRouter, setRemoveScreenFromRouter] = useState<boolean>(false);
-
+  const [removeScreenFromRouter, setRemoveScreenFromRouter] = useState(false);
+  const { openBottomSheet, closeBottomSheet } = useBottomSheet();
   const strokeColor = useThemeColor({}, 'stroke');
 
-  const openLoginModal = (message: string, removeScreenFromRouter: boolean = false) => {
-    setModalMessage(message);
-    setRemoveScreenFromRouter(removeScreenFromRouter);
-    setModalVisible(true);
-  };
-
   const closeLoginModal = () => {
-    setModalVisible(false);
-    if (removeScreenFromRouter) {
-      router.back();
-    }
-    setModalMessage('');
+    closeBottomSheet();
+    if (removeScreenFromRouter) router.back();
   };
 
   const onLogin = () => {
-    router.push('/auth/loginOptionsScreen')
-    setModalVisible(false);
-  }
+    closeBottomSheet();
+    router.push('/auth/loginOptionsScreen');
+  };
+
+  const openLoginModal = (message: string, remove: boolean = false) => {
+    setRemoveScreenFromRouter(remove);
+
+    openBottomSheet(
+      <ThemedView type='secondaryBackground' style={[styles.bottomSheetContainer, { borderColor: strokeColor }]}>
+        <View style={{ marginBottom: 16, gap: 8 }}>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+            <ThemedText type='titleMedium'>{message}</ThemedText>
+            <TouchableOpacity onPress={closeLoginModal}><IconClose /></TouchableOpacity>
+          </View>
+        </View>
+        <ThemedButton text='Log in' onPress={onLogin} style={{ marginTop: 10 }} />
+      </ThemedView>
+    );
+  };
 
   return (
     <AuthModalContext.Provider value={{ openLoginModal, closeLoginModal }}>
       {children}
-      {
-        modalVisible && (
-          <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}>
-            <View style={styles.modalOverlay}>
-              <Modal
-                animationType="slide"
-                transparent
-                onRequestClose={closeLoginModal}
-              >
-                {/* When the backdrop is pressed, close the modal */}
-                <TouchableWithoutFeedback onPress={closeLoginModal}>
-                  {/* Prevent the inner bottom sheet from closing when tapped */}
-                  <View style={{ flex: 1, justifyContent: 'flex-end' }}> 
-                    <TouchableWithoutFeedback onPress={(e) => e.stopPropagation()}>
-                      <ThemedView type='secondaryBackground' style={[styles.bottomSheetContainer, { borderColor: strokeColor }]}>
-                        <View style={{ marginBottom: 16, gap: 8 }}>
-                          <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
-                            <ThemedText type="titleMedium" style={{ textAlign: "center" }}>{modalMessage}</ThemedText>
-                            <TouchableOpacity onPress={closeLoginModal}>
-                              <IconClose />
-                            </TouchableOpacity>
-                          </View>
-                        </View>
-                        <ThemedButton text='Log in' onPress={onLogin} style={{ marginVertical: 10 }}></ThemedButton>
-                      </ThemedView>
-                    </TouchableWithoutFeedback>
-                  </View>
-                </TouchableWithoutFeedback>
-              </Modal>
-            </View>
-          </View>
-        )
-      }
     </AuthModalContext.Provider>
   );
 };
+
 
 // Hook to use the context safely
 export const useAuthModal = (): AuthModalContextType => {

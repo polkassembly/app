@@ -76,6 +76,9 @@ export const BottomSheetProvider = ({ children }: { children: ReactNode }) => {
           backdropComponent={renderBackdrop}
           backgroundStyle={{ backgroundColor: "transparent" }}
           handleComponent={null}
+          enablePanDownToClose
+          keyboardBehavior="interactive"
+          keyboardBlurBehavior="restore"
           animationConfigs={{
             duration: 300
           }}
