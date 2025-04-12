@@ -18,6 +18,7 @@ import { useState, useEffect } from "react";
 import { useWeb2Login } from "@/lib/net/queries/auth";
 import { useBottomSheet } from "@/lib/context/bottomSheetContext";
 import ForgotPassword from "@/lib/components/auth/ForgotPassword";
+import ErrorView from "@/lib/components/auth/ErrorView";
 
 const Colors = {
   primaryBackground: "#222121",
@@ -34,6 +35,8 @@ export default function Web2Auth() {
 
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
+  const [loginError, setLoginError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const { mutateAsync: login, isPending } = useWeb2Login();
   const { openBottomSheet, closeBottomSheet } = useBottomSheet();
@@ -62,6 +65,7 @@ export default function Web2Auth() {
     /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
   async function onPressLogin() {
+    setLoading(true);
     let hasError = false;
 
     if (!email.trim()) {
@@ -81,19 +85,37 @@ export default function Web2Auth() {
       setPasswordError("");
     }
 
-    if (hasError) return;
+    if (hasError) {
+      setLoading(false);
+      return;
+    };
 
-    try {
-      await login({ emailOrUsername: email, password });
-      router.dismissAll();
-      router.replace("/(tabs)");
-    } catch (e) {
-      console.error(e);
-      if (e instanceof AxiosError) {
-        console.error(e.response?.data);
+    await login({ emailOrUsername: email, password },
+      {
+        onError: (e) => {
+          console.log("error", e)
+          if (e instanceof AxiosError) {
+            const message = e.response?.data?.message;
+            console.log(message)
+            if (typeof message === "string") {
+              setLoginError(message.replace(/^.*?:\s*/, '').trim());
+            } else {
+              setLoginError("Login failed. Please try again.");
+            }
+          } else {
+            setLoginError("An unexpected error occurred.");
+          }
+          return;
+        }, onSuccess: () => {
+          router.dismissAll();
+          router.replace("/(tabs)");
+        },
+        onSettled: () => {
+          console.log("done")
+          setLoading(false)
+        }
       }
-      // Optional: show toast or inline error
-    }
+    );
   }
 
   const handleForgotPassword = () => {
@@ -167,6 +189,7 @@ export default function Web2Auth() {
             label="Password"
             password
           />
+          {loginError ? <ErrorView content={loginError} /> : null}
 
           <View
             style={{
@@ -192,8 +215,8 @@ export default function Web2Auth() {
             onPress={onPressLogin}
             text="Log In"
             textType="buttonLarge"
-            disabled={isPending}
-            loading={isPending}
+            disabled={loading}
+            loading={loading}
           />
         </ThemedView>
       </ThemedView>
