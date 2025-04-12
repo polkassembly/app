@@ -41,8 +41,8 @@ const HomeHeader = () => {
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 20, paddingHorizontal: 16 }}>
         <Image
           source={require('@/assets/images/logo-wide.png')}
-          style={{ width: 132, height: 40 }}
-          resizeMode='cover'
+          style={{ width: 132, height: 41 }}
+          resizeMode='contain'
         />
         <View style={{ flexDirection: 'row', gap: 12 }}>
           <View>
