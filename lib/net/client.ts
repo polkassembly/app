@@ -1,7 +1,5 @@
 import axios, { InternalAxiosRequestConfig, AxiosResponse } from "axios";
-import { storage, KEY_COOKIE, KEY_ACCESS_TOKEN } from "@/lib/store";
-import { Alert } from "react-native";
-import { navigate } from "@/lib/navigation";
+import { storage, KEY_COOKIE } from "@/lib/store";
 
 const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL;
 const DEFAULT_NETWORK = "polkadot";
@@ -62,25 +60,8 @@ function storeCookie(response: AxiosResponse) {
   return response;
 }
 
-// Handle 401 Unauthorized
-async function handleUnauthorized(error: any) {
-  if (error.response && error.response.status === 401) {
-    await logoutUser();
-  }
-  return Promise.reject(error);
-}
-
-// Logout user and navigate to login screen
-async function logoutUser() {
-  storage.deleteString(KEY_COOKIE); // Clear stored cookie
-  storage.deleteString(KEY_ACCESS_TOKEN); // Clear access token
-  Alert.alert("Session Expired", "Your session has expired. Please log in again.", [
-    { text: "OK", onPress: () => navigate("/auth") },
-  ]);
-}
-
 // Attach interceptors
 client.interceptors.request.use(attachCookie);
-client.interceptors.response.use(storeCookie, handleUnauthorized);
+client.interceptors.response.use(storeCookie);
 
 export default client;
