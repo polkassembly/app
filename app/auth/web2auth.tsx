@@ -9,6 +9,8 @@ import { ThemedCheckbox, ThemedTextInput } from "@/lib/components/shared";
 import { AxiosError } from "axios";
 import { useState, useEffect } from "react";
 import { useWeb2Login } from "@/lib/net/queries/auth";
+import { useBottomSheet } from "@/lib/context/bottomSheetContext";
+import ForgotPassword from "@/lib/components/auth/ForgotPassword";
 
 const Colors = {
   primaryBackground: "#222121",
@@ -24,6 +26,7 @@ export default function Web2Auth() {
   const [keyboardVisible, setKeyboardVisible] = useState(false);
 
   const { mutateAsync: login, isPending } = useWeb2Login();
+  const { openBottomSheet, closeBottomSheet } = useBottomSheet();
 
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
@@ -65,7 +68,10 @@ export default function Web2Auth() {
     }
   }
 
-  const secondaryBackgroundColor = useThemeColor({}, "secondaryBackground");
+  const handleForgotPassword = () => {
+    openBottomSheet(<ForgotPassword onClose={closeBottomSheet} />)
+  }
+
   const accentColor = useThemeColor({}, "accent");
 
   return (
@@ -76,15 +82,15 @@ export default function Web2Auth() {
       <ThemedView type="secondaryBackground" style={styles.safeAreaView}>
         <View style={styles.headerContainer}>
           <Image style={styles.logo} source={require("@/assets/images/logo-wide.png")} />
-          
+
           {!keyboardVisible && (
-            <Image 
-              style={{ flexGrow: 0.8, flexBasis: 0 }} 
-              resizeMode="contain" 
-              source={require("@/assets/images/auth/qr-auth-screen.gif")} 
+            <Image
+              style={{ flexGrow: 0.8, flexBasis: 0 }}
+              resizeMode="contain"
+              source={require("@/assets/images/auth/qr-auth-screen.gif")}
             />
           )}
-          
+
           <View style={styles.loginText}>
             <ThemedText type="display">Login to the App</ThemedText>
             <ThemedText type="bodyMedium2" colorName="mediumText">
@@ -92,7 +98,7 @@ export default function Web2Auth() {
             </ThemedText>
           </View>
         </View>
-        
+
         <Link href="/auth/loginOptionsScreen" style={{ paddingLeft: 24, paddingBottom: 16 }}>
           <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
             <Ionicons name="arrow-back" size={16} color={accentColor} />
@@ -126,7 +132,7 @@ export default function Web2Auth() {
               label="Remember me"
             />
 
-            <ThemedButton borderless text="Forgot Password?" />
+            <ThemedButton borderless text="Forgot Password?" onPress={handleForgotPassword} />
           </View>
 
           <ThemedButton
