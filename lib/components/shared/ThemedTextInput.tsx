@@ -23,7 +23,7 @@ export default function ThemedTextInput({
           <ThemedText colorName="mediumText" type="bodySmall1">
             {label}
           </ThemedText>
-          <ThemedText colorName="error" type="bodySmall1">*</ThemedText>
+          { required && <ThemedText colorName="error" type="bodySmall1">*</ThemedText>}
         </View>
       )}
 

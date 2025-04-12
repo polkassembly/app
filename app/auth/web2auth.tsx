@@ -93,10 +93,9 @@ export default function Web2Auth() {
     await login({ emailOrUsername: email, password },
       {
         onError: (e) => {
-          console.log("error", e)
+          console.error("Error authenticating", e)
           if (e instanceof AxiosError) {
             const message = e.response?.data?.message;
-            console.log(message)
             if (typeof message === "string") {
               setLoginError(message.replace(/^.*?:\s*/, '').trim());
             } else {
@@ -111,7 +110,6 @@ export default function Web2Auth() {
           router.replace("/(tabs)");
         },
         onSettled: () => {
-          console.log("done")
           setLoading(false)
         }
       }
@@ -174,6 +172,7 @@ export default function Web2Auth() {
             }}
             errorText={emailError}
             label="Email or Username"
+            required
             textContentType="emailAddress"
             keyboardType="email-address"
             autoCapitalize="none"
@@ -187,6 +186,7 @@ export default function Web2Auth() {
             }}
             errorText={passwordError}
             label="Password"
+            required
             password
           />
           {loginError ? <ErrorView content={loginError} /> : null}
