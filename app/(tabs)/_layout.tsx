@@ -1,7 +1,7 @@
 import { Tabs } from "expo-router";
 import React from "react";
 import { StyleSheet, Pressable } from "react-native";
-import Svg, { Ellipse } from "react-native-svg";
+import Svg, { Defs, Ellipse, LinearGradient, Stop } from "react-native-svg";
 import { Colors } from "@/lib/constants/Colors";
 import { BottomTabBarButtonProps } from "@react-navigation/bottom-tabs";
 import IconBrowser from "@/lib/components/icons/icon-browser";
@@ -105,9 +105,18 @@ function TabBarButton(props: BottomTabBarButtonProps) {
 function TabBarBackground() {
   return (
     <Svg width={"100%"} height={"100%"} fill={"transparent"}>
+      <Defs>
+        <LinearGradient id="borderGradient" x1="100%" y1="0%" x2="0%" y2="0%">
+          <Stop offset="9.13%" stopColor="#000000" />
+          <Stop offset="50.62%" stopColor="#666666" />
+          <Stop offset="88.92%" stopColor="#000000" />
+        </LinearGradient>
+      </Defs>
       <Ellipse
-        fill={"#000000"}
-        cx={"50%"}
+        fill="#000000"
+        stroke="url(#borderGradient)"
+        strokeWidth={1}
+        cx="50%"
         cy={250 / 2}
         rx={660 / 2}
         ry={250 / 2}
