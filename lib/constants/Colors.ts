@@ -7,6 +7,7 @@ const colorAccent = "#E5007A";
 export const Colors = {
   light: {
     accent: colorAccent,
+    error: "#F53C3C",
     background: "#161616",
     secondaryBackground: "#000000",
     container: "#000000",
@@ -30,6 +31,7 @@ export const Colors = {
   },
   dark: {
     accent: colorAccent,
+    error: "#F53C3C",
     background: "#161616",
     secondaryBackground: "#000000",
     container: "#000000",
@@ -63,7 +65,7 @@ export const bgColors = {
       technical: "#FEF7DD",
       general: "#FDF5F0",
     },
-  }, 
+  },
   dark: {
     originBadges: {
       default: "#333333",
