@@ -33,17 +33,18 @@ function CommentCard({ comment, commentDisabled }: CommentCardProps) {
 
 	// Local state to manage like/dislike actions
 	const [isLiked, setIsLiked] = useState<boolean>(
-		comment.reactions.filter((r) => r.reaction === EReaction.like && r.userId === userProfile?.id).length > 0
+		(comment.reactions ?? []).some((r) => r.reaction === EReaction.like && r.userId === userProfile?.id)
 	);
 	const [isDisliked, setIsDisliked] = useState<boolean>(
-		comment.reactions.filter((r) => r.reaction === EReaction.dislike && r.userId === userProfile?.id).length > 0
+		(comment.reactions ?? []).some((r) => r.reaction === EReaction.dislike && r.userId === userProfile?.id)
 	);
 	const [likes, setLikes] = useState<number>(
-		comment.reactions.filter((r) => r.reaction === EReaction.like).length
+		(comment.reactions ?? []).filter((r) => r.reaction === EReaction.like).length
 	);
 	const [dislikes, setDislikes] = useState<number>(
-		comment.reactions.filter((r) => r.reaction === EReaction.dislike).length
+		(comment.reactions ?? []).filter((r) => r.reaction === EReaction.dislike).length
 	);
+
 	const [commentsCount, setCommentsCount] = useState<number>(
 		comment.children?.length || 0
 	);
@@ -67,7 +68,7 @@ function CommentCard({ comment, commentDisabled }: CommentCardProps) {
 	// Debounced likehandler
 	const handleLike = useCallback(
 		debounce(() => {
-			if(!userProfile) {
+			if (!userProfile) {
 				openLoginModal("Please login to like comment", false);
 				return;
 			}
@@ -266,6 +267,10 @@ function CommentCard({ comment, commentDisabled }: CommentCardProps) {
 			createdAt: comment?.createdAt.toString(),
 			parentComment: comment.content,
 			parentCommentId: comment.id,
+			onCommentSuccess: () => {
+				setCommentsCount((prev) => prev + 1);
+				setShowReplies(true);
+			}
 		})
 	};
 	return (

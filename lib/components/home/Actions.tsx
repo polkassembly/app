@@ -1,7 +1,5 @@
-import React from "react";
+import React, { useState } from "react";
 import { StyleSheet, View } from "react-native";
-import { ResizeMode, Video } from "expo-av";
-import { LinearGradient } from "expo-linear-gradient";
 import { openBrowserAsync } from "expo-web-browser";
 import { router } from "expo-router";
 import { Skeleton } from "moti/skeleton";
@@ -18,13 +16,47 @@ function Actions() {
   const strokeColor = useThemeColor({}, "stroke");
   const { openLoginModal } = useAuthModal();
   const user = useProfileStore((state) => state.profile);
+  const [isNavigating, setIsNavigating] = useState(false);
+
+  const navigateOnce = async (path: string) => {
+    if (isNavigating) return; // Prevent navigation if already navigating
+    
+    setIsNavigating(true);
+    
+    try {
+      await router.push(path as any);
+    } catch (error) {
+      console.error("Navigation error:", error);
+    } finally {
+      // Reset navigation state after a delay
+      setTimeout(() => {
+        setIsNavigating(false);
+      }, 800);
+    }
+  };
+
+  const handleExternalLink = async (url: string) => {
+    if (isNavigating) return;
+    
+    setIsNavigating(true);
+    
+    try {
+      await openBrowserAsync(url);
+    } catch (error) {
+      console.error("Failed to open external link:", error);
+    } finally {
+      setTimeout(() => {
+        setIsNavigating(false);
+      }, 800);
+    }
+  };
 
   const handleVote = () => {
     if (!user) {
       openLoginModal("Login to access batch vote", false);
       return;
     }
-    router.push("/batch-vote");
+    navigateOnce("/batch-vote");
   };
 
   const handleSettings = () => {
@@ -32,7 +64,7 @@ function Actions() {
       openLoginModal("Login to access settings", false);
       return;
     }
-    router.push("/settings");
+    navigateOnce("/settings");
   };
 
   return (
@@ -40,22 +72,6 @@ function Actions() {
       type="secondaryBackground"
       style={[styles.container, { borderColor: strokeColor }]}
     >
-      <Video
-        source={require("@/assets/videos/actions.mp4")}
-        style={[styles.video, { bottom: -200, opacity: 0.8 }]}
-        resizeMode={ResizeMode.COVER}
-        shouldPlay
-        isLooping
-        isMuted
-      />
-
-      <LinearGradient
-        colors={["rgba(0, 0, 0, 0)", "#000000"]}
-        start={{ x: 0.5, y: 0.18 }}
-        end={{ x: 0.5, y: 0.46 }}
-        style={[styles.gradient, { bottom: -100 }]}
-      />
-
       <View style={styles.content}>
         <ThemedText type="bodySmall">EXPLORE ACTIONS</ThemedText>
         <View style={styles.actionsRow}>
@@ -66,6 +82,7 @@ function Actions() {
             iconSize={30}
             bordered
             onPress={handleVote}
+            disabled={isNavigating}
           />
           <ActionButton
             Icon={IconDelegate}
@@ -73,7 +90,8 @@ function Actions() {
             containerSize={68}
             iconSize={30}
             bordered
-            onPress={() => openBrowserAsync("https://polkadot.polkassembly.io/delegation")}
+            onPress={() => handleExternalLink("https://polkadot.polkassembly.io/delegation")}
+            disabled={isNavigating}
           />
           <ActionButton
             Icon={IconBounties}
@@ -81,7 +99,8 @@ function Actions() {
             containerSize={68}
             iconSize={30}
             bordered
-            onPress={() => openBrowserAsync("https://polkadot.polkassembly.io/bounties")}
+            onPress={() => handleExternalLink("https://polkadot.polkassembly.io/bounties")}
+            disabled={isNavigating}
           />
           <ActionButton
             Icon={IconSettings}
@@ -90,6 +109,7 @@ function Actions() {
             iconSize={30}
             bordered
             onPress={handleSettings}
+            disabled={isNavigating}
           />
         </View>
       </View>
