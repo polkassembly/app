@@ -1,4 +1,11 @@
-import { StyleSheet, View, Image, Keyboard, KeyboardAvoidingView, Platform } from "react-native";
+import {
+  StyleSheet,
+  View,
+  Image,
+  Keyboard,
+  KeyboardAvoidingView,
+  Platform,
+} from "react-native";
 import { Link, router } from "expo-router";
 import { ThemedView } from "@/lib/components/shared/View";
 import { ThemedText } from "@/lib/components/shared/text";
@@ -25,18 +32,21 @@ export default function Web2Auth() {
   const [password, setPassword] = useState("");
   const [keyboardVisible, setKeyboardVisible] = useState(false);
 
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+
   const { mutateAsync: login, isPending } = useWeb2Login();
   const { openBottomSheet, closeBottomSheet } = useBottomSheet();
 
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
-      'keyboardDidShow',
+      "keyboardDidShow",
       () => {
         setKeyboardVisible(true);
       }
     );
     const keyboardDidHideListener = Keyboard.addListener(
-      'keyboardDidHide',
+      "keyboardDidHide",
       () => {
         setKeyboardVisible(false);
       }
@@ -48,12 +58,33 @@ export default function Web2Auth() {
     };
   }, []);
 
+  const isValidEmail = (email: string) =>
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
   async function onPressLogin() {
+    let hasError = false;
+
+    if (!email.trim()) {
+      setEmailError("Email is required.");
+      hasError = true;
+    } else if (!isValidEmail(email)) {
+      setEmailError("Please enter a valid email.");
+      hasError = true;
+    } else {
+      setEmailError("");
+    }
+
+    if (!password.trim()) {
+      setPasswordError("Password is required.");
+      hasError = true;
+    } else {
+      setPasswordError("");
+    }
+
+    if (hasError) return;
+
     try {
-      await login({
-        emailOrUsername: email,
-        password,
-      });
+      await login({ emailOrUsername: email, password });
       router.dismissAll();
       router.replace("/(tabs)");
     } catch (e) {
@@ -61,16 +92,13 @@ export default function Web2Auth() {
       if (e instanceof AxiosError) {
         console.error(e.response?.data);
       }
-
-      // FIXME: report errors to UI
-
-      return;
+      // Optional: show toast or inline error
     }
   }
 
   const handleForgotPassword = () => {
-    openBottomSheet(<ForgotPassword onClose={closeBottomSheet} />)
-  }
+    openBottomSheet(<ForgotPassword onClose={closeBottomSheet} />);
+  };
 
   const accentColor = useThemeColor({}, "accent");
 
@@ -81,14 +109,18 @@ export default function Web2Auth() {
     >
       <ThemedView type="secondaryBackground" style={styles.safeAreaView}>
         <View style={styles.headerContainer}>
-          <Image style={styles.logo} source={require("@/assets/images/logo-wide.png")} />
-
           {!keyboardVisible && (
-            <Image
-              style={{ flexGrow: 0.8, flexBasis: 0 }}
-              resizeMode="contain"
-              source={require("@/assets/images/auth/qr-auth-screen.gif")}
-            />
+            <>
+              <Image
+                style={styles.logo}
+                source={require("@/assets/images/logo-wide.png")}
+              />
+              <Image
+                style={{ flexGrow: 0.8, flexBasis: 0 }}
+                resizeMode="contain"
+                source={require("@/assets/images/auth/qr-auth-screen.gif")}
+              />
+            </>
           )}
 
           <View style={styles.loginText}>
@@ -99,26 +131,43 @@ export default function Web2Auth() {
           </View>
         </View>
 
-        <Link href="/auth/loginOptionsScreen" style={{ paddingLeft: 24, paddingBottom: 16 }}>
+        <Link
+          href="/auth/loginOptionsScreen"
+          style={{ paddingLeft: 24, paddingBottom: 16 }}
+        >
           <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
             <Ionicons name="arrow-back" size={16} color={accentColor} />
-            <ThemedText type="bodyMedium2" colorName="accent">Go Back</ThemedText>
+            <ThemedText type="bodyMedium2" colorName="accent">
+              Go Back
+            </ThemedText>
           </View>
         </Link>
 
         <ThemedView type="background" style={styles.loginDescContainer}>
           <ThemedTextInput
             value={email}
-            onChangeText={setEmail}
+            onChangeText={(text) => {
+              setEmail(text);
+              if (emailError) setEmailError("");
+            }}
+            errorText={emailError}
             label="Email or Username"
             textContentType="emailAddress"
+            keyboardType="email-address"
+            autoCapitalize="none"
           />
+
           <ThemedTextInput
             value={password}
-            onChangeText={setPassword}
+            onChangeText={(text) => {
+              setPassword(text);
+              if (passwordError) setPasswordError("");
+            }}
+            errorText={passwordError}
             label="Password"
             password
           />
+
           <View
             style={{
               flexDirection: "row",
@@ -132,7 +181,11 @@ export default function Web2Auth() {
               label="Remember me"
             />
 
-            <ThemedButton borderless text="Forgot Password?" onPress={handleForgotPassword} />
+            <ThemedButton
+              borderless
+              text="Forgot Password?"
+              onPress={handleForgotPassword}
+            />
           </View>
 
           <ThemedButton
@@ -179,12 +232,5 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     padding: 24,
     gap: 16,
-  },
-  loginDescText: {
-    backgroundColor: Colors.primaryBackground,
-    color: Colors.textPrimary,
-    borderRadius: 7,
-    paddingHorizontal: 10,
-    paddingVertical: 10,
   },
 });
