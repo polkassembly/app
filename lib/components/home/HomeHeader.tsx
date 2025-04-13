@@ -1,36 +1,57 @@
 import { useAuthModal } from "@/lib/context/authContext";
 import { useProfileStore } from "@/lib/store/profileStore";
 import { router } from "expo-router";
-import { View, TouchableOpacity } from "react-native";
+import { View, TouchableOpacity, Image } from "react-native";
 import { IconVote } from "../icons/Profile";
 import { UserAvatar } from "../shared";
 import { ActionButton } from "../shared/button";
 import { RadialBackgroundWrapper } from "../shared/View";
-import { Image } from "react-native";
 import { useGetCartItems } from "@/lib/net/queries/actions";
 import { useThemeColor } from "@/lib/hooks";
+import { useState } from "react";
 
 const HomeHeader = () => {
   // Get user from profile store
   const user = useProfileStore((state) => state.profile);
-  // Get accent color
+
   const accentColor = useThemeColor({}, "accent");
-  // Get auth modal
+
+  const [isNavigating, setIsNavigating] = useState(false);
+
   const { openLoginModal } = useAuthModal();
-  // Get cart items - place this hook after the other hooks to maintain the same order
   const { data: cart } = useGetCartItems();
 
+  const navigateOnce = async (path: string) => {
+    if (isNavigating) return; // Prevent navigation if already navigating
+    
+    setIsNavigating(true);
+    
+    try {
+      router.push(path as any);
+    } catch (error) {
+      console.error("Navigation error:", error);
+    } finally {
+      setTimeout(() => {
+        setIsNavigating(false);
+      }, 800);
+    }
+  };
+
   const handleProfilePress = () => {
+    if (isNavigating) return;
+    
     if (user) {
-      router.push(`/profile/${user.id}`);
+      navigateOnce(`/profile/${user.id}`);
     } else {
       openLoginModal("Login to access your profile", false);
     }
   };
 
   const handleCartPress = () => {
+    if (isNavigating) return;
+    
     if (user) {
-      router.push("/batch-vote/voted-proposals");
+      navigateOnce("/batch-vote/voted-proposals");
     } else {
       openLoginModal("Login to access your cart", false);
     }
@@ -52,6 +73,7 @@ const HomeHeader = () => {
               containerType="background"
               iconSize={20}
               onPress={handleCartPress}
+              disabled={isNavigating}
             />
             {
               cart && (
@@ -63,6 +85,7 @@ const HomeHeader = () => {
           </View>
           <TouchableOpacity
             onPress={handleProfilePress}
+            disabled={isNavigating}
           >
             <UserAvatar avatarUrl={user?.profileDetails?.image || ""} width={30} height={30} />
           </TouchableOpacity>

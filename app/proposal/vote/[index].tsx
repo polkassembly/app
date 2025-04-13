@@ -31,8 +31,12 @@ export default function BatchVotingScreen() {
     nay: 1
   });
   const [conviction, setConviction] = useState<number>(0);
+  const [isNavigating, setIsNavigating] = useState(false);
 
   async function onPressAddToCart() {
+    if (isNavigating) return;
+    setIsNavigating(true);
+
     let amount: { aye?: string, nay?: string, abstain?: string} = {};
     let amountSuccess;
     
@@ -58,6 +62,7 @@ export default function BatchVotingScreen() {
     });
 
     router.push(`/proposal/vote/success/${index}?dot=${amountSuccess}&conviction=${conviction}&decision=${vote}&proposalType=${proposalType}`);
+    setIsNavigating(false);
   }
 
   return (
@@ -96,7 +101,7 @@ export default function BatchVotingScreen() {
       </ScrollView>
 
       <View style={{ position: "absolute", bottom: 0, left: 0, right: 0 }}>
-        <BottomButton onPress={onPressAddToCart}>Add to Cart</BottomButton>
+        <BottomButton onPress={onPressAddToCart} loading={isNavigating} disabled={isNavigating} >Add to Cart</BottomButton>
       </View>
     </View>
   );
