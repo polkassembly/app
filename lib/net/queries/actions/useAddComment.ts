@@ -1,7 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { EProposalType, ICommentResponse } from "@/lib/types";
-import { buildActivityFeedQueryKey } from "../post/useActivityFeed";
-import { buildProposalByIndexQueryKey } from "../post/useProposalByIndex";
 import { buildProposalCommentsQueryKey } from "../post";
 import { ENetwork } from "@/lib/types/post";
 import { EDataSource } from "@/lib/types/comment";
@@ -51,6 +49,8 @@ const useAddComment = () => {
     onMutate: async ({ pathParams, bodyParams }) => {
       if (!userInfo) return;
 
+      //TODO: Increment the comment count in the activity feed
+
       // Create the query key for the proposal comments.
       const commentsQueryKey = buildProposalCommentsQueryKey({
         proposalType: pathParams.proposalType.toString(),
@@ -75,7 +75,6 @@ const useAddComment = () => {
         indexOrHash: pathParams.postIndexOrHash,
         parentCommentId: bodyParams.parentCommentId || null,
         isDeleted: false,
-        address: bodyParams.address || null,
         dataSource: EDataSource.POLKASSEMBLY,
         user: { ...userInfo },
         reactions: []
@@ -113,12 +112,15 @@ const useAddComment = () => {
     },
     onSettled: (_, __, { pathParams }) => {
       // Invalidate queries to fetch fresh data from the backend.
-      queryClient.invalidateQueries({
-        queryKey: buildProposalCommentsQueryKey({
-          proposalType: pathParams.proposalType,
-          proposalId: pathParams.postIndexOrHash,
-        }),
-      });
+      // Add a delay as the comments api is not instant.
+      setTimeout(() => {
+        queryClient.invalidateQueries({
+          queryKey: buildProposalCommentsQueryKey({
+            proposalType: pathParams.proposalType,
+            proposalId: pathParams.postIndexOrHash,
+          }),
+        });
+      }, 60 * 1000);
     },
   });
 };
