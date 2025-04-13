@@ -2,49 +2,71 @@ import { useThemeColor } from "@/lib/hooks/useThemeColor";
 import { useGetCartItems } from "@/lib/net/queries/actions";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
+import React, { useState } from "react";
 import { View, TouchableOpacity, StyleSheet } from "react-native";
 import IconVotedProposal from "../icons/proposals/icon-voted-proposal";
 import { ThemedText } from "../shared/text/ThemedText";
 
 const CartItemsPreview = () => {
 	const { data: cartItems, isLoading } = useGetCartItems();
-	const colorStroke = useThemeColor({}, "stroke");
 	const accent = useThemeColor({}, "accent");
 	const router = useRouter();
+	const [isNavigating, setIsNavigating] = useState(false);
 
-	if (!cartItems || cartItems.length === 0 || isLoading) {
-		return (
-			<View style={[styles.floatingPreview, { backgroundColor: "#FFE5F3" }]}>
-				<IconVotedProposal />
-				<View style={styles.previewText}>
-					<ThemedText style={{ color: "#000" }}>Preview</ThemedText>
-					<ThemedText style={{ color: colorStroke }}>{ isLoading ? "loading.." : "0 Proposals"}</ThemedText>
-				</View>
-				<TouchableOpacity>
-					<View style={[styles.iconView, { backgroundColor: accent }]}>
-						<Ionicons name="chevron-forward" color="white" size={30} />
-					</View>
-				</TouchableOpacity>
-			</View>
-		)
-	}
+	const handlePress = () => {
+		if (isNavigating) return;
+		setIsNavigating(true);
+		router.push("/batch-vote/voted-proposals");
+		setTimeout(() => {
+			setIsNavigating(false);
+		}, 1000);
+};
 
+if (!cartItems || cartItems.length === 0 || isLoading) {
 	return (
 		<View style={[styles.floatingPreview, { backgroundColor: "#FFE5F3" }]}>
-			<IconVotedProposal />
+			<IconVotedProposal iconHeight={32} iconWidth={32} />
 			<View style={styles.previewText}>
-				<ThemedText style={{ color: "#000" }}>Preview</ThemedText>
-				<ThemedText style={{ color: colorStroke }}>
-					{cartItems.length} Proposals
+				<ThemedText type="bodyMedium1" style={{ color: "#243A57" }}>Preview</ThemedText>
+				<ThemedText type="bodySmall" style={{ color: "#485F7D" }}>
+					{isLoading ? "loading.." : "0 Proposals"}
 				</ThemedText>
 			</View>
-			<TouchableOpacity onPress={() => router.push("/batch-vote/voted-proposals")}>
-				<View style={[styles.iconView, { backgroundColor: accent }]}>
-					<Ionicons name="chevron-forward" color="white" size={30} />
+			<TouchableOpacity disabled>
+				<View style={[styles.iconView, { backgroundColor: accent, opacity: 0.5 }]}>
+					<Ionicons name="chevron-forward" color="white" size={16} />
 				</View>
 			</TouchableOpacity>
 		</View>
 	);
+}
+
+return (
+	<View style={[styles.floatingPreview, { backgroundColor: "#FFE5F3" }]}>
+		<IconVotedProposal iconHeight={32} iconWidth={32} />
+		<View style={styles.previewText}>
+			<ThemedText type="bodyMedium1" style={{ color: "#243A57", fontFamily: "Poppins-SemiBold" }}>Preview</ThemedText>
+			<ThemedText type="bodySmall" style={{ color: "#485F7D" }}>
+				{cartItems.length} Proposals
+			</ThemedText>
+		</View>
+		<TouchableOpacity
+			onPress={handlePress}
+			disabled={isNavigating}
+		>
+			<View
+				style={[
+					styles.iconView,
+					{
+						backgroundColor: accent,
+					},
+				]}
+			>
+				<Ionicons name="chevron-forward" color="white" size={16} />
+			</View>
+		</TouchableOpacity>
+	</View>
+);
 };
 
 const styles = StyleSheet.create({
@@ -68,7 +90,9 @@ const styles = StyleSheet.create({
 		width: 30,
 		height: 30,
 		borderRadius: 15,
+		justifyContent: "center",
+		alignItems: "center",
 	},
-})
+});
 
 export default CartItemsPreview;
