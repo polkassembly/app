@@ -4,7 +4,7 @@ import { NavigationDarkTheme } from "@/lib/constants/Colors";
 import { useAuthStore } from "@/lib/store/authStore";
 import getIdFromToken from "@/lib/util/jwt";
 import { ThemeProvider } from "@react-navigation/native";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QueryClientProvider } from "@tanstack/react-query";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
@@ -21,12 +21,10 @@ import { CommentSheetProvider } from "@/lib/context/commentContext";
 import { activityFeedFunction, buildActivityFeedQueryKey } from "@/lib/net/queries/post";
 import { ACTIVITY_FEED_LIMIT } from "@/lib/net/queries/post/useActivityFeed";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import queryClient from "@/lib/net/queryClient";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
-
-const queryClient = new QueryClient();
-
 const fonts = {
   PoppinsRegular: require("../assets/fonts/Poppins-Regular.ttf"),
   PoppinsMedium: require("@/assets/fonts/Poppins-Medium.ttf"),

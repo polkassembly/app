@@ -2,7 +2,6 @@ import IntroPager from "@/lib/components/shared/IntroPager";
 import { ThemedView } from "@/lib/components/shared/View";
 import { ThemedButton } from "@/lib/components/shared/button";
 import { ThemedText } from "@/lib/components/shared/text";
-import { useThemeColor } from "@/lib/hooks/useThemeColor";
 import { Link } from "expo-router";
 import React from "react";
 import { Image, StyleSheet, View } from "react-native";
