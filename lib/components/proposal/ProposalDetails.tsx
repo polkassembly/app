@@ -26,6 +26,9 @@ import { ThemedText } from "../shared/text";
 import { ThemedView, HorizontalSeparator } from "../shared/View";
 import { useProfileStore } from "@/lib/store/profileStore";
 import { useAuthModal } from "@/lib/context/authContext";
+import { ICommentResponse } from "@/lib/types";
+import { ECommentSentiment } from "@/lib/types/comment";
+import { IconSentiment } from "../icons/proposals";
 
 interface ProposalDetailsProps {
   post: any;
@@ -38,6 +41,7 @@ interface ProposalDetailsProps {
 
 export function ProposalDetails({ post, openFullDetails, withoutFullDetails, withoutHeaderText, withoutProposalCardIndex = true, withVotingButton = true }: ProposalDetailsProps) {
   const accentColor = useThemeColor({}, "accent");
+  const [isNavigating, setIsNavigating] = useState(false);
   const user = useProfileStore((state) => state.profile);
   const { openLoginModal } = useAuthModal();
 
@@ -57,11 +61,16 @@ export function ProposalDetails({ post, openFullDetails, withoutFullDetails, wit
   const nayPercent = totalValue.isZero() ? 0 : calculatePercentage(post.onChainInfo?.voteMetrics?.nay.value || "0", totalValue);
 
   const handleVote = () => {
+    if (isNavigating) return; // Prevent navigation if already navigating
+    setIsNavigating(true);
     if (!user) {
       openLoginModal("Login to vote on proposal", false);
       return;
     }
     router.push(`/proposal/vote/${post.index}?proposalType=${post.proposalType}`)
+    setTimeout(() => {
+      setIsNavigating(false);
+    }, 800);
   }
 
   return (
@@ -89,6 +98,7 @@ export function ProposalDetails({ post, openFullDetails, withoutFullDetails, wit
                 textType="bodyMedium2"
                 style={{ paddingVertical: 8, borderRadius: 8 }}
                 onPress={handleVote}
+                disabled={isNavigating}
               />
             )
           }
@@ -248,10 +258,58 @@ function Comments({ proposalIndex, proposalType }: { proposalIndex: string; prop
     proposalId: proposalIndex.toString(),
   });
 
+  const [sentimentStats, setSentimentStats] = useState<Record<ECommentSentiment, number>>({
+    [ECommentSentiment.AGAINST]: 0,
+    [ECommentSentiment.SLIGHTLY_AGAINST]: 0,
+    [ECommentSentiment.NEUTRAL]: 0,
+    [ECommentSentiment.SLIGHTLY_FOR]: 0,
+    [ECommentSentiment.FOR]: 0,
+  });
+  const [sortedSentiments, setSortedSentiments] = useState<[ECommentSentiment, number][]>([]);
+
+  // Helper: Flatten nested comments and remove comments without sentiment
+  const flattenComments = (comments: ICommentResponse[]): ICommentResponse[] => {
+    return comments.reduce((acc: ICommentResponse[], comment) => {
+      if (comment.aiSentiment) acc.push(comment);
+      if (comment.children?.length) {
+        acc.push(...flattenComments(comment.children));
+      }
+      return acc;
+    }, []);
+  };
+
+  // Calculate sentiment percentages
   useEffect(() => {
-    comments
+    if (!comments) return;
+
+    const allComments = flattenComments(comments);
+    const total = allComments.length;
+
+    const count: Record<ECommentSentiment, number> = {
+      [ECommentSentiment.AGAINST]: 0,
+      [ECommentSentiment.SLIGHTLY_AGAINST]: 0,
+      [ECommentSentiment.NEUTRAL]: 0,
+      [ECommentSentiment.SLIGHTLY_FOR]: 0,
+      [ECommentSentiment.FOR]: 0,
+    };
+
+    for (const comment of allComments) {
+      console.log(comment.aiSentiment)
+      if (comment.aiSentiment && count.hasOwnProperty(comment.aiSentiment)) {
+        count[comment.aiSentiment]++;
+      }
+    }
+
+    console.log("Sentiment Count:", count, "Total:", total);
+
+    const percentages = Object.fromEntries(
+      Object.entries(count).map(([key, value]) => [key, total ? Math.round((value / total) * 100) : 0])
+    ) as Record<ECommentSentiment, number>;
+
+    const sorted = (Object.entries(percentages) as [ECommentSentiment, number][])
+      .sort(([, aPct], [, bPct]) => bPct - aPct);
+    setSortedSentiments(sorted)
   }, [comments]);
-  const insets = useSafeAreaInsets();
 
   const getTotalLength = (arr: any[]) =>
     arr.reduce((sum, item) => {
@@ -271,15 +329,25 @@ function Comments({ proposalIndex, proposalType }: { proposalIndex: string; prop
         },
       ]}
     >
-      <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
-        <ThemedText type="bodyLarge">Replies </ThemedText>
-        {comments && (
-          <View style={{ backgroundColor: "#E5E5FD", paddingHorizontal: 4, borderRadius: 4 }}>
-            <ThemedText type="bodySmall1" style={{ color: "#79767D", lineHeight: 18 }}>
-              {getTotalLength(comments)}
-            </ThemedText>
-          </View>
-        )}
+      <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+        <View style={{ flexDirection: "row", gap: 4, alignItems: "center" }}>
+          <ThemedText type="bodyLarge">Replies </ThemedText>
+          {comments && (
+            <View style={{ backgroundColor: "#E5E5FD", paddingHorizontal: 4, borderRadius: 4 }}>
+              <ThemedText type="bodySmall1" style={{ color: "#79767D", lineHeight: 18 }}>
+                {getTotalLength(comments)}
+              </ThemedText>
+            </View>
+          )}
+        </View>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+          {sortedSentiments.map(([sentiment, pct]) => (
+            <View key={sentiment} style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+              <IconSentiment sentiment={sentiment} iconWidth={16} iconHeight={16} />
+              <ThemedText type="bodySmall1">{pct}%</ThemedText>
+            </View>
+          ))}
+        </View>
       </View>
       <View style={{ gap: 16 }}>
         {isLoading ? (
@@ -291,6 +359,7 @@ function Comments({ proposalIndex, proposalType }: { proposalIndex: string; prop
     </ThemedView>
   );
 }
+
 
 const styles = StyleSheet.create({
   box: {

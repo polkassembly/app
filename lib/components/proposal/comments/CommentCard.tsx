@@ -21,6 +21,8 @@ import ProfileCard from "../../profile/ProfileCard";
 import { useCommentSheet } from "@/lib/context/commentContext";
 import { useAuthModal } from "@/lib/context/authContext";
 import { ThemedMarkdownDisplay } from "../../shared/ThemedMarkdownDisplay";
+import { IconSentiment } from "../../icons/proposals";
+import { ECommentSentiment } from "../../icons/proposals/icon-sentiment";
 
 interface CommentCardProps {
 	comment: ICommentResponse;
@@ -290,12 +292,26 @@ function CommentCard({ comment, commentDisabled }: CommentCardProps) {
 			</View>
 			<View style={styles.commentContainer}>
 				<View style={styles.headerContainer}>
-					<TouchableOpacity onPress={handleOpenProfile}>
-						<ThemedText type="bodySmall">
-							{comment.user.username}
-						</ThemedText>
-					</TouchableOpacity>
-					<ThemedText type="bodySmall3" colorName="mediumText" >{formatTime(new Date(comment.createdAt))}</ThemedText>
+					<View style={{ flexDirection: "row", gap: 4, alignItems: "center" }}>
+						<TouchableOpacity onPress={handleOpenProfile}>
+							<ThemedText type="bodySmall">
+								{comment.user.username}
+							</ThemedText>
+						</TouchableOpacity>
+						<ThemedText type="bodySmall3" colorName="mediumText" >{formatTime(new Date(comment.createdAt))}</ThemedText>
+					</View>
+					{
+						comment.aiSentiment && (
+							<View>
+								<IconSentiment
+									sentiment={comment.aiSentiment}
+									color="#F385BF"
+									iconWidth={16}
+									iconHeight={16}
+								/>
+							</View>
+						)
+					}
 				</View>
 				<ThemedMarkdownDisplay
 					content={comment.content}
@@ -364,6 +380,7 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 		gap: 4,
 		marginVertical: 4,
+		justifyContent: "space-between"
 	},
 	commentActionsContainer: {
 		flexDirection: "row",
