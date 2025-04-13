@@ -287,7 +287,7 @@ function Comments({ proposalIndex, proposalType }: { proposalIndex: string; prop
     };
 
     for (const comment of allComments) {
-      if (comment.aiSentiment && count.hasOwnProperty(comment.aiSentiment)) {
+      if (comment.aiSentiment && Object.hasOwn(count, comment.aiSentiment)) {
         count[comment.aiSentiment]++;
       }
     }

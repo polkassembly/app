@@ -1,14 +1,7 @@
-import Svg, { Path, Circle, G, Defs, ClipPath, Rect } from "react-native-svg";
+import Svg, { Path, Circle } from "react-native-svg";
 import { ViewStyle } from "react-native";
 import { memo } from "react";
-
-export enum ECommentSentiment {
-  AGAINST = 'against',
-  SLIGHTLY_AGAINST = 'slightly_against',
-  NEUTRAL = 'neutral',
-  SLIGHTLY_FOR = 'slightly_for',
-  FOR = 'for',
-}
+import { ECommentSentiment } from "@/lib/types/comment";
 
 interface SentimentIconProps {
   sentiment: ECommentSentiment;
@@ -41,8 +34,10 @@ const IconSentiment = ({
     ),
     [ECommentSentiment.SLIGHTLY_FOR]: (
       <Path
-        d="M8.26085 9.77994C9.06774 9.77994 9.87463 9.78228 10.6815 9.77806C10.8699 9.77713 10.9791 9.88398 11.055 10.0293C11.1267 10.1666 11.0868 10.2997 10.9931 10.4206C9.9585 11.7596 8.11372 12.1762 6.61146 11.4038C6.14429 11.1639 5.74788 10.8344 5.42831 10.415C5.254 10.1863 5.32381 9.92803 5.59278 9.83383C5.68555 9.8015 5.78817 9.78181 5.88657 9.78134C6.678 9.77713 7.46942 9.779 8.26038 9.779L8.26085 9.77994Z"
-        fill={color}
+        d="M5.5 10.3333C6.10808 11.1429 7.0762 11.6667 8.16667 11.6667C9.25713 11.6667 10.2253 11.1429 10.8333 10.3333"
+        stroke={color}
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     ),
     [ECommentSentiment.NEUTRAL]: (
