@@ -257,15 +257,8 @@ function Comments({ proposalIndex, proposalType }: { proposalIndex: string; prop
     proposalType: proposalType.toString(),
     proposalId: proposalIndex.toString(),
   });
-
-  const [sentimentStats, setSentimentStats] = useState<Record<ECommentSentiment, number>>({
-    [ECommentSentiment.AGAINST]: 0,
-    [ECommentSentiment.SLIGHTLY_AGAINST]: 0,
-    [ECommentSentiment.NEUTRAL]: 0,
-    [ECommentSentiment.SLIGHTLY_FOR]: 0,
-    [ECommentSentiment.FOR]: 0,
-  });
   const [sortedSentiments, setSortedSentiments] = useState<[ECommentSentiment, number][]>([]);
+  const accentColor = useThemeColor({}, "accent");
 
   // Helper: Flatten nested comments and remove comments without sentiment
   const flattenComments = (comments: ICommentResponse[]): ICommentResponse[] => {
@@ -337,13 +330,36 @@ function Comments({ proposalIndex, proposalType }: { proposalIndex: string; prop
             </View>
           )}
         </View>
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-          {sortedSentiments.map(([sentiment, pct]) => (
-            <View key={sentiment} style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
-              <IconSentiment sentiment={sentiment} iconWidth={16} iconHeight={16} />
-              <ThemedText type="bodySmall1">{pct}%</ThemedText>
-            </View>
-          ))}
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+          {sortedSentiments.map(([sentiment, pct], index) => {
+            const isFirst = index === 0;
+            return (
+              <View
+                key={sentiment}
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  gap: 2,
+                  backgroundColor: isFirst ? '#FEF2F8' : 'transparent',
+                  borderRadius: isFirst ? 4 : 0,
+                  padding: 4,
+                }}
+              >
+                <IconSentiment
+                  sentiment={sentiment}
+                  iconWidth={13}
+                  iconHeight={13}
+                  color={isFirst ? accentColor : undefined}
+                />
+                <ThemedText
+                  type="bodySmall1"
+                  colorName={isFirst ? "accent" : "mediumText"}
+                >
+                  {pct}%
+                </ThemedText>
+              </View>
+            );
+          })}
         </View>
       </View>
       <View style={{ gap: 16 }}>
