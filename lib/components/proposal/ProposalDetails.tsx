@@ -294,13 +294,10 @@ function Comments({ proposalIndex, proposalType }: { proposalIndex: string; prop
     };
 
     for (const comment of allComments) {
-      console.log(comment.aiSentiment)
       if (comment.aiSentiment && count.hasOwnProperty(comment.aiSentiment)) {
         count[comment.aiSentiment]++;
       }
     }
-
-    console.log("Sentiment Count:", count, "Total:", total);
 
     const percentages = Object.fromEntries(
       Object.entries(count).map(([key, value]) => [key, total ? Math.round((value / total) * 100) : 0])
