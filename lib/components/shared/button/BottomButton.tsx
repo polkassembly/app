@@ -1,50 +1,81 @@
 import { useThemeColor } from "@/lib/hooks/useThemeColor";
 import { forwardRef } from "react";
-import { TouchableOpacity, View, ViewProps, ViewStyle } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import {
+  ActivityIndicator,
+  TouchableOpacity,
+  TouchableOpacityProps,
+  View,
+  ViewProps,
+  ViewStyle,
+} from "react-native";
 import { ThemedText } from "../text";
+import Svg, { Defs, LinearGradient, Stop, Ellipse } from "react-native-svg";
 
-interface ButtonButtonProps {
-  onPress?: () => void;
-  style?: ViewStyle;
-  containerProps?: ViewProps;
+interface BottomButtonProps extends TouchableOpacityProps {
+  containerStyle?: ViewStyle;
   children: string;
+  loading?: boolean;
 }
 
-const BottomButton = forwardRef<View, ButtonButtonProps>(
-  ({ onPress, containerProps, style, children }: ButtonButtonProps, ref) => {
-    const colorStroke = useThemeColor({}, "stroke");
+const BottomButton = forwardRef<View, BottomButtonProps>(
+  ({ containerStyle, children, loading, ...touchableProps }, ref) => {
+    const accentColor = useThemeColor({}, "accent");
 
     return (
       <View
         ref={ref}
-        {...containerProps}
         style={[
           {
-            width: "110%",
-            paddingInline: 16,
-            paddingBlock: 21,
-            left: "-5%",
+            paddingHorizontal: 16,
             position: "sticky",
             bottom: 0,
-            borderTopStartRadius: "100%",
-            borderTopEndRadius: "100%",
-            borderWidth: 1,
-            borderBottomWidth: 0,
-            borderColor: colorStroke,
             backgroundColor: "#000000",
           },
-          style,
+          containerStyle,
         ]}
       >
-        <TouchableOpacity onPress={onPress}>
-          <ThemedText colorName="ctaText" style={{ textAlign: "center" }}>
-            {children}
-          </ThemedText>
+        <TouchableOpacity {...touchableProps} style={[{ paddingVertical: 24 }, touchableProps.style]}>
+          <View style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0 }}>
+            <TabBarBackground />
+          </View>
+
+          {
+            loading ? (
+              <ActivityIndicator
+                color={accentColor}
+              />
+            ) :
+              <ThemedText colorName="ctaText" style={{ textAlign: "center" }}>
+                {children}
+              </ThemedText>
+          }
         </TouchableOpacity>
       </View>
     );
   }
 );
+
+function TabBarBackground() {
+  return (
+    <Svg width={"100%"} height={"100%"} fill={"transparent"} style={{ zIndex: 0 }}>
+      <Defs>
+        <LinearGradient id="borderGradient" x1="100%" y1="0%" x2="0%" y2="0%">
+          <Stop offset="9.13%" stopColor="#000000" />
+          <Stop offset="50.62%" stopColor="#666666" />
+          <Stop offset="88.92%" stopColor="#000000" />
+        </LinearGradient>
+      </Defs>
+      <Ellipse
+        fill="#000000"
+        stroke="url(#borderGradient)"
+        strokeWidth={1}
+        cx="50%"
+        cy={250 / 2}
+        rx={660 / 2}
+        ry={250 / 2}
+      />
+    </Svg>
+  );
+}
 
 export default BottomButton;
