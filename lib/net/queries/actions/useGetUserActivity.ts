@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import client from "@/lib/net/client";
 import { UserActivity } from "./type";
+import { QueryHookOptions } from "@/lib/types/query";
 
 interface GetUserActivityPathParams {
   userId: string;
@@ -8,12 +9,12 @@ interface GetUserActivityPathParams {
 
 const buildUserActivityQueryKey = (params: GetUserActivityPathParams) => ["user-activity", params];
 
-const useGetUserActivity = (params: GetUserActivityPathParams) => {
+const useGetUserActivity = ({ userId }: GetUserActivityPathParams, options?: QueryHookOptions<UserActivity[]>) => {
   return useQuery<UserActivity[], Error>({
-    queryKey: buildUserActivityQueryKey(params),
-    queryFn: () => getUserActivity(params.userId),
-    enabled: !!params.userId,
-		refetchOnWindowFocus: true,
+    queryKey: buildUserActivityQueryKey({ userId }),
+    queryFn: () => getUserActivity(userId),
+    enabled: !!userId,
+    ...options,
   });
 };
 
