@@ -16,7 +16,7 @@ import { CommentList } from "@/lib/components/proposal/comments";
 import { formatBnBalance } from "@/lib/util";
 import { calculatePercentage } from "@/lib/util/calculatePercentage";
 import BN from "bn.js";
-import { ENetwork, EProposalType, IVoteMetrics } from "@/lib/types/post";
+import { ENetwork, EProposalType, IVoteMetrics, Post } from "@/lib/types/post";
 import { useProposalComments } from "@/lib/net/queries/post";
 import StatusTag from "./card/header/StatusTag";
 import { router } from "expo-router";
@@ -29,9 +29,10 @@ import { useAuthModal } from "@/lib/context/authContext";
 import { ICommentResponse } from "@/lib/types";
 import { ECommentSentiment } from "@/lib/types/comment";
 import { IconSentiment } from "../icons/proposals";
+import { canVote } from "@/lib/util/vote/canVote";
 
 interface ProposalDetailsProps {
-  post: any;
+  post: Post;
   withoutFullDetails?: boolean
   withoutHeaderText?: boolean
   withoutProposalCardIndex?: boolean
@@ -92,7 +93,7 @@ export function ProposalDetails({ post, openFullDetails, withoutFullDetails, wit
           containerType="background"
           withoutIndex={withoutProposalCardIndex}
           childrenEnd={
-            withVotingButton && (
+            withVotingButton && canVote(post.onChainInfo?.status, post.onChainInfo?.preparePeriodEndsAt) && (
               <ThemedButton
                 text="Cast Your Vote"
                 textType="bodyMedium2"
