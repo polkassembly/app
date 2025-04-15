@@ -13,6 +13,7 @@ import { useState } from "react";
 const HomeHeader = () => {
   // Get user from profile store
   const user = useProfileStore((state) => state.profile);
+  const address = user?.addresses.length ? user?.addresses[0] : "";
 
   const accentColor = useThemeColor({}, "accent");
 
@@ -23,9 +24,9 @@ const HomeHeader = () => {
 
   const navigateOnce = async (path: string) => {
     if (isNavigating) return; // Prevent navigation if already navigating
-    
+
     setIsNavigating(true);
-    
+
     try {
       router.push(path as any);
     } catch (error) {
@@ -39,7 +40,7 @@ const HomeHeader = () => {
 
   const handleProfilePress = () => {
     if (isNavigating) return;
-    
+
     if (user) {
       navigateOnce(`/profile/${user.id}`);
     } else {
@@ -49,7 +50,7 @@ const HomeHeader = () => {
 
   const handleCartPress = () => {
     if (isNavigating) return;
-    
+
     if (user) {
       navigateOnce("/batch-vote/voted-proposals");
     } else {
@@ -78,7 +79,7 @@ const HomeHeader = () => {
             {
               cart && (
                 <View
-                  style={{ backgroundColor: accentColor, position: "absolute", top: 0, right: 0, width: 8, height: 8, borderRadius: 4}}
+                  style={{ backgroundColor: accentColor, position: "absolute", top: 0, right: 0, width: 8, height: 8, borderRadius: 4 }}
                 />
               )
             }
@@ -87,7 +88,7 @@ const HomeHeader = () => {
             onPress={handleProfilePress}
             disabled={isNavigating}
           >
-            <UserAvatar avatarUrl={user?.profileDetails?.image || ""} width={30} height={30} />
+            <UserAvatar address={address} avatarUrl={ ""} width={30} height={30} />
           </TouchableOpacity>
         </View>
       </View>

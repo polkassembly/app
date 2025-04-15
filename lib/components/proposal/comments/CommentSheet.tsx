@@ -72,6 +72,7 @@ const CommentSheet = ({ author, isReply, proposalTitle, proposalIndex, proposalT
 					<View style={{ flexDirection: "row", gap: 12, marginBottom: 12 }}>
 						<View style={{ alignItems: "center", gap: 12 }}>
 							<UserAvatar
+								address={author?.addresses?.length ? author.addresses[0] : ""}
 								avatarUrl={author?.profileDetails?.image}
 								width={46}
 								height={46}
@@ -109,6 +110,7 @@ const CommentSheet = ({ author, isReply, proposalTitle, proposalIndex, proposalT
 					</View>
 					<View style={{ flexDirection: "row", gap: 12 }}>
 						<UserAvatar
+							address={user?.addresses?.length ? user.addresses[0] : ""}
 							avatarUrl={user?.profileDetails?.image || ""}
 							width={46}
 							height={46}

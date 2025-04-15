@@ -68,7 +68,12 @@ function ProposalBody({
 				<TouchableOpacity onPress={handleOpenProfile}>
 					<View style={styles.flexRowGap4}>
 						<View style={{ width: 12, height: 12, borderRadius: 16 }}>
-							<UserAvatar avatarUrl={proposerInfo?.profileDetails?.image || ""} width={12} height={12} />
+							<UserAvatar
+								address={proposerAddress}
+								avatarUrl={proposerInfo?.profileDetails?.image || ""}
+								width={12}
+								height={12}
+							/>
 						</View>
 						<ThemedText type="bodySmall3" style={{ fontWeight: "400" }}>
 							{proposerInfo?.username || formatAddress(proposerAddress) || "User"}

@@ -31,6 +31,7 @@ const ActivityItem = ({ item }: { item: UserActivity }) => {
 			<TouchableOpacity style={[styles.activityItemContainer, { backgroundColor: secondaryBackgroundColor, borderColor: strokeColor }]} onPress={onPress}>
 				<UserAvatar
 					avatarUrl={userProfile?.profileDetails.image || ""}
+					address={userProfile?.addresses.length ? userProfile?.addresses[0] : ""}
 					width={32}
 					height={32}
 				/>

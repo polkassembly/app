@@ -49,6 +49,7 @@ const UserInfo: React.FC<UserInfoProps> = React.memo(({ address, amount, assetId
 		<View style={styles.userInfoContainer}>
 			<View style={styles.avatarContainer}>
 				<UserAvatar
+					address={user.addresses.length ? user.addresses[0] : ""}
 					avatarUrl={user.profileDetails.image}
 					width={24}
 					height={24}

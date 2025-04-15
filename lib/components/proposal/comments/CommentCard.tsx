@@ -22,7 +22,6 @@ import { useCommentSheet } from "@/lib/context/commentContext";
 import { useAuthModal } from "@/lib/context/authContext";
 import { ThemedMarkdownDisplay } from "../../shared/ThemedMarkdownDisplay";
 import { IconSentiment } from "../../icons/proposals";
-import { ECommentSentiment } from "../../icons/proposals/icon-sentiment";
 
 interface CommentCardProps {
 	comment: ICommentResponse;
@@ -51,7 +50,7 @@ function CommentCard({ comment, commentDisabled }: CommentCardProps) {
 		comment.children?.length || 0
 	);
 	const [showReplies, setShowReplies] = useState<boolean>(false);
-	const [avatars, setAvatars] = useState<string[]>([]);
+	const [avatars, setAvatars] = useState<{ avatarUrl: string | null; address: string }[]>([]);
 	// Flag to disable like/dislike buttons until processing is done
 	const [processing, setProcessing] = useState<boolean>(false);
 	// Store the reaction id for later deletion
@@ -280,6 +279,7 @@ function CommentCard({ comment, commentDisabled }: CommentCardProps) {
 			<View style={{ flexDirection: "column", alignItems: "center", gap: 10 }}>
 				<TouchableOpacity onPress={handleOpenProfile}>
 					<UserAvatar
+						address={comment.user.addresses.length ? comment.user.addresses[0] : ""}
 						avatarUrl={comment.user.profileDetails.image}
 						width={35}
 						height={35}
@@ -287,7 +287,7 @@ function CommentCard({ comment, commentDisabled }: CommentCardProps) {
 				</TouchableOpacity>
 				{!showReplies && <VerticalSeprator />}
 				{!showReplies && (comment.children?.length || 0) > 0 && (
-					<StackedAvatars avatars={avatars} />
+					<StackedAvatars users={avatars} />
 				)}
 			</View>
 			<View style={styles.commentContainer}>

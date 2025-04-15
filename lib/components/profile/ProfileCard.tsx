@@ -39,6 +39,7 @@ export default function ProfileCard({ user }: { user: UserProfile }) {
       {/* Profile Avatar */}
       <View style={styles.avatarWrapper}>
         <UserAvatar
+          address={user.addresses.length ? user.addresses[0] : ""}
           avatarUrl={user.profileDetails.image}
           width={60}
           height={60}

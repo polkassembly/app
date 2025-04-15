@@ -47,7 +47,12 @@ const ProfileHeader = () => {
           }
         </View>
         <TouchableOpacity disabled >
-          <UserAvatar avatarUrl={user?.profileDetails.image || ""} width={30} height={30} />
+          <UserAvatar
+            address={user?.addresses?.length ? user.addresses[0] : ""}
+            avatarUrl={user?.profileDetails.image || ""}
+            width={30}
+            height={30}
+          />
         </TouchableOpacity>
       </View>
     </View>
