@@ -16,7 +16,6 @@ const useGetUserById = (userId: string, options?: QueryHookOptions<UserProfile>)
 };
 
 async function getUserById(userId: string) {
-  console.log("Fetching user by ID:", userId);
   const response = await client.get<UserProfile>(`users/id/${userId}`);
   return response.data;
 }

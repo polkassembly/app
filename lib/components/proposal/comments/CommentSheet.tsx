@@ -12,6 +12,8 @@ import { useAddComment } from "@/lib/net/queries/actions"
 import { AddCommentBody } from "@/lib/net/queries/actions/useAddComment"
 import { useState } from "react"
 import { ThemedButton } from "../../shared/button"
+import { BottomSheetTextInput } from "@gorhom/bottom-sheet"
+import Toast from "react-native-toast-message"
 
 interface CommentSheetProps {
 	author: UserProfile;
@@ -37,7 +39,14 @@ const CommentSheet = ({ author, isReply, proposalTitle, proposalIndex, proposalT
 	const colorText = useThemeColor({}, "text")
 
 	const handleSubmitComment = async () => {
-		if (!comment.trim()) return;
+		if (!comment.trim()) {
+			Toast.show({
+				type: "error",
+				text1: "Comment cannot be empty",
+				position: "top",
+			})
+			return;
+		};
 
 		const bodyParam = { content: comment } as AddCommentBody
 		if (parentCommentId) bodyParam["parentCommentId"] = parentCommentId
@@ -52,14 +61,14 @@ const CommentSheet = ({ author, isReply, proposalTitle, proposalIndex, proposalT
 		if (onCommentSubmitted) {
 			onCommentSubmitted({ comment });
 		}
-		
+
 		setComment("");
 		onClose();
 	};
 
 	return (
 		<ThemedView type="container" style={styles.sheet}>
-			<ScrollView>
+			<ScrollView keyboardShouldPersistTaps="handled">
 				<View style={styles.headerContainer}>
 					<ThemedText type="titleSmall">{isReply ? "Add reply" : "Add comment"}</ThemedText>
 					<TouchableOpacity onPress={onClose} style={{ padding: 5, paddingHorizontal: 10 }}>
@@ -117,7 +126,7 @@ const CommentSheet = ({ author, isReply, proposalTitle, proposalIndex, proposalT
 						/>
 						<View style={styles.inputContainer}>
 							<ThemedText type="bodySmall">{user?.username || "User"}</ThemedText>
-							<TextInput
+							<BottomSheetTextInput
 								style={[styles.commentInput, { color: colorText }]}
 								placeholder={isReply ? "Add a reply" : "Add a comment"}
 								placeholderTextColor={mediumTextColor}
@@ -130,8 +139,14 @@ const CommentSheet = ({ author, isReply, proposalTitle, proposalIndex, proposalT
 						</View>
 					</View>
 					<View style={{ justifyContent: "flex-end", alignItems: "flex-end" }}>
-						<View style={{ width: 64 }}>
-							<ThemedButton text="post" style={{ paddingVertical: 2 }} onPress={handleSubmitComment} />
+						<View style={{}}>
+							<ThemedButton
+								text="Post"
+								style={{ paddingVertical: 6, opacity: comment.trim() ? 1 : 0.5 }}
+								disabled={!comment.trim()}
+								textStyle={{ lineHeight: 14, letterSpacing: 1.20 }}
+								onPress={handleSubmitComment}
+							/>
 						</View>
 					</View>
 				</View>

@@ -95,21 +95,14 @@ export default function ProposalDetailScreenImpl() {
 
   return (
     <ThemedView type="container" style={{ flex: 1 }}>
-      <KeyboardAvoidingView
-        style={{ flex: 1 }}
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        keyboardVerticalOffset={insets.top}
-      >
-        <View style={{ flex: 1, paddingHorizontal: 16, gap: 16 }}>
-          <TopBar />
-          <ProposalDetails
-            post={proposal}
-            openFullDetails={() => setOpen(true)}
-          />
-        </View>
-      </KeyboardAvoidingView>
+      <View style={{ flex: 1, paddingHorizontal: 16, gap: 16 }}>
+        <TopBar />
+        <ProposalDetails
+          post={proposal}
+          openFullDetails={() => setOpen(true)}
+        />
+      </View>
 
-      {/* Bottom button outside of KeyboardAvoidingView */}
       <View style={{ position: "absolute", bottom: 0, width: "100%" }}>
         <BottomButton onPress={handleComment}>Add a Comment</BottomButton>
       </View>

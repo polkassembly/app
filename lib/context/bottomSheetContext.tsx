@@ -6,7 +6,6 @@ import {
   BottomSheetModalProvider,
   BottomSheetBackdrop,
 } from '@gorhom/bottom-sheet';
-import { useThemeColor } from "../hooks";
 
 interface BottomSheetContextProps {
   bottomSheetVisible: boolean;
@@ -77,14 +76,15 @@ export const BottomSheetProvider = ({ children }: { children: ReactNode }) => {
           backgroundStyle={{ backgroundColor: "transparent" }}
           handleComponent={null}
           enablePanDownToClose
-          keyboardBehavior="interactive"
           keyboardBlurBehavior="restore"
+          keyboardBehavior="interactive"
+          android_keyboardInputMode="adjustResize"
           animationConfigs={{
             duration: 300
           }}
         >
           <BottomSheetView style={styles.contentContainer}>
-              {bottomSheetContent}
+            {bottomSheetContent}
           </BottomSheetView>
         </BottomSheetModal>
       </BottomSheetModalProvider>
