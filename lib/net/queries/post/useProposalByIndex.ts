@@ -21,13 +21,15 @@ const useProposalByIndex = (
 
   return useQuery<Post, Error>({
     queryKey,
-    queryFn: async () => {
-      const response = await client.get(`/${proposalType}/${indexOrHash}`);
-      return response.data as Post;
-    },
+    queryFn: () => getProposalByIndex({ proposalType, indexOrHash }),
     enabled: !!indexOrHash && !!proposalType,
     ...options,
   });
 };
 
-export { useProposalByIndex, buildProposalByIndexQueryKey };
+const getProposalByIndex = async ({ proposalType, indexOrHash }: PathParams) => {
+  const response = await client.get<Post>(`${proposalType}/${indexOrHash}`);
+  return response.data;
+}
+
+export { getProposalByIndex, useProposalByIndex, buildProposalByIndexQueryKey };
