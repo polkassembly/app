@@ -29,7 +29,6 @@ const BottomButton = forwardRef<View, BottomButtonProps>(
             paddingHorizontal: 16,
             position: "sticky",
             bottom: 0,
-            backgroundColor: "#000000",
           },
           containerStyle,
         ]}
