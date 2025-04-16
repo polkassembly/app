@@ -27,6 +27,7 @@ export default function useAddCartItem() {
       );
 
       let updatedItems;
+      let isUpdated = false;
       if (existingItemIndex !== undefined && existingItemIndex !== -1) {
         // If the proposal already exists, update it
         updatedItems = previousItems?.map((item, index) =>
@@ -38,6 +39,7 @@ export default function useAddCartItem() {
               }
             : item
         );
+        isUpdated = true;
       } else {
         // If no existing proposal, add new item
         const optimisticItem: CartItem = {
@@ -59,9 +61,9 @@ export default function useAddCartItem() {
         buildCartItemsQueryKey(id),
         updatedItems
       );
-      return { previousItems };
+      return { previousItems, isUpdated };
     },
-    onError: (err, newItem, context: any) => {
+    onError: (err, context: any) => {
       if (context?.previousItems) {
         queryClient.setQueryData(
           buildCartItemsQueryKey(id),

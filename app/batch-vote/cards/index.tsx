@@ -134,17 +134,29 @@ const ProposalVotingScreen: React.FC = () => {
             text2: "There was an error while submitting your vote. Please try again.",
             visibilityTime: 2000
           });
-        }
-      });
-      Toast.show({
-        type: "success",
-        text1: "Vote Submitted",
-        text2: `Your vote for proposal #${proposal.index} has been submitted.`,
-        visibilityTime: 2000
+        },
+        onSuccess: (_result, _variables, context: any) => {
+          if (context?.isUpdated) {
+            Toast.show({
+              type: "success",
+              text1: "Vote Updated",
+              text2: "Your vote has been updated successfully.",
+              visibilityTime: 2000
+            });
+            return;
+          }
+          Toast.show({
+            type: "success",
+            text1: "Vote Added",
+            text2: "Your vote has been added to the cart.",
+            visibilityTime: 2000
+          });
+        },
       });
     },
     [proposals, hasNextPage, fetchNextPage, ayeAmount, nayAmount, abstainAmount, conviction]
   );
+
 
   if (isLoading || proposals.length === 0) {
     return (
