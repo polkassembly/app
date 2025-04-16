@@ -162,4 +162,5 @@ export interface CartItemParams {
     abstain?: string;
   };
   conviction: number;
+	proposalTitle: string;
 }

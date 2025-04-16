@@ -123,6 +123,7 @@ const ProposalVotingScreen: React.FC = () => {
         decision: direction,
         amount,
         conviction,
+        proposalTitle: proposal.title
       };
 
       voteMutation.mutate(params, {
