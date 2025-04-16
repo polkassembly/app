@@ -28,7 +28,6 @@ export default function VotedProposals() {
 	const [cartItem, setCartItem] = useState<CartItem | null>(null);
 	const colorStroke = useThemeColor({}, "stroke");
 
-
 	return (
 		<ThemedView type="secondaryBackground" style={{ flex: 1 }}>
 			<TopBar style={{ paddingHorizontal: 16 }} />
@@ -134,11 +133,7 @@ interface CartItemCardProps {
 }
 
 function CartItemCard({ cartItem, onEdit }: CartItemCardProps) {
-	const { data: post, isLoading: isPostLoading } = useProposalByIndex({
-		proposalType: cartItem.proposalType,
-		indexOrHash: cartItem.postIndexOrHash,
-	});
-	const { mutate: deleteCartItem, isPending: isDeletePending } = useDeleteCartItem();
+	const { mutate: deleteCartItem } = useDeleteCartItem();
 	const [isDeleting, setIsDeleting] = useState(false);
 
 	const handleDelete = () => {
@@ -181,11 +176,7 @@ function CartItemCard({ cartItem, onEdit }: CartItemCardProps) {
 					}}>
 					#{cartItem.postIndexOrHash}
 				</ThemedText>
-				{isPostLoading ? (
-					<Skeleton width={150} height={15} />
-				) : (
-					<ThemedText type="bodySmall">{trimText(post?.title || "", 30)}</ThemedText>
-				)}
+				<ThemedText type="bodySmall">{trimText(cartItem.title || "", 30)}</ThemedText>
 			</View>
 			<HorizontalSeparator />
 			<View
@@ -218,12 +209,6 @@ interface EditCartItemProps {
 }
 
 function EditCartItem({ cartItem, onClose }: EditCartItemProps) {
-	const { data: post, isLoading: isPostLoading } = useProposalByIndex({
-		proposalType: cartItem.proposalType,
-		indexOrHash: cartItem.postIndexOrHash,
-	});
-	const colorStroke = useThemeColor({}, "stroke");
-
 	const [vote, setVote] = useState<Vote>(cartItem.decision as Vote);
 
 	// Initialize with proper values for aye amount
@@ -330,11 +315,7 @@ function EditCartItem({ cartItem, onClose }: EditCartItemProps) {
 						}}>
 						#{cartItem.postIndexOrHash}
 					</ThemedText>
-					{isPostLoading ? (
-						<Skeleton width={150} height={15} />
-					) : (
-						<ThemedText type="bodySmall">{trimText(post?.title || "", 30)}</ThemedText>
-					)}
+					<ThemedText type="bodySmall">{trimText(cartItem.title || "", 30)}</ThemedText>
 				</View>
 				<BatchVoteForm
 					vote={vote}
