@@ -1,7 +1,7 @@
 import { useAuthModal } from "@/lib/context/authContext";
 import { useProfileStore } from "@/lib/store/profileStore";
 import { router } from "expo-router";
-import { View, TouchableOpacity, Image } from "react-native";
+import { View, TouchableOpacity, Image, StyleSheet } from "react-native";
 import { IconVote } from "../icons/Profile";
 import { UserAvatar } from "../shared";
 import { ActionButton } from "../shared/button";
@@ -9,6 +9,7 @@ import { RadialBackgroundWrapper } from "../shared/View";
 import { useGetCartItems } from "@/lib/net/queries/actions";
 import { useThemeColor } from "@/lib/hooks";
 import { useState } from "react";
+import IconProfile from "../icons/icon-profile";
 
 const HomeHeader = () => {
   // Get user from profile store
@@ -16,6 +17,7 @@ const HomeHeader = () => {
   const address = user?.addresses.length ? user?.addresses[0] : "";
 
   const accentColor = useThemeColor({}, "accent");
+  const backgroundColor = useThemeColor({}, "background");
 
   const [isNavigating, setIsNavigating] = useState(false);
 
@@ -66,7 +68,7 @@ const HomeHeader = () => {
           style={{ width: 132, height: 41 }}
           resizeMode='contain'
         />
-        <View style={{ flexDirection: 'row', gap: 12 }}>
+        <View style={{ flexDirection: 'row', gap: 12, alignItems: "center" }}>
           <View>
             <ActionButton
               Icon={IconVote}
@@ -88,12 +90,37 @@ const HomeHeader = () => {
             onPress={handleProfilePress}
             disabled={isNavigating}
           >
-            <UserAvatar address={address} avatarUrl={ ""} width={30} height={30} />
+            {
+              user ? (
+                <UserAvatar
+                  address={address}
+                  avatarUrl={user?.profileDetails.image || ""}
+                  width={30}
+                  height={30} />
+              ) : (
+                <View style={[styles.iconContainer, { backgroundColor: backgroundColor }]}>
+                  <IconProfile
+                    iconWidth={20}
+                    iconHeight={20}
+                  />
+                </View>
+              )
+            }
           </TouchableOpacity>
         </View>
       </View>
     </RadialBackgroundWrapper>
   );
 };
+
+const styles = StyleSheet.create({
+  iconContainer: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    justifyContent: "center",
+    alignItems: "center",
+  }
+});
 
 export default HomeHeader;
