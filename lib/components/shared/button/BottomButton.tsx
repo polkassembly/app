@@ -33,7 +33,11 @@ const BottomButton = forwardRef<View, BottomButtonProps>(
           containerStyle,
         ]}
       >
-        <TouchableOpacity {...touchableProps} style={[{ paddingVertical: 24 }, touchableProps.style]}>
+        <TouchableOpacity
+          {...touchableProps}
+          style={[{ paddingVertical: 24 }, touchableProps.style]}
+          activeOpacity={1}
+        >
           <View style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0 }}>
             <TabBarBackground />
           </View>
