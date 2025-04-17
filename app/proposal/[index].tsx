@@ -2,11 +2,8 @@ import React, { useState } from "react";
 import { useLocalSearchParams } from "expo-router";
 import {
   ActivityIndicator,
-  KeyboardAvoidingView,
   View,
-  Platform,
 } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { ProposalDetails } from "@/lib/components/proposal";
 import PostFullDetails from "@/lib/components/proposal/full-details";
@@ -45,7 +42,6 @@ export default function ProposalDetailScreenImpl() {
 
   const storeProposal = useProposalStore((state) => state.proposal);
   const user = useProfileStore((state) => state.profile);
-  const insets = useSafeAreaInsets();
   const { openLoginModal } = useAuthModal();
   const accentColor = useThemeColor({}, "accent");
 

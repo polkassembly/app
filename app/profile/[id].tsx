@@ -28,6 +28,7 @@ function Profile() {
 	);
 
 	const accentColor = useThemeColor({}, "accent");
+	const backgroundColor = useThemeColor({}, "background");
 
 	useEffect(() => {
 		if (data) {
@@ -78,13 +79,12 @@ function Profile() {
 					onRefresh={onRefresh}
 					tintColor={accentColor}
 					colors={[accentColor]}
-					progressBackgroundColor={"transparent"}
+					progressBackgroundColor={backgroundColor}
 				/>}
 			>
 				<PointsView points={userProfile?.profileScore} />
 				<Badges badges={userProfile?.profileDetails.achievementBadges} />
 				<Activity userId={String(userProfile?.id)} />
-				<EmptyViewWithTabBarHeight />
 			</ScrollView>
 		</ThemedView>
 	);

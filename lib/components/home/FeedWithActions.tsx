@@ -37,6 +37,7 @@ function FeedWithActions() {
 	} = useActivityFeed({ limit: 10 });
 
 	const accentColor = useThemeColor({}, "accent");
+	const backgroundColor = useThemeColor({}, "background");
 
 	// Generate skeleton items for loading state
 	const skeletonItems = isLoading ? [1, 2, 3] : [];
@@ -88,7 +89,7 @@ function FeedWithActions() {
 						onRefresh={refetch}
 						colors={[accentColor]}
 						tintColor={accentColor}
-						progressBackgroundColor={"transparent"}
+						progressBackgroundColor={backgroundColor}
 					/>
 				}
 				ListFooterComponent={
