@@ -1,5 +1,4 @@
 import { useThemeColor } from "@/lib/hooks";
-import { UserActivity } from "@/lib/net/queries/actions/type";
 import { Feather } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
@@ -9,12 +8,14 @@ import { formatTime } from "../../util/time";
 import { ACTIVITY_MAP } from "@/lib/constants/ACTIVITY_MAP";
 import { UserAvatar } from "../../shared";
 import { useProfileStore } from "@/lib/store/profileStore";
+import { IUserActivity } from "@/lib/types/user";
+import { toSentenceCase } from "@/lib/util/stringUtil";
 
-const ActivityItem = ({ item }: { item: UserActivity }) => {
+const ActivityItem = ({ item }: { item: IUserActivity }) => {
 	const strokeColor = useThemeColor({}, "stroke")
 	const secondaryBackgroundColor = useThemeColor({}, "secondaryBackground")
 	const mediumTextColor = useThemeColor({}, "mediumText")
-	const { data: proposal, isLoading: isProposalLoading } = useProposalByIndex({
+	const { data: proposal } = useProposalByIndex({
 		proposalType: item.proposalType || "",
 		indexOrHash: item.indexOrHash || ""
 	})
@@ -36,12 +37,12 @@ const ActivityItem = ({ item }: { item: UserActivity }) => {
 					height={32}
 				/>
 				<View style={{ gap: 8, flex: 1 }}>
-					{ACTIVITY_MAP[item.name] ?? (
-						<ThemedText>{item.name.replaceAll("_", " ")}</ThemedText>
+					{ACTIVITY_MAP[item.name](item) ?? (
+						<ThemedText type="bodySmall">{toSentenceCase(item.name.replaceAll("_", " "))}</ThemedText>
 					)}
 					{
 						item.indexOrHash && item.proposalType && (
-							<View style={{ flexDirection: "row", gap: 8, paddingRight: 40}}>
+							<View style={{ flexDirection: "row", gap: 8, paddingRight: 40 }}>
 								<View>
 									<ThemedText
 										type="bodySmall3"
@@ -51,14 +52,18 @@ const ActivityItem = ({ item }: { item: UserActivity }) => {
 										#{item.indexOrHash}
 									</ThemedText>
 								</View>
-								<ThemedText
-									type="bodySmall"
-									colorName="mediumText"
-									numberOfLines={3}
-									ellipsizeMode="tail"
-								>
-									{proposal?.title}
-								</ThemedText>
+								{
+									(item.metadata?.title || proposal?.title) && (
+										<ThemedText
+											type="bodySmall"
+											colorName="mediumText"
+											numberOfLines={2}
+											ellipsizeMode="tail"
+										>
+											`{item.metadata?.title || proposal?.title || ""}`
+										</ThemedText>
+									)
+								}
 							</View>
 						)
 					}

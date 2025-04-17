@@ -10,6 +10,10 @@ function toTitleCase(str: string): string {
     .join(' ');
 }
 
+function toSentenceCase(str: string): string {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
 function trimText(text: string, maxLength: number): string {
   return text.length > maxLength ? `${text.slice(0, maxLength)}...` : text;
 }
@@ -19,4 +23,4 @@ const formatAddress = (address: string) => {
   return `${address.slice(0, 4)}...${address.slice(-4)}`;
 };
 
-export { formatAddress, pascalToNormal, trimText, toTitleCase };
+export { formatAddress, pascalToNormal, trimText, toSentenceCase, toTitleCase };
