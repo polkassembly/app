@@ -51,12 +51,6 @@ export default function QrAuthScreen() {
           </View>
           <ThemedText type="bodyMedium2" style={styles.loginDescText}>3. Scan QR To Log In To Mobile App</ThemedText>
           <ThemedButton textType="bodyLarge" text="Scan QR Code" onPress={() => setShowScanner(true)} />
-          <Link href="/">
-            <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
-              <ThemedText type="bodyMedium2" colorName="text" style={{ textAlign: "center", paddingVertical: 10 }}>Can't Find QR?</ThemedText>
-              <IconExternalLink />
-            </View>
-          </Link>
         </ThemedView>
       </ThemedView>
       {showScanner && <QrCodeScanner />}
