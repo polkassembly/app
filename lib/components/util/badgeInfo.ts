@@ -33,21 +33,21 @@ export const badgeDetails: BadgeDetails[] = [
 		}
 	},
 	{
-		img: '@/assets/images/profile/badges/council.png',
-		lockImg: '@/assets/images/profile/badges/council_locked.png',
-		name: EUserBadge.COUNCIL,
-		requirements: {
-			locked: 'You must be elected as a member of the governance council to unlock this badge.',
-			unlocked: 'You are recognized as a member of the governance council. Badge unlocked!'
-		}
-	},
-	{
 		img: '@/assets/images/profile/badges/active_voter.png',
 		lockImg: '@/assets/images/profile/badges/active_voter_locked.png',
 		name: EUserBadge.ACTIVE_VOTER,
 		requirements: {
 			locked: 'To unlock, vote on at least 15% of proposals, with a minimum participation in 5 proposals.',
 			unlocked: 'You have actively voted on at least 15% of key proposals and unlocked the Active Voter badge.'
+		}
+	},
+	{
+		img: '@/assets/images/profile/badges/council.png',
+		lockImg: '@/assets/images/profile/badges/council_locked.png',
+		name: EUserBadge.COUNCIL,
+		requirements: {
+			locked: 'You must be elected as a member of the governance council to unlock this badge.',
+			unlocked: 'You are recognized as a member of the governance council. Badge unlocked!'
 		}
 	},
 	{
