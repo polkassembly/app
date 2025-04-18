@@ -35,6 +35,7 @@ export interface BatchVoteFormProps {
   onConfirm?: () => void;
   onCancel?: () => void;
   hideButtons?: boolean;
+  singleButtonMode?: boolean
 }
 
 export function BatchVoteForm({
@@ -53,6 +54,7 @@ export function BatchVoteForm({
   onConfirm,
   onCancel,
   hideButtons = false,
+  singleButtonMode = true
 }: BatchVoteFormProps) {
   const handleVoteChange = (nextVote: Vote) => {
     onVoteChange(nextVote);
@@ -146,17 +148,18 @@ export function BatchVoteForm({
 
       {/* Render buttons only if hideButtons is false */}
       {!hideButtons &&
-        (singleVoteMode ? (
+        (!singleButtonMode ? (
           <View style={{ flexDirection: "row", gap: 8 }}>
             <ThemedButton
               onPress={onCancel}
+              bordered
               text="Cancel"
               textType="bodyMedium3"
               style={{ flex: 1, paddingVertical: 8 }}
             />
             <ThemedButton
               onPress={onConfirm}
-              text="Confirm"
+              text="Save"
               textType="bodyMedium3"
               style={{ flex: 1, paddingVertical: 8 }}
             />
