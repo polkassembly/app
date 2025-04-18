@@ -9,6 +9,8 @@ const VIA_RADIUMBLOCK = 'via RadiumBlock';
 const VIA_LUCKYFRIDAY = 'via LuckyFriday';
 const VIA_PINKNODE = 'via Pinknode';
 
+export const DEFAULT_NETWORK = ENetwork.POLKADOT;
+
 interface ITreasuryAsset {
 	name: string;
 	tokenDecimal: number;
