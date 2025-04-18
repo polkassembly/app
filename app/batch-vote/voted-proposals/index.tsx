@@ -13,14 +13,17 @@ import { ThemedText } from "@/lib/components/shared/text";
 import { ThemedView, TopGlow } from "@/lib/components/shared/View";
 import { CartItemCard, CartItemCardSkeleton, EditCartItem } from "@/lib/components/voting/cart";
 import { useBottomSheet } from "@/lib/context/bottomSheetContext";
+import useClearCart from "@/lib/net/queries/actions/vote/useClearCart";
 
 export default function VotedProposals() {
 	const colorStroke = useThemeColor({}, "stroke");
-	const { mutate: deleteCartItem } = useDeleteCartItem();
+	const [loading, setLoading] = useState(false);
 
 	const { data: cart, isLoading: isCartLoading } = useGetCartItems();
 	const { openBottomSheet, closeBottomSheet } = useBottomSheet();
 	const { mutate: editCartItem } = useUpdateCartItem();
+	const { mutate: deleteCartItem } = useDeleteCartItem();
+	const { mutateAsync: clearCart } = useClearCart();
 
 	const showEditSheet = (item: CartItem) => {
 		openBottomSheet(
@@ -65,6 +68,27 @@ export default function VotedProposals() {
 				}
 			}
 		);
+	}
+
+	const handleClearCart =  async () => {
+		setLoading(true);
+		await clearCart(undefined, {
+			onSuccess: () => {
+				Toast.show({
+					type: "success",
+					text1: "Vote Cart Cleared"
+				});
+			},
+			onError: () => {
+				Toast.show({
+					type: "error",
+					text1: "Vote Cart Clear Failed"
+				});
+			},
+			onSettled: () => {
+				setLoading(false);
+			}
+		});
 	}
 
 	return (
@@ -140,12 +164,12 @@ export default function VotedProposals() {
 							))}
 				</ThemedView>
 			</ScrollView>
-			<BottomView totalProposal={String(cart?.length || 0)} onClearCart={() => { console.log("clear cart") }} />
+			<BottomView totalProposal={String(cart?.length || 0)} onClearCart={() => handleClearCart()} loading={loading} />
 		</ThemedView>
 	);
 }
 
-function BottomView({ totalProposal, onClearCart }: { totalProposal: string, onClearCart: () => void }) {
+function BottomView({ totalProposal, onClearCart, loading }: { totalProposal: string, onClearCart: () => void, loading: boolean }) {
 	return (
 		<View>
 			<TopGlow />
@@ -156,6 +180,7 @@ function BottomView({ totalProposal, onClearCart }: { totalProposal: string, onC
 						<ThemedText type="bodyMedium3">{totalProposal}</ThemedText>
 					</View>
 					<ThemedButton
+						loading={loading}
 						bordered
 						text="Clear"
 						style={{ paddingVertical: 2 }}
