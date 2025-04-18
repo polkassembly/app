@@ -1,7 +1,9 @@
+import { Vote } from "@/lib/types/voting";
+
 export interface CartItemParams {
   postIndexOrHash: string;
   proposalType: string;
-  decision: "aye" | "nay" | "splitAbstain" | "split";
+  decision: Vote;
   amount: {
     aye?: string;
     nay?: string;

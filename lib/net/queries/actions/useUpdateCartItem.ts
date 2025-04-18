@@ -4,7 +4,7 @@ import { buildCartItemsQueryKey, CartItem } from "./useGetCartItem";
 import { useProfileStore } from "@/lib/store/profileStore";
 import { Vote } from "@/lib/types/voting";
 
-interface UpdateCartItemParams {
+export interface UpdateCartItemParams {
   id: string;
   decision: Vote;
   amount: {

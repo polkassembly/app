@@ -1,8 +1,9 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import client from "@/lib/net/client";
 import { buildCartItemsQueryKey, CartItem } from "./useGetCartItem";
-import { CartItemParams, ENetwork } from "./type";
+import { CartItemParams } from "./type";
 import { useProfileStore } from "@/lib/store/profileStore";
+import { ENetwork } from "@/lib/types/post";
 
 export default function useAddCartItem() {
   const queryClient = useQueryClient();
