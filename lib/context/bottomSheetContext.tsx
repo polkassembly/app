@@ -19,7 +19,7 @@ const BottomSheetContext = createContext<BottomSheetContextProps | undefined>(un
 export const BottomSheetProvider = ({ children }: { children: ReactNode }) => {
   const [bottomSheetVisible, setBottomSheetVisible] = useState(false);
   const [bottomSheetContent, setBottomSheetContent] = useState<ReactNode | null>(null);
-  const [sheetSnapPoints, setSheetSnapPoints] = useState<(string | number)[]>(["CONTENT_HEIGHT"]);
+  const [sheetSnapPoints, setSheetSnapPoints] = useState<(string | number)[]>([]);
 
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
 
@@ -37,7 +37,9 @@ export const BottomSheetProvider = ({ children }: { children: ReactNode }) => {
   }, [bottomSheetVisible]);
 
   const openBottomSheet = (content: ReactNode, snapPoints: (string | number)[] = []) => {
-    setSheetSnapPoints(snapPoints);
+    if (snapPoints.length > 0) {
+      setSheetSnapPoints(snapPoints);
+    }
     setBottomSheetContent(content);
     bottomSheetModalRef.current?.present();
     setBottomSheetVisible(true);
@@ -45,6 +47,8 @@ export const BottomSheetProvider = ({ children }: { children: ReactNode }) => {
 
   const closeBottomSheet = () => {
     bottomSheetModalRef.current?.dismiss();
+    setSheetSnapPoints([]);
+    setBottomSheetContent(null);
     setBottomSheetVisible(false);
   };
 
@@ -75,6 +79,7 @@ export const BottomSheetProvider = ({ children }: { children: ReactNode }) => {
           ref={bottomSheetModalRef}
           snapPoints={sheetSnapPoints}
           onChange={handleSheetChanges}
+          onDismiss={closeBottomSheet}
           backdropComponent={renderBackdrop}
           backgroundStyle={{ backgroundColor: "transparent" }}
           handleComponent={null}
@@ -85,7 +90,7 @@ export const BottomSheetProvider = ({ children }: { children: ReactNode }) => {
           animationConfigs={{
             duration: 300
           }}
-          enableDynamicSizing={false}
+          enableDynamicSizing={sheetSnapPoints.length === 0}
         >
           <BottomSheetView style={styles.contentContainer}>
             {bottomSheetContent}

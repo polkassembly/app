@@ -74,7 +74,8 @@ export default function VotedProposals() {
 				cartItem={item}
 				onClose={closeBottomSheet}
 				onUpdate={handleEdit}
-			/>
+			/>,
+			["90%", "100%"]
 		)
 	};
 

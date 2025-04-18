@@ -6,6 +6,7 @@ import { HorizontalSeparator, ThemedView } from "@/lib/components/shared/View";
 import { ThemedText } from "@/lib/components/shared/text";
 import { BatchVoteForm } from "@/lib/components/voting";
 import { UpdateCartItemParams } from "@/lib/net/queries/actions/useUpdateCartItem";
+import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 
 export default function EditCartItem({
 	cartItem,
@@ -44,9 +45,10 @@ export default function EditCartItem({
 				borderTopLeftRadius: 16,
 				borderTopRightRadius: 16,
 				paddingTop: 16,
+				flex: 1
 			}}
 		>
-			<ScrollView style={{ paddingHorizontal: 16 }}>
+			<BottomSheetScrollView style={{ paddingHorizontal: 16 }}>
 				<View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
 					<ThemedText type="titleMedium">Edit Vote Details</ThemedText>
 					<TouchableOpacity onPress={onClose}>
@@ -84,7 +86,7 @@ export default function EditCartItem({
 					onConfirm={handleConfirm}
 					onCancel={onClose}
 				/>
-			</ScrollView>
+			</BottomSheetScrollView>
 		</ThemedView>
 	);
 }
