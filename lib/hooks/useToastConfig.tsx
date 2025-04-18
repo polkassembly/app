@@ -44,5 +44,21 @@ export function useToastConfig() {
         }}
       />
     ),
+    info: (props: any) => (
+      <BaseToast
+        {...props}
+        style={{ borderLeftColor: "#00b8d4", backgroundColor: containerColor }}
+        contentContainerStyle={{ paddingHorizontal: 15 }}
+        text1Style={{
+          color: textColor,
+          fontSize: 16,
+          fontWeight: "bold",
+        }}
+        text2Style={{
+          color: textColor,
+          fontSize: 14,
+        }}
+      />
+    ),
   };
 }
