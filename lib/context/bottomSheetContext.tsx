@@ -10,7 +10,7 @@ import {
 interface BottomSheetContextProps {
   bottomSheetVisible: boolean;
   bottomSheetContent: ReactNode | null;
-  openBottomSheet: (content: ReactNode) => void;
+  openBottomSheet: (content: ReactNode, snapPoints?: (string | number)[]) => void;
   closeBottomSheet: () => void;
 }
 
@@ -19,6 +19,7 @@ const BottomSheetContext = createContext<BottomSheetContextProps | undefined>(un
 export const BottomSheetProvider = ({ children }: { children: ReactNode }) => {
   const [bottomSheetVisible, setBottomSheetVisible] = useState(false);
   const [bottomSheetContent, setBottomSheetContent] = useState<ReactNode | null>(null);
+  const [sheetSnapPoints, setSheetSnapPoints] = useState<(string | number)[]>(["CONTENT_HEIGHT"]);
 
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
 
@@ -35,7 +36,8 @@ export const BottomSheetProvider = ({ children }: { children: ReactNode }) => {
     return () => backHandler.remove();
   }, [bottomSheetVisible]);
 
-  const openBottomSheet = (content: ReactNode) => {
+  const openBottomSheet = (content: ReactNode, snapPoints: (string | number)[] = []) => {
+    setSheetSnapPoints(snapPoints);
     setBottomSheetContent(content);
     bottomSheetModalRef.current?.present();
     setBottomSheetVisible(true);
@@ -71,6 +73,7 @@ export const BottomSheetProvider = ({ children }: { children: ReactNode }) => {
       <BottomSheetModalProvider>
         <BottomSheetModal
           ref={bottomSheetModalRef}
+          snapPoints={sheetSnapPoints}
           onChange={handleSheetChanges}
           backdropComponent={renderBackdrop}
           backgroundStyle={{ backgroundColor: "transparent" }}
@@ -82,6 +85,7 @@ export const BottomSheetProvider = ({ children }: { children: ReactNode }) => {
           animationConfigs={{
             duration: 300
           }}
+          enableDynamicSizing={false}
         >
           <BottomSheetView style={styles.contentContainer}>
             {bottomSheetContent}
