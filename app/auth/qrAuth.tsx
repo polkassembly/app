@@ -29,7 +29,7 @@ export default function QrAuthScreen() {
           <Image style={styles.logo} source={require("@/assets/images/logo-wide.png")} />
           <Image style={{ flexGrow: 0.8, flexBasis: 0 }} resizeMode="contain" source={require("@/assets/images/auth/qr-auth-screen.gif")} />
           <View style={styles.loginText}>
-            <ThemedText type="display">Scan Qr</ThemedText>
+            <ThemedText type="display">Scan QR</ThemedText>
             <ThemedText type="bodyMedium2" colorName="mediumText" style={{ paddingHorizontal: 42, textAlign: "center" }}>
               Connect to your Polkassembly account through web login
             </ThemedText>
@@ -49,8 +49,8 @@ export default function QrAuthScreen() {
             <Ionicons name='arrow-forward' size={16} color={Colors.textPrimary} />
             <ThemedText type="bodyMedium2" style={[styles.loginDescText, { paddingLeft: 4 }]}>Mobile Login</ThemedText>
           </View>
-          <ThemedText type="bodyMedium2" style={styles.loginDescText}>3. Scan Qr To Log In To Mobile App</ThemedText>
-          <ThemedButton textType="bodyLarge" text="Scan Qr Code" onPress={() => setShowScanner(true)} />
+          <ThemedText type="bodyMedium2" style={styles.loginDescText}>3. Scan QR To Log In To Mobile App</ThemedText>
+          <ThemedButton textType="bodyLarge" text="Scan QR Code" onPress={() => setShowScanner(true)} />
         </ThemedView>
       </ThemedView>
       {showScanner && <QrCodeScanner />}

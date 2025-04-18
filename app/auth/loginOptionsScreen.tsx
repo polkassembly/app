@@ -29,7 +29,7 @@ export default function LoginOptionsScreen() {
 			</View>
 
 			<ThemedView type="background" style={styles.loginDescContainer}>
-				<ThemedButton text='Scan Qr' onPress={() => router.push("/auth/qrAuth")} style={{ marginVertical: 10 }}></ThemedButton>
+				<ThemedButton text='Scan QR' onPress={() => router.push("/auth/qrAuth")} style={{ marginVertical: 10 }}></ThemedButton>
 				<View style={{ flexDirection: "row", alignItems: "center" }}>
 					<View style={{ flex: 1, height: 1, backgroundColor: strokeColor }} />
 					<ThemedText type="bodySmall" style={{ marginHorizontal: 8, textAlign: 'center' }}>
