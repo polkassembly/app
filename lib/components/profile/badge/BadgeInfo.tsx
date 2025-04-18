@@ -2,9 +2,8 @@ import { Image, StyleSheet } from "react-native";
 import { View } from "react-native";
 import { ENetwork } from "@/lib/types/post";
 import { useThemeColor } from "@/lib/hooks";
-import { LinearGradient } from 'expo-linear-gradient';
 import { ThemedText } from "../../shared/text";
-import { ThemedView } from "../../shared/View";
+import { ThemedView, TopGlow } from "../../shared/View";
 import { BadgeDetails, BADGEIMAGES } from "../../util/badgeInfo";
 
 interface BadgeInfoProps {
@@ -39,10 +38,7 @@ const BadgeInfo = ({ badge }: BadgeInfoProps) => {
 				/>
 			</View>
 			<View style={{ marginTop: 50 }}>
-				<LinearGradient
-					colors={['transparent', accentColor]}
-					style={styles.topGlow}
-				/>
+				<TopGlow />
 				<ThemedView
 					type="container"
 					style={[styles.container, { backgroundColor }]}
@@ -67,16 +63,8 @@ const styles = StyleSheet.create({
 	container: {
 		paddingHorizontal: 16,
 		paddingVertical: 30,
-		borderTopEndRadius: 16,
-		borderTopStartRadius: 16,
-	},
-	topGlow: {
-		position: 'absolute',
-		top: -8,
-		left: 0,
-		right: 0,
-		height: 100,
-		borderRadius: 16,
+		borderTopEndRadius: 24,
+		borderTopStartRadius: 24,
 	},
 	badgeContainer: {
 		alignItems: "center",
