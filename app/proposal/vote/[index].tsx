@@ -59,6 +59,7 @@ export default function BatchVotingScreen() {
       decision: vote,
       postIndexOrHash: index,
       proposalType: proposalType,
+      proposalTitle: ""
     });
 
     router.push(`/proposal/vote/success/${index}?dot=${amountSuccess}&conviction=${conviction}&decision=${vote}&proposalType=${proposalType}`);

@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import { View, StyleSheet, Text, ActivityIndicator, TouchableOpacity, Platform, useWindowDimensions } from "react-native";
 import Swiper from "react-native-deck-swiper";
-import useAddCartItem from "@/lib/net/queries/actions/useAddCartItem";
 import { ACTIVITY_FEED_LIMIT, useActivityFeed } from "@/lib/net/queries/post/useActivityFeed";
 import { useThemeColor } from "@/lib/hooks/useThemeColor";
 import { Post } from "@/lib/types";
@@ -9,7 +8,6 @@ import { BottomSheet, TopBar } from "@/lib/components/shared";
 import CartItemsPreview from "@/lib/components/voting/CartItemsPreview";
 import { BottomVotingButtons, OverlayLabel } from "@/lib/components/voting";
 import { ThemedButton } from "@/lib/components/shared/button";
-import Toast from "react-native-toast-message";
 import IconClose from "@/lib/components/icons/shared/icon-close";
 import { ThemedText } from "@/lib/components/shared/text";
 import { ProposalDetails } from "@/lib/components/proposal";
@@ -17,6 +15,10 @@ import { ThemedView } from "@/lib/components/shared/View";
 import { ProposalContentSummary } from "@/lib/components/proposal";
 import { useBatchVotingStore } from "@/lib/store/batchVotingStore";
 import { ProposalCard } from "@/lib/components/proposal";
+import { useLocalCartStore } from "@/lib/store/localCartStore";
+import { CartItem } from "@/lib/net/queries/actions/useGetCartItem";
+import { useProfileStore } from "@/lib/store/profileStore";
+import { DEFAULT_NETWORK } from "@/lib/constants/networks";
 
 interface MemoizedProposalCardProps {
   card: Post;
@@ -69,8 +71,9 @@ const ProposalVotingScreen: React.FC = () => {
 
   const feedParams = { limit: ACTIVITY_FEED_LIMIT };
   const { data, isLoading, isError, hasNextPage, fetchNextPage } = useActivityFeed(feedParams);
-  const voteMutation = useAddCartItem();
-
+  const addCartItem = useLocalCartStore((state) => state.addCartItem)
+  const user = useProfileStore((state) => state.profile)
+  
   // Single source of proposals
   const [proposals, setProposals] = useState<Post[]>([]);
   const [proposalDetailsOpen, setProposalDetailsOpen] = useState(false);
@@ -117,42 +120,21 @@ const ProposalVotingScreen: React.FC = () => {
         };
       }
 
-      const params = {
+      const params: CartItem = {
+        id: proposal.index,
         postIndexOrHash: String(proposal.index),
         proposalType: proposal.proposalType,
         decision: direction,
         amount,
         conviction,
-        proposalTitle: proposal.title
+        title: proposal.title,
+        createdAt: String(Date.now()),
+        updatedAt: String(Date.now()),
+        userId: user?.id || 0,
+        network: DEFAULT_NETWORK
       };
 
-      voteMutation.mutate(params, {
-        onError: () => {
-          Toast.show({
-            type: "error",
-            text1: "Vote Failed",
-            text2: "There was an error while submitting your vote. Please try again.",
-            visibilityTime: 2000
-          });
-        },
-        onSuccess: (_result, _variables, context: any) => {
-          if (context?.isUpdated) {
-            Toast.show({
-              type: "success",
-              text1: "Vote Updated",
-              text2: "Your vote has been updated successfully.",
-              visibilityTime: 2000
-            });
-            return;
-          }
-          Toast.show({
-            type: "success",
-            text1: "Vote Added",
-            text2: "Your vote has been added to the cart.",
-            visibilityTime: 2000
-          });
-        },
-      });
+      addCartItem(params)
     },
     [proposals, hasNextPage, fetchNextPage, ayeAmount, nayAmount, abstainAmount, conviction]
   );

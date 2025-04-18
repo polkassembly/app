@@ -3,7 +3,6 @@ import { StyleSheet, View } from "react-native";
 import Svg, { Defs, LinearGradient, Rect, Stop } from "react-native-svg";
 import { IconPoints } from "@/lib/components/icons/icon-points";
 import { ThemedText } from "@/lib/components/shared/text/ThemedText";
-import { Skeleton } from "moti/skeleton";
 
 interface pointsViewProps {
   points?: number;
