@@ -10,7 +10,7 @@ const NoActivity = () => (
 			<Image
 				style={styles.emptyImage}
 				resizeMode="contain"
-				source={require("@/assets/images/profile/empty-activity.png")}
+				source={require("@/assets/images/empty-state.png")}
 			/>
 			<View style={styles.noActivityTextContainer}>
 				<ThemedText>No Activity Yet.</ThemedText>

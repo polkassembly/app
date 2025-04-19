@@ -140,7 +140,7 @@ export default function VotedProposals() {
 										height: 170,
 									}}
 									resizeMode="contain"
-									source={require("@/assets/images/vote_empty.png")}
+									source={require("@/assets/images/empty-state.png")}
 								/>
 								<View style={{
 									flexDirection: "row",
