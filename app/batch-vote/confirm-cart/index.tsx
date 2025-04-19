@@ -1,6 +1,6 @@
 import { useThemeColor } from "@/lib/hooks/useThemeColor";
 import { Link, router } from "expo-router";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { Image, ScrollView, StyleSheet, View } from "react-native";
 import { Note, TopBar } from "@/lib/components/shared";
 import { ThemedButton } from "@/lib/components/shared/button";
@@ -16,13 +16,13 @@ import Toast from "react-native-toast-message";
 import { EVoteDecision } from "@/lib/types/post";
 
 export default function VotedProposals() {
-	const [totalDotSpent, setTotalDotSpent] = useState<Number>(0)
+	const [totalDotSpent, setTotalDotSpent] = useState<number>(0)
 	const colorStroke = useThemeColor({}, "stroke");
 
 	const items = useLocalCartStore((state) => state.items);
 	const removeCartItem = useLocalCartStore((state) => state.removeCartItem);
 	const updateCartItem = useLocalCartStore((state) => state.updateCartItem);
-	const clearCartItems = useLocalCartStore((state) => state.clearCartItems)
+	const clearCartItems = useLocalCartStore((state) => state.clearCartItems);
 	const { openBottomSheet, closeBottomSheet } = useBottomSheet();
 	const { mutateAsync: addCartItem } = useAddCartItem();
 
@@ -41,48 +41,102 @@ export default function VotedProposals() {
 			}
 		}, 0);
 		setTotalDotSpent(total);
-	}, [items])
+	}, [items]);
 
-	const handleConfirmCart = async () => {
-		const promises = items.map((item) =>
-			addCartItem({
-				postIndexOrHash: item.postIndexOrHash,
-				proposalType: item.proposalType,
-				decision: item.decision,
-				amount: item.amount,
-				conviction: item.conviction,
-				proposalTitle: item.title
-			},{
-				onError: (error) => {
-					Toast.show({
-						type: "error",
-						text1: `Failed to add vote for ${item.postIndexOrHash} `,
-					})
-				}
-			})
-		);
-		await Promise.all(promises);
-		Toast.show({
-			type: "success",
-			text1: "Votes added to cart successfully",
-			text2: "You can now confirm your votes in the cart"
+	// Calculate DOT spent for a single vote item
+	const calculateItemDotSpent = useCallback((item: CartItem): number => {
+		if (item.decision === EVoteDecision.AYE) {
+			return Number(item.amount.aye);
+		} else if (item.decision === EVoteDecision.NAY) {
+			return Number(item.amount.nay);
+		} else if (item.decision === EVoteDecision.SPLIT_ABSTAIN) {
+			return Number(item.amount.aye) + Number(item.amount.nay) + Number(item.amount.abstain);
+		}
+		return 0;
+	}, []);
+
+	// Process vote results and handle successes/failures
+	const processVoteResults = useCallback((results: any, items: CartItem[]) => {
+		const successfulItemIds: string[] = [];
+		const failedItemIds: string[] = [];
+		let successfulDotSpent = 0;
+
+		results.forEach((result: any, index: number) => {
+			const item = items[index];
+			if (result.status === 'fulfilled') {
+				successfulItemIds.push(item.id);
+				successfulDotSpent += calculateItemDotSpent(item);
+			} else {
+				failedItemIds.push(item.id);
+				Toast.show({
+					type: "error",
+					text1: `Failed to add vote for ${item.title || item.postIndexOrHash}`,
+				});
+			}
 		});
-		setTimeout(() => {
-			clearCartItems();
-		}, 2000);
-		router.replace(`/batch-vote/success?proposalCount=${items.length}&totalDotSpent=${totalDotSpent}`);
-		
-	};
 
-	const handleEdit = (updatedCartItem: UpdateCartItemParams) => {
+		return { successfulItemIds, failedItemIds, successfulDotSpent };
+	}, [calculateItemDotSpent]);
+
+	// Show appropriate toast messages based on results
+	const showResultToasts = useCallback((successCount: number, failCount: number) => {
+		if (failCount === 0) {
+			Toast.show({
+				type: "success",
+				text1: "All votes added to cart successfully",
+				text2: "You can now confirm your votes in the cart"
+			});
+		} else if (successCount > 0) {
+			Toast.show({
+				type: "info",
+				text1: `${successCount} votes added successfully`,
+				text2: `${failCount} votes failed and remain in your cart`
+			});
+		} else {
+			Toast.show({
+				type: "error",
+				text1: "Failed to add votes to cart",
+				text2: "Please try again later"
+			});
+		}
+	}, []);
+
+	const handleConfirmCart = useCallback(async () => {
+		if (items.length === 0) return;
+
+		const results = await Promise.allSettled(
+			items.map((item) =>
+				addCartItem({
+					postIndexOrHash: item.postIndexOrHash,
+					proposalType: item.proposalType,
+					decision: item.decision,
+					amount: item.amount,
+					conviction: item.conviction,
+					proposalTitle: item.title
+				})
+			)
+		);
+
+		// Process the results
+		const { successfulItemIds, failedItemIds, successfulDotSpent } = processVoteResults(results, items);
+		successfulItemIds.forEach(id => removeCartItem(id));
+
+		showResultToasts(successfulItemIds.length, failedItemIds.length);
+
+		if (successfulItemIds.length > 0) {
+			router.replace(`/batch-vote/success?proposalCount=${successfulItemIds.length}&totalDotSpent=${successfulDotSpent}&failedCount=${failedItemIds.length}`);
+		}
+	}, [items, addCartItem, processVoteResults, removeCartItem, showResultToasts]);
+
+	const handleEdit = useCallback((updatedCartItem: UpdateCartItemParams) => {
 		updateCartItem(updatedCartItem);
-	};
+	}, [updateCartItem]);
 
-	const handleDelete = (id: string) => {
+	const handleDelete = useCallback((id: string) => {
 		removeCartItem(id);
-	};
+	}, [removeCartItem]);
 
-	const showEditSheet = (item: CartItem) => {
+	const showEditSheet = useCallback((item: CartItem) => {
 		if (!item) return null;
 
 		openBottomSheet(
@@ -93,7 +147,7 @@ export default function VotedProposals() {
 			/>,
 			["90%", "100%"]
 		);
-	};
+	}, [openBottomSheet, closeBottomSheet, handleEdit]);
 
 	return (
 		<ThemedView type="secondaryBackground" style={{ flex: 1 }}>
@@ -164,7 +218,7 @@ export default function VotedProposals() {
 
 interface BottomViewProps {
 	totalProposal: string,
-	totalDotSpent: Number,
+	totalDotSpent: number,
 	onConfirm: () => Promise<void>
 	onClearCart: () => void
 }
@@ -172,14 +226,16 @@ interface BottomViewProps {
 function BottomView({ totalProposal, totalDotSpent, onConfirm, onClearCart }: BottomViewProps) {
 	const [isLoading, setIsLoading] = useState(false);
 
-	const handleConfirmCart = () => {
+	const handleConfirmCart = useCallback(async () => {
 		setIsLoading(true);
-		Toast.show({
-			type: "info",
-			text2: "Your votes are being added to the cart"
-		})
-		onConfirm()
-	}
+		try {
+			await onConfirm();
+		} catch (error) {
+			console.error("Error confirming cart:", error);
+		} finally {
+			setIsLoading(false);
+		}
+	}, [onConfirm]);
 
 	return (
 		<View>
@@ -196,7 +252,10 @@ function BottomView({ totalProposal, totalDotSpent, onConfirm, onClearCart }: Bo
 						onPress={onClearCart}
 					/>
 				</View>
-				<Note content="NOTE: Login Via web view to confirm your vote" />
+				<ThemedView style={{ borderRadius: 6, paddingHorizontal: 12, paddingVertical: 8, flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+					<ThemedText type="bodyMedium2" colorName="mediumText">Gas Fees</ThemedText>
+					<ThemedText type="bodyMedium1" >{totalDotSpent} DOT</ThemedText>
+				</ThemedView>
 				<ThemedButton
 					text="Confirm Cart"
 					onPress={handleConfirmCart}

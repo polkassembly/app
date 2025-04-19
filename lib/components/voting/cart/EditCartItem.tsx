@@ -7,13 +7,14 @@ import { ThemedText } from "@/lib/components/shared/text";
 import { BatchVoteForm } from "@/lib/components/voting";
 import { UpdateCartItemParams } from "@/lib/net/queries/actions/useUpdateCartItem";
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
+import { CartItem } from "@/lib/net/queries/actions/useGetCartItem";
 
 export default function EditCartItem({
 	cartItem,
 	onClose,
 	onUpdate,
 }: {
-	cartItem: any;
+	cartItem: CartItem;
 	onClose: () => void;
 	onUpdate: (updatedCartItem: UpdateCartItemParams) => void;
 }) {
