@@ -22,6 +22,7 @@ import { activityFeedFunction, buildActivityFeedQueryKey } from "@/lib/net/queri
 import { ACTIVITY_FEED_LIMIT } from "@/lib/net/queries/post/useActivityFeed";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import queryClient from "@/lib/net/queryClient";
+import { PaperProvider } from "react-native-paper";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -124,13 +125,15 @@ export default function RootLayout() {
           />
         )}
         <SafeAreaProvider>
-          <BottomSheetProvider>
-            <CommentSheetProvider>
-              <SafeAreaView style={{ flex: 1, backgroundColor: secondaryBackgroundColor }}>
-                <Content />
-              </SafeAreaView>
-            </CommentSheetProvider>
-          </BottomSheetProvider>
+          <PaperProvider>
+            <BottomSheetProvider>
+              <CommentSheetProvider>
+                <SafeAreaView style={{ flex: 1, backgroundColor: secondaryBackgroundColor }}>
+                  <Content />
+                </SafeAreaView>
+              </CommentSheetProvider>
+            </BottomSheetProvider>
+          </PaperProvider>
           <Toast config={toastConfig} />
         </SafeAreaProvider>
       </GestureHandlerRootView>
