@@ -79,7 +79,7 @@ const HomeHeader = () => {
               disabled={isNavigating}
             />
             {
-              cart?.length !== 0 && (
+              cart && cart.length !== 0 && (
                 <View
                   style={{ backgroundColor: accentColor, position: "absolute", top: 0, right: 0, width: 8, height: 8, borderRadius: 4 }}
                 />

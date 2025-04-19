@@ -1,33 +1,59 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { StyleSheet, View, } from "react-native";
 import { ThemedText } from "../../shared/text/ThemedText";
 import { useGetUserActivity } from "@/lib/net/queries/actions/useGetUserActivity";
-import { useActivityStore } from "@/lib/store/activityStore";
 import ActivityItem from "./ActivityItem";
-import ActivitySkeleton from "./ActivitySkeleton";
 import NoActivity from "./NoActivity";
+import { IUserActivity } from "@/lib/types/user";
+import ActivityItemSkeleton from "./ActivityItemSkeleton";
 
-const Activity = ({ userId }: { userId: string }) => {
+const Activity = ({
+  userId,
+  refreshKey = 0
+}: {
+  userId: string,
+  refreshKey?: number
+}) => {
 
-  const { activities, setActivities } = useActivityStore();
-  const { data, isLoading } = useGetUserActivity({ userId });
+  const [activities, setActivities] = useState<IUserActivity[]>([]);
+  const { data, isLoading, refetch } = useGetUserActivity({ userId });
 
-  // On every load, when data is fetched, update the store
+  // On every load, when data is fetched, update activities
   useEffect(() => {
     if (data) {
       setActivities(data.slice(0, 10));
     }
   }, [data]);
 
-  if (!activities && isLoading) return <ActivitySkeleton />;
-  if (!activities || activities.length === 0) return <NoActivity />;
+  useEffect(() => {
+    refetch();
+  }, [userId, refetch]);
+
+  // Refetch activities when refreshKey changes
+  useEffect(() => {
+    if (refreshKey > 0) {
+      refetch();
+    }
+  }, [refreshKey, refetch]);
+
+  if (!isLoading && (!activities || activities.length === 0)) return <NoActivity />;
 
   return (
     <View style={styles.mainContainer}>
       <ThemedText type="bodySmall">RECENT ACTIVITY</ThemedText>
-      {activities.map((item) => (
-        <ActivityItem key={item.id} item={item} />
-      ))}
+      {activities.length === 0 && isLoading ? (
+
+        Array(4)
+          .fill(null)
+          .map((_, index) => (
+            <ActivityItemSkeleton key={index} />
+          ))
+      ) : (
+        activities.map((item) => (
+          <ActivityItem key={item.id} item={item} />
+        ))
+      )
+      }
     </View>
   );
 };

@@ -13,6 +13,7 @@ import { Activity, Badges, PointsView, ProfileHeader } from "@/lib/components/pr
 
 function Profile() {
 	const [refreshing, setRefreshing] = useState(false);
+	const [refreshKey, setRefreshKey] = useState(0);
 
 	const userProfile = useProfileStore((state) => state.profile);
 	const accessToken = useAuthStore((state) => state.accessToken);
@@ -37,6 +38,7 @@ function Profile() {
 
 	const onRefresh = async () => {
 		setRefreshing(true);
+		setRefreshKey(prevKey => prevKey + 1);
 		await refetch();
 		setRefreshing(false);
 	};
@@ -83,7 +85,10 @@ function Profile() {
 			>
 				<PointsView points={userProfile?.profileScore} />
 				<Badges badges={userProfile?.profileDetails.achievementBadges} />
-				<Activity userId={String(userProfile?.id)} />
+				<Activity 
+					userId={String(userProfile?.id)} 
+					refreshKey={refreshKey}
+				/>
 			</ScrollView>
 		</ThemedView>
 	);
