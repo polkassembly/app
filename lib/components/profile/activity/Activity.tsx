@@ -35,24 +35,26 @@ const Activity = ({
       refetch();
     }
   }, [refreshKey, refetch]);
-  if (!activities || activities.length === 0) return <NoActivity />;
+
+  if (!isLoading && (!activities || activities.length === 0)) return <NoActivity />;
 
   return (
     <View style={styles.mainContainer}>
       <ThemedText type="bodySmall">RECENT ACTIVITY</ThemedText>
-      {activities.length === 0 && isLoading ? (
-
-        Array(4)
-          .fill(null)
-          .map((_, index) => (
-            <ActivityItemSkeleton key={index} />
+      <View style={{ gap: 12 }}>
+        {activities.length === 0 && isLoading ? (
+          Array(4)
+            .fill(null)
+            .map((_, index) => (
+              <ActivityItemSkeleton key={index} />
+            ))
+        ) : (
+          activities.map((item) => (
+            <ActivityItem key={item.id} item={item} />
           ))
-      ) : (
-        activities.map((item) => (
-          <ActivityItem key={item.id} item={item} />
-        ))
-      )
-      }
+        )
+        }
+      </View>
     </View>
   );
 };
