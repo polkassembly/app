@@ -163,7 +163,7 @@ export default function VotedProposals() {
 						borderColor: colorStroke,
 					}}
 				>
-					<ThemedText type="bodyLarge">Voted Proposals{`(${items.length})`}</ThemedText>
+					<ThemedText type="bodyLarge">Voted Proposals{` (${items.length})`}</ThemedText>
 
 					{items.length === 0 ? (
 						<View

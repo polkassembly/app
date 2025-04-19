@@ -105,7 +105,7 @@ export default function VotedProposals() {
 						borderColor: colorStroke,
 					}}
 				>
-					<ThemedText type="bodyLarge">Voted Proposals{`(${cart?.length || 0})`}</ThemedText>
+					<ThemedText type="bodyLarge">Voted Proposals{` (${cart?.length || 0})`}</ThemedText>
 					{
 						isCartLoading ? (
 							<View
@@ -181,7 +181,6 @@ function BottomView({ totalProposal, onClearCart, loading }: { totalProposal: st
 					</View>
 					<ThemedButton
 						loading={loading}
-						bordered
 						text="Clear"
 						style={{ paddingVertical: 2 }}
 						onPress={onClearCart}
