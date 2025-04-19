@@ -47,10 +47,13 @@ export const BottomSheetProvider = ({ children }: { children: ReactNode }) => {
 
   const closeBottomSheet = () => {
     bottomSheetModalRef.current?.dismiss();
+  };
+
+  const handleDismiss = () => {
     setSheetSnapPoints([]);
     setBottomSheetContent(null);
     setBottomSheetVisible(false);
-  };
+  }
 
   const handleSheetChanges = (index: number) => {
     if (index === -1) {
@@ -79,7 +82,7 @@ export const BottomSheetProvider = ({ children }: { children: ReactNode }) => {
           ref={bottomSheetModalRef}
           snapPoints={sheetSnapPoints}
           onChange={handleSheetChanges}
-          onDismiss={closeBottomSheet}
+          onDismiss={handleDismiss}
           backdropComponent={renderBackdrop}
           backgroundStyle={{ backgroundColor: "transparent" }}
           handleComponent={null}

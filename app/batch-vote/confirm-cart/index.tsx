@@ -52,10 +52,26 @@ export default function VotedProposals() {
 				amount: item.amount,
 				conviction: item.conviction,
 				proposalTitle: item.title
+			},{
+				onError: (error) => {
+					Toast.show({
+						type: "error",
+						text1: `Failed to add vote for ${item.postIndexOrHash} `,
+					})
+				}
 			})
 		);
 		await Promise.all(promises);
-		clearCartItems()
+		Toast.show({
+			type: "success",
+			text1: "Votes added to cart successfully",
+			text2: "You can now confirm your votes in the cart"
+		});
+		setTimeout(() => {
+			clearCartItems();
+		}, 2000);
+		router.replace(`/batch-vote/success?proposalCount=${items.length}&totalDotSpent=${totalDotSpent}`);
+		
 	};
 
 	const handleEdit = (updatedCartItem: UpdateCartItemParams) => {
@@ -76,7 +92,7 @@ export default function VotedProposals() {
 				onUpdate={handleEdit}
 			/>,
 			["90%", "100%"]
-		)
+		);
 	};
 
 	return (
@@ -156,22 +172,13 @@ interface BottomViewProps {
 function BottomView({ totalProposal, totalDotSpent, onConfirm, onClearCart }: BottomViewProps) {
 	const [isLoading, setIsLoading] = useState(false);
 
-	const handleConfirmCart = async () => {
+	const handleConfirmCart = () => {
 		setIsLoading(true);
 		Toast.show({
 			type: "info",
 			text2: "Your votes are being added to the cart"
 		})
-
-		try {
-			await onConfirm();
-			router.dismissAll();
-			router.push(`/batch-vote/success?proposalCount=${totalProposal}&totalDotSpent=${totalDotSpent}`);
-		} catch (error) {
-			console.error(error)
-		} finally {
-			setIsLoading(false);
-		}
+		onConfirm()
 	}
 
 	return (
