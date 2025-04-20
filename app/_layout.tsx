@@ -153,7 +153,7 @@ function Content() {
         router.push("/batch-vote/confirm-cart");
       });
     }
-  }, [cartItems]);
+  }, []);
 
   return (
     <AuthModalProvider>

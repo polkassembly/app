@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { useLocalSearchParams } from "expo-router";
 import {
-  ActivityIndicator,
   View,
 } from "react-native";
 
@@ -15,7 +14,6 @@ import { useProposalStore } from "@/lib/store/proposalStore";
 import { useProfileStore } from "@/lib/store/profileStore";
 import { useAuthModal } from "@/lib/context/authContext";
 import { useProposalByIndex } from "@/lib/net/queries/post";
-import { useThemeColor } from "@/lib/hooks/useThemeColor";
 import { EProposalType, Post, UserProfile } from "@/lib/types";
 import { useCommentSheet } from "@/lib/context/commentContext";
 import { useGetUserByAddress } from "@/lib/net/queries/profile";
