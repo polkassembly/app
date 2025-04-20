@@ -1,7 +1,6 @@
 import React, { createContext, useContext, useState, ReactNode } from "react";
 import { UserProfile, EProposalType, EPostOrigin } from "@/lib/types";
 import CommentSheet from "../components/proposal/comments/CommentSheet";
-import { View, Modal, TouchableWithoutFeedback, StyleSheet } from "react-native";
 import { useBottomSheet } from "./bottomSheetContext";
 
 interface CommentSheetOptions {

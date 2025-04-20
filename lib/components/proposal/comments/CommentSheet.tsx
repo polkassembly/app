@@ -56,8 +56,11 @@ const CommentSheet = ({ author, isReply, proposalTitle, proposalIndex, proposalT
 				postIndexOrHash: proposalIndex,
 			},
 			bodyParams: bodyParam,
-		},
-		);
+		});
+		Toast.show({
+			type: "success",
+			text1: isReply ? "Your reply has been added" : "Your comment has been added",
+		})
 		if (onCommentSubmitted) {
 			onCommentSubmitted({ comment });
 		}

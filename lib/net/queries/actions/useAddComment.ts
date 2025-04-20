@@ -5,6 +5,7 @@ import { ENetwork } from "@/lib/types/post";
 import { EDataSource } from "@/lib/types/comment";
 import { useProfileStore } from "@/lib/store/profileStore";
 import client from "../../client";
+import Toast from "react-native-toast-message";
 
 interface AddCommentPathParams {
   proposalType: EProposalType;
@@ -108,6 +109,10 @@ const useAddComment = () => {
       if (context?.previousCommentsData) {
         queryClient.setQueryData(context.commentsQueryKey, context.previousCommentsData);
       }
+      Toast.show({
+        type: "error",
+        text1: "Failed to add comment",
+      })
       console.error("Failed to add comment", error);
     },
     onSettled: (_, __, { pathParams }) => {

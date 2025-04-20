@@ -281,6 +281,12 @@ function ProposalActions(
       unsubscribeProposal(
         { pathParams: { postIndexOrHash: index, proposalType: proposalType } },
         {
+          onSuccess: () => {
+            Toast.show({
+              type: "success",
+              text1: `Unsubscribed from proposal ${index}`,
+            })
+          },
           onSettled: () => setIsUpdatingSubscription(false),
         }
       );
@@ -289,6 +295,12 @@ function ProposalActions(
       subscribeProposal(
         { pathParams: { postIndexOrHash: index, proposalType: proposalType } },
         {
+          onSuccess: () => {
+            Toast.show({
+              type: "success",
+              text1: `Subscribed to proposal ${index}`,
+            })
+          },
           onSettled: () => setIsUpdatingSubscription(false),
         }
       );
