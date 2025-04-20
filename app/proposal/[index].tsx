@@ -5,7 +5,7 @@ import {
   View,
 } from "react-native";
 
-import { ProposalDetails } from "@/lib/components/proposal";
+import { ProposalDetails, ProposalDetailsSkeleton } from "@/lib/components/proposal";
 import PostFullDetails from "@/lib/components/proposal/full-details";
 import { BottomSheet, TopBar } from "@/lib/components/shared";
 import { BottomButton } from "@/lib/components/shared/button";
@@ -30,7 +30,7 @@ export default function ProposalDetailScreenImpl() {
   const [open, setOpen] = useState(false);
   const { openCommentSheet } = useCommentSheet();
 
-  const { index, proposalType } = useLocalSearchParams<{
+  var { index, proposalType } = useLocalSearchParams<{
     index: string;
     proposalType: EProposalType;
   }>();
@@ -43,7 +43,6 @@ export default function ProposalDetailScreenImpl() {
   const storeProposal = useProposalStore((state) => state.proposal);
   const user = useProfileStore((state) => state.profile);
   const { openLoginModal } = useAuthModal();
-  const accentColor = useThemeColor({}, "accent");
 
   let proposal: Post | undefined;
 
@@ -70,16 +69,7 @@ export default function ProposalDetailScreenImpl() {
       postOrigin: proposal?.onChainInfo?.origin,
     })
   };
-
-  if (isLoading && proposal === undefined) {
-    return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <ActivityIndicator color={accentColor} size="large" />
-      </View>
-    );
-  }
-
-  if (!proposal) {
+  if (!proposal && !isLoading) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignContent: "center" }}>
         <ThemedText type="titleLarge" style={{ textAlign: "center" }}>
@@ -93,14 +83,20 @@ export default function ProposalDetailScreenImpl() {
     <ThemedView type="container" style={{ flex: 1 }}>
       <View style={{ flex: 1, paddingHorizontal: 16, gap: 16 }}>
         <TopBar />
-        <ProposalDetails
-          post={proposal}
-          openFullDetails={() => setOpen(true)}
-        />
+        {
+          (proposal) ? (
+            <ProposalDetails
+              post={proposal}
+              openFullDetails={() => setOpen(true)}
+            />
+          ) : (
+            <ProposalDetailsSkeleton />
+          )
+        }
       </View>
 
       <View style={{ position: "absolute", bottom: 0, width: "100%" }}>
-        <BottomButton onPress={handleComment}>Add a Comment</BottomButton>
+        <BottomButton onPress={handleComment} disabled={!proposal}>Add a Comment</BottomButton>
       </View>
 
       {/* Full Proposal Details Sheet */}
