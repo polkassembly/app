@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Animated, View } from "react-native";
+import { Animated, InteractionManager, View } from "react-native";
 import { NavigationDarkTheme } from "@/lib/constants/Colors";
 import { useAuthStore } from "@/lib/store/authStore";
 import getIdFromToken from "@/lib/util/jwt";
 import { ThemeProvider } from "@react-navigation/native";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { useFonts } from "expo-font";
-import { Stack } from "expo-router";
+import { Stack, useRouter } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import "react-native-reanimated";
@@ -23,6 +23,7 @@ import { ACTIVITY_FEED_LIMIT } from "@/lib/net/queries/post/useActivityFeed";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import queryClient from "@/lib/net/queryClient";
 import { PaperProvider } from "react-native-paper";
+import { useLocalCartStore } from "@/lib/store/localCartStore";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -142,6 +143,18 @@ export default function RootLayout() {
 }
 
 function Content() {
+  const router = useRouter();
+  const cartItems = useLocalCartStore((state) => state.items);
+
+  useEffect(() => {
+    if (cartItems.length > 0) {
+      // Wait until all interactions/splash/animations finish
+      InteractionManager.runAfterInteractions(() => {
+        router.push("/batch-vote/confirm-cart");
+      });
+    }
+  }, [cartItems]);
+
   return (
     <AuthModalProvider>
       <ThemeProvider value={NavigationDarkTheme}>
