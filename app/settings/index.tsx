@@ -208,95 +208,90 @@ export default function Settings() {
   const colorStroke = useThemeColor({}, "mediumText");
 
   return (
-    <>
-      <ThemedView type="secondaryBackground" style={styles.container}>
-        <TopBar />
-        <View style={{ gap: 3 }}>
-          <View style={styles.header}>
-            <IconSettings color="white" iconWidth={24} iconHeight={24} />
-            <ThemedText type="titleMedium">Settings</ThemedText>
+    <ThemedView type="secondaryBackground" style={styles.container}>
+      <TopBar />
+      <View style={{ gap: 32 }}>
+        <View style={styles.header}>
+          <IconSettings color="white" iconWidth={24} iconHeight={24} />
+          <ThemedText type="titleMedium">Settings</ThemedText>
+        </View>
+        <View style={{ gap: 16 }}>
+          <ThemedText type="bodySmall">USERNAME</ThemedText>
+          <View style={styles.userNameContainer}>
+            <TextInput
+              style={{ color: "white", flex: 1, fontSize: 16, padding: 8 }}
+              placeholder="Username"
+              value={username}
+              onChangeText={setUsername}
+            />
+            <IconPencil />
           </View>
-          <View style={{ gap: 8, marginTop: 20 }}>
-            <ThemedText type="bodySmall">USERNAME</ThemedText>
-            {!userProfile ? (
-              <Skeleton width={150} height={12} />
-            ) : (
-              <View style={styles.userNameContainer}>
-                <TextInput
-                  style={{ color: "white", flex: 1, fontSize: 16, padding: 8 }}
-                  placeholder="Username"
-                  value={username}
-                  onChangeText={setUsername}
-                />
-                <IconPencil />
-              </View>
-            )}
-          </View>
-          <View style={{}}>
-            <ThemedText type="bodySmall">PROFILE PICTURE</ThemedText>
-            <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
-              <View style={{ maxWidth: "48%", flex: 1, aspectRatio: 1 }}>
-                <Image
-                  source={
-                    userProfilePicture
-                      ? typeof userProfilePicture === "string"
-                        ? { uri: userProfilePicture }
-                        : Image.resolveAssetSource(userProfilePicture)
-                      : Image.resolveAssetSource(defaultAvatar)
-                  }
-                  style={{ maxWidth: "100%", flex: 1, borderRadius: 100 }}
 
-                />
+        </View>
+        <View style={{ gap: 16 }}>
+          <ThemedText type="bodySmall">PROFILE PICTURE</ThemedText>
+          <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+            <View style={{ maxWidth: "48%", flex: 1, aspectRatio: 1 }}>
+              <Image
+                source={
+                  userProfilePicture
+                    ? typeof userProfilePicture === "string"
+                      ? { uri: userProfilePicture }
+                      : Image.resolveAssetSource(userProfilePicture)
+                    : Image.resolveAssetSource(defaultAvatar)
+                }
+                style={{ maxWidth: "100%", flex: 1, borderRadius: 100 }}
+
+              />
+            </View>
+            <View style={{ width: "48%" }}>
+              <ThemedText type="bodyMedium2" style={{ color: colorStroke }}>
+                Options:
+              </ThemedText>
+              <View style={{ flexDirection: "row", gap: 4 }}>
+                {defaultAvatars.slice(0, 3).map((avatar, index) => (
+                  <AvatarButton
+                    key={index}
+                    avatarSource={avatar}
+                    setAvatar={setUserProfilePicture}
+                  />
+                ))}
               </View>
-              <View style={{ width: "48%" }}>
-                <ThemedText type="bodyMedium2" style={{ color: colorStroke }}>
-                  Options:
-                </ThemedText>
-                <View style={{ flexDirection: "row", gap: 4 }}>
-                  {defaultAvatars.slice(0, 3).map((avatar, index) => (
-                    <AvatarButton
-                      key={index}
-                      avatarSource={avatar}
-                      setAvatar={setUserProfilePicture}
-                    />
-                  ))}
-                </View>
-                <View style={{ flexDirection: "row", gap: 4 }}>
-                  {defaultAvatars.slice(3, 6).map((avatar, index) => (
-                    <AvatarButton
-                      key={index}
-                      avatarSource={avatar}
-                      setAvatar={setUserProfilePicture}
-                    />
-                  ))}
-                </View>
-                <View style={{ flexDirection: "row", gap: 4 }}>
-                  {defaultAvatars.slice(6, 8).map((avatar, index) => (
-                    <AvatarButton
-                      key={index}
-                      avatarSource={avatar}
-                      setAvatar={setUserProfilePicture}
-                    />
-                  ))}
-                  <View style={styles.avatarButton}>
-                    <TouchableOpacity onPress={handleUploadImage}>
-                      <Ionicons name="camera" color="white" size={25} />
-                    </TouchableOpacity>
-                  </View>
+              <View style={{ flexDirection: "row", gap: 4 }}>
+                {defaultAvatars.slice(3, 6).map((avatar, index) => (
+                  <AvatarButton
+                    key={index}
+                    avatarSource={avatar}
+                    setAvatar={setUserProfilePicture}
+                  />
+                ))}
+              </View>
+              <View style={{ flexDirection: "row", gap: 4 }}>
+                {defaultAvatars.slice(6, 8).map((avatar, index) => (
+                  <AvatarButton
+                    key={index}
+                    avatarSource={avatar}
+                    setAvatar={setUserProfilePicture}
+                  />
+                ))}
+                <View style={styles.avatarButton}>
+                  <TouchableOpacity onPress={handleUploadImage}>
+                    <Ionicons name="camera" color="white" size={25} />
+                  </TouchableOpacity>
                 </View>
               </View>
             </View>
           </View>
-          <ThemedButton text={isSaving ? "Saving..." : "Save"} onPress={handleSave} />
         </View>
-      </ThemedView>
-      {isSaving && (
-        <View style={styles.savingOverlay}>
-          <ActivityIndicator size="large" color="white" />
-          <ThemedText>Saving profile...</ThemedText>
-        </View>
-      )}
-    </>
+        <ThemedButton
+          textType="bodyMedium1"
+          text={isSaving ? "Saving..." : "Save Changes"}
+          onPress={handleSave}
+          disabled={isSaving}
+          loading={isSaving}
+        />
+      </View>
+    </ThemedView>
   );
 }
 
@@ -341,7 +336,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#383838",
     paddingHorizontal: 12,
-    borderRadius: 16,
+    borderRadius: 26,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
