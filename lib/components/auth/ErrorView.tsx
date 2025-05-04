@@ -5,7 +5,14 @@ import IconWarn from "@/lib/components/icons/auth/icon-warn";
 const ErrorView = ({ content }: { content: string }) => (
 	<View style={styles.error}>
 		<IconWarn iconHeight={20} iconWidth={20} />
-		<ThemedText type="bodySmall">{content}</ThemedText>
+		<ThemedText
+			type="bodySmall"
+			numberOfLines={2}
+			ellipsizeMode="tail"
+			style={{ paddingRight: 32}}
+		>
+			{content || "Something went wrong"}
+		</ThemedText>
 	</View>
 );
 
