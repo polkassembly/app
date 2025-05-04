@@ -205,7 +205,6 @@ const ProposalVotingScreen: React.FC = () => {
             <View style={styles.swiperWrapper}>
               <Swiper
                 containerStyle={styles.swiperStyle}
-                infinite
                 ref={swiperRef}
                 cards={proposals}
                 renderCard={(cardData) => (
