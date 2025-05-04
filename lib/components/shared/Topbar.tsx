@@ -1,12 +1,13 @@
 import React, { ReactNode } from "react";
 import { StyleProp, ViewStyle, TouchableOpacity } from "react-native";
-import { Link } from "expo-router";
+import { Link, router } from "expo-router";
 import { View } from "moti";
 import { useThemeColor } from "../../hooks/useThemeColor";
 import IconBack from "../icons/icon-back";
 import { IconPoints } from "../icons/icon-points";
 import { ThemedText } from "./text/ThemedText";
 import { useProfileStore } from "../../store/profileStore";
+import UserAvatar from "./UserAvatar";
 
 interface TopBarProps {
   style?: StyleProp<ViewStyle>;
@@ -30,6 +31,7 @@ export default function TopBar({
           backgroundColor,
           flexDirection: "row",
           alignItems: "center",
+          
         },
         style,
       ]}
@@ -49,12 +51,11 @@ export default function TopBar({
       <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
         {
           userProfile?.profileScore && (
-            <>
-              <IconPoints iconWidth={24} iconHeight={24} />
-              <ThemedText type="titleMedium" style={{ fontWeight: 700 }}>
-                {userProfile?.profileScore}
-              </ThemedText>
-            </>
+            <TouchableOpacity
+              onPress={() => router.push("/profile")}
+            >
+              <UserAvatar avatarUrl={userProfile?.profileDetails.image} width={24} height={24} />
+            </TouchableOpacity>
           )
         }
       </View>
