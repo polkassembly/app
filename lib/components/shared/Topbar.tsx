@@ -40,6 +40,9 @@ const TopBar = ({
     } else {
       openLoginModal("Login to access your profile", false);
     }
+    setTimeout(() => {
+      setIsNavigating(false);
+    }, 1000);
   };
 
   return (
