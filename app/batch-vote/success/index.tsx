@@ -4,8 +4,8 @@ import { Note, TopBar } from "@/lib/components/shared";
 import { useThemeColor } from "@/lib/hooks/useThemeColor";
 import { router } from "expo-router";
 import { useLocalSearchParams } from "expo-router/build/hooks";
-import { Image, StyleSheet, View } from "react-native";
-import { ThemedView, TopGlow } from "@/lib/components/shared/View";
+import { StyleSheet, View } from "react-native";
+import { ThemedView, TopGlow, VoteSuccessView } from "@/lib/components/shared/View";
 
 type Params = {
 	proposalCount: string
@@ -19,19 +19,7 @@ export default function SuccessScreen() {
 	return (
 		<View style={{ flex: 1, backgroundColor }}>
 			<TopBar style={{ paddingHorizontal: 16 }} />
-
-			<View style={{ justifyContent: "space-between", flex: 1, paddingHorizontal: 16 }}>
-				<View style={{ flexDirection: "row" }}>
-					<Image
-						style={{
-							width: "100%",
-							aspectRatio: 1,
-							objectFit: "contain",
-						}}
-						source={require("@/assets/images/vote-success.gif")}
-					/>
-				</View>
-			</View>
+			<VoteSuccessView />
 			<View>
 				<TopGlow />
 				<ThemedView type="secondaryBackground" style={styles.bottomContainer}>

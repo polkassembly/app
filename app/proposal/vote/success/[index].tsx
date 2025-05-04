@@ -1,13 +1,20 @@
 import IconInfo from "@/lib/components/icons/shared/icon-info";
-import {ThemedButton} from "@/lib/components/shared/button";
+import { ThemedButton } from "@/lib/components/shared/button";
 import { ThemedText } from "@/lib/components/shared/text";
-import { TopBar } from "@/lib/components/shared";
+import { Note, TopBar, UserAvatar } from "@/lib/components/shared";
 import { useThemeColor } from "@/lib/hooks/useThemeColor";
 import { router } from "expo-router";
 import { useLocalSearchParams } from "expo-router/build/hooks";
-import { Image, View } from "react-native";
+import { Image, StyleSheet, TouchableOpacity, View } from "react-native";
 import { EProposalType, EVoteDecision } from "@/lib/types/post";
 import { toTitleCase } from "@/lib/util/stringUtil";
+import { ThemedView, TopGlow, VoteSuccessView } from "@/lib/components/shared/View";
+import { useProfileStore } from "@/lib/store/profileStore";
+import { useCommentSheet } from "@/lib/context/commentContext";
+import { UserProfile } from "@/lib/types";
+import { TouchableWithoutFeedback } from "react-native-gesture-handler";
+import { useProposalStore } from "@/lib/store/proposalStore";
+import { useGetUserByAddress } from "@/lib/net/queries/profile";
 
 type Params = {
   conviction: string;
@@ -21,96 +28,107 @@ export default function SuccessScreen() {
   const backgroundColor = useThemeColor({}, "secondaryBackground");
   const { conviction, decision, dot, index, proposalType } = useLocalSearchParams<Params>();
 
+  const userProfile = useProfileStore((state) => state.profile);
+  const proposal = useProposalStore((state) => state.proposal);
+
+  const { data: author } = useGetUserByAddress(proposal?.onChainInfo?.proposer || "")
+
+  const { openCommentSheet } = useCommentSheet();
+
+  const handleCommentPress = () => {
+    openCommentSheet({
+      proposalIndex: index,
+      proposalType: proposalType,
+      author: author as UserProfile,
+      proposalTitle: proposal?.title || "",
+      
+
+      onCommentSuccess: () => {
+        router.dismissTo(`/(tabs)`)
+      },
+    });
+  }
+
   return (
     <View style={{ flex: 1, backgroundColor }}>
       <TopBar style={{ paddingHorizontal: 16 }} />
+      <VoteSuccessView />
+      <View>
+        <TopGlow />
+        <ThemedView type="secondaryBackground" style={{ gap: 16, justifyContent: "center", alignItems: "center", paddingHorizontal: 16, borderRadius: 26, paddingVertical: 26 }}>
+          <View style={{ gap: 8 }}>
+            <View style={{ flexDirection: "row", alignItems: "center", alignContent: "center" }}>
+              <ThemedText type="titleLarge">
+                Your{" "}
+              </ThemedText>
+              <ThemedText style={{ color: decision === 'aye' ? "#2ED47A" : decision === "nay" ? "#F53C3C" : "#FFA013" }} type="titleLarge">
+                {toTitleCase(decision)}
+              </ThemedText>
+              <ThemedText type="titleLarge">
+                {" "}was added to cart
+              </ThemedText>
+            </View>
 
-      <View style={{ justifyContent: "space-between", flex: 1, paddingHorizontal: 16 }}>
-        <View style={{ flexDirection: "row" }}>
-          <Image
-            style={{
-              width: "100%",
-              aspectRatio: 1,
-              objectFit: "contain",
-            }}
-            source={require("@/assets/images/vote-success.gif")}
-          />
-          <View>
-            <Image
+            <View
               style={{
-                width: 47,
-                height: 64,
-                objectFit: "contain"
+                flexDirection: "row",
+                alignItems: "baseline",
+                justifyContent: "center",
               }}
-              source={require("@/assets/gif/twinkle.gif")}
-              />
-          </View>
-        </View>
-        <View style={{ gap: 16, justifyContent: "center", alignItems: "center" }}>
-          <View style={{ flexDirection: "row", alignItems: "center", alignContent: "center"}}>
-            <ThemedText type="titleLarge">
-              Your{" "}
-            </ThemedText>
-            <ThemedText style={{ color: decision === 'aye' ? "#2ED47A" : decision === "nay" ? "#F53C3C" : "#FFA013"}} type="titleLarge">
-              {toTitleCase(decision)}
-            </ThemedText>
-            <ThemedText type="titleLarge">
-              {" "}was added to cart
-            </ThemedText>
+            >
+              <ThemedText type="titleMedium">
+                {conviction}x conviction
+              </ThemedText>
+              <ThemedText type="bodyMedium1" colorName="mediumText">
+                {" "}
+                with{" "}
+              </ThemedText>
+              <ThemedText type="titleMedium" colorName="ctaText">
+                {dot} DOT
+              </ThemedText>
+            </View>
           </View>
 
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "baseline",
-              justifyContent: "center",
-            }}
+          <TouchableOpacity
+            onPress={handleCommentPress}
+            style={{ width: "100%" }}
+            touchSoundDisabled
           >
-            <ThemedText type="titleMedium">
-              {conviction}x conviction
-            </ThemedText>
-            <ThemedText type="bodyMedium1" colorName="mediumText">
-              {" "}
-              with{" "}
-            </ThemedText>
-            <ThemedText type="titleMedium" colorName="ctaText">
-              {dot} DOT
-            </ThemedText>
-          </View>
+            <ThemedView
+              style={styles.commentBox}
+            >
+              <UserAvatar
+                width={24}
+                height={24}
+                avatarUrl={userProfile?.profileDetails.image || ""}
+              />
+              <ThemedText type="bodySmall" colorName="mediumText">
+                Share your reason to vote in a comment...
+              </ThemedText>
+            </ThemedView>
+          </TouchableOpacity>
 
-          <Note content="NOTE: Login Via web view to confirm your vote" />
+          <Note content="Login Via Desktop to confirm your vote" />
 
           <ThemedButton
             onPress={() => router.dismissTo("/(tabs)")}
             text="Explore Feed"
             textType="buttonLarge"
-            style={{ width: "100%"}}
+            style={{ width: "100%" }}
           />
-        </View>
+        </ThemedView>
       </View>
     </View>
   );
 }
 
-interface NoteProps {
-  content: string;
-}
-
-function Note({ content }: NoteProps) {
-  return (
-    <View
-      style={{
-        backgroundColor: "#002C4F",
-        padding: 8,
-        gap: 16,
-        borderRadius: 8,
-        flexDirection: "row",
-        alignItems: "center",
-        width: "100%"
-      }}
-    >
-      <IconInfo />
-      <ThemedText type="bodySmall">{content}</ThemedText>
-    </View>
-  );
-}
+const styles = StyleSheet.create({
+  commentBox: {
+    padding: 8,
+    gap: 16,
+    borderRadius: 26,
+    flexDirection: "row",
+    alignItems: "center",
+    width: "100%",
+  },
+});
