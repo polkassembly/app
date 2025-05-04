@@ -19,6 +19,7 @@ import { useLocalCartStore } from "@/lib/store/localCartStore";
 import { CartItem } from "@/lib/net/queries/actions/useGetCartItem";
 import { useProfileStore } from "@/lib/store/profileStore";
 import { DEFAULT_NETWORK } from "@/lib/constants/networks";
+import { Ionicons } from "@expo/vector-icons";
 
 interface MemoizedProposalCardProps {
   card: Post;
@@ -73,12 +74,13 @@ const ProposalVotingScreen: React.FC = () => {
   const { data, isLoading, isError, hasNextPage, fetchNextPage } = useActivityFeed(feedParams);
   const addCartItem = useLocalCartStore((state) => state.addCartItem)
   const user = useProfileStore((state) => state.profile)
-  
+
   // Single source of proposals
   const [proposals, setProposals] = useState<Post[]>([]);
   const [proposalDetailsOpen, setProposalDetailsOpen] = useState(false);
-  const swiperRef = useRef<any>(null);
+  const [isChevronDisabled, setIsChevronDisabled] = useState(false);
   const [index, setIndex] = useState(0);
+  const swiperRef = useRef<any>(null);
 
   const backgroundColor = useThemeColor({}, "container");
   const accentColor = useThemeColor({}, "accent");
@@ -93,6 +95,28 @@ const ProposalVotingScreen: React.FC = () => {
   }, [data]);
 
   const showDetails = useCallback(() => setProposalDetailsOpen(true), []);
+
+  const handleBackPress = () => {
+    if (isChevronDisabled || index === 0) return;
+    setIsChevronDisabled(true);
+
+    const prevIndex = index - 1;
+    swiperRef.current?.jumpToCardIndex(prevIndex);
+    setIndex(prevIndex);
+
+    setTimeout(() => setIsChevronDisabled(false), 500); // adjust delay if needed
+  };
+
+  const handleNextPress = () => {
+    if (isChevronDisabled || index === proposals.length - 1) return;
+    setIsChevronDisabled(true);
+
+    const nextIndex = index + 1;
+    swiperRef.current?.jumpToCardIndex(nextIndex);
+    setIndex(nextIndex);
+
+    setTimeout(() => setIsChevronDisabled(false), 500); // adjust delay if needed
+  };
 
   // Handler for swipe events
   const onSwiped = useCallback(
@@ -157,11 +181,27 @@ const ProposalVotingScreen: React.FC = () => {
   }
 
   return (
-    <View style={[styles.container, { backgroundColor }]}>
-      <View style={styles.contentContainer}>
+    <View style={[styles.flex1, { backgroundColor }]}>
+      <View style={styles.flex1}>
         <TopBar style={{ paddingHorizontal: 16 }} />
-        <View style={styles.mainContent}>
-          <View style={styles.swiperContainer}>
+        <View style={{ paddingHorizontal: 16, flexDirection: "row", justifyContent: "space-between", alignItems: "center", paddingVertical: 20 }}>
+          <TouchableOpacity
+            onPress={handleBackPress}
+            style={{ opacity: index === 0 ? 0.5 : 1 }}
+            disabled={index === 0 || isChevronDisabled}
+          >
+            <Ionicons name="chevron-back-circle" size={24} color="white" />
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={handleNextPress}
+            style={{ opacity: index === proposals.length - 1 ? 0.5 : 1 }}
+            disabled={index === proposals.length - 1 || isChevronDisabled}
+          >
+            <Ionicons name="chevron-forward-circle" size={24} color="white" />
+          </TouchableOpacity>
+        </View>
+        <View style={styles.flex1}>
+          <View style={styles.flex1}>
             <View style={styles.swiperWrapper}>
               <Swiper
                 containerStyle={styles.swiperStyle}
@@ -200,7 +240,7 @@ const ProposalVotingScreen: React.FC = () => {
                 }}
 
                 // card stack styling
-                cardVerticalMargin={10}
+                cardVerticalMargin={0}
                 cardHorizontalMargin={20}
                 backgroundColor="transparent"
                 useViewOverflow={Platform.OS === 'ios'}
@@ -250,18 +290,8 @@ const ProposalVotingScreen: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  contentContainer: {
-    flex: 1,
-  },
-  mainContent: {
-    flex: 1,
-  },
-  swiperContainer: {
-    flex: 1,
-    paddingVertical: 20,
+  flex1: {
+    flex: 1
   },
   swiperWrapper: {
     flex: 1,
@@ -275,9 +305,9 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
+    top: 0,
     zIndex: 0,
-    top: 10,
-    padding: 20,
+    paddingHorizontal: 20,
   },
   cardContainer: {
     borderRadius: 10,
