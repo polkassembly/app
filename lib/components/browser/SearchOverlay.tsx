@@ -11,6 +11,8 @@ import { ThemedText } from "../shared/text/ThemedText";
 import { ThemedView } from "../shared/View/ThemedView";
 import { useThemeColor } from "@/lib/hooks";
 import { ENetwork } from "@/lib/types/post";
+import IconBack from "../icons/icon-back";
+import { TopBar } from "../shared";
 
 interface SearchOverlayProps {
   onDeactivate: () => void;
@@ -196,6 +198,7 @@ function SearchOverlay({ onDeactivate, backgroundColor, visible }: SearchOverlay
         }
       ]}
     >
+      <TopBar handleBackPress={() => deactivateSearchOverlay()}/>
       <ThemedView
         style={[localStyles.searchBarContainer, { borderWidth: 1, borderColor: strokeColor}]}
         type="secondaryBackground"
