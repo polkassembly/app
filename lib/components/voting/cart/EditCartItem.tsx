@@ -57,6 +57,7 @@ export default function EditCartItem({
 					</TouchableOpacity>
 				</View>
 				<HorizontalSeparator style={{ marginVertical: 20 }} />
+				<ThemedText type="bodyMedium2">Editing Vote Details for Proposal:</ThemedText>
 				<View style={{ flexDirection: "row", gap: 10, marginBottom: 16 }}>
 					<ThemedText
 						type="bodySmall"
@@ -70,7 +71,14 @@ export default function EditCartItem({
 					>
 						#{cartItem.postIndexOrHash}
 					</ThemedText>
-					<ThemedText type="bodySmall">{trimText(cartItem.title || "", 30)}</ThemedText>
+					<ThemedText
+						type="bodyMedium2"
+						style={{ fontFamily: "Poppins-SemiBold" }}
+						numberOfLines={2}
+						ellipsizeMode="tail"
+					>
+						{cartItem.title}
+					</ThemedText>
 				</View>
 				<BatchVoteForm
 					vote={vote}

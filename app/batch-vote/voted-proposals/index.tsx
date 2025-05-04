@@ -182,8 +182,9 @@ function BottomView({ totalProposal, onClearCart, loading }: { totalProposal: st
 					<ThemedButton
 						loading={loading}
 						text="Clear"
-						style={{ paddingVertical: 2 }}
+						style={{ paddingVertical: 2, opacity: totalProposal === "0" ? 0.8 : 1 }}
 						onPress={onClearCart}
+						disabled={totalProposal === "0" || loading}
 					/>
 				</View>
 				<Note content="NOTE: Login Via web view to confirm your vote" />
