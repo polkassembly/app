@@ -21,7 +21,8 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.polkassembly.app"
+      "package": "com.polkassembly.app",
+      "versionCode": 1
     },
     "web": {
       "bundler": "metro",
@@ -49,8 +50,9 @@
         "origin": false
       },
       "eas": {
-        "projectId": "49b392c5-79b3-4bc4-af00-b842a889a6a6"
+        "projectId": "6b4a575e-6240-419f-8938-98a783e52acf"
       }
-    }
+    },
+    "owner": "polkassembly"
   }
 }
