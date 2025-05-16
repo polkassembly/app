@@ -12,6 +12,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.polkassembly.app",
+      "buildNumber": "1",
       "config": {
         "usesNonExemptEncryption": false
       }
