@@ -38,3 +38,7 @@ yarn-error.*
 
 app-example
 build-configs
+
+ios/
+
+android/
