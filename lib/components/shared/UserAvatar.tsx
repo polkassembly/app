@@ -14,7 +14,7 @@ export default function UserAvatar({ avatarUrl, width, height, style, address }:
   const defaultAvatar = require("@/assets/images/profile/default-avatar.png");
 
   return (
-    address && avatarUrl === "" ? (
+    !address?.startsWith('0x') && avatarUrl === "" ? (
       <Identicon
         value={address}
         size={width}

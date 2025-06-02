@@ -59,7 +59,7 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
-    padding: 0,
+    padding: 10,
     color: Colors.dark.text,
   },
   errorText: {
